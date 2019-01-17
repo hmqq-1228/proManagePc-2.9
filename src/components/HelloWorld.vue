@@ -1,6 +1,7 @@
 <template>
   <div class="hello">
-   <h1>项目管理中心</h1>
+   <h1 class="h1" v-on:click="test()">项目管理中心</h1>
+    <div class="lala">123</div>
   </div>
 </template>
 
@@ -10,6 +11,14 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
+    }
+  },
+  created: function () {
+    // console.log($('.lala').text())
+  },
+  methods: {
+    test: function () {
+      $('.lala').hide()
     }
   }
 }
