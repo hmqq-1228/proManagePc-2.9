@@ -1,6 +1,59 @@
 <template>
   <div class="hello">
-   <h1>项目管理中心</h1>
+   <div class="topperTitle">
+     <div class="topCon">
+       <div class="topConLf">
+         <div class="title">2019年公司战略执行过程管控</div>
+         <div class="proDetail">该项目为2019年贝豪集团战略规划，由各部门分解细化到具体任务或项目</div>
+       </div>
+       <div class="topConRt">
+         <div class="myMsg"><div><img src="../../static/img/my.png" alt=""></div><div style="margin-left: 10px;">杨樊</div></div>
+         <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">2019-01-20</div></div>
+       </div>
+     </div>
+     <div class="planList">
+       <div class="planName">项目计划</div>
+       <div class="planBox">
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+         <div @click="selectProject($event)">信息中心</div>
+       </div>
+     </div>
+   </div>
+    <div class="devide">
+      <div>项目详情</div>
+    </div>
+    <div class="block">
+      <el-tree
+        :data="data5"
+        node-key="id"
+        default-expand-all
+        @node-expand="getNodeMsg($event)"
+        :expand-on-click-node="false">
+      <span class="custom-tree-node" slot-scope="{ node, data }">
+        <span>{{ node.label }}</span>
+        <span class="proMsg">
+          <span class="treeName">
+            <span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>
+            <span style="float: left;margin-left: 16px;">姜海川</span>
+          </span>
+          <span class="treeTime">
+            <span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>
+            <span style="float: left;margin-left: 16px;">{{data.date}}</span>
+          </span>
+        </span>
+      </span>
+      </el-tree>
+    </div>
   </div>
 </template>
 
@@ -9,7 +62,52 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      data5: [{
+        id: 1,
+        label: '一级 1',
+        date: '2019-01-20',
+        children: [{
+          id: 4,
+          label: '二级 1-1',
+          date: '2019-01-20'
+        }]
+      }, {
+        id: 2,
+        label: '一级 2',
+        date: '2019-01-25',
+        children: [{
+          id: 5,
+          label: '二级 2-1',
+          date: '2019-01-12'
+        }, {
+          id: 6,
+          label: '二级 2-2',
+          date: '2019-01-19'
+        }]
+      }, {
+        id: 3,
+        label: '一级 3',
+        date: '2019-01-19',
+        children: [{
+          id: 7,
+          label: '二级 3-1',
+          date: '2019-01-10'
+        }, {
+          id: 8,
+          label: '二级 3-2',
+          date: '2019-01-08'
+        }]
+      }]
+    }
+  },
+  methods: {
+    selectProject: function (e) {
+      var obj = e.currentTarget
+      console.log(obj)
+    },
+    getNodeMsg: function (e) {
+      console.log(e)
     }
   }
 }
@@ -31,4 +129,88 @@ li {
 a {
   color: #42b983;
 }
+.topCon{
+  display: flex;
+  justify-content: space-between;
+}
+.topConLf{
+  width: 80%;
+}
+  .title{
+    height: 30px;
+    color: chocolate;
+    font-size: 18px;
+    font-family: '黑体';
+    font-weight: bold;
+  }
+  .proDetail{
+    font-size: 14px;
+    color: #666;
+    text-indent: 2em;
+  }
+  .topConRt{
+    width: 20%;
+  }
+  .myMsg,.dataMsg{
+    color: #888;
+    display: flex;
+    font-size: 15px;
+    justify-content: start;
+    line-height: 25px;
+  }
+  .planName{
+    width: 20px;
+    font-size: 14px;
+    color: #fff;
+    float: left;
+    padding: 10px 2px;
+    text-align: center;
+    background-color: #3ca00b;
+    border-radius: 6px;
+  }
+  .planList{
+    width: 96%;
+    display: flex;
+    margin-top: 30px;
+  }
+  .planBox{
+    width: 98%;
+    float: left;
+  }
+.planBox div{
+  padding: 4px 20px;
+  float: left;
+  border-radius: 4px;
+  background-color: #ebeef5;
+  margin-left: 25px;
+  margin-top: 15px;
+  color: #777;
+  font-size: 15px;
+}
+  .devide{
+    height: 40px;
+    clear: both;
+    line-height: 40px;
+    padding: 0 10px;
+    font-size: 16px;
+    color: #999;
+    margin-top: 20px;
+    background-color: #f5f5f5;
+  }
+.custom-tree-node {
+  flex: 1;
+  align-items: center;
+  font-size: 14px;
+  padding-right: 8px;
+}
+.treeName{
+  float: left;
+}
+.treeTime{
+  float: right;
+}
+  .proMsg{
+    width: 500px;
+    float: right;
+  }
 </style>
