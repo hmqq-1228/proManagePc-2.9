@@ -3,29 +3,21 @@
    <div class="topperTitle">
      <div class="topCon">
        <div class="topConLf">
-         <div class="title">2019年公司战略执行过程管控</div>
-         <div class="proDetail">该项目为2019年贝豪集团战略规划，由各部门分解细化到具体任务或项目</div>
+         <div class="title">{{proDetailMsg.projectName}}</div>
+         <div class="proDetail">{{proDetailMsg.content}}</div>
        </div>
        <div class="topConRt">
-         <div class="myMsg"><div><img src="../../static/img/my.png" alt=""></div><div style="margin-left: 10px;">杨樊</div></div>
-         <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">2019-01-20</div></div>
+         <div style="margin-left: 25%;">
+           <div class="myMsg"><div><img src="../../static/img/my.png" alt=""></div><div style="margin-left: 10px;">{{proDetailMsg.projectManager}}</div></div>
+           <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">{{proDetailMsg.createDate}}</div></div>
+         </div>
        </div>
      </div>
      <div class="planList">
        <div class="planName">项目计划</div>
        <div class="planBox">
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
-         <div @click="selectProject($event)">信息中心</div>
+         <div class="active" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject($event)">{{plan.name}}</div>
+         <div v-for="task in taskList" v-bind:key="task.uid" @click="selectProject($event)">{{task.jobName}}</div>
        </div>
      </div>
    </div>
@@ -60,9 +52,13 @@
 <script>
 export default {
   name: 'HelloWorld',
+  props: ['proId'],
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
+      proDetailMsg: '',
+      taskList: [],
+      planList: [],
       data5: [{
         id: 1,
         label: '一级 1',
@@ -101,13 +97,35 @@ export default {
       }]
     }
   },
+  created: function () {
+    this.getProjectDetail()
+  },
+  watch: {
+    proId: function (val, oVal) {
+      console.log('val', val)
+      this.getProjectDetail()
+    }
+  },
   methods: {
     selectProject: function (e) {
       var obj = e.currentTarget
       console.log(obj)
+      $(obj).addClass('active').siblings().removeClass('active')
     },
     getNodeMsg: function (e) {
       console.log(e)
+    },
+    getProjectDetail: function () {
+      var that = this
+      console.log('proid', that.proId)
+      that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.proId}).then(res => {
+        if (res.code === 200) {
+          console.log('getPlanOrTaskByProjectId', res)
+          that.proDetailMsg = res.data.projectDetail
+          that.taskList = res.data.jobList
+          that.planList = res.data.planList
+        }
+      })
     }
   }
 }
@@ -134,7 +152,7 @@ a {
   justify-content: space-between;
 }
 .topConLf{
-  width: 80%;
+  width: 75%;
 }
   .title{
     height: 30px;
@@ -149,7 +167,7 @@ a {
     text-indent: 2em;
   }
   .topConRt{
-    width: 20%;
+    width: 25%;
   }
   .myMsg,.dataMsg{
     color: #888;
@@ -212,5 +230,9 @@ a {
   .proMsg{
     width: 500px;
     float: right;
+  }
+.planBox .active{
+    color: #fff;
+    background-color: #409EFF;
   }
 </style>

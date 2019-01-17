@@ -9,39 +9,39 @@
           <el-row>
           <el-col :span="24">
             <el-menu
-              default-active="2"
+              default-active="S1243eb5eaedd4b7780ba29101ed407c6"
               class="el-menu-vertical-demo"
               background-color="#28558c"
               text-color="#fff"
               active-text-color="#ffd04b">
-              <el-submenu index="1">
+              <el-submenu v-for="(name, index) in proManageName" :index="JSON.stringify(index)" v-bind:key="index">
                 <template slot="title">
                   <i class="el-icon-location"></i>
-                  <span>战略项目</span>
+                  <span>{{name.projectType}}</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item index="1-1">2019年公司战略执行过程管控</el-menu-item>
-                  <el-menu-item index="1-2">2018年公司战略</el-menu-item>
+                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID)">{{nameItem.projectName}}</el-menu-item>
+                  <!--<el-menu-item index="1-2">2018年公司战略</el-menu-item>-->
                 </el-menu-item-group>
               </el-submenu>
-              <el-menu-item index="2">
-                <i class="el-icon-menu"></i>
-                <span slot="title">商品管理</span>
-              </el-menu-item>
-              <el-menu-item index="3">
-                <i class="el-icon-document"></i>
-                <span slot="title">活动管理</span>
-              </el-menu-item>
-              <!--<el-menu-item index="4">-->
-                <!--<i class="el-icon-setting"></i>-->
-                <!--<span slot="title">导航四</span>-->
-              <!--</el-menu-item>-->
+              <el-submenu index="2">
+                <template slot="title">
+                  <i class="el-icon-menu"></i>
+                  <span slot="title">商品管理</span>
+                </template>
+              </el-submenu>
+              <el-submenu index="3">
+                <template slot="title">
+                  <i class="el-icon-document"></i>
+                  <span slot="title">活动管理</span>
+                </template>
+              </el-submenu>
             </el-menu>
           </el-col>
           </el-row>
         </el-aside>
         <el-main>
-          <router-view/>
+          <router-view :proId="proId"/>
         </el-main>
       </el-container>
     </el-container>
@@ -50,7 +50,32 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data () {
+    return {
+      proManageName: '',
+      proId: 'S1243eb5eaedd4b7780ba29101ed407c6'
+    }
+  },
+  created: function () {
+    this.getProManageMenu()
+  },
+  methods: {
+    getProManageMenu: function () {
+      var that = this
+      that.ajax('/leader/getProjectList', {}).then(res => {
+        if (res.code === 200) {
+          console.log(res)
+          that.proManageName = res.data
+        }
+      })
+    },
+    getProjectDetail: function (id) {
+      if (id) {
+        this.proId = id
+      }
+    }
+  }
 }
 </script>
 
@@ -80,6 +105,7 @@ export default {
     padding: 0 20px;
     line-height: 60px;
     text-align: left;
+    font-weight: bold;
     background-color: #28558c;
   }
 .el-tree-node__content{
@@ -88,5 +114,10 @@ export default {
 }
 .el-tree-node__expand-icon{
   font-size: 16px;
+}
+.el-submenu .el-menu-item{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
