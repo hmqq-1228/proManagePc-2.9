@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-container>
-      <el-header style="padding: 0">
+      <el-header class="elHeader" style="padding: 0;">
         <div class="header">
           <div>贝豪实业项目管理中心</div>
           <div style="width: 60px;text-align: right;" @click="backToIndex()"><img src="../static/img/longOut.png" alt=""></div>
@@ -91,6 +91,16 @@ export default {
   padding: 0;
   margin: 0;
 }
+html,body{
+  width: 100%;
+  height: 100%;
+}
+#app{
+  height: 100%;
+}
+.el-container{
+  height: 100%;
+}
 .el-main{
   padding: 0 20px;
 }
@@ -108,8 +118,13 @@ export default {
 .el-header{
   padding: 0;
 }
+.elHeader{
+  box-shadow: 0px 0px 10px #092d58;
+  position: relative;
+  z-index: 10;
+}
 .el-menu{
-  border-right: none;
+  border: none !important;
 }
   .header{
     color: #fff;
