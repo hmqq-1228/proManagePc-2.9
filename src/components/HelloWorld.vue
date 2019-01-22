@@ -6,7 +6,7 @@
       </el-breadcrumb>
     </div>
     <div class="hello" style="margin-top: 15px;">
-      <Drawer :closable="false" width="40%" v-model="value4">
+      <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
         <div class="slidTop">
           <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
           <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
@@ -723,7 +723,7 @@ a {
   justify-content: space-between;
   line-height: 40px;
   font-size: 14px;
-  font-family: '黑体';
+  /*font-family: '黑体';*/
   padding:0 10px;
   background-color: #f5f8fa;
 }

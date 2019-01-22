@@ -138,7 +138,7 @@ export default {
 .el-collapse-item__content{
   padding-bottom: 10px;
 }
-  .ivu-timeline-item-content{
-    padding: 1px 1px 0 24px;
-  }
+.ivu-timeline-item-content{
+    padding: 1px 1px 0 24px !important;
+}
 </style>
