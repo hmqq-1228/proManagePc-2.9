@@ -90,11 +90,11 @@
           <Timeline v-if="commentList && commentList.length > 0">
             <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
               <p class="time">{{comment.createDate}}</p>
-              <p class="content">{{comment.customer_name}}说: {{comment.content}}</p>
+              <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
               <p class="content" v-if="comment.showName">附件:
                 <span style="display: inline-block"> {{comment.showName}}</span>
                 <span v-if="comment.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(comment.previewUrl)">预览</span>
-                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="comment.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
               </p>
             </Timeline-item>
           </Timeline>
@@ -114,7 +114,7 @@
               <p class="content" v-if="history.showName"><span>附件:</span>
                 <span style="display: inline-block"> {{history.showName}}</span>
                 <span v-if="history.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(history.previewUrl)">预览</span>
-                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="history.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
               </p>
             </Timeline-item>
           </Timeline>
@@ -374,7 +374,7 @@ export default {
           for (var i = 0; i < that.commentList.length; i++) {
             if (that.isImage(res.data.list[i].showName)) {
               res.data.list[i].isImg = true
-              that.commentList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+              res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
             } else {
               res.data.list[i].isImg = false
             }
@@ -784,6 +784,10 @@ a {
 }
 .content{
   padding-left: 5px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 .timeLine{
   padding: 20px;

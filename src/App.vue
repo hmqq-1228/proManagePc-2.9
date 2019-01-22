@@ -12,7 +12,7 @@
           <el-row>
           <el-col :span="24">
             <el-menu
-              default-active="S1243eb5eaedd4b7780ba29101ed407c6"
+              :default-active="proId"
               class="el-menu-vertical-demo"
               background-color="#28558c"
               text-color="#fff"
