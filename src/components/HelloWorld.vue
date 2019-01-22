@@ -1,6 +1,6 @@
 <template>
   <div class="HelloWorld">
-    <div>
+    <div style="padding: 5px; border-bottom: 1px solid #eee; color: #999;">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block" @click="getNextPlan(router.id)">{{router.name}}</span></el-breadcrumb-item>
       </el-breadcrumb>
@@ -136,7 +136,7 @@
            <div class="proDetail" v-bind:title="proDetailMsg.content">{{proDetailMsg.content}}</div>
          </div>
          <div class="topConRt">
-           <div style="margin-left: 25%;">
+           <div>
              <div class="myMsg"><div><img src="../../static/img/my.png" alt=""></div><div style="margin-left: 10px;">{{proDetailMsg.projectManager}}</div></div>
              <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">{{startPlanDate}} 到 {{endPlanDate}}</div></div>
            </div>
@@ -145,8 +145,8 @@
            <div class="imgBox" v-if="proDetailMsg.state === '3'"><img src="../../static/img/finish.png" alt=""></div>
          </div>
        </div>
-       <div class="planList">
-         <div class="planName">项目计划</div>
+       <div class="planList" v-if="planList.length > 0">
+         <div class="planName">项<br />目<br />计<br />划</div>
          <div class="planBox">
            <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
          </div>
@@ -521,14 +521,15 @@ a {
     -webkit-box-orient:vertical;
   }
   .topConRt{
-    width: 25%;
+    width: 15%;
     position: relative;
   }
   .imgBox{
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 120px;
+    top: -20px;
+    right: 15px;
+    opacity: 0.9;
+    width: 90px;
   }
   .imgBox img{
     width: 100%;
@@ -541,19 +542,20 @@ a {
     line-height: 25px;
   }
   .planName{
-    width: 20px;
+    width: 34px;
     font-size: 14px;
     color: #fff;
     float: left;
-    padding: 10px 2px;
+    padding: 10px;
     text-align: center;
-    background-color: #3ca00b;
-    border-radius: 6px;
+    background-color: #409EFF;
+    border-radius: 0px;
   }
   .planList{
-    width: 96%;
+    width: 100%;
     display: flex;
     margin-top: 30px;
+    background-color: #f5f8fa;
   }
   .planBox{
     width: 98%;
@@ -563,7 +565,7 @@ a {
   padding: 4px 20px;
   float: left;
   border-radius: 4px;
-  background-color: #ebeef5;
+  background-color: #fff;
   margin-left: 25px;
   margin-top: 15px;
   color: #777;
@@ -579,7 +581,7 @@ a {
     font-size: 16px;
     color: #999;
     margin-top: 20px;
-    background-color: #f5f5f5;
+    background-color: #f5f8fa;
   }
 .custom-tree-node {
   flex: 1;
