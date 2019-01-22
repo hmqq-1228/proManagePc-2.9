@@ -13,6 +13,7 @@ const state = {
   // baseServiceUrl: 'http://10.0.5.66:8089',
   // baseServiceUrl: 'http://10.0.5.29:8088'
   baseServiceUrl: 'http://ityp.baho.cn/pms'
+  // baseServiceUrl: 'http://10.0.5.29:8088'
 }
 const mutations = {
   add (state) {

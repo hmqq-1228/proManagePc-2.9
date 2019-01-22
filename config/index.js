@@ -50,7 +50,8 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/pmsCenter/',
+    // assetsPublicPath: '/pmsGodView/',
 
     /**
      * Source Maps

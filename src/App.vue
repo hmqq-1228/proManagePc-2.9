@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-container>
-      <el-header>
+      <el-header style="padding: 0">
         <div class="header">
           <div>贝豪实业项目管理中心</div>
           <div style="width: 60px;text-align: right;" @click="backToIndex()"><img src="../static/img/longOut.png" alt=""></div>
@@ -43,7 +43,7 @@
           </el-col>
           </el-row>
         </el-aside>
-        <el-main>
+        <el-main style="padding: 0 20px;">
           <router-view :proId="proId"/>
         </el-main>
       </el-container>
@@ -123,11 +123,11 @@ export default {
     display: flex;
     justify-content: space-between;
   }
-.el-tree-node__content{
+.HelloWorld .el-tree-node__content{
   height: 40px;
   border-bottom: 1px dashed #ddd;
 }
-.el-tree-node__expand-icon{
+.HelloWorld .el-tree-node__expand-icon{
   font-size: 16px;
 }
 .el-submenu .el-menu-item{
