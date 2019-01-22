@@ -348,10 +348,10 @@ export default {
             that.rid = res.data.uid
             if (that.isImage(res.data.showName)) {
               res.data.isImg = true
-              that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
             } else {
               res.data.isImg = false
             }
+            that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
           }
         })
       }
@@ -374,10 +374,10 @@ export default {
           for (var i = 0; i < that.commentList.length; i++) {
             if (that.isImage(res.data.list[i].showName)) {
               res.data.list[i].isImg = true
-              res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
             } else {
               res.data.list[i].isImg = false
             }
+            res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
           }
         }
       })
