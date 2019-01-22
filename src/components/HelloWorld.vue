@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="HelloWorld">
     <div>
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block" @click="getNextPlan(router.id)">{{router.name}}</span></el-breadcrumb-item>
@@ -161,29 +161,29 @@
           node-key="id"
           @node-expand="getNodeMsg($event)"
           :expand-on-click-node="false">
-        <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>
-          <span class="proMsg">
-            <span class="treeName">
-              <span v-if="data.type === '2'">
-                <span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>
-                <span style="float: left;margin-left: 16px;">{{data.userName}}</span>
+          <span class="custom-tree-node" slot-scope="{ node, data }">
+            <span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>
+            <span class="proMsg">
+              <span class="treeName">
+                <span v-if="data.type === '2'">
+                  <span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>
+                  <span style="float: left;margin-left: 16px;">{{data.userName}}</span>
+                </span>
+              </span>
+              <span class="treeState">
+                 <span v-if="data.type === '2'">
+                  <span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>
+                  <span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>
+                  <span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>
+                  <span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>
+                 </span>
+              </span>
+              <span class="treeTime">
+                <span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>
+                <span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>
               </span>
             </span>
-            <span class="treeState">
-               <span v-if="data.type === '2'">
-                <span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>
-                <span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>
-                <span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>
-                <span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>
-               </span>
-            </span>
-            <span class="treeTime">
-              <span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>
-              <span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>
-            </span>
           </span>
-        </span>
         </el-tree>
       </div>
     </div>
@@ -510,7 +510,15 @@ a {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+    text-overflow:ellipsis;
     overflow: hidden;
+  }
+  .proDetail{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
   }
   .topConRt{
     width: 25%;
@@ -640,6 +648,7 @@ a {
     text-indent: 2em;
     display: -webkit-box;
     -webkit-box-orient: vertical;
+    text-overflow:ellipsis;
     -webkit-line-clamp: 3;
     overflow: hidden;
   }
