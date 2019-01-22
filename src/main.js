@@ -5,11 +5,14 @@ import App from './App'
 import store from './store/store.js'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import iView from 'iview'
+import 'iview/dist/styles/iview.css'
 import router from './router'
 import $ from 'jquery'
 import ajax from './assets/ajax/ajax.js'
 Vue.config.productionTip = false
 Vue.use(ElementUI)
+Vue.use(iView)
 Vue.use(ajax)
 /* eslint-disable no-new */
 new Vue({

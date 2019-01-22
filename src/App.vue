@@ -2,7 +2,10 @@
   <div id="app">
     <el-container>
       <el-header>
-        <div class="header">贝豪实业项目管理中心</div>
+        <div class="header">
+          <div>贝豪实业项目管理中心</div>
+          <div style="width: 60px;text-align: right;" @click="backToIndex()"><img src="../static/img/longOut.png" alt=""></div>
+        </div>
       </el-header>
       <el-container>
         <el-aside width="250px" style="min-height: 700px;background-color: #28558c">
@@ -54,7 +57,8 @@ export default {
   data () {
     return {
       proManageName: '',
-      proId: 'S1243eb5eaedd4b7780ba29101ed407c6'
+      proId: '',
+      nav: ''
     }
   },
   created: function () {
@@ -65,8 +69,8 @@ export default {
       var that = this
       that.ajax('/leader/getProjectList', {}).then(res => {
         if (res.code === 200) {
-          console.log(res)
           that.proManageName = res.data
+          that.proId = res.data[0].projectList[0].projectUID
         }
       })
     },
@@ -74,6 +78,9 @@ export default {
       if (id) {
         this.proId = id
       }
+    },
+    backToIndex: function () {
+      console.log('back')
     }
   }
 }
@@ -83,6 +90,12 @@ export default {
 *{
   padding: 0;
   margin: 0;
+}
+.el-main{
+  padding: 0 20px;
+}
+.el-breadcrumb__item{
+  margin-top: 10px;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -107,6 +120,8 @@ export default {
     text-align: left;
     font-weight: bold;
     background-color: #28558c;
+    display: flex;
+    justify-content: space-between;
   }
 .el-tree-node__content{
   height: 40px;
@@ -120,4 +135,10 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.el-collapse-item__content{
+  padding-bottom: 10px;
+}
+  .ivu-timeline-item-content{
+    padding: 1px 1px 0 24px;
+  }
 </style>
