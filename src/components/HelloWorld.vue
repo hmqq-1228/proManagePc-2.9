@@ -438,7 +438,6 @@ export default {
               message: data.msg
             })
             that.getCommicateCont()
-            $('#textArea').val('')
             that.commitComent = ''
             $('.showFileName').html('')
             that.loading = false
@@ -448,6 +447,7 @@ export default {
               message: data.msg
             })
             $('.showFileName').html('')
+            that.commitComent = ''
             that.loading = false
           }
         })
