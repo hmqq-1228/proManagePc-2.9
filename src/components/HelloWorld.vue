@@ -395,10 +395,10 @@ export default {
           for (var i = 0; i < that.historyList.length; i++) {
             if (that.isImage(res.data.list[i].showName)) {
               res.data.list[i].isImg = true
-              that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
             } else {
               res.data.list[i].isImg = false
             }
+            that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
           }
         }
       })
@@ -465,7 +465,6 @@ export default {
       that.planList = []
       that.data5 = []
       that.currentProId = pId
-      // that.$store.commit('setRouterName', {name: name, id: pId})
       that.setRouterNameList = that.$store.state.routerList
       that.getProjectDetail()
     }

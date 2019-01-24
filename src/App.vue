@@ -24,7 +24,6 @@
                 </template>
                 <el-menu-item-group>
                   <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID)">{{nameItem.projectName}}</el-menu-item>
-                  <!--<el-menu-item index="1-2">2018年公司战略</el-menu-item>-->
                 </el-menu-item-group>
               </el-submenu>
               <el-submenu index="2">
