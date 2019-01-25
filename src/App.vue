@@ -8,13 +8,13 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside width="250px" style="min-height: 700px;background-color: #28558c">
+        <el-aside width="250px" style="min-height: 700px;background-color: #2f64a5">
           <el-row>
           <el-col :span="24">
             <el-menu
               :default-active="proId"
               class="el-menu-vertical-demo"
-              background-color="#28558c"
+              background-color="#2f64a5"
               text-color="#fff"
               active-text-color="#ffd04b">
               <el-submenu v-for="(name, index) in proManageName" :index="JSON.stringify(index)" v-bind:key="index">
@@ -23,8 +23,7 @@
                   <span>{{name.projectType}}</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID)">{{nameItem.projectName}}</el-menu-item>
-                  <!--<el-menu-item index="1-2">2018年公司战略</el-menu-item>-->
+                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
               <el-submenu index="2">
@@ -153,7 +152,7 @@ html,body{
 .el-collapse-item__content{
   padding-bottom: 10px;
 }
-  .HelloWorld ul.ivu-timeline li{
-    padding: 0 !important;
-  }
+.ivu-timeline-item-content{
+    padding: 1px 1px 0 24px !important;
+}
 </style>

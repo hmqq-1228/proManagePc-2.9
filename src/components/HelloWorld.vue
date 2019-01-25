@@ -7,7 +7,7 @@
     </div>
     <!--<div v-on:click="testScro()" style="position: fixed; right: 200px; top: 300px; z-index: 99999; background-color: #aaa;">TEST</div>-->
     <div class="hello" style="margin-top: 15px;">
-      <Drawer class="hello2" :closable="false" width="40%" v-model="value4" @on-close="drawerClose">
+      <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
         <div class="slidTop">
           <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
           <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
@@ -405,10 +405,10 @@ export default {
           for (var i = 0; i < that.historyList.length; i++) {
             if (that.isImage(res.data.list[i].showName)) {
               res.data.list[i].isImg = true
-              that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
             } else {
               res.data.list[i].isImg = false
             }
+            that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
           }
         }
       })
@@ -448,7 +448,6 @@ export default {
               message: data.msg
             })
             that.getCommicateCont()
-            $('#textArea').val('')
             that.commitComent = ''
             $('.showFileName').html('')
             that.loading = false
@@ -458,6 +457,7 @@ export default {
               message: data.msg
             })
             $('.showFileName').html('')
+            that.commitComent = ''
             that.loading = false
           }
         })
@@ -475,7 +475,6 @@ export default {
       that.planList = []
       that.data5 = []
       that.currentProId = pId
-      // that.$store.commit('setRouterName', {name: name, id: pId})
       that.setRouterNameList = that.$store.state.routerList
       that.getProjectDetail()
     }
@@ -737,7 +736,7 @@ a {
   justify-content: space-between;
   line-height: 40px;
   font-size: 14px;
-  _font-family: '黑体';
+  /*font-family: '黑体';*/
   padding:0 10px;
   background-color: #f5f8fa;
 }
