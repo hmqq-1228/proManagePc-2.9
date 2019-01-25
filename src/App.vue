@@ -8,13 +8,13 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside width="250px" style="min-height: 700px;background-color: #153254">
+        <el-aside width="250px" style="min-height: 700px;background-color: #28558c">
           <el-row>
           <el-col :span="24">
             <el-menu
               :default-active="proId"
               class="el-menu-vertical-demo"
-              background-color="#153254"
+              background-color="#28558c"
               text-color="#fff"
               active-text-color="#ffd04b">
               <el-submenu v-for="(name, index) in proManageName" :index="JSON.stringify(index)" v-bind:key="index">
