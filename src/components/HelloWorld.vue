@@ -450,6 +450,7 @@ export default {
             that.getCommicateCont()
             that.commitComent = ''
             $('.showFileName').html('')
+            $('#myfile').val('')
             that.loading = false
           } else {
             that.$message({
@@ -458,6 +459,7 @@ export default {
             })
             $('.showFileName').html('')
             that.commitComent = ''
+            $('#myfile').val('')
             that.loading = false
           }
         })
