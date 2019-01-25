@@ -4,7 +4,9 @@
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
           <div>贝豪实业项目管理中心</div>
-          <div style="width: 60px;text-align: right;" @click="backToIndex()"><img src="../static/img/longOut.png" alt=""></div>
+          <div style="text-align: right;font-size: 15px;font-weight: normal;cursor: pointer" @click="backToIndex()">
+            返回旧版 <i class="el-icon-d-arrow-right"></i>
+          </div>
         </div>
       </el-header>
       <el-container>
@@ -23,7 +25,7 @@
                   <span>{{name.projectType}}</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
+                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
               <el-submenu index="2">
@@ -43,7 +45,7 @@
           </el-row>
         </el-aside>
         <el-main style="padding: 0 20px;">
-          <router-view :proId="proId"/>
+          <router-view :proId="proId" :type = "nav"/>
         </el-main>
       </el-container>
     </el-container>
@@ -57,7 +59,7 @@ export default {
     return {
       proManageName: '',
       proId: '',
-      nav: ''
+      nav: 1
     }
   },
   created: function () {
@@ -69,17 +71,24 @@ export default {
       that.ajax('/leader/getProjectList', {}).then(res => {
         if (res.code === 200) {
           that.proManageName = res.data
+          console.log('getProjectList', res)
           that.proId = res.data[0].projectList[0].projectUID
+          that.$store.commit('setRouterName', {name: res.data[0].projectList[0].projectName, id: res.data[0].projectList[0].projectUID, type: 1})
+          console.log('setRouterName:::::', that.$store.state.routerList)
         }
       })
     },
-    getProjectDetail: function (id) {
+    getProjectDetail: function (id, n) {
       if (id) {
         this.proId = id
+        this.nav = n
       }
+      console.log('nav', this.nav)
     },
     backToIndex: function () {
       console.log('back')
+      // this.$router.push('https://pms.baho.cn/pmsSys/index.html#/')
+      window.location.href = 'https://pms.baho.cn/pmsSys/index.html#/'
     }
   }
 }

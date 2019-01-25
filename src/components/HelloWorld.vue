@@ -2,7 +2,7 @@
   <div class="HelloWorld">
     <div style="padding: 5px; border-bottom: 1px solid #eee; color: #999;">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block" @click="getNextPlan(router.id)">{{router.name}}</span></el-breadcrumb-item>
+        <el-breadcrumb-item v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block" @click="breadcrumbGetPlan(router.id, index)">{{router.name}}</span></el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <!--<div v-on:click="testScro()" style="position: fixed; right: 200px; top: 300px; z-index: 99999; background-color: #aaa;">TEST</div>-->
@@ -194,7 +194,7 @@
 <script>
 export default {
   name: 'HelloWorld',
-  props: ['proId'],
+  props: ['proId', 'type'],
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -205,6 +205,7 @@ export default {
       fileName: '',
       totalNum: 1,
       currentProId: '',
+      currentType: 1,
       totalHistoryNum: 1,
       dialogShowImg: false,
       commentPreviewUrl: '',
@@ -245,6 +246,7 @@ export default {
   watch: {
     proId: function (val, oVal) {
       this.currentProId = val
+      this.currentType = this.type
       this.getProjectDetail()
     },
     commitComent: function (val, oVal) {
@@ -283,15 +285,18 @@ export default {
         }
       })
     },
-    getProjectDetail: function () {
+    getProjectDetail: function (typeNum) {
       var that = this
       // that.setRouterNameList = []
-      console.log('setRouterNameList', that.setRouterNameList)
+      if (typeNum) {
+        that.currentType = typeNum
+      }
+      console.log('setRouterNameListClick', that.$store.state.routerList)
       // that.$store.state.routerList = []
       that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.currentProId}).then(res => {
         if (res.code === 200) {
           that.proDetailMsg = res.data.projectDetail
-          that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID})
+          that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID, type: that.currentType})
           that.setRouterNameList = that.$store.state.routerList
           that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
           that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
@@ -478,7 +483,14 @@ export default {
       that.data5 = []
       that.currentProId = pId
       that.setRouterNameList = that.$store.state.routerList
-      that.getProjectDetail()
+      that.getProjectDetail(2)
+    },
+    breadcrumbGetPlan: function (pid, index) {
+      var that = this
+      that.data5 = []
+      that.currentProId = pid
+      that.getProjectDetail(that.$store.state.routerList[index].type)
+      that.$store.commit('resetBreadcrumb', index)
     }
   }
 }
@@ -573,6 +585,10 @@ a {
   .planBox{
     width: 98%;
     float: left;
+    max-height: 104px;
+    overflow: scroll;
+    overflow-x: hidden;
+    border-top: 1px solid #f0f0f0;
   }
 .planBox div{
   padding: 4px 20px;
