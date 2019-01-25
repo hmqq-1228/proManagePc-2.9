@@ -153,7 +153,7 @@ html,body{
 .el-collapse-item__content{
   padding-bottom: 10px;
 }
-  .ivu-timeline-item-content{
-    padding: 1px 1px 0 24px;
+  .HelloWorld ul.ivu-timeline li{
+    padding: 0 !important;
   }
 </style>

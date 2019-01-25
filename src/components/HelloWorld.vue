@@ -5,8 +5,9 @@
         <el-breadcrumb-item v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block" @click="getNextPlan(router.id)">{{router.name}}</span></el-breadcrumb-item>
       </el-breadcrumb>
     </div>
+    <!--<div v-on:click="testScro()" style="position: fixed; right: 200px; top: 300px; z-index: 99999; background-color: #aaa;">TEST</div>-->
     <div class="hello" style="margin-top: 15px;">
-      <Drawer :closable="false" width="40%" v-model="value4">
+      <Drawer class="hello2" :closable="false" width="40%" v-model="value4" @on-close="drawerClose">
         <div class="slidTop">
           <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
           <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
@@ -257,6 +258,13 @@ export default {
     }
   },
   methods: {
+    resetScro: function () {
+      $('.ivu-drawer-body').scrollTop(0)
+    },
+    // j
+    drawerClose: function () {
+      $('.ivu-drawer-body').scrollTop(0)
+    },
     getNodeMsg: function (e) {
       // this.value4 = true
       var that = this
@@ -335,6 +343,7 @@ export default {
     },
     showDetailPage: function (data) {
       var that = this
+      // that.resetScro()
       if (data.type === '2') {
         that.taskId = data.id
         that.taskComment.uid = data.id
@@ -352,6 +361,7 @@ export default {
               res.data.isImg = false
             }
             that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
+            that.resetScro()
           }
         })
       }
@@ -550,6 +560,8 @@ a {
     text-align: center;
     background-color: #409EFF;
     border-radius: 0px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
   }
   .planList{
     width: 100%;
@@ -725,7 +737,7 @@ a {
   justify-content: space-between;
   line-height: 40px;
   font-size: 14px;
-  font-family: '黑体';
+  _font-family: '黑体';
   padding:0 10px;
   background-color: #f5f8fa;
 }
