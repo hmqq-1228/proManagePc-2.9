@@ -88,7 +88,7 @@ export default {
     backToIndex: function () {
       console.log('back')
       // this.$router.push('https://pms.baho.cn/pmsSys/index.html#/')
-      window.location.href = 'https://pms.baho.cn/pmsSys/index.html#/'
+      window.location.href = 'https://ityp.baho.cn:8094/pmsSys/index.html#/'
     }
   }
 }
