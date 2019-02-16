@@ -146,11 +146,12 @@
            <div class="imgBox" v-if="proDetailMsg.state === '3'"><img src="../../static/img/finish.png" alt=""></div>
          </div>
        </div>
-       <div class="planList" v-if="planList.length > 0">
+       <div class="planList">
          <div class="planName">项<br />目<br />计<br />划</div>
-         <div class="planBox">
+         <div class="planBox" v-if="planList.length > 0">
            <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
          </div>
+         <div class="planBox2" v-if="planList.length === 0">暂无子计划</div>
        </div>
      </div>
       <div class="devide">
@@ -301,13 +302,18 @@ export default {
           that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
           that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
           that.planList = res.data.planOrJobList
-          that.activeId = res.data.planOrJobList[0].id
+          if (res.data.planOrJobList.length > 0) {
+            that.activeId = res.data.planOrJobList[0].id
+          } else {
+            that.activeId = ''
+          }
           that.selectProjectId()
         }
       })
     },
     selectProjectId: function () {
       var that = this
+      that.data5 = []
       that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
         if (res.code === 200) {
           for (var i = 0; i < res.data.planOrJobList.length; i++) {
@@ -590,6 +596,14 @@ a {
     overflow-x: hidden;
     border-top: 1px solid #f0f0f0;
   }
+.planBox2{
+  width: 98%;
+  float: left;
+  color: #6f7180;
+  max-height: 104px;
+  text-align: center;
+  line-height: 104px;
+}
 .planBox div{
   padding: 4px 20px;
   float: left;
