@@ -4,9 +4,9 @@
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
           <div>贝豪实业项目管理中心</div>
-          <div style="text-align: right;font-size: 15px;font-weight: normal;cursor: pointer" @click="backToIndex()">
-            返回旧版 <i class="el-icon-d-arrow-right"></i>
-          </div>
+          <!--<div style="text-align: right;font-size: 15px;font-weight: normal;cursor: pointer" @click="backToIndex()">-->
+            <!--返回旧版 <i class="el-icon-d-arrow-right"></i>-->
+          <!--</div>-->
         </div>
       </el-header>
       <el-container>
@@ -84,12 +84,12 @@ export default {
         this.nav = n
       }
       console.log('nav', this.nav)
-    },
-    backToIndex: function () {
-      console.log('back')
-      // this.$router.push('https://pms.baho.cn/pmsSys/index.html#/')
-      window.location.href = 'https://ityp.baho.cn:8094/pmsSys/index.html#/'
     }
+    // backToIndex: function () {
+    //   console.log('back')
+    //   // this.$router.push('https://pms.baho.cn/pmsSys/index.html#/')
+    //   window.location.href = 'https://pms.baho.cn/pmsSys/index.html#/'
+    // }
   }
 }
 </script>
