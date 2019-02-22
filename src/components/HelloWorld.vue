@@ -1,5 +1,7 @@
 <template>
   <div class="HelloWorld">
+    <div>{{getStoreProId}}</div>
+    <!--面包屑-->
     <div style="padding: 5px; border-bottom: 1px solid #eee; color: #999;">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block" @click="breadcrumbGetPlan(router.id, index)">{{router.name}}</span></el-breadcrumb-item>
@@ -130,30 +132,30 @@
       <el-dialog title="图片预览" :visible.sync="dialogShowImg">
         <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
       </el-dialog>
-     <div class="topperTitle">
-       <div class="topCon">
-         <div class="topConLf">
-           <div class="title">{{proDetailMsg.projectName}}</div>
-           <div class="proDetail" v-bind:title="proDetailMsg.content">{{proDetailMsg.content}}</div>
-         </div>
-         <div class="topConRt">
-           <div>
-             <div class="myMsg"><div><img src="../../static/img/my.png" alt=""></div><div style="margin-left: 10px;">{{proDetailMsg.projectManager}}</div></div>
-             <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">{{startPlanDate}} 到 {{endPlanDate}}</div></div>
-           </div>
-           <div class="imgBox" v-if="proDetailMsg.state === '0'"><img src="../../static/img/unstart.png" alt=""></div>
-           <div class="imgBox" v-if="proDetailMsg.state === '2'"><img src="../../static/img/doing.png" alt=""></div>
-           <div class="imgBox" v-if="proDetailMsg.state === '3'"><img src="../../static/img/finish.png" alt=""></div>
-         </div>
-       </div>
-       <div class="planList">
-         <div class="planName">项<br />目<br />计<br />划</div>
-         <div class="planBox" v-if="planList.length > 0">
-           <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
-         </div>
-         <div class="planBox2" v-if="planList.length === 0">暂无子计划</div>
-       </div>
-     </div>
+      <div class="topperTitle">
+        <div class="topCon">
+          <div class="topConLf">
+            <div class="title">{{proDetailMsg.projectName}}</div>
+            <div class="proDetail" v-bind:title="proDetailMsg.content">{{proDetailMsg.content}}</div>
+          </div>
+          <div class="topConRt">
+            <div>
+              <div class="myMsg"><div><img src="../../static/img/my.png" alt=""></div><div style="margin-left: 10px;">{{proDetailMsg.projectManager}}</div></div>
+              <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">{{startPlanDate}} 到 {{endPlanDate}}</div></div>
+            </div>
+            <div class="imgBox" v-if="proDetailMsg.state === '0'"><img src="../../static/img/unstart.png" alt=""></div>
+            <div class="imgBox" v-if="proDetailMsg.state === '2'"><img src="../../static/img/doing.png" alt=""></div>
+            <div class="imgBox" v-if="proDetailMsg.state === '3'"><img src="../../static/img/finish.png" alt=""></div>
+          </div>
+        </div>
+        <div class="planList">
+          <div class="planName">项<br />目<br />计<br />划</div>
+          <div class="planBox" v-if="planList.length > 0">
+            <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
+          </div>
+          <div class="planBox2" v-if="planList.length === 0">暂无子计划</div>
+        </div>
+      </div>
       <div class="devide">
         <div>项目详情</div>
       </div>
@@ -195,10 +197,12 @@
 <script>
 export default {
   name: 'HelloWorld',
-  props: ['proId', 'type'],
+  // props: ['proId', 'type'],
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
+      proId: '',
+      type: '',
       rid: '',
       taskId: '',
       pageSize: 5,
@@ -240,9 +244,16 @@ export default {
     }
   },
   created: function () {
-    // this.getProjectDetail()
+    this.getProjectDetail()
     // this.setRouterNameList = this.$store.state.routerList
     // console.log('setRouterNameList', this.setRouterNameList)
+  },
+  computed: {
+    getStoreProId: function () {
+      var that = this
+      that.proId = this.$store.state.proId
+      return this.$store.state.proId
+    }
   },
   watch: {
     proId: function (val, oVal) {
@@ -288,13 +299,10 @@ export default {
     },
     getProjectDetail: function (typeNum) {
       var that = this
-      // that.setRouterNameList = []
       if (typeNum) {
         that.currentType = typeNum
       }
-      console.log('setRouterNameListClick', that.$store.state.routerList)
-      // that.$store.state.routerList = []
-      that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.currentProId}).then(res => {
+      that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
         if (res.code === 200) {
           that.proDetailMsg = res.data.projectDetail
           that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID, type: that.currentType})

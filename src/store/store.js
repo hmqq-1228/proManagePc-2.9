@@ -5,13 +5,15 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const state = {
   count: 0,
+  proId: '',
+  navType: '',
   routerList: [],
   fileFormat: ['jpg', 'jpeg', 'png', 'gif'],
   // baseServiceUrl: 'http://10.0.5.66:8089'
   // baseServiceUrl: 'http://10.0.5.29:8088'
   // baseServiceUrl: 'https://ityp.baho.cn:8094/pms2'
-  baseServiceUrl: 'https://pms.baho.cn/pms'
-  // baseServiceUrl: 'https://ityp.baho.cn:8094/pms'
+  // baseServiceUrl: 'https://pms.baho.cn/pms'
+  baseServiceUrl: 'https://ityp.baho.cn:8094/pms'
   // baseServiceUrl: 'http://10.0.5.29:8088'
 }
 const mutations = {

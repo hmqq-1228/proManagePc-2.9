@@ -25,27 +25,28 @@
                   <span>{{name.projectType}}</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
+                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
-              <el-submenu index="2">
-                <template slot="title">
-                  <i class="el-icon-menu"></i>
-                  <span slot="title">商品管理</span>
-                </template>
-              </el-submenu>
-              <el-submenu index="3">
-                <template slot="title">
-                  <i class="el-icon-document"></i>
-                  <span slot="title">活动管理</span>
-                </template>
-              </el-submenu>
+              <!--<el-submenu index="2">-->
+                <!--<template slot="title">-->
+                  <!--<i class="el-icon-menu"></i>-->
+                  <!--<span slot="title">我的日程</span>-->
+                <!--</template>-->
+                <!--<el-menu-item index="5" @click="linkJump()">我的日程</el-menu-item>-->
+              <!--</el-submenu>-->
+              <!--<el-submenu index="3">-->
+                <!--<template slot="title">-->
+                  <!--<i class="el-icon-document"></i>-->
+                  <!--<span slot="title">活动管理</span>-->
+                <!--</template>-->
+              <!--</el-submenu>-->
             </el-menu>
           </el-col>
           </el-row>
         </el-aside>
         <el-main style="padding: 0 20px;">
-          <router-view :proId="proId" :type = "nav"/>
+          <router-view />
         </el-main>
       </el-container>
     </el-container>
@@ -70,20 +71,34 @@ export default {
       var that = this
       that.ajax('/leader/getProjectList', {}).then(res => {
         if (res.code === 200) {
+          var obj = {
+            projectList: [
+              {projectName: '我的日程', projectUID: 's012'}
+            ],
+            projectType: '我的日程'
+          }
+          res.data.push(obj)
           that.proManageName = res.data
-          console.log('getProjectList', res)
-          that.proId = res.data[0].projectList[0].projectUID
+          if (res.data[0].projectType === '集团战略') {
+            that.$store.state.proId = res.data[0].projectList[0].projectUID
+          }
           that.$store.commit('setRouterName', {name: res.data[0].projectList[0].projectName, id: res.data[0].projectList[0].projectUID, type: 1})
-          console.log('setRouterName:::::', that.$store.state.routerList)
         }
       })
     },
-    getProjectDetail: function (id, n) {
-      if (id) {
-        this.proId = id
-        this.nav = n
+    getProjectDetail: function (id, n, proType, proName) {
+      if (proType === '集团战略') {
+        if (id) {
+          this.$store.state.proId = id
+          this.$store.state.navType = n
+          this.$router.push('/')
+        }
+      } else {
+        if (proName === '我的日程') {
+          this.$router.push('/Schedule')
+        }
       }
-      console.log('nav', this.nav)
+      // console.log('nav:2:', this.nav)
     }
     // backToIndex: function () {
     //   console.log('back')
