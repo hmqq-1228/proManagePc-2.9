@@ -40,6 +40,14 @@
                   <span slot="title">活动管理</span>
                 </template>
               </el-submenu>
+              <el-menu-item index="4" @click="toDongtai()">
+                <i class="el-icon-bell"></i>
+                <span slot="title">动态</span>
+              </el-menu-item>
+              <el-menu-item index="5">
+                <i class="el-icon-date"></i>
+                <span slot="title">日程管理</span>
+              </el-menu-item>
             </el-menu>
           </el-col>
           </el-row>
@@ -84,6 +92,9 @@ export default {
         this.nav = n
       }
       console.log('nav', this.nav)
+    },
+    toDongtai: function () {
+      this.$router.push('/dongtai')
     }
     // backToIndex: function () {
     //   console.log('back')

@@ -2,7 +2,7 @@
   <div class="HelloWorld">
     <div style="padding: 5px; border-bottom: 1px solid #eee; color: #999;">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block" @click="breadcrumbGetPlan(router.id, index)">{{router.name}}</span></el-breadcrumb-item>
+        <el-breadcrumb-item style="font-size: 12px;margin-top: 5px;" v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block" @click="breadcrumbGetPlan(router.id, index)">{{router.name}}</span></el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <!--<div v-on:click="testScro()" style="position: fixed; right: 200px; top: 300px; z-index: 99999; background-color: #aaa;">TEST</div>-->
