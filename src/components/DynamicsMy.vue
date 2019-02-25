@@ -175,6 +175,123 @@
       <!---->
     </div>
     <!---->
+    <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
+      <div class="slidTop">
+        <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
+        <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
+      </div>
+      <div class="taskMsg">
+        <div class="taskLf">
+          <div class="taskName">{{taskBasicMsg.jobName}}</div>
+          <div class="taskDetail" v-bind:title="taskBasicMsg.description">{{taskBasicMsg.description}}</div>
+        </div>
+        <div class="taskRt">
+          <div v-if="taskBasicMsg.status === '0'"><img src="../../static/img/unstart.png" alt=""></div>
+          <div v-if="taskBasicMsg.status === '1'"><img src="../../static/img/doing.png" alt=""></div>
+          <div v-if="taskBasicMsg.status === '2'"><img src="../../static/img/finish.png" alt=""></div>
+        </div>
+      </div>
+      <div class="taskTime">
+        <el-collapse>
+          <el-collapse-item style="padding: 0 10px;">
+            <template slot="title">
+              <img src="../../static/img/time.png" alt=""><span style="margin-left: 10px;">起止时间: {{taskBasicMsg.taskStartDate}} 到 {{taskBasicMsg.taskFinishDate}}</span>
+              <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum >= 0">剩余 <span style="color: #53b5ff;font-size: 16px;font-weight: bold">{{taskBasicMsg.dayNum}}</span> 天</div>
+              <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum < 0"><span style="color:red;font-size: 16px;">已逾期</span></div>
+              <div style="margin-left: 10%;" v-if="!taskBasicMsg.dayNum"><span style="color:#27CF97;font-size: 16px;">已完成</span></div>
+            </template>
+            <div class="managePro">
+              <div><img src="../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span>{{taskBasicMsg.userName}}</span></div>
+              <div><img src="../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>
+            </div>
+            <div class="managePro" style="margin-top: 10px;">
+              <div><img src="../../static/img/kaishi.png" alt=""><span class="proLabel">实际开始:</span><span v-if="taskBasicMsg.dealWithDate">{{taskBasicMsg.dealWithDate}}</span><span v-if="!taskBasicMsg.dealWithDate">暂未开始</span></div>
+              <div><img src="../../static/img/jiesu.png" alt=""><span class="proLabel">实际结束:</span><span v-if="taskBasicMsg.realFinishDate">{{taskBasicMsg.realFinishDate}}</span><span v-if="!taskBasicMsg.realFinishDate">暂未完成</span></div>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+      <div class="cannetProject">
+        <div style="display: inline-block"><img src="../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
+        <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>
+        <span v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
+      </div>
+      <div class="cannetProject">
+        <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
+        <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
+      </div>
+      <div class="cannetProject">
+        <div style="display: inline-block"><img src="../../static/img/fujian.png" alt=""><span>项目附件:</span></div>
+        <div style="display: inline-block;font-size: 14px;" v-if="taskBasicMsg.showName">
+          <span style="display: inline-block;">{{taskBasicMsg.showName}}</span>
+          <span v-if="taskBasicMsg.isImg" @click="showImagePre" style="margin-left: 10px;display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
+          <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+        </div>
+        <div style="display: inline-block;font-size: 14px;" v-if="!taskBasicMsg.showName">暂无附件</div>
+      </div>
+      <div class="cannetProject" v-if="false">
+        <Button type="primary" style="margin-right: 30px;">Primary</Button><Button type="primary" style="margin-right: 30px;">Primary</Button><Button type="primary">Primary</Button>
+      </div>
+      <div class="cannetProject1">
+        <div style="display: inline-block"><img src="../../static/img/goutong.png" alt=""><span>沟 通</span></div>
+      </div>
+      <div class="el-textarea" v-loading="loading2">
+        <form id="uploadFile" enctype="multipart/form-data">
+          <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
+          <div class="cannetProject2">
+            <div style="display: inline-block">
+              <img src="../../static/img/fujian.png" alt="">
+              <a href="javascript:;" class="file" @change="getFileName">选择文件
+                <input type="file" name="myfile" id="myfile">
+              </a>
+              <input type="hidden" name="rid" v-bind:value="rid2">
+              <input type="hidden" name="rtype" v-bind:value="3">
+              <span class="showFileName"></span>
+            </div>
+            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
+          </div>
+        </form>
+      </div>
+      <div class="cannetProject1-1">
+        <div style="display: inline-block"><img src="../../static/img/jilu.png" alt=""><span>沟通记录</span></div>
+      </div>
+      <div class="timeLine">
+        <Timeline v-if="commentList && commentList.length > 0">
+          <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
+            <p class="time">{{comment.createDate}}</p>
+            <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
+            <p class="content" v-if="comment.showName">附件:
+              <span style="display: inline-block"> {{comment.showName}}</span>
+              <span v-if="comment.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(comment.previewUrl)">预览</span>
+              <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="comment.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+            </p>
+          </Timeline-item>
+        </Timeline>
+        <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
+        <div style="text-align: center">
+          <Page :total="totalNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentPage($event)"></Page>
+        </div>
+      </div>
+      <div class="cannetProject1-1" style="margin-top: 0">
+        <div style="display: inline-block"><img src="../../static/img/history.png" alt=""><span>操作记录</span></div>
+      </div>
+      <div class="timeLine">
+        <Timeline>
+          <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
+            <p class="time">{{history.oTime}}</p>
+            <p class="content">{{history.oName}}{{history.oContent}}</p>
+            <p class="content" v-if="history.showName"><span>附件:</span>
+              <span style="display: inline-block"> {{history.showName}}</span>
+              <span v-if="history.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(history.previewUrl)">预览</span>
+              <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="history.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+            </p>
+          </Timeline-item>
+        </Timeline>
+        <div style="text-align: center">
+          <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
+        </div>
+      </div>
+    </Drawer>
     <!--预览图片-->
     <el-dialog title="预览图片" :visible.sync="showBigImageVisible">
       <div style="width: 100%"><img style="width: 100%" v-bind:src="preImageUrl" alt=""></div>
@@ -194,6 +311,18 @@ export default {
   data () {
     return {
       msg: '任务动态',
+      // 抽屉
+      rid2: '',
+      totalNum: 1,
+      pageSize: 5,
+      totalHistoryNum: 1,
+      value4: false,
+      taskBasicMsg: '',
+      commitComent: '',
+      loading2: false,
+      commentList: [],
+      historyList: [],
+      butnDisabled: false,
       // 总条目数
       taskTotalRow: 0,
       // 控制nodata图片显示
@@ -534,7 +663,8 @@ export default {
       }
     },
     toDetail: function (id) {
-      this.$router.push('/taskDetailPage/' + id)
+      // this.$router.push('/taskDetailPage/' + id)
+      this.value4 = true
     },
     currentChange: function (pageNum) {
       this.log(pageNum)
@@ -549,6 +679,13 @@ export default {
       } else {
         this.$message('地址无效')
       }
+    },
+    // 抽屉
+    getFileName: function () {
+      var filePath = $('#myfile').val()
+      var arr = filePath.split('\\')
+      var fileName = arr[arr.length - 1]
+      $('.showFileName').html(fileName)
     }
   }
 }
@@ -1006,5 +1143,216 @@ export default {
     padding: 6px 5px;
     background-color: #f5f8fa;
     justify-content: space-between;
+  }
+  /*抽屉*/
+  .slidTop{
+    height: 40px;
+    line-height: 40px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .topState0 img,.topState1 img,.topState2 img{
+    float: left;
+    margin-top: 6px;
+  }
+  .topState0{
+    color: #ffc107;
+  }
+  .topState1{
+    color: #26a2ff;
+  }
+  .topState2{
+    color: #27CF97;
+  }
+  .taskLf{
+    padding: 10px;
+    width: 80%;
+  }
+  .taskName{
+    font-size: 16px;
+    font-weight: bold;
+    font-family: '黑体';
+  }
+  .taskDetail{
+    font-size: 14px;
+    margin-top: 10px;
+    text-indent: 2em;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow:ellipsis;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+  .taskRt{
+    width: 20%;
+    position: relative;
+  }
+  .taskRt div{
+    width: 90px;
+    float: right;
+    margin: 10px;
+  }
+  .taskRt div img{
+    width: 100%;
+  }
+  .taskMsg{
+    background-color: #f5f8fa;
+    display: flex;
+    justify-content: space-between;
+  }
+  .managePro{
+    display: flex;
+    justify-content: space-between;
+  }
+  .managePro div{
+    width: 50%;
+  }
+  .managePro div img{
+    float: left;
+    margin-right: 20px;
+  }
+  .managePro div .proLabel{
+    color: #1296db;
+    display: inline-block;
+    margin-right: 20px;
+  }
+  .cannetProject{
+    height: 49px;
+    line-height: 49px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 15px;
+    font-family: '黑体';
+    padding:0 10px;
+  }
+  .cannetProject1{
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f1f1f1;
+    background-color: #f5f8fa;
+    font-size: 16px;
+    font-family: '黑体';
+    font-weight: bold;
+    padding:0 10px;
+  }
+  .cannetProject1-1{
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f1f1f1;
+    background-color: #f5f8fa;
+    font-size: 16px;
+    font-family: '黑体';
+    font-weight: bold;
+    padding:0 10px;
+    margin-top: 20px;
+    border-top: 1px solid #f1f1f1;
+  }
+  .cannetProject2{
+    height: 40px;
+    width: 90%;
+    color: #1296db;
+    display: flex;
+    justify-content: space-between;
+    line-height: 40px;
+    font-size: 14px;
+    /*font-family: '黑体';*/
+    padding:0 10px;
+    background-color: #f5f8fa;
+  }
+  .cannetProject2 div img{
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;
+    width: 18px;
+  }
+  .cannetProject div img{
+    float: left;
+    margin-top: 15px;
+    margin-right: 10px;
+  }
+  .cannetProject1 div img{
+    float: left;
+    margin-top: 9px;
+    margin-right: 10px;
+  }
+  .cannetProject1-1 div img{
+    float: left;
+    margin-top: 9px;
+    margin-right: 10px;
+  }
+  .el-textarea{
+    margin-top: 20px;
+    margin-left: 10px;
+  }
+  .el-textarea__inner{
+    width: 90%;
+    min-height: 80px;
+  }
+  .file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+    margin-top: 6px;
+  }
+  .file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+  }
+  .file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+  }
+  .showFileName{
+    float: right;
+    margin-left: 10px;
+  }
+  .time{
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .content{
+    padding-left: 5px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  .timeLine{
+    padding: 20px;
+  }
+  .linkProject{
+    color: #fff;
+    font-size: 14px;
+    padding: 4px 10px;
+    background-color: #409EFF;
+    margin-right: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .linkProject:hover{
+    background-color: #1771ff;
+  }
+  .showImg img{
+    width: 100%;
+  }
+  .noComment{
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    color: #aaa;
   }
 </style>
