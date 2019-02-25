@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const state = {
   count: 0,
+  debug: true,
   proId: '',
   navType: '',
   routerList: [],

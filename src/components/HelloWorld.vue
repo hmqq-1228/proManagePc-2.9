@@ -362,6 +362,7 @@ export default {
     },
     showDetailPage: function (data) {
       var that = this
+      console.log('dataaaaa:', data)
       // that.resetScro()
       if (data.type === '2') {
         that.taskId = data.id
