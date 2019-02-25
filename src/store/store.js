@@ -9,6 +9,7 @@ const state = {
   proId: '',
   navType: '',
   routerList: [],
+  DevelopmentTab: 'DynamicsMy',
   fileFormat: ['jpg', 'jpeg', 'png', 'gif'],
   // baseServiceUrl: 'http://10.0.5.66:8089'
   // baseServiceUrl: 'http://10.0.5.29:8088'

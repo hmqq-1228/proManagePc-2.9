@@ -1,10 +1,10 @@
 <template>
   <div class="HelloWorld">
-    <div>{{getStoreProId}}</div>
+    <div v-show="false">{{getStoreProId}}</div>
     <!--面包屑-->
-    <div style="padding: 5px; border-bottom: 1px solid #eee; color: #999;">
+    <div style="padding: 5px;padding-top:0;border-bottom: 1px solid #eee; color: #999;">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block" @click="breadcrumbGetPlan(router.id, index)">{{router.name}}</span></el-breadcrumb-item>
+        <el-breadcrumb-item v-if="router.id" v-for="(router, index) in setRouterNameList" v-bind:key="index"><span style="display: inline-block;font-size: 12px;" @click="breadcrumbGetPlan(router.id, index)">{{router.name}}</span></el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <!--<div v-on:click="testScro()" style="position: fixed; right: 200px; top: 300px; z-index: 99999; background-color: #aaa;">TEST</div>-->

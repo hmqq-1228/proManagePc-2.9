@@ -85,6 +85,44 @@ const install = function (Vue, options) {
       return 'IE'
     }
   }
+  // 获取当前时间
+  Vue.prototype.getNowTime = function () {
+    var myDate = new Date()
+    var year = myDate.getFullYear()
+    var month = (myDate.getMonth() + 1) < 10 ? '0' + (myDate.getMonth() + 1) : (myDate.getMonth() + 1)
+    var date = myDate.getDate() < 10 ? '0' + myDate.getDate() : myDate.getDate()
+    var hour = myDate.getHours() < 10 ? '0' + myDate.getHours() : myDate.getHours()
+    var min = myDate.getMinutes() < 10 ? '0' + myDate.getMinutes() : myDate.getMinutes()
+    var sec = myDate.getSeconds() < 10 ? '0' + myDate.getSeconds() : myDate.getSeconds()
+    return year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec
+  }
+  /**
+   * 获取基于某个时间的某段时间之后的时间 如：获取一小时后的时间
+   * 第一个参数为时间段，整数，以毫秒计
+   * 第二个参数为基于的时间 字符串，默认当前
+   */
+  Vue.prototype.getLaterTime = function (msecond, btime) {
+    var myDate = btime ? new Date(btime) : new Date()
+    var laterTimeStamp = myDate.getTime() + msecond
+    myDate = new Date(laterTimeStamp)
+    var year = myDate.getFullYear()
+    var month = (myDate.getMonth() + 1) < 10 ? '0' + (myDate.getMonth() + 1) : (myDate.getMonth() + 1)
+    var date = myDate.getDate() < 10 ? '0' + myDate.getDate() : myDate.getDate()
+    var hour = myDate.getHours() < 10 ? '0' + myDate.getHours() : myDate.getHours()
+    var min = myDate.getMinutes() < 10 ? '0' + myDate.getMinutes() : myDate.getMinutes()
+    var sec = myDate.getSeconds() < 10 ? '0' + myDate.getSeconds() : myDate.getSeconds()
+    return year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec
+  }
+  // 常规时间格式 兼容苹果的时间格式 replace(/-/g, '/')
+  Vue.prototype.dateCompatibility = function (baseDate) {
+    var finalDate = ''
+    if (this.testBrowser() === 'Safari') {
+      finalDate = baseDate.replace(/-/g, '/')
+    } else {
+      finalDate = baseDate
+    }
+    return finalDate
+  }
 }
 export default {
   install
