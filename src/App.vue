@@ -46,7 +46,7 @@
           </el-row>
         </el-aside>
         <el-main style="padding: 0 20px;">
-          <router-view />
+          <router-view/>
         </el-main>
       </el-container>
     </el-container>
@@ -77,9 +77,18 @@ export default {
             ],
             projectType: '我的日程'
           }
+          var obj2 = {
+            projectList: [
+              {projectName: '我的动态', projectUID: 's013'}
+            ],
+            projectType: '我的动态'
+          }
           res.data.push(obj)
+          res.data.push(obj2)
           that.proManageName = res.data
+          console.log('proManageName', that.proManageName)
           if (res.data[0].projectType === '集团战略') {
+            that.proId = res.data[0].projectList[0].projectUID
             that.$store.state.proId = res.data[0].projectList[0].projectUID
           }
           that.$store.commit('setRouterName', {name: res.data[0].projectList[0].projectName, id: res.data[0].projectList[0].projectUID, type: 1})
@@ -96,6 +105,8 @@ export default {
       } else {
         if (proName === '我的日程') {
           this.$router.push('/Schedule')
+        } else if (proName === '我的动态') {
+          this.$router.push('/MyDep')
         }
       }
       // console.log('nav:2:', this.nav)
@@ -125,10 +136,13 @@ html,body{
   height: 100%;
 }
 .el-main{
-  padding: 0 20px;
+  /*padding: 0 20px;*/
 }
 .el-breadcrumb__item{
   margin-top: 10px;
+}
+.MyDep .submitBtn .el-button--primary{
+padding: 8px 20px;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
