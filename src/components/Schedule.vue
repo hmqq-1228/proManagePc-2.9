@@ -420,6 +420,13 @@ export default {
       }
       that.dateMountInit(that.monDateOneFormart())
     },
+    commitComent: function (val, oVal) {
+      if (val) {
+        this.butnDisabled = false
+      } else {
+        this.butnDisabled = true
+      }
+    },
     durationValue: function (newValue, oldValue) {
       // this.alert('newValue:' + newValue)
     },
@@ -1161,6 +1168,57 @@ export default {
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
       $('.showFileName').html(fileName)
+    },
+    showImagePre: function () {
+      this.dialogFormVisible = true
+    },
+    addMarkInfo () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFile')[0])
+      var taxtV = $('#textArea').val()
+      that.loading = true
+      if (taxtV) {
+        $.ajax({
+          type: 'post',
+          url: url + '/general/addOrEditComment',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          if (data.code === 200) {
+            that.$message({
+              type: 'success',
+              message: data.msg
+            })
+            that.getCommicateCont()
+            that.commitComent = ''
+            $('.showFileName').html('')
+            $('#myfile').val('')
+            that.loading = false
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+            $('.showFileName').html('')
+            that.commitComent = ''
+            $('#myfile').val('')
+            that.loading = false
+          }
+        })
+      } else {
+        that.$message({
+          type: 'error',
+          message: '备注不能为空！'
+        })
+        that.loading = false
+      }
     }
   }
 }

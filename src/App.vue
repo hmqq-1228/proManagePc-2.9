@@ -83,8 +83,15 @@ export default {
             ],
             projectType: '我的动态'
           }
+          var obj3 = {
+            projectList: [
+              {projectName: '我的项目', projectUID: 's014'}
+            ],
+            projectType: '我的项目'
+          }
           res.data.push(obj)
           res.data.push(obj2)
+          res.data.push(obj3)
           that.proManageName = res.data
           console.log('proManageName', that.proManageName)
           if (res.data[0].projectType === '集团战略') {
@@ -107,6 +114,8 @@ export default {
           this.$router.push('/Schedule')
         } else if (proName === '我的动态') {
           this.$router.push('/MyDep')
+        } else if (proName === '我的项目') {
+          this.$router.push('/MyPro')
         }
       }
       // console.log('nav:2:', this.nav)
