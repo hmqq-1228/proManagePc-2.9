@@ -432,7 +432,7 @@ export default {
       // this.selectDateDiaShow = false
       var obj = e.currentTarget
       this.selectUserDiaShow = true
-      this.selectUserLeft = $(obj).offset().left - 300
+      this.selectUserLeft = $(obj).offset().left - 400
       this.selectUserTop = $(obj).offset().top - 100
       // 所有的伸缩窗 隐藏
       this.transitionManage('', true)
@@ -473,7 +473,7 @@ export default {
       if (e) {
         var obj = e.currentTarget
         this.selectDateDiaShow = true
-        this.selectDateLeft = $(obj).offset().left - 370
+        this.selectDateLeft = $(obj).offset().left - 420
         this.selectDateTop = $(obj).offset().top - 102
       }
       // this.log(123)

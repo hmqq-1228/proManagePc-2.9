@@ -1,0 +1,2430 @@
+<template>
+  <div class="MyDep">
+    <el-main style="padding-bottom: 0;">
+      <div class="el-main-box">
+        <div class="el-main-left">
+          <div class="contentTop">
+            <div class="paiTaskTitTab">
+              <div class="paiTask pai active" v-on:click="testValue9()">新建任务</div>
+              <!--<div class="paiTask share">发分享(@Ta)</div>-->
+            </div>
+            <div class="paiTaskIptBox" v-loading="loading3">
+              <div class="paiTaskIptLeft">
+                <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+                <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" v-on:blur="iptBlur()" type="text" placeholder="请输入新建任务名称" /></div>
+              </div>
+              <div class="paiTaskIptRight">
+                <div class="paiTaskIptRightIcon" v-on:click="selectUser($event)"><i class="el-icon-edit-outline"></i></div>
+                <div class="paiTaskIptRightCnt" v-on:click="selectUser($event)">
+                  <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
+                  <span v-if="taskForm.value9.length > 0" v-for="user in taskForm.value9" :key="user"> {{user.split('-')[0]}}</span>
+                  <span v-if="taskForm.value9.length === 0">{{defImplementer.name}}</span>
+                  <!--<span> {{defImplementer.name}}</span>-->
+                </div>
+                <div class="paiTaskIptRightIcon" v-on:click="selectDate($event)"><i class="el-icon-date"></i></div>
+                <div class="paiTaskIptRightCnt" v-on:click="selectDate($event)">时间</div>
+                <div class="paiTaskIptRightIcon" v-on:click="selectLevel($event)"><i class="el-icon-bell"></i></div>
+              </div>
+            </div>
+            <!--任务关联 项目组成员 简介-->
+            <div class="taskRelation" v-if="taskRelationShow">
+              <div class="relationHeader">
+                <div class="proBelong">
+                  <!--所属项目 <i class="el-icon-arrow-down"></i>-->
+                  <el-select v-model="projectBelong" placeholder="请选择关联项目">
+                    <el-option
+                      v-for="item in options"
+                      :key="item.projectUID"
+                      :label="item.projectName"
+                      :value="item.projectUID">
+                    </el-option>
+                  </el-select>
+                </div>
+                <!--<div class="taskExecutor">-->
+                  <!--参与人 <i class="el-icon-date"></i>-->
+                <!--</div>-->
+              </div>
+              <div class="relationIntro">
+                <textarea class="relationIntroArea" v-model="taskIntro" placeholder="请输入任务简介"></textarea>
+              </div>
+            </div>
+            <!--附件选择-->
+            <div class="taskFileUpload">
+              <div class="fileUploadCao">
+                <div class="selectLeft">
+                  <form id="uploadFile" enctype="multipart/form-data">
+                    <input type="file" v-on:change="fileChange" id="myfile" name="myfile" placeholder="请选择文件"/><br><br>
+                      <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
+                  </form>
+                </div>
+                <div class="selectRight">
+                  <div class="selectMoreInfo" v-on:click="moreClick()">
+                    <i v-bind:class="moreIcon"></i><span style="margin-left: 6px;">{{moreText}}</span>
+                  </div>
+                  <div class="submitBtn" v-on:click="depSub()"><el-button type="primary">发布</el-button></div>
+                </div>
+              </div>
+              <div class="fileUploadPre"></div>
+            </div>
+          </div>
+          <!--上传的图片在此预览-->
+          <div class="uploadFilePre"></div>
+        </div>
+      </div>
+    </el-main>
+    <div class="searchItem">
+      <el-col :span="3">
+        <el-select v-model="optionsValue" placeholder="请选择" @change="myTaskStyleChange($event)">
+          <el-option
+            v-for="item in optionsTask"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="3">
+        <el-select v-model="optionsValue2" placeholder="请选择" @change="taskTypeState($event)">
+          <el-option
+            v-for="item in optionsTask2"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="3">
+        <el-select v-model="optionsValue3" placeholder="请选择" @change="taskOfProject($event)">
+          <el-option label="全部" value=""></el-option>
+          <el-option
+            v-for="item in projectList"
+            :key="item.projectUID"
+            :label="item.projectName"
+            :value="item.projectName">
+          </el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="6">
+        <el-input placeholder="请输入搜索内容" v-model="input3">
+          <template slot="prepend">任务名称</template>
+        </el-input>
+      </el-col>
+    </div>
+    <div class="taskBox">
+      <CheckboxGroup v-model="taskCheckedList">
+        <div class="taskList" v-for="(myTask, index) in myTaskList" :key="index">
+          <div class="taskItem">
+            <div><span style="font-size: 16px;color: #409EFF;" @click="toDetail(myTask.uid)">{{myTask.jobName}}</span></div>
+            <div class="taskName"><Icon type="md-ribbon" size="20"/>{{myTask.projectName}}</div>
+          </div>
+          <div class="taskMsg">
+            <div><Icon type="md-contact" size="20"/><span style="padding-left: 8px;">{{myTask.userName}}</span></div>
+            <div style="line-height: 20px;">
+              <Icon type="md-alarm" size="18"/>
+              <span style="padding-left: 8px;float: right;margin-top: 2px;">{{myTask.taskStartDate.split(' ')[0]}} - {{myTask.taskFinishDate.split(' ')[0]}}</span>
+            </div>
+          </div>
+          <div v-bind:class="'taskTag'+ myTask.status">{{myTask.statusStr}}</div>
+        </div>
+      </CheckboxGroup>
+    </div>
+    <div style="text-align: center;margin-top: 40px;margin-bottom: 40px;">
+      <el-pagination
+        background
+        layout="prev, pager, next, total"
+        @current-change="pageNumChenge($event)"
+        :page-size="8"
+        :total="totalRowNum">
+      </el-pagination>
+    </div>
+    <!--发动态 人员选择-->
+    <div class="selectUserDialog" v-bind:style="{ top: selectUserTop + 'px', left: selectUserLeft + 'px' }" v-if="selectUserDiaShow">
+      <div class="selectUserIpt">
+        <el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"
+                   :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
+                   :remote-method="remoteMethod" :loading="loading2">
+          <el-option v-for="item in options4" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
+                     :value="item.Name + '-' + item.ID">
+          </el-option>
+        </el-select>
+      </div>
+      <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm.value9.length===0">* 如果此项不选，则默认自己</div>
+      <div class="selectUserBtn" v-on:click="selectUserClick()"><el-button>确定</el-button></div>
+    </div>
+    <!--发动态 时间选择 -->
+    <div class="selectDateDialog" v-bind:style="{ top: selectDateTop + 'px', left: selectDateLeft + 'px' }" v-if="selectDateDiaShow">
+      <div class="selectDateBox">
+        <div class="selectDateItem">
+          <el-date-picker
+            v-model="selDateStart"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择开始时间">
+          </el-date-picker>
+        </div>
+        <!--<div style="margin-left: 10px; margin-right: 10px;">至</div>-->
+        <div class="selectDateItem">
+          <el-date-picker
+            v-model="selDateEnd"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择结束时间">
+          </el-date-picker>
+        </div>
+      </div>
+      <div class="selectUserBtn">
+        <el-button v-on:click="selectDateCancel()">取消</el-button>
+        <el-button v-on:click="selectDateOk()">确定</el-button>
+      </div>
+    </div>
+    <!---->
+    <!--发动态 任务级别选择-->
+    <div class="depTaskLevel" v-bind:style="{ height: taskLevelHeight + 'px', top: taskLevelTop + 'px', left: taskLevelLeft + 'px'}" v-on:mouseleave="rateMouseLeave()">
+      <div class="rateBox">
+        <el-rate v-model="levelValue"></el-rate>
+      </div>
+    </div>
+    <el-dialog title="图片预览" :visible.sync="dialogFormVisible">
+      <div class="showImg"><img v-bind:src="taskBasicMsg.previewUrl" alt=""></div>
+    </el-dialog>
+    <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+      <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
+    </el-dialog>
+    <!--/ 任务完成/-->
+    <el-dialog title="任务完成" :visible.sync="taskFinishedVisible" width="25%">
+      <div class="el-textarea" v-loading="loading9" style="margin-top: 0">
+        <form id="uploadFileRe2" enctype="multipart/form-data">
+          <textarea name="remark" class="el-textarea__inner" id="textAreaF" type="text" v-model="commitComentF"></textarea>
+          <!--<div class="cannetProject2">-->
+            <div style="display: inline-block">
+              <img src="../../static/img/fujian.png" alt="">
+              <a href="javascript:;" class="file" @change="getFileNameFinished">选择文件
+                <input type="file" name="myfile" id="myfileF">
+              </a>
+              <input type="hidden" name="taskId" v-bind:value="taskId2">
+              <!--<input type="hidden" name="rtype" v-bind:value="3">-->
+              <span class="showFileName2"></span>
+            </div>
+            <div slot="footer" class="dialog-footer" style="text-align: center;">
+              <i-button @click="concelFinished()">取消</i-button>
+              <i-button type="info" v-bind:disabled="butnDisabledF" @click="confirmFinished()">确定</i-button>
+            </div>
+          <!--</div>-->
+        </form>
+      </div>
+    </el-dialog>
+    <!--任务移交-->
+    <el-dialog title="任务移交" :visible.sync="taskTransferVisible" v-loading="loading11" width="26%">
+      <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
+      <el-autocomplete style="width:90%"
+         v-model="projectManager"
+         :fetch-suggestions="querySearchAsync"
+         placeholder="请输入移交人姓名"
+         :trigger-on-focus="false"
+         @select="handleSelect"
+      ></el-autocomplete>
+      <form id="taskTransfer" enctype="multipart/form-data">
+        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交备注：</div>
+        <textarea name="remark" class="el-textarea__inner" id="Transfer" type="text" v-model="commitComentT"></textarea>
+        <!--<div class="cannetProject2">-->
+        <div style="display: inline-block">
+          <img src="../../static/img/fujian.png" alt="">
+          <a href="javascript:;" class="file" @change="getFileNameTran">选择文件
+            <input type="file" name="myfile" id="myfileTransfer">
+          </a>
+          <input type="hidden" name="taskId" v-bind:value="taskId2">
+          <input type="hidden" name="transferUserId" v-bind:value="transferUserId">
+          <input type="hidden" name="transferUserName" v-bind:value="transferUserName">
+          <!--<input type="hidden" name="rtype" v-bind:value="3">-->
+          <span class="showFileNameTran"></span>
+        </div>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <i-button @click="concelTransfer()">取消</i-button>
+          <i-button type="info" v-bind:disabled="butnDisabledT" @click="taskTransfer()">确定</i-button>
+        </div>
+        <!--</div>-->
+      </form>
+    </el-dialog>
+    <!---->
+    <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
+      <div class="slidTop">
+        <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
+        <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
+        <div><div v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div></div>
+      </div>
+      <div class="taskMsg2">
+        <div class="taskLf">
+          <div class="taskName2">{{taskBasicMsg.jobName}}</div>
+          <div class="taskDetail" v-bind:title="taskBasicMsg.description">{{taskBasicMsg.description}}</div>
+        </div>
+        <div class="taskRt">
+          <div v-if="taskBasicMsg.status === '0'"><img src="../../static/img/unstart.png" alt=""></div>
+          <div v-if="taskBasicMsg.status === '1'"><img src="../../static/img/doing.png" alt=""></div>
+          <div v-if="taskBasicMsg.status === '2'"><img src="../../static/img/finish.png" alt=""></div>
+        </div>
+      </div>
+      <div class="taskTime">
+        <el-collapse>
+          <el-collapse-item style="padding: 0 10px;">
+            <template slot="title">
+              <img src="../../static/img/time.png" alt=""><span style="margin-left: 10px;">起止时间: {{taskBasicMsg.taskStartDate}} 到 {{taskBasicMsg.taskFinishDate}}</span>
+              <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum >= 0">剩余 <span style="color: #53b5ff;font-size: 16px;font-weight: bold">{{taskBasicMsg.dayNum}}</span> 天</div>
+              <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum < 0"><span style="color:red;font-size: 16px;">已逾期</span></div>
+              <div style="margin-left: 10%;" v-if="!taskBasicMsg.dayNum"><span v-bind:class="'topState' + taskBasicMsg.status">{{taskBasicMsg.statusStr}}</span></div>
+            </template>
+            <div class="managePro">
+              <div><img src="../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span>{{taskBasicMsg.userName}}</span></div>
+              <div><img src="../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>
+            </div>
+            <div class="managePro" style="margin-top: 10px;">
+              <div><img src="../../static/img/kaishi.png" alt=""><span class="proLabel">实际开始:</span><span v-if="taskBasicMsg.dealWithDate">{{taskBasicMsg.dealWithDate}}</span><span v-if="!taskBasicMsg.dealWithDate">暂未开始</span></div>
+              <div><img src="../../static/img/jiesu.png" alt=""><span class="proLabel">实际结束:</span><span v-if="taskBasicMsg.realFinishDate">{{taskBasicMsg.realFinishDate}}</span><span v-if="!taskBasicMsg.realFinishDate">暂未完成</span></div>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+      <div class="cannetProject">
+        <div style="display: inline-block"><img src="../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
+        <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>
+        <span v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
+      </div>
+      <div class="cannetProject">
+        <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
+        <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
+      </div>
+      <div class="cannetProject">
+        <div style="display: inline-block"><img src="../../static/img/fujian.png" alt=""><span>项目附件:</span></div>
+        <div style="display: inline-block;font-size: 14px;" v-if="taskBasicMsg.showName">
+          <span style="display: inline-block;">{{taskBasicMsg.showName}}</span>
+          <span v-if="taskBasicMsg.isImg" @click="showImagePre" style="margin-left: 10px;display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
+          <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+        </div>
+        <div style="display: inline-block;font-size: 14px;" v-if="!taskBasicMsg.showName">暂无附件</div>
+      </div>
+      <div class="cannetProject">
+        <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
+        <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
+        <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
+        <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
+        <Button type="info" @click="taskToDevided()">任务分解</Button>
+      </div>
+      <div class="cannetProject1" v-if="toShowDevided">
+        <div style="display: inline-block"><img src="../../static/img/goutong.png" alt=""><span>任务分解</span></div>
+      </div>
+      <div style="position: relative;width: 90%;margin-left: 10px;" v-if="toShowDevided">
+        <div v-loading="loading32">
+          <div class="paiTaskIptBox" style="position: relative;">
+            <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+              <div class="selectUserIpt">
+                <el-select v-model="taskForm2.value9" multiple filterable remote style="width: 100%;"
+                           :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
+                           :remote-method="remoteMethod2" :loading="loading22">
+                  <el-option v-for="item in options42" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
+                             :value="item.Name + '-' + item.ID">
+                  </el-option>
+                </el-select>
+              </div>
+              <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
+              <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
+            </div>
+            <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">
+              <div class="selectDateBox">
+                <div class="selectDateItem">
+                  <el-date-picker
+                    v-model="selDateStart2"
+                    type="datetime"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    placeholder="选择开始时间">
+                  </el-date-picker>
+                </div>
+                <!--<div style="margin-left: 10px; margin-right: 10px;">至</div>-->
+                <div class="selectDateItem">
+                  <el-date-picker
+                    v-model="selDateEnd2"
+                    type="datetime"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    placeholder="选择结束时间">
+                  </el-date-picker>
+                </div>
+              </div>
+              <div class="selectUserBtn">
+                <el-button v-on:click="selectDateCancel2()">取消</el-button>
+                <el-button v-on:click="selectDateOk2()">确定</el-button>
+              </div>
+            </div>
+            <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight2 + 'px', top: taskLevelTop2 + 'px', left: taskLevelLeft2 + 'px'}" v-on:mouseleave="rateMouseLeave2()">
+              <div class="rateBox">
+                <el-rate v-model="levelValue2"></el-rate>
+              </div>
+            </div>
+            <div class="paiTaskIptLeft">
+              <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+              <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建任务名称" /></div>
+            </div>
+            <div class="paiTaskIptRight">
+              <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
+              <div class="paiTaskIptRightCnt" v-on:click="selectUser2($event)">
+                <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
+                <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
+                <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
+                <!--<span> {{defImplementer.name}}</span>-->
+              </div>
+              <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
+              <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
+              <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div>
+            </div>
+          </div>
+          <div class="taskRelation" v-if="taskRelationShow2">
+            <div class="relationIntro">
+              <textarea class="relationIntroArea" v-model="taskIntro2" placeholder="请输入任务简介"></textarea>
+            </div>
+          </div>
+          <div class="taskFileUpload">
+            <div class="fileUploadCao">
+              <div class="selectLeft">
+                <form id="uploadFileDel" enctype="multipart/form-data">
+                  <input type="file" v-on:change="fileChange2" id="myfileDel" name="myfile" placeholder="请选择文件"/><br><br>
+                  <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
+                </form>
+              </div>
+              <div class="selectRight2">
+                <div class="selectMoreInfo" v-on:click="moreClick2()">
+                  <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
+                </div>
+                <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">分解</i-button></div>
+                <div class="submitBtn" v-on:click="cancelDevide()"><i-button >取消</i-button></div>
+              </div>
+            </div>
+            <div class="fileUploadPre"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cannetProject1">
+        <div style="display: inline-block"><img src="../../static/img/goutong.png" alt=""><span>沟 通</span></div>
+      </div>
+      <div class="el-textarea" v-loading="loading8">
+        <form id="uploadFileRe" enctype="multipart/form-data">
+          <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent"></textarea>
+          <div class="cannetProject2">
+            <div style="display: inline-block">
+              <img src="../../static/img/fujian.png" alt="">
+              <a href="javascript:;" class="file" @change="getFileName">选择文件
+                <input type="file" name="myfile" id="myfile2">
+              </a>
+              <input type="hidden" name="rid" v-bind:value="rid2">
+              <input type="hidden" name="rtype" v-bind:value="3">
+              <span class="showFileName"></span>
+            </div>
+            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo2()">回复</i-button></div>
+          </div>
+        </form>
+      </div>
+      <div class="cannetProject1-1">
+        <div style="display: inline-block"><img src="../../static/img/jilu.png" alt=""><span>沟通记录</span></div>
+      </div>
+      <div class="timeLine">
+        <Timeline v-if="commentList && commentList.length > 0">
+          <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
+            <p class="time">{{comment.createDate}}</p>
+            <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
+            <p class="content" v-if="comment.showName">附件:
+              <span style="display: inline-block"> {{comment.showName}}</span>
+              <span v-if="comment.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(comment.previewUrl)">预览</span>
+              <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="comment.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+            </p>
+          </Timeline-item>
+        </Timeline>
+        <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
+        <div style="text-align: center">
+          <Page :total="totalNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentPage($event)"></Page>
+        </div>
+      </div>
+      <div class="cannetProject1-1" style="margin-top: 0">
+        <div style="display: inline-block"><img src="../../static/img/history.png" alt=""><span>操作记录</span></div>
+      </div>
+      <div class="timeLine">
+        <Timeline>
+          <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
+            <p class="time">{{history.oTime}}</p>
+            <p class="content">{{history.oName}}{{history.oContent}}</p>
+            <p class="content" v-if="history.showName"><span>附件:</span>
+              <span style="display: inline-block"> {{history.showName}}</span>
+              <span v-if="history.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(history.previewUrl)">预览</span>
+              <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="history.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+            </p>
+          </Timeline-item>
+        </Timeline>
+        <div style="text-align: center">
+          <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
+        </div>
+      </div>
+    </Drawer>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'MyTask',
+  data () {
+    return {
+      token: '',
+      toShowDevided: false,
+      // 任务移交
+      taskTransferVisible: false,
+      loading11: false,
+      butnDisabledT: true,
+      projectManager: '',
+      commitComentT: '',
+      transferUserId: '',
+      transferUserName: '',
+      // 任务完成
+      taskFinishedVisible: false,
+      loading9: false,
+      commitComentF: '',
+      butnDisabledF: true,
+      totalRowNum: 0,
+      myTaskList: [],
+      projectList: [],
+      taskCheckedList: ['任务1'],
+      // 抽屉
+      rid2: '',
+      taskId2: '',
+      totalNum: 1,
+      pageSize: 5,
+      totalHistoryNum: 1,
+      dialogShowImg: false,
+      commentPreviewUrl: '',
+      dialogFormVisible: false,
+      value4: false,
+      taskBasicMsg: '',
+      commitComent: '',
+      loading8: false,
+      commentList: [],
+      historyList: [],
+      butnDisabled: true,
+      taskComment: {
+        uid: '',
+        pageNum: 1,
+        pageSize: 5
+      },
+      taskHistoryList: {
+        uid: '',
+        pageNum: 1,
+        pageSize: 5
+      },
+      // 默认指派
+      input3: '',
+      defImplementerName: '李四',
+      defImplementer: {
+        name: '张三',
+        id: ''
+      },
+      optionsTask: [{
+        value: '1',
+        label: '我负责的'
+      }, {
+        value: '2',
+        label: '我发起的'
+      }],
+      optionsValue: '1',
+      optionsTask2: [{
+        value: '',
+        label: '全部'
+      }, {
+        value: 'today',
+        label: '今日任务'
+      }, {
+        value: 'overtime',
+        label: '逾期任务'
+      }, {
+        value: 'unstart',
+        label: '未开始任务'
+      }, {
+        value: 'unfinish',
+        label: '进行中任务'
+      }, {
+        value: 'finish',
+        label: '已完成任务'
+      }],
+      optionsValue2: '',
+      optionsValue3: '',
+      // 任务级别
+      levelValue: 3,
+      levelValue2: 3,
+      // top
+      taskLevelTop: '',
+      taskLevelTop2: '',
+      // left
+      taskLevelLeft: '',
+      taskLevelLeft2: '',
+      // 任务级别 div高度
+      taskLevelHeight: 0,
+      taskLevelHeight2: 0,
+      formData: '',
+      formData2: '',
+      // 附件id
+      attachmentId: '',
+      attachmentId2: '',
+      // 所属项目
+      projectBelong: '',
+      // 子级页面数据是否重调以刷新
+      isRecall: 0,
+      isRecall2: 0,
+      selDateStart: '',
+      selDateStart2: '',
+      selDateEnd: '',
+      activeName: 'second',
+      testData: 'Test Data',
+      loading2: false,
+      loading22: false,
+      loading3: false,
+      loading32: false,
+      loading: false,
+      options4: [],
+      options42: [],
+      options: [],
+      selectUserDiaShow: false,
+      selectUserDiaShow2: false,
+      taskRelationShow: false,
+      taskRelationShow2: false,
+      selectDateDiaShow: false,
+      selectDateDiaShow2: false,
+      // 悬浮窗管理 数组
+      diaManageArr: ['selectUserDiaShow', 'selectDateDiaShow'],
+      diaManageArr2: ['selectUserDiaShow2', 'selectDateDiaShow2'],
+      // 伸缩窗管理 数组
+      tranManageArr: ['taskLevelHeight'],
+      tranManageArr2: ['taskLevelHeight2'],
+      selectUserTop: '',
+      selectUserLeft: '',
+      selectDateTop: '',
+      selectDateLeft: '',
+      selectUserTop2: '',
+      selectUserLeft2: '',
+      selectDateTop2: '',
+      selectDateLeft2: '',
+      moreText: '更多',
+      moreText2: '更多',
+      moreIcon: 'el-icon-arrow-down',
+      moreIcon2: 'el-icon-arrow-down',
+      taskIntro: '',
+      taskIntro2: '',
+      taskNameText: '',
+      taskNameText2: '',
+      taskForm: {
+        jobName: '',
+        userName: '',
+        jobLevel: 3,
+        date1: '',
+        date2: '',
+        state2: '',
+        value9: [],
+        value8: [],
+        description: '',
+        taskUserId: ''
+      },
+      taskForm2: {
+        jobName: '',
+        userName: '',
+        jobLevel: 3,
+        date1: '',
+        date2: '',
+        state2: '',
+        value9: [],
+        value8: [],
+        description: '',
+        taskUserId: ''
+      },
+      moreUserSelectPayload: {
+        projectManager: ''
+      },
+      moreUserSelectPayload2: {
+        projectManager: ''
+      },
+      myTaskViewPayload: {
+        pageNum: '1',
+        pageSize: '8',
+        projectUID: '',
+        uid: this.$route.params.id,
+        userId: this.$store.state.userId,
+        startTime: '',
+        endTime: '',
+        projectName: '',
+        planName: '',
+        jobName: '',
+        type: '',
+        jobLevel: '',
+        createrName: '',
+        status: '',
+        cStartTime: '',
+        cEndTime: '',
+        taskSource: '1',
+        sType: ''
+      },
+      myProjectListPayload: {
+        userId: this.$store.state.userId
+      },
+      CommunityTaskPayload: {
+        projectUID: '',
+        planId: '',
+        taskId: '',
+        jobName: '',
+        description: '',
+        startTime: '',
+        endTime: '',
+        jobLevel: '3',
+        // 附件id
+        attachmentId: '',
+        pStr: ''
+      },
+      CommunityTaskPayload2: {
+        projectUID: '1',
+        id: '1',
+        pStr: '',
+        attachmentId: '',
+        description: '',
+        jobName: '',
+        jobLevel: 3,
+        startTime: '',
+        endTime: '',
+        userId: '',
+        _jfinal_token: '',
+        userName: ''
+      }
+    }
+  },
+  watch: {
+    // 如果 `testData` 发生改变，这个函数就会运行
+    testData: function (newQuestion, oldQuestion) {
+    },
+    value4: function (newQuestion, oldQuestion) {
+      if (newQuestion === false) {
+        this.toShowDevided = false
+      }
+    },
+    toShowDevided: function (newQuestion, oldQuestion) {
+      if (newQuestion === false) {
+        this.taskRelationShow2 = false
+        this.clearDynamicsForm2()
+      }
+    },
+    optionsValue3: function (newValue, oldValue) {
+      // console.log('newValue:', newValue)
+      this.myTaskViewPayload.projectName = newValue
+      this.queryMyTaskView()
+    },
+    input3: function (newValue, oldValue) {
+      // console.log('newValue:', newValue)
+      this.myTaskViewPayload.jobName = newValue
+      this.queryMyTaskView()
+    },
+    // currentTab: function (newQuestion, oldQuestion) {
+    //   this.$store.state.DevelopmentTab = newQuestion
+    // },
+    selDateStart: function (newQuestion, oldQuestion) {
+      this.log('newQuestion:', newQuestion)
+    },
+    selDateStart2: function (newQuestion, oldQuestion) {
+      this.log('newQuestion:', newQuestion)
+    },
+    projectBelong: function (newQuestion, oldQuestion) {
+      this.log('projectBelong:', newQuestion)
+    },
+    formData: function (newQuestion, oldQuestion) {
+      this.log('新的newQuestion:', newQuestion)
+    },
+    formData2: function (newQuestion, oldQuestion) {
+      this.log('新的newQuestion:', newQuestion)
+    },
+    levelValue: function (newQuestion, oldQuestion) {
+      this.CommunityTaskPayload.jobLevel = newQuestion.toString()
+    },
+    levelValue2: function (newQuestion, oldQuestion) {
+      this.CommunityTaskPayload2.jobLevel = newQuestion.toString()
+    },
+    // 监听人员选择 触发悬浮窗管理
+    selectUserDiaShow: function (newQuestion, oldQuestion) {
+      this.dialogManage('selectUserDiaShow')
+    },
+    selectUserDiaShow2: function (newQuestion, oldQuestion) {
+      this.dialogManage2('selectUserDiaShow')
+    },
+    // 监听日期选择 触发悬浮窗管理
+    selectDateDiaShow: function (newQuestion, oldQuestion) {
+      this.dialogManage('selectDateDiaShow')
+    },
+    selectDateDiaShow2: function (newQuestion, oldQuestion) {
+      this.dialogManage2('selectDateDiaShow2')
+    },
+    // 监听任务级别伸缩窗
+    taskLevelHeight: function (newQuestion, oldQuestion) {
+      this.transitionManage('taskLevelHeight')
+      // if () {}
+    },
+    taskLevelHeight2: function (newQuestion, oldQuestion) {
+      this.transitionManage2('taskLevelHeight2')
+      // if () {}
+    },
+    commitComent: function (val, oVal) {
+      if (val) {
+        this.butnDisabled = false
+      } else {
+        this.butnDisabled = true
+      }
+    },
+    commitComentF: function (val, oVal) {
+      if (val) {
+        this.butnDisabledF = false
+      } else {
+        this.butnDisabledF = true
+      }
+    },
+    projectManager: function (val, oVal) {
+      if (val) {
+        this.butnDisabledT = false
+      } else {
+        this.butnDisabledT = true
+      }
+    },
+    taskTransferVisible: function (val, oVal) {
+      if (val === false) {
+        this.projectManager = ''
+        this.commitComentT = ''
+        $('#myfileTransfer').val('')
+        $('.showFileNameTran').html('')
+      }
+    },
+    taskFinishedVisible: function (val, oVal) {
+      if (val === false) {
+        this.commitComentF = ''
+        $('.showFileName2').html('')
+        $('#myfileF').val('')
+      }
+    },
+    fileName: function (val, oval) {
+    }
+  },
+  created () {
+    this.settoken()
+    this.getUserInfo()
+    this.getProBelong()
+    this.setDefaultTime()
+    this.queryMyTaskView()
+    this.queryMyProjectList()
+  },
+  computed: {
+    // currentTabComponent: function () {
+    //   return this.currentTab
+    // }
+  },
+  methods: {
+    settoken: function () {
+      this.ajax('/general/setToken', {}).then(res => {
+        this.token = res._jfinal_token
+      })
+    },
+    queryMyProjectList () {
+      var that = this
+      this.ajax('/general/myProjectList', that.myProjectListPayload).then(res => {
+        // this.log('选择所属项目:', res)
+        if (res.code === 200) {
+          that.projectList = res.data
+        }
+      })
+    },
+    testValue9: function () {
+      this.log('taskFormvalue9:', this.taskForm.value9)
+      this.log('defImplementer:', this.defImplementer)
+    },
+    // 悬浮窗管理函数
+    dialogManage: function (target, allDiaHide) {
+      var that = this
+      // allDiaHide为false
+      if (!allDiaHide) {
+        if (that[target]) {
+          for (var i = 0; i < that.diaManageArr.length; i++) {
+            if (that.diaManageArr[i] !== target) {
+              that[that.diaManageArr[i]] = false
+            }
+          }
+        }
+      } else if (allDiaHide) {
+        // allDiaHide为true (即:所有悬浮窗隐藏)
+        for (var t = 0; t < that.diaManageArr.length; t++) {
+          that[that.diaManageArr[t]] = false
+        }
+      }
+    },
+    // 悬浮窗管理函数
+    dialogManage2: function (target, allDiaHide) {
+      var that = this
+      // allDiaHide为false
+      if (!allDiaHide) {
+        if (that[target]) {
+          for (var i = 0; i < that.diaManageArr2.length; i++) {
+            if (that.diaManageArr2[i] !== target) {
+              that[that.diaManageArr2[i]] = false
+            }
+          }
+        }
+      } else if (allDiaHide) {
+        // allDiaHide为true (即:所有悬浮窗隐藏)
+        for (var t = 0; t < that.diaManageArr2.length; t++) {
+          that[that.diaManageArr2[t]] = false
+        }
+      }
+    },
+    // 伸缩框管理函数
+    transitionManage: function (target, allTranHide) {
+      var that = this
+      if (!allTranHide) {
+        if (that[target]) {
+          for (var i = 0; i < that.tranManageArr.length; i++) {
+            if (that.tranManageArr[i] !== target) {
+              that[that.tranManageArr[i]] = 0
+            }
+          }
+        }
+      } else if (allTranHide) {
+        // allDiaHide为true (即:所有悬浮窗隐藏)
+        for (var t = 0; t < that.tranManageArr.length; t++) {
+          that[that.tranManageArr[t]] = 0
+        }
+      }
+    },
+    transitionManage2: function (target, allTranHide) {
+      var that = this
+      if (!allTranHide) {
+        if (that[target]) {
+          for (var i = 0; i < that.tranManageArr2.length; i++) {
+            if (that.tranManageArr2[i] !== target) {
+              that[that.tranManageArr2[i]] = 0
+            }
+          }
+        }
+      } else if (allTranHide) {
+        // allDiaHide为true (即:所有悬浮窗隐藏)
+        for (var t = 0; t < that.tranManageArr2.length; t++) {
+          that[that.tranManageArr2[t]] = 0
+        }
+      }
+    },
+    getUserInfo: function () {
+      var that = this
+      this.ajax('/general/getUserInfo', {}).then(res => {
+        if (res.code === 200) {
+          that.log('getUserInfo', res)
+          that.defImplementer.name = res.data.Name
+          that.defImplementer.id = res.data.ID
+        }
+      })
+    },
+    // 设置任务级别
+    selectLevel: function (e) {
+      var obj = e.currentTarget
+      this.taskLevelLeft = $(obj).offset().left - 165
+      this.taskLevelTop = $(obj).offset().top + 32
+      this.taskLevelHeight = 46
+      // 其它悬浮窗为隐藏状态
+      this.dialogManage('', true)
+    },
+    selectLevel2: function (e) {
+      var obj = e.currentTarget
+      this.taskLevelLeft2 = $(obj).offset().left - 165
+      this.taskLevelTop2 = $(obj).offset().top + 32
+      this.taskLevelHeight2 = 46
+      // 其它悬浮窗为隐藏状态
+      this.dialogManage2('', true)
+    },
+    // 鼠标离开 任务级别 div关闭
+    rateMouseLeave: function () {
+      // this.alert(1)
+      this.taskLevelHeight = 0
+    },
+    rateMouseLeave2: function () {
+      // this.alert(1)
+      this.taskLevelHeight2 = 0
+    },
+    // 获取当前时间
+    getNowFormartTime: function () {
+      var dateObj = new Date()
+      var year = dateObj.getFullYear()
+      var month = dateObj.getMonth() + 1
+      var date = dateObj.getDate()
+      var h = dateObj.getHours()
+      var m = dateObj.getMinutes()
+      if (month < 10) {
+        month = '0' + month
+      }
+      if (date < 10) {
+        date = '0' + date
+      }
+      if (h < 10) {
+        h = '0' + h
+      }
+      if (m < 10) {
+        m = '0' + m
+      }
+      return year + '-' + month + '-' + date + ' ' + h + ':' + m + ':' + '00'
+    },
+    // 获取所属项目
+    getProBelong: function () {
+      var that = this
+      that.ajax('/community/getAllProject', {}).then(res => {
+        if (res.code === 200) {
+          this.log('getAllProject:', res)
+          this.projectBelong = res.data[0].projectUID
+          this.options = res.data
+        }
+      })
+    },
+    // 更多
+    moreClick: function () {
+      var that = this
+      if (that.moreText === '更多') {
+        that.moreText = '收起'
+        this.moreIcon = 'el-icon-arrow-up'
+        this.taskRelationShow = true
+      } else {
+        that.moreText = '更多'
+        this.moreIcon = 'el-icon-arrow-down'
+        this.taskRelationShow = false
+      }
+    },
+    moreClick2: function () {
+      var that = this
+      if (that.moreText2 === '更多') {
+        that.moreText2 = '收起'
+        this.moreIcon2 = 'el-icon-arrow-up'
+        this.taskRelationShow2 = true
+      } else {
+        that.moreText2 = '更多'
+        this.moreIcon2 = 'el-icon-arrow-down'
+        this.taskRelationShow2 = false
+      }
+    },
+    // 测试异步请求走状态
+    testAjaxVuex: function () {
+      // that.$store.commit('callService', that.testAjaxVuexData)
+    },
+    // 跳转至nTest
+    routerTest: function () {
+      // this.$router.push('/Test')
+    },
+    // 选择任务负责人
+    selectUser: function (e) {
+      // 时间弹窗 与 人员选择弹窗 不共存  selectUserDiaShow selectDateDiaShow
+      // this.selectDateDiaShow = false
+      var obj = e.currentTarget
+      this.selectUserDiaShow = true
+      this.selectUserLeft = $(obj).offset().left - 400
+      this.selectUserTop = $(obj).offset().top - 100
+      // 所有的伸缩窗 隐藏
+      this.transitionManage('', true)
+    },
+    selectUser2: function (e) {
+      // 时间弹窗 与 人员选择弹窗 不共存  selectUserDiaShow selectDateDiaShow
+      // this.selectDateDiaShow = false
+      var obj = e.currentTarget
+      this.selectUserDiaShow2 = true
+      this.selectUserLeft2 = $(obj).offset().left
+      this.selectUserTop2 = $(obj).offset().top
+      // 所有的伸缩窗 隐藏
+      this.transitionManage2('', true)
+    },
+    // 设置默认时间
+    setDefaultTime: function () {
+      // 获取当前时间
+      var startTime = this.getNowFormartTime()
+      var date = new Date(startTime)
+      var nextDayStamp = date.getTime() + (24 * 60 * 60 * 1000)
+      var nextDateObj = new Date(nextDayStamp)
+      var nextDayYear = nextDateObj.getFullYear()
+      var nextDayMonth = nextDateObj.getMonth() + 1
+      var nextDayDate = nextDateObj.getDate()
+      var nextDayHours = nextDateObj.getHours()
+      var nextDayMinutes = nextDateObj.getMinutes()
+      // this.log(456)
+      if (nextDayMonth < 10) {
+        nextDayMonth = '0' + nextDayMonth
+      }
+      if (nextDayDate < 10) {
+        nextDayDate = '0' + nextDayDate
+      }
+      if (nextDayHours < 10) {
+        nextDayHours = '0' + nextDayHours
+      }
+      if (nextDayMinutes < 10) {
+        nextDayMinutes = '0' + nextDayMinutes
+      }
+      var endTime = nextDayYear + '-' + nextDayMonth + '-' + nextDayDate + ' ' + nextDayHours + ':' + nextDayMinutes + ':00'
+      this.selDateStart = startTime
+      this.selDateStart2 = startTime
+      this.selDateEnd = endTime
+      this.selDateEnd2 = endTime
+    },
+    // 选择时间
+    selectDate: function (e) {
+      // 所有的伸缩窗 隐藏
+      this.transitionManage('', true)
+      if (e) {
+        var obj = e.currentTarget
+        this.selectDateDiaShow = true
+        this.selectDateLeft = $(obj).offset().left - 420
+        this.selectDateTop = $(obj).offset().top - 102
+      }
+      // this.log(123)
+    },
+    selectDate2: function (e) {
+      // 所有的伸缩窗 隐藏
+      this.transitionManage2('', true)
+      if (e) {
+        var obj = e.currentTarget
+        this.selectDateDiaShow2 = true
+        this.selectDateLeft2 = $(obj).offset().left - 420
+        this.selectDateTop2 = $(obj).offset().top - 102
+      }
+      // this.log(123)
+    },
+    // 选择时间取消
+    selectDateCancel: function () {
+      this.selectDateDiaShow = false
+    },
+    selectDateCancel2: function () {
+      this.selectDateDiaShow2 = false
+    },
+    // 选择时间确定
+    selectDateOk: function () {
+      this.selectDateDiaShow = false
+    },
+    selectDateOk2: function () {
+      this.selectDateDiaShow2 = false
+    },
+    inputFocus: function () {
+      var that = this
+      // this.taskRelationShow = true
+      if (that.moreText === '更多') {
+        that.moreText = '收起'
+        this.moreIcon = 'el-icon-arrow-up'
+        this.taskRelationShow = true
+      } else {
+        that.moreText = '更多'
+        this.moreIcon = 'el-icon-arrow-down'
+        this.taskRelationShow = false
+      }
+    },
+    inputFocus2: function () {
+      var that = this
+      // this.taskRelationShow2 = true
+      if (that.moreText2 === '更多') {
+        that.moreText2 = '收起'
+        this.moreIcon2 = 'el-icon-arrow-up'
+        this.taskRelationShow2 = true
+      } else {
+        that.moreText2 = '更多'
+        this.moreIcon2 = 'el-icon-arrow-down'
+        this.taskRelationShow2 = false
+      }
+    },
+    iptBlur: function () {
+      // this.taskRelationShow = false
+    },
+    iptBlur2: function () {
+      // this.taskRelationShow = false
+    },
+    handleClick (tab, event) {
+      console.log(tab, event)
+    },
+    // 创建任务 提交
+    depSub: function () {
+      var that = this
+      that.loading3 = true
+      // 如果有任务名
+      if (that.taskNameText) {
+        // value9有值
+        var selectUserStr = ''
+        if (that.taskForm.value9.length > 0) {
+          for (var i = 0; i < that.taskForm.value9.length; i++) {
+            if (i === 0) {
+              selectUserStr = that.taskForm.value9[0]
+            } else {
+              selectUserStr = selectUserStr + '_' + that.taskForm.value9[i]
+            }
+          }
+        } else {
+          // value9没有值，取默认
+          selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
+        }
+        that.CommunityTaskPayload.attachmentId = that.attachmentId
+        that.CommunityTaskPayload.pStr = selectUserStr
+        that.CommunityTaskPayload.jobName = that.taskNameText
+        that.CommunityTaskPayload.startTime = that.selDateStart
+        that.CommunityTaskPayload.endTime = that.selDateEnd
+        that.CommunityTaskPayload.projectUID = that.projectBelong
+        that.CommunityTaskPayload.description = that.taskIntro
+        that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+          if (res.code === 200) {
+            that.isRecall = that.isRecall + 1
+            that.$message({
+              message: '任务创建成功',
+              type: 'success'
+            })
+            // 清空发动态的表单
+            that.clearDynamicsForm()
+          } else {
+            that.$message({
+              message: res.msg,
+              type: 'warning'
+            })
+          }
+          that.loading3 = false
+        })
+      } else {
+        that.$message({
+          message: '请填写动态任务名',
+          type: 'warning'
+        })
+        that.loading3 = false
+      }
+    },
+    depSub2: function () {
+      var that = this
+      that.loading32 = true
+      // 如果有任务名
+      if (that.taskNameText2) {
+        // value9有值
+        var selectUserStr = ''
+        if (that.taskForm2.value9.length > 0) {
+          for (var i = 0; i < that.taskForm2.value9.length; i++) {
+            if (i === 0) {
+              selectUserStr = that.taskForm2.value9[0]
+            } else {
+              selectUserStr = selectUserStr + '_' + that.taskForm2.value9[i]
+            }
+          }
+        } else {
+          // value9没有值，取默认
+          selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
+        }
+        that.CommunityTaskPayload2.attachmentId = that.attachmentId2
+        that.CommunityTaskPayload2.pStr = selectUserStr
+        that.CommunityTaskPayload2.jobName = that.taskNameText2
+        that.CommunityTaskPayload2.startTime = that.selDateStart2
+        that.CommunityTaskPayload2.endTime = that.selDateEnd2
+        that.CommunityTaskPayload2.description = that.taskIntro2
+        that.CommunityTaskPayload2._jfinal_token = that.token
+        that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
+          if (res.code === 200) {
+            that.isRecall2 = that.isRecall2 + 1
+            that.token = res._jfinal_token
+            that.$message({
+              message: '任务创建成功',
+              type: 'success'
+            })
+            // 清空发动态的表单
+            that.clearDynamicsForm2()
+          } else {
+            that.$message({
+              message: res.msg,
+              type: 'warning'
+            })
+          }
+          that.loading32 = false
+        })
+      } else {
+        that.$message({
+          message: '请填写动态任务名',
+          type: 'warning'
+        })
+        that.loading32 = false
+      }
+    },
+    // 派任务（发动态）清空表单
+    clearDynamicsForm: function () {
+      this.taskNameText = ''
+      this.CommunityTaskPayload.jobName = ''
+      this.selDateStart = ''
+      this.CommunityTaskPayload.startTime = ''
+      this.selDateEnd = ''
+      this.CommunityTaskPayload.endTime = ''
+      this.taskIntro = ''
+      this.CommunityTaskPayload.description = ''
+      this.attachmentId = ''
+      this.CommunityTaskPayload.attachmentId = ''
+      this.taskForm.value9 = []
+      this.levelValue = 3
+      $('#myfile').val('')
+      this.getProBelong()
+      this.moreClick()
+    },
+    clearDynamicsForm2: function () {
+      this.taskNameText2 = ''
+      this.CommunityTaskPayload2.jobName = ''
+      this.selDateStart2 = ''
+      this.CommunityTaskPayload2.taskStartDate = ''
+      this.selDateEnd2 = ''
+      this.CommunityTaskPayload2.taskFinishDate = ''
+      this.taskIntro2 = ''
+      this.CommunityTaskPayload2.description = ''
+      this.attachmentId2 = ''
+      this.CommunityTaskPayload2.formId = ''
+      this.taskForm2.value9 = []
+      this.levelValue2 = 3
+      $('#myfileDel').val('')
+      this.moreClick2()
+    },
+    remoteMethod (query) {
+      var that = this
+      this.log('query:', query)
+      if (query !== '') {
+        this.loading2 = true
+        that.moreUserSelectPayload.projectManager = query
+        this.ajax('/general/autoCompleteNames', that.moreUserSelectPayload).then(res => {
+          that.log('autoCompleteNames:', res)
+          if (res.code === 200) {
+            that.options4 = res.msg
+            this.loading2 = false
+          }
+        })
+      } else {
+        this.options4 = []
+      }
+    },
+    remoteMethod2 (query) {
+      var that = this
+      this.log('query:', query)
+      if (query !== '') {
+        this.loading22 = true
+        that.moreUserSelectPayload2.projectManager = query
+        this.ajax('/general/autoCompleteNames', that.moreUserSelectPayload2).then(res => {
+          that.log('autoCompleteNames:', res)
+          if (res.code === 200) {
+            that.options42 = res.msg
+            this.loading22 = false
+          }
+        })
+      } else {
+        this.options42 = []
+      }
+    },
+    // 点击确定
+    selectUserClick: function () {
+      this.selectUserDiaShow = false
+      this.log(this.taskForm.value9)
+    },
+    selectUserClick2: function () {
+      this.selectUserDiaShow2 = false
+      this.log(this.taskForm2.value9)
+    },
+    // 监听文件选择
+    fileChange: function (file) {
+      var that = this
+      var obj = file.currentTarget
+      var isfile = $(obj).val()
+      if (isfile) {
+        that.addMarkInfo()
+      }
+      this.log('change了', file)
+    },
+    fileChange2: function (file) {
+      var that = this
+      var obj = file.currentTarget
+      var isfile = $(obj).val()
+      if (isfile) {
+        that.addMarkInfo3()
+      }
+      this.log('change了', file)
+    },
+    // 文件上传
+    addMarkInfo () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFile')[0])
+      that.formData = formData
+      if (formData) {
+        $.ajax({
+          type: 'post',
+          url: url + '/file/uploadFileAjax',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          that.log('upload:', data)
+          if (data.code === 200) {
+            that.attachmentId = data.data.attachmentId
+            that.log('attachmentId:', data.data.attachmentId)
+            that.$message({
+              type: 'success',
+              message: '文件' + data.msg
+            })
+          } else if (data.code === 300) {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          }
+        })
+      } else {
+        // that.loading = false
+        that.$message({
+          type: 'error',
+          message: '评论内容不能为空'
+        })
+      }
+    },
+    addMarkInfo3 () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileDel')[0])
+      that.formData2 = formData
+      if (formData) {
+        $.ajax({
+          type: 'post',
+          url: url + '/file/uploadFileAjax',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          that.log('upload:', data)
+          if (data.code === 200) {
+            that.attachmentId2 = data.data.attachmentId
+            that.log('attachmentId:', data.data.attachmentId2)
+            that.$message({
+              type: 'success',
+              message: '文件' + data.msg
+            })
+          } else if (data.code === 300) {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          }
+        })
+      } else {
+        // that.loading = false
+        that.$message({
+          type: 'error',
+          message: '评论内容不能为空'
+        })
+      }
+    },
+    // 抽屉
+    getFileName: function () {
+      var filePath = $('#myfile2').val()
+      var arr = filePath.split('\\')
+      var fileName = arr[arr.length - 1]
+      $('.showFileName').html(fileName)
+    },
+    toDetail: function (id) {
+      var that = this
+      // that.resetScro()
+      that.taskId2 = id
+      that.taskComment.uid = id
+      that.taskHistoryList.uid = id
+      that.value4 = true
+      that.getCommicateCont()
+      that.getHistoryList()
+      that.ajax('/leader/getTaskBasic', {uid: that.taskId2}).then(res => {
+        if (res.code === 200) {
+          that.taskBasicMsg = res.data
+          that.CommunityTaskPayload2.projectUID = res.data.projectUID
+          that.CommunityTaskPayload2.id = res.data.uid
+          that.rid2 = res.data.uid
+          if (that.isImage(res.data.showName)) {
+            res.data.isImg = true
+          } else {
+            res.data.isImg = false
+          }
+          that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
+          that.resetScro()
+        }
+      })
+    },
+    getCommicateCont: function () {
+      var that = this
+      that.ajax('/leader/getTaskComment', that.taskComment).then(res => {
+        if (res.code === 200) {
+          that.commentList = res.data.list
+          that.totalNum = res.data.totalRow
+          for (var i = 0; i < that.commentList.length; i++) {
+            if (that.isImage(res.data.list[i].showName)) {
+              res.data.list[i].isImg = true
+            } else {
+              res.data.list[i].isImg = false
+            }
+            res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+          }
+        }
+      })
+    },
+    getCurrentPage: function (e) {
+      this.taskComment.pageNum = e
+      this.getCommicateCont()
+    },
+    delTask: function (id) {
+      var that = this
+      console.log('id', id)
+      that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/general/delPlanOrTask', {id: id}).then(res => {
+          if (res.code === 200) {
+            that.log('delPlanOrTask:', res)
+            that.value4 = false
+            that.queryMyTaskView()
+          }
+        }).catch(() => {
+          // that.loading = false
+        })
+      })
+    },
+    // 任务开始
+    startTask: function (id) {
+      var that = this
+      console.log('id', id)
+      that.$confirm('确定后将开始此任务，确定开始？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/general/dealTask', {taskId: id}).then(res => {
+          if (res.code === 200) {
+            that.log('dealTask:', res)
+            that.toDetail(id)
+            that.queryMyTaskView()
+          }
+        }).catch(() => {
+          // that.loading = false
+        })
+      })
+    },
+    // 任务完成
+    finishedTask: function () {
+      var that = this
+      that.taskFinishedVisible = true
+    },
+    getFileNameFinished: function () {
+      var filePath = $('#myfileF').val()
+      var arr = filePath.split('\\')
+      var fileName = arr[arr.length - 1]
+      $('.showFileName2').html(fileName)
+    },
+    confirmFinished () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileRe2')[0])
+      var taxtV2 = $('#textAreaF').val()
+      that.loading9 = true
+      if (taxtV2) {
+        $.ajax({
+          type: 'post',
+          url: url + '/general/finishTask',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          if (data.code === 200) {
+            that.$message({
+              type: 'success',
+              message: data.msg
+            })
+            that.toDetail(that.taskId2)
+            that.queryMyTaskView()
+            that.commitComentF = ''
+            $('.showFileName2').html('')
+            $('#myfileF').val('')
+            that.taskFinishedVisible = false
+            that.loading9 = false
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+            $('.showFileName2').html('')
+            that.commitComentF = ''
+            $('#myfileF').val('')
+            that.loading9 = false
+          }
+        })
+      } else {
+        that.$message({
+          type: 'error',
+          message: '备注不能为空！'
+        })
+        that.loading9 = false
+      }
+    },
+    concelFinished: function () {
+      var that = this
+      that.taskFinishedVisible = false
+      that.commitComentF = ''
+      $('.showFileName2').html('')
+      $('#myfileF').val('')
+    },
+    // ------
+    transferTask: function () {
+      var that = this
+      that.taskTransferVisible = true
+    },
+    getFileNameTran: function () {
+      var filePath = $('#myfileTransfer').val()
+      var arr = filePath.split('\\')
+      var fileName = arr[arr.length - 1]
+      $('.showFileNameTran').html(fileName)
+    },
+    taskTransfer () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#taskTransfer')[0])
+      var transText = $('#Transfer').val()
+      if (transText && that.projectManager) {
+        that.loading11 = true
+        that.taskTransferVisible = false
+        $.ajax({
+          type: 'post',
+          url: url + '/general/finishTask',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          if (data.code === 200) {
+            that.$message({
+              type: 'success',
+              message: data.msg
+            })
+            that.toDetail(that.taskId2)
+            that.queryMyTaskView()
+            that.value4 = false
+            that.loading11 = false
+            that.taskTransferVisible = false
+            $('#myfileTransfer').val('')
+            $('.showFileNameTran').html('')
+            that.projectManager = ''
+            that.commitComentT = ''
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+            that.loading11 = false
+          }
+        })
+      } else {
+        that.$message({
+          type: 'error',
+          message: '移交人和备注不能为空！'
+        })
+        that.loading11 = false
+      }
+    },
+    querySearchAsync (queryString, cb) {
+      var that = this
+      if (queryString) {
+        that.projectManager = queryString
+        this.ajax('/general/autoCompleteNames', {projectManager: that.projectManager}).then(res => {
+          if (res.code === 200) {
+            var dddarr = []
+            if (res.msg.length > 0) {
+              for (var i = 0; i < res.msg.length; i++) {
+                var obj = {}
+                obj.value = res.msg[i].Name + ' (' + res.msg[i].jName + ')'
+                obj.userId = res.msg[i].ID
+                // obj.jName = res.msg[i].jName
+                dddarr.push(obj)
+              }
+              // 调用 callback 返回建议列表的数据
+              cb(dddarr)
+            } else {
+              var aaaddd = []
+              that.$message('未能搜索到该人员')
+              cb(aaaddd)
+            }
+          }
+        })
+      }
+    },
+    handleSelect (item) {
+      this.transferUserId = item.userId
+      this.transferUserName = item.value
+    },
+    concelTransfer: function () {
+      var that = this
+      that.loading11 = false
+      $('#myfileTransfer').val('')
+      $('.showFileNameTran').html('')
+      that.projectManager = ''
+      that.commitComentT = ''
+      that.taskTransferVisible = false
+    },
+    // 重启
+    isReStartTask: function (id) {
+      var that = this
+      that.$confirm('是否确定重启此任务?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/general/restartTask', {taskId: id}).then(res => {
+          if (res.code === 200) {
+            this.log('restartTask', res)
+            that.toDetail(id)
+            that.queryMyTaskView()
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
+    getHistoryList: function () {
+      var that = this
+      that.ajax('/leader/getTaskLog', that.taskHistoryList).then(res => {
+        if (res.code === 200) {
+          that.historyList = res.data.list
+          that.totalHistoryNum = res.data.totalRow
+          for (var i = 0; i < that.historyList.length; i++) {
+            if (that.isImage(res.data.list[i].showName)) {
+              res.data.list[i].isImg = true
+            } else {
+              res.data.list[i].isImg = false
+            }
+            that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+          }
+        }
+      })
+    },
+    getCurrentHistoryPage: function (e) {
+      this.taskHistoryList.pageNum = e
+      this.getHistoryList()
+    },
+    showImagePre: function () {
+      this.dialogFormVisible = true
+    },
+    showImagePreCom: function (url) {
+      if (url) {
+        this.commentPreviewUrl = url
+        this.dialogShowImg = true
+      }
+    },
+    resetScro: function () {
+      $('.ivu-drawer-body').scrollTop(0)
+    },
+    addMarkInfo2 () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileRe')[0])
+      var taxtV2 = $('#textArea2').val()
+      that.loading8 = true
+      if (taxtV2) {
+        $.ajax({
+          type: 'post',
+          url: url + '/general/addOrEditComment',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          if (data.code === 200) {
+            that.$message({
+              type: 'success',
+              message: data.msg
+            })
+            that.getCommicateCont()
+            that.commitComent = ''
+            $('.showFileName').html('')
+            $('#myfile2').val('')
+            that.loading8 = false
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+            $('.showFileName').html('')
+            that.commitComent = ''
+            $('#myfile2').val('')
+            that.loading8 = false
+          }
+        })
+      } else {
+        that.$message({
+          type: 'error',
+          message: '备注不能为空！'
+        })
+        that.loading8 = false
+      }
+    },
+    queryMyTaskView () {
+      var that = this
+      this.ajax('/myTask/myTaskView', that.myTaskViewPayload).then(res => {
+        if (res.code === 200) {
+          that.log('myTaskView:', res)
+          that.myTaskList = res.data.list
+          that.totalRowNum = res.data.totalRow
+        }
+      })
+    },
+    pageNumChenge (e) {
+      console.log('eeeeeeee', e)
+      this.myTaskViewPayload.pageNum = e
+      this.queryMyTaskView()
+    },
+    myTaskStyleChange: function (e) {
+      console.log('eeeee', e)
+      var that = this
+      that.myTaskViewPayload.taskSource = e
+      that.queryMyTaskView()
+    },
+    taskTypeState: function (e) {
+      var that = this
+      that.myTaskViewPayload.sType = e
+      that.queryMyTaskView()
+    },
+    taskOfProject: function (e) {
+      var that = this
+      that.myTaskViewPayload.projectName = e
+      that.queryMyTaskView()
+    },
+    taskToDevided: function () {
+      var that = this
+      that.toShowDevided = true
+      // that.taskRelationShow2 = false
+    },
+    cancelDevide: function () {
+      var that = this
+      that.taskRelationShow2 = false
+      that.toShowDevided = false
+      that.clearDynamicsForm2()
+    }
+  }
+}
+</script>
+
+<style scoped>
+  /*div img{*/
+    /*width: 100%;*/
+    /*display: block;*/
+  /*}*/
+  .MyDep{
+    position: relative;
+  }
+  .header{
+    height: auto !important;
+    padding: 10px;
+    box-shadow: 0px -10px 30px #000;
+    z-index: 10;
+  }
+  .headerCntBox{
+    display: flex;
+    justify-content: space-between;
+  }
+  .headerCntLeft{
+    display: flex;
+  }
+  .logoBox{
+    width: 150px;
+  }
+  .groupName{
+    line-height: 30px;
+  }
+  .aside{
+    width: 200px !important;
+    height: 800px;
+    color: #fff;
+    background-color: #005999;
+  }
+  .el-main-box{
+    display: flex;
+  }
+  .el-main-left{
+    flex-grow: 1;
+  }
+  .el-main-right{
+    width: 262px;
+    box-sizing: border-box;
+    padding: 20px;
+    padding-left: 40px;
+    padding-right: 10px;
+  }
+  .paiTaskTitTab{
+    display: flex;
+    background-color: #f5f8fa;
+  }
+  .paiTask{
+    font-size: 16px;
+    margin-right: 15px;
+  }
+  .paiTask.active{
+    font-weight: bold;
+  }
+  .paiTaskIptBox{
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border: 1px solid #dcdfe6;
+    padding-left: 8px;
+  }
+  .paiTaskIptLeft{
+    width: 250px;
+    display: flex;
+    flex-grow: 1;
+  }
+  .paiTaskIptIcon{
+    width: 20px;
+    font-size: 18px;
+    margin-right: 6px;
+  }
+  .paiTaskIptWrap{
+    width: 100%;
+    line-height: 27px;
+  }
+  .paiTaskIptWrap input{
+    width: 100%;
+    outline: none;
+    border: none;
+  }
+  .paiTaskIptRight{
+    _width: 165px;
+    display: flex;
+  }
+  .paiTaskIptRightIcon{
+    border-left: 1px dashed #ccc;
+    margin-right: 5px;
+    font-size: 18px;
+    padding-left: 5px;
+    color: #1687d9;
+  }
+  .paiTaskIptRightCnt{
+    cursor: pointer;
+    margin-right: 10px;
+    line-height: 25px;
+  }
+  .taskRelation{
+    border: 1px solid #a9b8bf;
+    border-top: none;
+  }
+  .relationHeader{
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #a9b8bf;
+  }
+  .relationIntroArea{
+    width: 100%;
+    height: 100px;
+    border: none;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: none;
+    display: block;
+  }
+  .taskFileUpload{
+    position: relative;
+  }
+  .depTaskLevel{
+    width: 200px;
+    height: 0px;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 300;
+    margin-top: -1px;
+    background-color: #fff;
+    transition: height 0.3s;
+  }
+  .depTaskLevel2{
+    width: 200px;
+    height: 0px;
+    text-align: center;
+    position: fixed;
+    overflow: hidden;
+    z-index: 300;
+    margin-top: -1px;
+    background-color: #fff;
+    transition: height 0.3s;
+  }
+  .rateBox{
+    padding: 12px;
+    border: 1px solid #a9b8bf;
+  }
+  .fileUploadCao{
+    display: flex;
+    justify-content: space-between;
+    background-color: #f5f8fa;
+    padding: 10px;
+  }
+  .selectLeft{
+    _line-height: 30px;
+  }
+  .selectRight{
+    width: 163px;
+    display: flex;
+  }
+  .selectRight2{
+    width: 190px;
+    display: flex;
+  }
+  .selectMoreInfo{
+    line-height: 30px;
+  }
+  .submitBtn{
+    margin-left: 15px;
+  }
+  .submitBtn div{
+    width: 50px;
+    padding: 6px;
+    color: #fff;
+    border-radius: 4px;
+    text-align: center;
+    color: #adb8c0;
+    background-color: #e7eef3;
+  }
+
+  /*置顶公告*/
+  .gonggaoBox{
+    margin-top: 25px;
+    font-size: 12px;
+    padding: 20px;
+    color: #ccc;
+    border: 1px dashed #ddd;
+  }
+  .userOnline{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+  }
+  .OnlineText{
+    font-size: 14px;
+  }
+  .OnlineNum{
+    color: #ddd;
+    font-size: 12px;
+  }
+  .userOnlineList{
+    margin-top: 20px;
+    display: flex;
+    flex-wrap:wrap;
+  }
+  .userOnlineItem{
+    width: 30px;
+    height: 30px;
+    margin: 2px;
+    background-color: #42b983;
+    border-radius: 15px;
+    overflow: hidden;
+    text-align: center;
+    line-height: 30px;
+    color: #fff;
+    font-size: 12px;
+  }
+  /**/
+  .selectUserDialog{
+    width: 300px;
+    padding: 0px 0px 20px 0px;
+    background-color: #fff;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .selectUserDialog2{
+    width: 300px;
+    padding: 0px 0px 20px 0px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .selectUserIpt{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: #f5f8fa;
+  }
+  .selectUserBtn{
+    text-align: center;
+    margin-top: 20px;
+  }
+  /**/
+  .selectDateDialog{
+    _width: 300px;
+    padding: 20px 20px 20px 20px;
+    background-color: #fff;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .selectDateDialog2{
+    _width: 300px;
+    padding: 20px 20px 20px 20px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .selectDateBox{
+    _display: flex;
+  }
+  .selectDateItem{
+    margin-top: 20px;
+  }
+  .searchItem{
+    padding: 0 20px;
+    height: 50px;
+    line-height: 50px;
+    background-color: #f5f5f8;
+  }
+  .taskList{
+    height: 100px;
+    width: 100%;
+    display: flex;
+    padding: 20px;
+    justify-content: space-between;
+    border-bottom: 1px dashed #ddd;
+    position: relative;
+    overflow: hidden;
+  }
+  /*.taskList2{*/
+    /*height: 80px;*/
+    /*width: 100%;*/
+    /*display: flex;*/
+    /*padding: 10px 20px 10px 60px;*/
+    /*justify-content: space-between;*/
+    /*border-top: 1px dashed #ddd;*/
+    /*position: relative;*/
+    /*overflow: hidden;*/
+  /*}*/
+  .taskList:hover,.taskList2:hover{
+    background-color: #f5f8fa;
+  }
+  .taskItem{
+    height: 100%;
+    width: 50%;
+    border-left: 6px solid #409EFF;
+    /*display: flex;*/
+    padding-left: 20px;
+  }
+ .taskName{
+   padding: 10px;
+   font-size: 14px;
+   color: #888;
+  }
+  .taskMsg{
+    color: #888;
+    width: 50%;
+    text-align: right;
+    padding-right: 40px;
+    font-size: 14px;
+  }
+  .taskTag0{
+    height: 20px;
+    text-align: center;
+    width: 100px;
+    font-size: 12px;
+    background-color: #ffc107;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 8px;
+    right: -32px;
+    color: #fff;
+  }
+  .taskTag1{
+    height: 20px;
+    text-align: center;
+    width: 100px;
+    font-size: 12px;
+    background-color: #27CF97;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 8px;
+    right: -32px;
+    color: #fff;
+  }
+  .taskTag2{
+    height: 20px;
+    text-align: center;
+    width: 100px;
+    font-size: 12px;
+    background-color: #3a8ee6;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 8px;
+    right: -32px;
+    color: #fff;
+  }
+  .taskTag4{
+    height: 20px;
+    text-align: center;
+    width: 100px;
+    font-size: 12px;
+    background-color: #ccc;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 8px;
+    right: -32px;
+    color: #fff;
+  }
+  /*抽屉*/
+  .slidTop{
+    height: 40px;
+    line-height: 40px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .topState0 img,.topState1 img,.topState2 img{
+    float: left;
+    margin-top: 6px;
+  }
+  .topState0{
+    color: #ffc107;
+  }
+  .topState1{
+    color: #26a2ff;
+  }
+  .topState2{
+    color: #27CF97;
+  }
+  .taskLf{
+    padding: 10px;
+    width: 80%;
+  }
+  .taskName2{
+    font-size: 16px;
+    font-weight: bold;
+    font-family: '黑体';
+  }
+  .taskDetail{
+    font-size: 14px;
+    margin-top: 10px;
+    text-indent: 2em;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow:ellipsis;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+  .taskRt{
+    width: 20%;
+    position: relative;
+  }
+  .taskRt div{
+    width: 90px;
+    float: right;
+    margin: 10px;
+  }
+  .taskRt div img{
+    width: 100%;
+  }
+  .taskMsg2{
+    background-color: #f5f8fa;
+    display: flex;
+    justify-content: space-between;
+  }
+  .managePro{
+    display: flex;
+    justify-content: space-between;
+  }
+  .managePro div{
+    width: 50%;
+  }
+  .managePro div img{
+    float: left;
+    margin-right: 20px;
+  }
+  .managePro div .proLabel{
+    color: #1296db;
+    display: inline-block;
+    margin-right: 20px;
+  }
+  .cannetProject{
+    height: 49px;
+    line-height: 49px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 15px;
+    font-family: '黑体';
+    padding:0 10px;
+  }
+  .cannetProject1{
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f1f1f1;
+    background-color: #f5f8fa;
+    font-size: 16px;
+    font-family: '黑体';
+    font-weight: bold;
+    padding:0 10px;
+  }
+  .cannetProject1-1{
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f1f1f1;
+    background-color: #f5f8fa;
+    font-size: 16px;
+    font-family: '黑体';
+    font-weight: bold;
+    padding:0 10px;
+    margin-top: 20px;
+    border-top: 1px solid #f1f1f1;
+  }
+  .cannetProject2{
+    height: 40px;
+    width: 90%;
+    color: #1296db;
+    display: flex;
+    justify-content: space-between;
+    line-height: 40px;
+    font-size: 14px;
+    /*font-family: '黑体';*/
+    padding:0 10px;
+    background-color: #f5f8fa;
+  }
+  .cannetProject2 div img{
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;
+    width: 18px;
+  }
+  .cannetProject div img{
+    float: left;
+    margin-top: 15px;
+    margin-right: 10px;
+  }
+  .cannetProject1 div img{
+    float: left;
+    margin-top: 9px;
+    margin-right: 10px;
+  }
+  .cannetProject1-1 div img{
+    float: left;
+    margin-top: 9px;
+    margin-right: 10px;
+  }
+  .el-textarea{
+    margin-top: 20px;
+    margin-left: 10px;
+  }
+  .el-textarea__inner{
+    width: 90%;
+    min-height: 80px;
+  }
+  .file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+    margin-top: 6px;
+  }
+  .file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+  }
+  .file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+  }
+  .showFileName{
+    float: right;
+    margin-left: 10px;
+  }
+  .showFileName2,.showFileNameTran{
+    float: right;
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  .time{
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .content{
+    padding-left: 5px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  .timeLine{
+    padding: 20px;
+  }
+  .linkProject{
+    color: #fff;
+    font-size: 14px;
+    padding: 4px 10px;
+    background-color: #409EFF;
+    margin-right: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .linkProject:hover{
+    background-color: #1771ff;
+  }
+  .showImg img{
+    width: 100%;
+  }
+  .noComment{
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    color: #aaa;
+  }
+</style>
