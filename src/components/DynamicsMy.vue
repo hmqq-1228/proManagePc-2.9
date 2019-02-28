@@ -236,13 +236,13 @@
         <div style="display: inline-block"><img src="../../static/img/goutong.png" alt=""><span>沟 通</span></div>
       </div>
       <div class="el-textarea" v-loading="loading2">
-        <form id="uploadFile" enctype="multipart/form-data">
-          <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
+        <form id="uploadFileRe" enctype="multipart/form-data">
+          <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent"></textarea>
           <div class="cannetProject2">
             <div style="display: inline-block">
               <img src="../../static/img/fujian.png" alt="">
               <a href="javascript:;" class="file" @change="getFileName">选择文件
-                <input type="file" name="myfile" id="myfile">
+                <input type="file" name="myfile" id="myfile2">
               </a>
               <input type="hidden" name="rid" v-bind:value="rid2">
               <input type="hidden" name="rtype" v-bind:value="3">
@@ -293,6 +293,12 @@
       </div>
     </Drawer>
     <!--预览图片-->
+    <el-dialog title="图片预览" :visible.sync="dialogFormVisible">
+      <div class="showImg"><img v-bind:src="taskBasicMsg.previewUrl" alt=""></div>
+    </el-dialog>
+    <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+      <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
+    </el-dialog>
     <el-dialog title="预览图片" :visible.sync="showBigImageVisible">
       <div style="width: 100%"><img style="width: 100%" v-bind:src="preImageUrl" alt=""></div>
     </el-dialog>
@@ -313,16 +319,30 @@ export default {
       msg: '任务动态',
       // 抽屉
       rid2: '',
+      taskId2: '',
       totalNum: 1,
       pageSize: 5,
       totalHistoryNum: 1,
+      dialogShowImg: false,
+      commentPreviewUrl: '',
+      dialogFormVisible: false,
       value4: false,
       taskBasicMsg: '',
       commitComent: '',
       loading2: false,
       commentList: [],
       historyList: [],
-      butnDisabled: false,
+      butnDisabled: true,
+      taskComment: {
+        uid: '',
+        pageNum: 1,
+        pageSize: 5
+      },
+      taskHistoryList: {
+        uid: '',
+        pageNum: 1,
+        pageSize: 5
+      },
       // 总条目数
       taskTotalRow: 0,
       // 控制nodata图片显示
@@ -412,12 +432,24 @@ export default {
     },
     taskList: function (newValue, oldValue) {
       this.log('listen:', newValue)
+    },
+    commitComent: function (val, oVal) {
+      if (val) {
+        this.butnDisabled = false
+      } else {
+        this.butnDisabled = true
+      }
+    },
+    fileName: function (val, oval) {
     }
   },
   created () {
     this.getTaskList()
   },
   methods: {
+    resetScro: function () {
+      $('.ivu-drawer-body').scrollTop(0)
+    },
     // 任务列表
     getTaskList: function () {
       var that = this
@@ -662,10 +694,10 @@ export default {
         })
       }
     },
-    toDetail: function (id) {
-      // this.$router.push('/taskDetailPage/' + id)
-      this.value4 = true
-    },
+    // toDetail: function (id) {
+    //   // this.$router.push('/taskDetailPage/' + id)
+    //   this.value4 = true
+    // },
     currentChange: function (pageNum) {
       this.log(pageNum)
       this.TaskCommunityListPayload.jobPageNum = pageNum
@@ -682,10 +714,132 @@ export default {
     },
     // 抽屉
     getFileName: function () {
-      var filePath = $('#myfile').val()
+      var filePath = $('#myfile2').val()
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
       $('.showFileName').html(fileName)
+    },
+    toDetail: function (id) {
+      var that = this
+      // that.resetScro()
+      that.taskId2 = id
+      that.taskComment.uid = id
+      that.taskHistoryList.uid = id
+      that.value4 = true
+      that.getCommicateCont()
+      that.getHistoryList()
+      that.ajax('/leader/getTaskBasic', {uid: that.taskId2}).then(res => {
+        if (res.code === 200) {
+          that.taskBasicMsg = res.data
+          that.rid2 = res.data.uid
+          if (that.isImage(res.data.showName)) {
+            res.data.isImg = true
+          } else {
+            res.data.isImg = false
+          }
+          that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
+          that.resetScro()
+        }
+      })
+    },
+    getCommicateCont: function () {
+      var that = this
+      that.ajax('/leader/getTaskComment', that.taskComment).then(res => {
+        if (res.code === 200) {
+          that.commentList = res.data.list
+          that.totalNum = res.data.totalRow
+          for (var i = 0; i < that.commentList.length; i++) {
+            if (that.isImage(res.data.list[i].showName)) {
+              res.data.list[i].isImg = true
+            } else {
+              res.data.list[i].isImg = false
+            }
+            res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+          }
+        }
+      })
+    },
+    getCurrentPage: function (e) {
+      this.taskComment.pageNum = e
+      this.getCommicateCont()
+    },
+    getHistoryList: function () {
+      var that = this
+      that.ajax('/leader/getTaskLog', that.taskHistoryList).then(res => {
+        if (res.code === 200) {
+          that.historyList = res.data.list
+          that.totalHistoryNum = res.data.totalRow
+          for (var i = 0; i < that.historyList.length; i++) {
+            if (that.isImage(res.data.list[i].showName)) {
+              res.data.list[i].isImg = true
+            } else {
+              res.data.list[i].isImg = false
+            }
+            that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+          }
+        }
+      })
+    },
+    getCurrentHistoryPage: function (e) {
+      this.taskHistoryList.pageNum = e
+      this.getHistoryList()
+    },
+    showImagePre: function () {
+      this.dialogFormVisible = true
+    },
+    showImagePreCom: function (url) {
+      if (url) {
+        this.commentPreviewUrl = url
+        this.dialogShowImg = true
+      }
+    },
+    addMarkInfo () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileRe')[0])
+      var taxtV2 = $('#textArea2').val()
+      that.loading2 = true
+      if (taxtV2) {
+        $.ajax({
+          type: 'post',
+          url: url + '/general/addOrEditComment',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          if (data.code === 200) {
+            that.$message({
+              type: 'success',
+              message: data.msg
+            })
+            that.getCommicateCont()
+            that.commitComent = ''
+            $('.showFileName').html('')
+            $('#myfile2').val('')
+            that.loading2 = false
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+            $('.showFileName').html('')
+            that.commitComent = ''
+            $('#myfile2').val('')
+            that.loading2 = false
+          }
+        })
+      } else {
+        that.$message({
+          type: 'error',
+          message: '备注不能为空！'
+        })
+        that.loading2 = false
+      }
     }
   }
 }
@@ -697,6 +851,7 @@ export default {
   }
   .tabsSelectTagBox{
     display: flex;
+    line-height: 40px;
     justify-content: space-between;
   }
   .tabsSelectTagLeft{
@@ -1126,7 +1281,7 @@ export default {
   /**/
   .responseArea{
     height: 0px;
-    padding-top: 10px;
+    /*padding-top: 10px;*/
     overflow: hidden;
     transition: height 0.5s;
   }

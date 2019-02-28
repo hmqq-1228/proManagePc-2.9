@@ -28,6 +28,10 @@
                   <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
+              <el-menu-item v-for="(name, index2) in proManageName2" :index="JSON.stringify(index2)" v-bind:key="name.projectUID" @click="getProjectDetail(name.projectUID, 1,name.projectName, name.projectName)">
+                <i class="el-icon-menu"></i>
+                <span slot="title">{{name.projectName}}</span>
+              </el-menu-item>
               <!--<el-submenu index="2">-->
                 <!--<template slot="title">-->
                   <!--<i class="el-icon-menu"></i>-->
@@ -59,6 +63,10 @@ export default {
   data () {
     return {
       proManageName: '',
+      proManageName2: [
+        {projectName: '我的日程', projectUID: 's012'},
+        {projectName: '我的动态', projectUID: 's013'},
+        {projectName: '我的任务', projectUID: 's014'}],
       proId: '',
       nav: 1
     }
@@ -70,21 +78,22 @@ export default {
     getProManageMenu: function () {
       var that = this
       that.ajax('/leader/getProjectList', {}).then(res => {
+        console.log('muneue', res)
         if (res.code === 200) {
-          var obj = {
-            projectList: [
-              {projectName: '我的日程', projectUID: 's012'}
-            ],
-            projectType: '我的日程'
-          }
-          var obj2 = {
-            projectList: [
-              {projectName: '我的动态', projectUID: 's013'}
-            ],
-            projectType: '我的动态'
-          }
-          res.data.push(obj)
-          res.data.push(obj2)
+          // var obj = {
+          //   projectList: [
+          //     {projectName: '我的日程', projectUID: 's012'}
+          //   ],
+          //   projectType: '我的日程'
+          // }
+          // var obj2 = {
+          //   projectList: [
+          //     {projectName: '我的动态', projectUID: 's013'}
+          //   ],
+          //   projectType: '我的动态'
+          // }
+          // res.data.push(obj)
+          // res.data.push(obj2)
           that.proManageName = res.data
           console.log('proManageName', that.proManageName)
           if (res.data[0].projectType === '集团战略') {
@@ -107,6 +116,8 @@ export default {
           this.$router.push('/Schedule')
         } else if (proName === '我的动态') {
           this.$router.push('/MyDep')
+        } else if (proName === '我的任务') {
+          this.$router.push('/MyTask')
         }
       }
       // console.log('nav:2:', this.nav)
@@ -192,5 +203,12 @@ padding: 8px 20px;
 }
 .ivu-timeline-item-content{
     padding: 1px 1px 0 24px !important;
+}
+  .searchItem .el-input__inner{
+    height: 30px;
+    line-height: 30px;
+  }
+.searchItem .el-input__icon{
+  line-height: 30px;
 }
 </style>
