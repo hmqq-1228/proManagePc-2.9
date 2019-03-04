@@ -9,7 +9,13 @@ const install = function (Vue, options) {
       postData.payload.userId = store.state.userId
       postData.payload = JSON.stringify(postData.payload)
     } else {
-      postData.userId = store.state.userId
+      if (typeof postData === 'string') {
+        var zzPostData = JSON.parse(postData)
+        zzPostData.userId = store.state.userId
+        postData = JSON.stringify(zzPostData)
+      } else {
+        postData.userId = store.state.userId
+      }
     }
     baseurl = store.state.baseServiceUrl + actionName
     return $.ajax({
