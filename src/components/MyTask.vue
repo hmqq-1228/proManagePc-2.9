@@ -100,7 +100,7 @@
       </el-col>
       <el-col :span="3">
         <el-select v-model="optionsValue3" placeholder="请选择" @change="taskOfProject($event)">
-          <el-option label="全部" value=""></el-option>
+          <el-option label="全部项目" value=""></el-option>
           <el-option
             v-for="item in projectList"
             :key="item.projectUID"
@@ -679,15 +679,15 @@ export default {
       },
       optionsTask: [{
         value: '2',
-        label: '我负责的'
+        label: '我负责的任务'
       }, {
         value: '3',
-        label: '我发起的'
+        label: '我发起的任务'
       }],
       optionsValue: '2',
       optionsTask2: [{
         value: '',
-        label: '全部'
+        label: '全部任务'
       }, {
         value: 'today',
         label: '今日任务'
@@ -2566,7 +2566,7 @@ export default {
     margin-top: 20px;
   }
   .searchItem{
-    padding: 0 20px;
+    margin: 0 20px;
     height: 50px;
     line-height: 50px;
     background-color: #f5f5f8;
