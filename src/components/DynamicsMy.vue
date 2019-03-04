@@ -81,7 +81,8 @@
               </div>
               <div class="tabsTaskCntRight">
                 <div class="TaskManager">负责人：<span>{{taskItem.userName}}</span></div>
-                <div class="TaskManager" v-if="taskItem.overDay>0?true:false">{{taskItem.statusStr}}：<span>{{taskItem.overDay}}天</span></div>
+                <div class="TaskManager" style="text-align: right;" v-if="taskItem.dayNum >= 0"> 剩余<span style="color: #13ce66;font-size: 18px;"> {{taskItem.dayNum}} </span>天</div>
+                <div class="TaskManager" style="text-align: right;" v-if="taskItem.dayNum < 0"> 逾期<span style="color: #f00;font-size: 18px;"> {{Math.abs(taskItem.dayNum)}} </span>天</div>
               </div>
             </div>
             <div class="fengeline">
@@ -92,7 +93,7 @@
             <div class="timeLine">
               <div class="timeLineTitle">全部操作</div>
               <div class="timeLineCnt">
-                <div class="timeLineItem" v-for="logs in taskItem.logPage" :key="logs.keyid" v-bind:class="logs.logStyle">
+                <div class="timeLineItem" v-for="(logs, index8) in taskItem.logPage" :key="logs.keyid + '-' + index8" v-bind:class="logs.logStyle">
                   <div class="timeLineItemLeft">
                     <div class="timeLineItemYear" v-if="logs.logtype">{{logs.logtype}}年<div class="yearTagBgArrow"></div></div>
                     <div class="timeLineItemTime" v-if="!logs.logtype">{{logs.mondate}}<span>{{logs.houMin}}</span></div>
@@ -132,7 +133,7 @@
           </div>
           <!---->
           <div class="tabsCntResponse">
-            <div class="responseItem" v-for="commonItem in taskItem.commentPage.list" :key="commonItem.id">
+            <div class="responseItem" v-for="(commonItem, index9) in taskItem.commentPage.list" :key="commonItem.id + '-' + index9">
               <div class="responseHeadPicBox">
                 <div class="responseHeadPic">{{commonItem.customer_name?commonItem.customer_name.substring(0,1):'某'}}</div>
               </div>

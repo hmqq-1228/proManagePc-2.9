@@ -3,12 +3,12 @@
     <el-main>
       <div class="el-main-box">
         <div class="el-main-left">
-          <div class="contentTop">
+          <div class="contentTop"  v-loading="loading3">
             <div class="paiTaskTitTab">
               <div class="paiTask pai active" v-on:click="testValue9()">派任务</div>
               <!--<div class="paiTask share">发分享(@Ta)</div>-->
             </div>
-            <div class="paiTaskIptBox" v-loading="loading3">
+            <div class="paiTaskIptBox">
               <div class="paiTaskIptLeft">
                 <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
                 <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" v-on:blur="iptBlur()" type="text" placeholder="请输入您要安排的任务" /></div>
@@ -52,10 +52,15 @@
             <div class="taskFileUpload">
               <div class="fileUploadCao">
                 <div class="selectLeft">
-                  <form id="uploadFile" enctype="multipart/form-data">
+                  <form style="height: 30px;" id="uploadFile" enctype="multipart/form-data">
                     <input type="file" v-on:change="fileChange" id="myfile" name="myfile" placeholder="请选择文件"/><br><br>
                       <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
                   </form>
+                  <div style="margin-top: 8px;">
+                    <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
+                    <span style="color: #888;" v-if="fileList.length === 0">暂无附件</span>
+                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                  </div>
                 </div>
                 <div class="selectRight">
                   <div class="selectMoreInfo" v-on:click="moreClick()">
@@ -178,6 +183,7 @@ export default {
   data () {
     return {
       // 默认指派
+      fileList: [],
       defImplementerName: '李四',
       defImplementer: {
         name: '张三',
@@ -509,6 +515,14 @@ export default {
     depSub: function () {
       var that = this
       that.loading3 = true
+      var fileStr = ''
+      for (var j = 0; j < this.fileList.length; j++) {
+        if (j === that.fileList.length - 1) {
+          fileStr = fileStr + that.fileList[j].attachmentId
+        } else {
+          fileStr = fileStr + that.fileList[j].attachmentId + ','
+        }
+      }
       // 如果有任务名
       if (that.taskNameText) {
         // value9有值
@@ -525,7 +539,7 @@ export default {
           // value9没有值，取默认
           selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
-        that.CommunityTaskPayload.attachmentId = that.attachmentId
+        that.CommunityTaskPayload.attachmentId = fileStr
         that.CommunityTaskPayload.pStr = selectUserStr
         that.CommunityTaskPayload.jobName = that.taskNameText
         that.CommunityTaskPayload.startTime = that.selDateStart
@@ -541,6 +555,7 @@ export default {
             })
             // 清空发动态的表单
             that.clearDynamicsForm()
+            that.fileList = []
           } else {
             that.$message({
               message: res.msg,
@@ -645,8 +660,11 @@ export default {
         }).then(function (data) {
           that.log('upload:', data)
           if (data.code === 200) {
-            that.attachmentId = data.data.attachmentId
-            that.log('attachmentId:', data.data.attachmentId)
+            var obj = {
+              attachmentId: data.data.attachmentId,
+              fileName: data.data.showName
+            }
+            that.fileList.push(obj)
             that.$message({
               type: 'success',
               message: '文件' + data.msg

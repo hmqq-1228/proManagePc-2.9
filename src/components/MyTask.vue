@@ -128,6 +128,8 @@
               <Icon type="md-alarm" size="18"/>
               <span style="padding-left: 8px;float: right;margin-top: 2px;">{{myTask.taskStartDate.split(' ')[0]}} - {{myTask.taskFinishDate.split(' ')[0]}}</span>
             </div>
+            <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum < 0">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(myTask.dayNum)}}</span> 天</div>
+            <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum >= 0">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{myTask.dayNum}}</span> 天</div>
           </div>
           <div v-bind:class="'taskTag'+ myTask.status">{{myTask.statusStr}}</div>
         </div>
