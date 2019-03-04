@@ -331,9 +331,11 @@
       <div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">
         <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
         <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
-        <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
         <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
         <Button type="info" @click="taskToDevided()">任务分解</Button>
+      </div>
+      <div class="cannetProject" v-if="taskBasicMsg.isRestart">
+        <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
       </div>
       <div class="cannetProject1" v-if="toShowDevided">
         <div style="display: inline-block"><img src="../../static/img/delTask.png" alt=""><span>任务分解</span></div>
@@ -905,7 +907,7 @@ export default {
       this.dialogManage('selectUserDiaShow')
     },
     selectUserDiaShow2: function (newQuestion, oldQuestion) {
-      this.dialogManage2('selectUserDiaShow')
+      this.dialogManage2('selectUserDiaShow2')
     },
     // 监听日期选择 触发悬浮窗管理
     selectDateDiaShow: function (newQuestion, oldQuestion) {
@@ -1026,6 +1028,8 @@ export default {
               that.modifyTaskVisible = false
               that.loadingEdit = false
               that.toDetail(that.taskId2)
+              that.getHistoryList()
+              that.queryMyTaskView()
             } else {
               that.loadingEdit = false
             }
@@ -1455,6 +1459,7 @@ export default {
             })
             that.queryMyTaskView()
             // 清空发动态的表单
+            that.getHistoryList()
             that.clearDynamicsForm2()
           } else {
             that.$message({
@@ -1825,6 +1830,7 @@ export default {
             that.log('delPlanOrTask:', res)
             that.value4 = false
             that.queryMyTaskView()
+            that.getHistoryList()
           }
         }).catch(() => {
           // that.loading = false
@@ -1844,6 +1850,7 @@ export default {
             that.log('delPlanOrTask:', res)
             that.getTaskChildList(id)
             that.queryMyTaskView()
+            that.getHistoryList()
           }
         }).catch(() => {
           // that.loading = false
@@ -1864,6 +1871,7 @@ export default {
             that.log('dealTask:', res)
             that.toDetail(id)
             that.queryMyTaskView()
+            that.getHistoryList()
           }
         })
       }).catch(() => {
@@ -1954,6 +1962,7 @@ export default {
           that.log('myTaskView:', res)
           that.toDetail(that.taskId2)
           that.queryMyTaskView()
+          that.getHistoryList()
           that.commitComentF = ''
           that.fileListFinish = []
           $('.showFileName2').html('')
@@ -2050,6 +2059,7 @@ export default {
         if (res.code === 200) {
           that.toDetail(that.taskId2)
           that.queryMyTaskView()
+          that.getHistoryList()
           that.value4 = false
           that.loading11 = false
           that.taskTransferVisible = false
@@ -2160,6 +2170,7 @@ export default {
             this.log('restartTask', res)
             that.toDetail(id)
             that.queryMyTaskView()
+            that.getHistoryList()
           }
         })
       }).catch(() => {
