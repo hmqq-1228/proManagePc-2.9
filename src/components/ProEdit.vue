@@ -54,7 +54,7 @@
       <div class="devide">
         <div class="proTreeHeader">
           <div>项目详情</div>
-          <div><Button size="small" type="primary" v-on:click="addNode(activeId)">+ 计划 / 任务</Button></div>
+          <div v-if="planList.length > 0"><Button size="small" type="primary" v-on:click="addNode(activeId)">+ 计划 / 任务</Button></div>
         </div>
       </div>
       <!--项目计划树 start-->
@@ -490,6 +490,7 @@
         <div class="cannetProject" v-if="taskBasicMsg.isRestart">
           <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
         </div>
+        <!-- 任务分解 -->
         <div style="position: relative;width: 90%;margin-left: 10px;" v-if="toShowDevided">
           <div v-loading="loading32">
             <div class="paiTaskIptBox" style="position: relative;">
@@ -512,7 +513,7 @@
                     <el-date-picker
                       v-model="selDateStart2"
                       type="datetime"
-                      :picker-options="pickerOptions0"
+                      :picker-options="pickerOptions3"
                       value-format="yyyy-MM-dd HH:mm:ss"
                       placeholder="选择开始时间">
                     </el-date-picker>
@@ -522,7 +523,7 @@
                     <el-date-picker
                       v-model="selDateEnd2"
                       type="datetime"
-                      :picker-options="pickerOptions0"
+                      :picker-options="pickerOptions3"
                       value-format="yyyy-MM-dd HH:mm:ss"
                       placeholder="选择结束时间">
                     </el-date-picker>
@@ -585,6 +586,7 @@
             </div>
           </div>
         </div>
+        <!-- 任务分解 end -->
         <div class="cannetProject1">
           <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务</span></div>
         </div>
@@ -671,6 +673,73 @@
           </div>
         </div>
       </Drawer>
+      <!--/ 任务完成/-->
+      <el-dialog title="任务完成" :visible.sync="taskFinishedVisible" width="25%">
+        <div class="el-textarea" v-loading="loading9" style="margin-top: 0">
+          <textarea name="remark" class="el-textarea__inner" id="textAreaF" type="text" v-model="commitComentF"></textarea>
+          <!--<div class="cannetProject2">-->
+          <div style="display: inline-block">
+            <form id="uploadFileRe2" enctype="multipart/form-data">
+              <img src="../../static/img/fujian.png" alt="">
+              <a href="javascript:;" class="file">选择文件
+                <input type="file" name="myfile" id="myfileF" @change="getFileNameFinished">
+              </a>
+              <!--<input type="hidden" name="taskId" v-bind:value="taskId2">-->
+              <!--<input type="hidden" name="rtype" v-bind:value="3">-->
+              <span class="showFileName2"></span>
+            </form>
+            <div>
+              <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListFinish.length}}</span> 个附件:</span>
+              <span style="color: #888;" v-if="fileListFinish.length === 0">暂无附件</span>
+              <span style="color: #409EFF" v-if="fileListFinish.length > 0" v-for="(file, index) in fileListFinish" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+            </div>
+          </div>
+          <div slot="footer" class="dialog-footer" style="text-align: center;">
+            <i-button @click="concelFinished()">取消</i-button>
+            <i-button type="info" v-bind:disabled="butnDisabledF" @click="confirmFinished()">确定</i-button>
+          </div>
+          <!--</div>-->
+        </div>
+      </el-dialog>
+      <!--任务移交-->
+      <el-dialog title="任务移交" :visible.sync="taskTransferVisible" width="26%">
+        <div v-loading="loading11">
+          <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
+          <el-autocomplete style="width:90%"
+                           v-model="projectManager"
+                           :fetch-suggestions="querySearchAsync2"
+                           placeholder="请输入移交人姓名"
+                           :trigger-on-focus="false"
+                           @select="handleSelect2"
+          ></el-autocomplete>
+          <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交备注：</div>
+          <textarea name="remark" class="el-textarea__inner" id="Transfer" type="text" v-model="commitComentT"></textarea>
+          <!--<div class="cannetProject2">-->
+          <div style="display: inline-block">
+            <form id="taskTransfer" enctype="multipart/form-data">
+              <img src="../../static/img/fujian.png" alt="">
+              <a href="javascript:;" class="file">选择文件
+                <input type="file" name="myfile" id="myfileTransfer" @change="getFileNameTran">
+              </a>
+              <span class="showFileNameTran"></span>
+            </form>
+            <!--<input type="hidden" name="taskId" v-bind:value="taskId2">-->
+            <!--<input type="hidden" name="transferUserId" v-bind:value="transferUserId">-->
+            <!--<input type="hidden" name="transferUserName" v-bind:value="transferUserName">-->
+            <!--<input type="hidden" name="rtype" v-bind:value="3">-->
+            <div>
+              <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListTrans.length}}</span> 个附件:</span>
+              <span style="color: #888;" v-if="fileListTrans.length === 0">暂无附件</span>
+              <span style="color: #409EFF" v-if="fileListTrans.length > 0" v-for="(file, index) in fileListTrans" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+            </div>
+          </div>
+          <div slot="footer" class="dialog-footer" style="text-align: center;">
+            <i-button @click="concelTransfer()">取消</i-button>
+            <i-button type="info" v-bind:disabled="butnDisabledT" @click="taskTransfer()">确定</i-button>
+          </div>
+        </div>
+        <!--</div>-->
+      </el-dialog>
       <!--任务详情 end-->
       <!--<div class="block">-->
         <!--<el-tree-->
@@ -726,6 +795,45 @@ export default {
   name: 'ProEdit',
   data () {
     return {
+      moreUserSelectPayload2: {
+        projectManager: ''
+      },
+      tranManageArr2: ['taskLevelHeight2'],
+      options42: [],
+      moreText2: '更多',
+      moreIcon2: 'el-icon-arrow-down',
+      fileList2: [],
+      defImplementer: {
+        name: '张三',
+        id: ''
+      },
+      taskNameText2: '',
+      taskLevelLeft2: '',
+      taskLevelTop2: '',
+      taskLevelHeight2: 0,
+      taskIntro2: '',
+      taskRelationShow2: false,
+      levelValue2: 3,
+      selDateEnd2: '',
+      pickerOptions3: {},
+      selDateStart2: '',
+      selectDateDiaShow2: false,
+      loading22: false,
+      selectUserDiaShow2: false,
+      loading32: false,
+      butnDisabledT: true,
+      fileListTrans: [],
+      commitComentT: '',
+      projectManager: '',
+      loading11: false,
+      // 任务移交
+      taskTransferVisible: false,
+      butnDisabledF: true,
+      fileListFinish: [],
+      commitComentF: '',
+      loading9: false,
+      // 任务完成
+      taskFinishedVisible: false,
       // 任务详情 start
       fileListComment: [],
       childTaskList: [],
@@ -826,6 +934,19 @@ export default {
         description: '',
         jobLevel: 1,
         users: []
+      },
+      // 任务分解
+      taskForm2: {
+        jobName: '',
+        userName: '',
+        jobLevel: 3,
+        date1: '',
+        date2: '',
+        state2: '',
+        value9: [],
+        value8: [],
+        description: '',
+        taskUserId: ''
       },
       // 增加任务 表单
       addTaskForm: {
@@ -1002,6 +1123,21 @@ export default {
         endDate: '',
         desc: ''
       },
+      // 任务开始
+      CommunityTaskPayload2: {
+        projectUID: '1',
+        uid: '1',
+        pStr: '',
+        attachmentId: '',
+        description: '',
+        jobName: '',
+        jobLevel: 3,
+        startTime: '',
+        endTime: '',
+        userId: '',
+        _jfinal_token: '',
+        userName: ''
+      },
       ruleValidate: {
         proName: [
           { required: true, message: '请输入项目名字', trigger: 'blur' }
@@ -1037,6 +1173,7 @@ export default {
     this.getProjectDetail()
     // 调用新接口 获取项目详情
     this.queryProDetail()
+    this.getUserInfo()
     // this.setRouterNameList = this.$store.state.routerList
     // console.log('setRouterNameList', this.setRouterNameList)
   },
@@ -1073,6 +1210,29 @@ export default {
       this.formValidate.proType = newVal.projectType
       this.formValidate.startDate = newVal.startDate
       this.formValidate.endDate = newVal.endDate
+    },
+    commitComentF: function (val, oVal) {
+      if (val) {
+        this.butnDisabledF = false
+      } else {
+        this.butnDisabledF = true
+      }
+    },
+    taskTransferVisible: function (val, oVal) {
+      if (val === false) {
+        this.projectManager = ''
+        this.commitComentT = ''
+        this.fileListTrans = []
+        $('#myfileTransfer').val('')
+        $('.showFileNameTran').html('')
+      }
+    },
+    projectManager: function (val, oVal) {
+      if (val) {
+        this.butnDisabledT = false
+      } else {
+        this.butnDisabledT = true
+      }
     }
   },
   methods: {
@@ -1671,14 +1831,11 @@ export default {
           that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
           that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
           that.planList = res.data.planOrJobList
-          that.log(6666666)
           if (res.data.planOrJobList.length > 0) {
-            that.log(88888)
             that.activeId = res.data.planOrJobList[0].id
           } else {
             that.activeId = ''
           }
-          that.log('走了走了走了走了走了走了走了')
           that.selectProjectId()
         }
       })
@@ -1737,19 +1894,21 @@ export default {
         that.value4 = true
         that.getCommicateCont()
         that.getHistoryList()
-        that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
-          if (res.code === 200) {
-            that.taskBasicMsg = res.data
-            that.rid = res.data.uid
-            if (that.isImage(res.data.showName)) {
-              res.data.isImg = true
-            } else {
-              res.data.isImg = false
-            }
-            that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
-            that.resetScro()
-          }
-        })
+        that.toDetail(data.id)
+        // that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
+        //   that.log('getTaskBasic:', res)
+        //   if (res.code === 200) {
+        //     that.taskBasicMsg = res.data
+        //     that.rid = res.data.uid
+        //     if (that.isImage(res.data.showName)) {
+        //       res.data.isImg = true
+        //     } else {
+        //       res.data.isImg = false
+        //     }
+        //     that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
+        //     that.resetScro()
+        //   }
+        // })
       }
     },
     // showImagePre: function () {
@@ -1916,6 +2075,571 @@ export default {
         that.$message({
           type: 'error',
           message: '评论内容不能为空'
+        })
+      }
+    },
+    // 任务开始 开始任务
+    startTask: function (id) {
+      var that = this
+      console.log('id', id)
+      that.$confirm('确定后将开始此任务，确定开始？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/general/dealTask', {taskId: id}).then(res => {
+          if (res.code === 200) {
+            that.log('dealTask:', res)
+            that.toDetail()
+            that.selectProjectId()
+            that.getHistoryList()
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消开始'
+        })
+      })
+    },
+    // 任务完成 完成任务
+    finishedTask: function () {
+      var that = this
+      that.taskFinishedVisible = true
+    },
+    getFileNameFinished: function () {
+      var that = this
+      var filePath = $('#myfileF').val()
+      var arr = filePath.split('\\')
+      var fileName = arr[arr.length - 1]
+      $('.showFileName2').html(fileName)
+      if (filePath) {
+        that.addMarkInfo5()
+      }
+    },
+    concelFinished: function () {
+      var that = this
+      that.taskFinishedVisible = false
+      that.commitComentF = ''
+      $('.showFileName2').html('')
+      $('#myfileF').val('')
+    },
+    confirmFinished () {
+      var that = this
+      var fileStr = ''
+      that.loading9 = true
+      for (var j = 0; j < this.fileListFinish.length; j++) {
+        if (j === that.fileListFinish.length - 1) {
+          fileStr = fileStr + that.fileListFinish[j].attachmentId
+        } else {
+          fileStr = fileStr + that.fileListFinish[j].attachmentId + ','
+        }
+      }
+      that.ajax('/myTask/finishTask', {remark: that.commitComentF, attachmentId: fileStr, taskId: that.taskId}).then(res => {
+        if (res.code === 200) {
+          that.log('myTaskView:', res)
+          that.toDetail()
+          that.selectProjectId()
+          that.getHistoryList()
+          that.commitComentF = ''
+          that.fileListFinish = []
+          $('.showFileName2').html('')
+          $('#myfileF').val('')
+          that.taskFinishedVisible = false
+          that.loading9 = false
+        }
+      })
+    },
+    addMarkInfo5 () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileRe2')[0])
+      if (formData) {
+        $.ajax({
+          type: 'post',
+          url: url + '/file/uploadFileAjax',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          that.log('upload:', data)
+          if (data.code === 200) {
+            // that.attachmentId2 = data.data.attachmentId
+            var obj = {
+              attachmentId: data.data.attachmentId,
+              fileName: data.data.showName
+            }
+            that.fileListFinish.push(obj)
+            // that.log('attachmentId:', data.data.attachmentId2)
+            that.$message({
+              type: 'success',
+              message: '文件' + data.msg
+            })
+          } else if (data.code === 300) {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          }
+        })
+      } else {
+        // that.loading = false
+        that.$message({
+          type: 'error',
+          message: '评论内容不能为空'
+        })
+      }
+    },
+    transferTask: function () {
+      var that = this
+      that.taskTransferVisible = true
+    },
+    querySearchAsync2 (queryString, cb) {
+      var that = this
+      if (queryString) {
+        that.projectManager = queryString
+        this.ajax('/general/autoCompleteNames', {projectManager: that.projectManager}).then(res => {
+          if (res.code === 200) {
+            var dddarr = []
+            if (res.msg.length > 0) {
+              for (var i = 0; i < res.msg.length; i++) {
+                var obj = {}
+                obj.value = res.msg[i].Name + ' (' + res.msg[i].jName + ')'
+                obj.userId = res.msg[i].ID
+                // obj.jName = res.msg[i].jName
+                dddarr.push(obj)
+              }
+              // 调用 callback 返回建议列表的数据
+              cb(dddarr)
+            } else {
+              var aaaddd = []
+              that.$message('未能搜索到该人员')
+              cb(aaaddd)
+            }
+          }
+        })
+      }
+    },
+    handleSelect2 (item) {
+      this.transferUserId = item.userId
+      this.transferUserName = item.value
+    },
+    getFileNameTran: function () {
+      var that = this
+      var filePath = $('#myfileTransfer').val()
+      var arr = filePath.split('\\')
+      var fileName = arr[arr.length - 1]
+      $('.showFileNameTran').html(fileName)
+      if (filePath) {
+        that.addMarkInfo6()
+      }
+    },
+    addMarkInfo6 () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#taskTransfer')[0])
+      if (formData) {
+        $.ajax({
+          type: 'post',
+          url: url + '/file/uploadFileAjax',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          that.log('upload:', data)
+          if (data.code === 200) {
+            // that.attachmentId2 = data.data.attachmentId
+            var obj = {
+              attachmentId: data.data.attachmentId,
+              fileName: data.data.showName
+            }
+            that.fileListTrans.push(obj)
+            // that.log('attachmentId:', data.data.attachmentId2)
+            that.$message({
+              type: 'success',
+              message: '文件' + data.msg
+            })
+          } else if (data.code === 300) {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          }
+        })
+      } else {
+        // that.loading = false
+        that.$message({
+          type: 'error',
+          message: '评论内容不能为空'
+        })
+      }
+    },
+    taskTransfer () {
+      var that = this
+      var fileStr = ''
+      that.loading11 = true
+      for (var j = 0; j < this.fileListTrans.length; j++) {
+        if (j === that.fileListTrans.length - 1) {
+          fileStr = fileStr + that.fileListTrans[j].attachmentId
+        } else {
+          fileStr = fileStr + that.fileListTrans[j].attachmentId + ','
+        }
+      }
+      that.ajax('/myTask/transferTask', {remark: that.commitComentT, attachmentId: fileStr, taskId: that.taskId, transferUserId: that.transferUserId, transferUserName: that.transferUserName}).then(res => {
+        if (res.code === 200) {
+          that.toDetail()
+          that.selectProjectId()
+          that.getHistoryList()
+          that.value4 = false
+          that.loading11 = false
+          that.taskTransferVisible = false
+          $('#myfileTransfer').val('')
+          $('.showFileNameTran').html('')
+          that.projectManager = ''
+          that.commitComentT = ''
+          that.fileListTrans = []
+        } else {
+          that.$message({
+            type: 'error',
+            message: res.msg
+          })
+          that.loading11 = false
+        }
+      })
+    },
+    // 重启
+    isReStartTask: function (id) {
+      var that = this
+      that.$confirm('是否确定重启此任务?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/general/restartTask', {taskId: id}).then(res => {
+          if (res.code === 200) {
+            this.log('restartTask', res)
+            that.toDetail()
+            that.selectProjectId()
+            that.getHistoryList()
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
+    taskToDevided: function () {
+      var that = this
+      that.toShowDevided = true
+      // that.taskRelationShow2 = false
+    },
+    selectUserClick2: function () {
+      this.selectUserDiaShow2 = false
+      this.log(this.taskForm2.value9)
+    },
+    selectDateCancel2: function () {
+      this.selectDateDiaShow2 = false
+    },
+    selectDateOk2: function () {
+      var that = this
+      var st = new Date(that.selDateStart2).getTime()
+      var et = new Date(that.selDateEnd2).getTime()
+      if (st > et) {
+        that.$message.warning('开始时间不能大于结束时间')
+      } else {
+        this.selectDateDiaShow2 = false
+      }
+    },
+    rateMouseLeave2: function () {
+      // this.alert(1)
+      this.taskLevelHeight2 = 0
+    },
+    inputFocus2: function () {
+      var that = this
+      // this.taskRelationShow2 = true
+      if (that.moreText2 === '更多') {
+        that.moreText2 = '收起'
+        this.moreIcon2 = 'el-icon-arrow-up'
+        this.taskRelationShow2 = true
+      } else {
+        that.moreText2 = '更多'
+        this.moreIcon2 = 'el-icon-arrow-down'
+        this.taskRelationShow2 = false
+      }
+    },
+    iptBlur2: function () {
+      // this.taskRelationShow = false
+    },
+    selectDate2: function (e) {
+      // 所有的伸缩窗 隐藏
+      this.transitionManage2('', true)
+      if (e) {
+        var obj = e.currentTarget
+        this.selectDateDiaShow2 = true
+        this.selectDateLeft2 = $(obj).offset().left - 420
+        this.selectDateTop2 = $(obj).offset().top - 102
+      }
+      // this.log(123)
+    },
+    selectLevel2: function (e) {
+      var obj = e.currentTarget
+      this.taskLevelLeft2 = $(obj).offset().left - 165
+      this.taskLevelTop2 = $(obj).offset().top + 32
+      this.taskLevelHeight2 = 46
+      // 其它悬浮窗为隐藏状态
+      this.dialogManage2('', true)
+    },
+    fileChange2: function (file) {
+      var that = this
+      var obj = file.currentTarget
+      var isfile = $(obj).val()
+      if (isfile) {
+        that.addMarkInfo3()
+      }
+      this.log('change了', file)
+    },
+    moreClick2: function () {
+      var that = this
+      if (that.moreText2 === '更多') {
+        that.moreText2 = '收起'
+        this.moreIcon2 = 'el-icon-arrow-up'
+        this.taskRelationShow2 = true
+      } else {
+        that.moreText2 = '更多'
+        this.moreIcon2 = 'el-icon-arrow-down'
+        this.taskRelationShow2 = false
+      }
+    },
+    depSub2: function () {
+      var that = this
+      that.loading32 = true
+      var fileStr = ''
+      for (var j = 0; j < this.fileList2.length; j++) {
+        if (j === that.fileList2.length - 1) {
+          fileStr = fileStr + that.fileList2[j].attachmentId
+        } else {
+          fileStr = fileStr + that.fileList2[j].attachmentId + ','
+        }
+      }
+      // 如果有任务名
+      if (that.taskNameText2) {
+        // value9有值
+        var selectUserStr = ''
+        if (that.taskForm2.value9.length > 0) {
+          for (var i = 0; i < that.taskForm2.value9.length; i++) {
+            if (i === 0) {
+              selectUserStr = that.taskForm2.value9[0]
+            } else {
+              selectUserStr = selectUserStr + '_' + that.taskForm2.value9[i]
+            }
+          }
+        } else {
+          // value9没有值，取默认
+          selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
+        }
+        that.CommunityTaskPayload2.attachmentId = fileStr
+        that.CommunityTaskPayload2.pStr = selectUserStr
+        that.CommunityTaskPayload2.jobName = that.taskNameText2
+        that.CommunityTaskPayload2.startTime = that.selDateStart2
+        that.CommunityTaskPayload2.endTime = that.selDateEnd2
+        that.CommunityTaskPayload2.description = that.taskIntro2
+        that.CommunityTaskPayload2._jfinal_token = that.token
+        that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
+          if (res.code === 200) {
+            that.isRecall2 = that.isRecall2 + 1
+            that.token = res._jfinal_token
+            that.$message({
+              message: '任务创建成功',
+              type: 'success'
+            })
+            that.toDetail()
+            that.selectProjectId()
+            that.getHistoryList()
+            // 清空发动态的表单
+            that.clearDynamicsForm2()
+          } else {
+            that.$message({
+              message: res.msg,
+              type: 'warning'
+            })
+          }
+          that.loading32 = false
+        })
+      } else {
+        that.$message({
+          message: '请填写动态任务名',
+          type: 'warning'
+        })
+        that.loading32 = false
+      }
+    },
+    cancelDevide: function () {
+      var that = this
+      that.taskRelationShow2 = false
+      that.toShowDevided = false
+      that.clearDynamicsForm2()
+    },
+    getUserInfo: function () {
+      var that = this
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
+        if (res.code === 200) {
+          that.log('getUserInfo', res)
+          that.defImplementer.name = res.data.Name
+          that.defImplementer.id = res.data.ID
+        }
+      })
+    },
+    selectUser2: function (e) {
+      // 时间弹窗 与 人员选择弹窗 不共存  selectUserDiaShow selectDateDiaShow
+      // this.selectDateDiaShow = false
+      var obj = e.currentTarget
+      this.selectUserDiaShow2 = true
+      this.selectUserLeft2 = $(obj).offset().left
+      this.selectUserTop2 = $(obj).offset().top
+      // 所有的伸缩窗 隐藏
+      this.transitionManage2('', true)
+    },
+    transitionManage2: function (target, allTranHide) {
+      var that = this
+      if (!allTranHide) {
+        if (that[target]) {
+          for (var i = 0; i < that.tranManageArr2.length; i++) {
+            if (that.tranManageArr2[i] !== target) {
+              that[that.tranManageArr2[i]] = 0
+            }
+          }
+        }
+      } else if (allTranHide) {
+        // allDiaHide为true (即:所有悬浮窗隐藏)
+        for (var t = 0; t < that.tranManageArr2.length; t++) {
+          that[that.tranManageArr2[t]] = 0
+        }
+      }
+    },
+    remoteMethod2 (query) {
+      var that = this
+      this.log('query:', query)
+      if (query !== '') {
+        this.loading22 = true
+        that.moreUserSelectPayload2.projectManager = query
+        this.ajax('/general/autoCompleteNames', that.moreUserSelectPayload2).then(res => {
+          that.log('autoCompleteNames:', res)
+          if (res.code === 200) {
+            that.options42 = res.msg
+            this.loading22 = false
+          }
+        })
+      } else {
+        this.options42 = []
+      }
+    },
+    clearDynamicsForm2: function () {
+      this.taskNameText2 = ''
+      this.fileList2 = []
+      this.CommunityTaskPayload2.jobName = ''
+      this.CommunityTaskPayload2.taskStartDate = ''
+      this.CommunityTaskPayload2.taskFinishDate = ''
+      this.taskIntro2 = ''
+      this.CommunityTaskPayload2.description = ''
+      this.attachmentId2 = ''
+      this.CommunityTaskPayload2.formId = ''
+      this.taskForm2.value9 = []
+      this.levelValue2 = 3
+      $('#myfileDel').val('')
+      this.moreClick2()
+    },
+    // commitComentF: function (val, oVal) {
+    //   if (val) {
+    //     this.butnDisabledF = false
+    //   } else {
+    //     this.butnDisabledF = true
+    //   }
+    // },
+    toDetail: function (id) {
+      var that = this
+      if (id) {
+        that.getTaskChildList(id)
+        that.ajax('/myTask/queryTaskDetail', {taskId: id}).then(res => {
+          this.log('查看返回：', res)
+          if (res.code === 200) {
+            that.taskBasicMsg = res.data
+            that.rid = res.data.uid
+            that.selDateStart2 = res.data.taskStartDate
+            that.selDateEnd2 = res.data.taskFinishDate
+            that.CommunityTaskPayload2.projectUID = res.data.projectUID
+            that.CommunityTaskPayload2.uid = res.data.uid
+            var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
+            var et = res.data.taskFinishDate
+            var sT = new Date(st)
+            var eT = new Date(et)
+            that.disabledStarTime = sT.getTime()
+            that.disabledEndTime = eT.getTime()
+            that.pickerOptions3.disabledDate = function (time) {
+              return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
+            }
+            for (var n = 0; n < res.data.attachment.length; n++) {
+              res.data.attachment[n].downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.attachment[n].realUrl + '&showName=' + res.data.attachment[n].showName
+              if (that.isImage(res.data.attachment[n].showName)) {
+                res.data.attachment[n].isImg = true
+              } else {
+                res.data.attachment[n].isImg = false
+              }
+            }
+            that.resetScro()
+          }
+        })
+      } else {
+        that.getTaskChildList()
+        that.ajax('/myTask/queryTaskDetail', {taskId: that.taskId}).then(res => {
+          this.log('查看返回2：', res)
+          if (res.code === 200) {
+            that.taskBasicMsg = res.data
+            that.rid = res.data.uid
+            that.selDateStart2 = res.data.taskStartDate
+            that.selDateEnd2 = res.data.taskFinishDate
+            that.CommunityTaskPayload2.projectUID = res.data.projectUID
+            that.CommunityTaskPayload2.uid = res.data.uid
+            var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
+            var et = res.data.taskFinishDate
+            var sT = new Date(st)
+            var eT = new Date(et)
+            that.disabledStarTime = sT.getTime()
+            that.disabledEndTime = eT.getTime()
+            that.pickerOptions0.disabledDate = function (time) {
+              return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
+            }
+            for (var n = 0; n < res.data.attachment.length; n++) {
+              res.data.attachment[n].downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.attachment[n].realUrl + '&showName=' + res.data.attachment[n].showName
+              if (that.isImage(res.data.attachment[n].showName)) {
+                res.data.attachment[n].isImg = true
+              } else {
+                res.data.attachment[n].isImg = false
+              }
+            }
+            that.resetScro()
+          }
         })
       }
     }
@@ -2615,4 +3339,137 @@ export default {
    *                          任务详情 end
    * =================================================================
    */
+  /*任务分解*/
+  .paiTaskIptBox{
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border: 1px solid #dcdfe6;
+    padding-left: 8px;
+  }
+  .paiTaskIptLeft{
+    width: 250px;
+    display: flex;
+    flex-grow: 1;
+  }
+  .paiTaskIptIcon{
+    width: 20px;
+    font-size: 18px;
+    margin-right: 6px;
+  }
+  .paiTaskIptWrap{
+    width: 100%;
+    line-height: 27px;
+  }
+  .paiTaskIptWrap input{
+    width: 100%;
+    outline: none;
+    border: none;
+  }
+  .paiTaskIptRight{
+    _width: 165px;
+    display: flex;
+  }
+  .paiTaskIptRightIcon{
+    border-left: 1px dashed #ccc;
+    margin-right: 5px;
+    font-size: 18px;
+    padding-left: 5px;
+    color: #1687d9;
+  }
+  .paiTaskIptRightCnt{
+    cursor: pointer;
+    margin-right: 10px;
+    line-height: 25px;
+  }
+  .taskRelation{
+    border: 1px solid #a9b8bf;
+    border-top: none;
+  }
+  .relationIntroArea{
+    width: 100%;
+    height: 100px;
+    border: none;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: none;
+    display: block;
+  }
+  .taskFileUpload{
+    position: relative;
+  }
+  .depTaskLevel2{
+    width: 200px;
+    height: 0px;
+    text-align: center;
+    position: fixed;
+    overflow: hidden;
+    z-index: 300;
+    margin-top: -1px;
+    background-color: #fff;
+    transition: height 0.3s;
+  }
+  .rateBox{
+    padding: 12px;
+    border: 1px solid #a9b8bf;
+  }
+  .fileUploadCao{
+    display: flex;
+    justify-content: space-between;
+    background-color: #f5f8fa;
+    padding: 10px;
+  }
+  .selectLeft{
+    _line-height: 30px;
+  }
+  .selectRight{
+    width: 163px;
+    display: flex;
+  }
+  .selectRight2{
+    width: 210px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .selectMoreInfo{
+    line-height: 30px;
+  }
+  .submitBtn{
+    margin-left: 15px;
+  }
+  .submitBtn div {
+    width: 50px;
+    padding: 6px;
+    color: #fff;
+    border-radius: 4px;
+    text-align: center;
+    color: #adb8c0;
+    background-color: #e7eef3;
+  }
+  .selectDateDialog2{
+    _width: 300px;
+    padding: 0px 20px 20px 20px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .selectUserDialog2{
+    width: 300px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .selectUserBtn{
+    text-align: center;
+    margin-top: 20px;
+  }
+  .selectDateItem{
+    margin-top: 20px;
+  }
 </style>
