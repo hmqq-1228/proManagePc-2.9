@@ -11,7 +11,7 @@
           <el-row>
           <el-col :span="24">
             <el-menu
-              :default-active="proId"
+              default-active="0"
               class="el-menu-vertical-demo"
               background-color="#2f64a5"
               text-color="#fff"
@@ -48,6 +48,7 @@ export default {
   name: 'App',
   data () {
     return {
+      isCollapse: true,
       // 侧边栏 集团战略
       slideMenuGroup: [],
       // 非集团战略的侧边栏

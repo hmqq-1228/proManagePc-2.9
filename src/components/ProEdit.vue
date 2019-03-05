@@ -415,6 +415,7 @@
         </div>
       </Drawer>
       <!--新增 抽屉 查看历史记录 end-->
+      <!---->
       <!--新增 抽屉 任务详情 start-->
       <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
         <div class="slidTop">
