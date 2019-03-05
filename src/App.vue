@@ -93,6 +93,11 @@ export default {
               that.slideMenu.push(res.data[i])
             }
           }
+          if (that.slideMenuGroup.length > 0) {
+            that.getProjectDetail(that.slideMenuGroup[0].projectList[0].projectUID, '1', '集团战略')
+          } else {
+            // that.getProjectDetail(that.slideMenu[0].projectUID, '2', '', that.slideMenu[0].projectType)
+          }
           that.$store.commit('setRouterName', {name: res.data[0].projectList[0].projectName, id: res.data[0].projectList[0].projectUID, type: 1})
         }
       })
