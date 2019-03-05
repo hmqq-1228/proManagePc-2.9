@@ -3,7 +3,7 @@
     <div class="MyProCnt">
       <div class="MyProHeader">
         <div class="MyProHeaItem search">
-          <Input search enter-button placeholder="Enter something..." />
+          <Input search enter-button @on-search="searchPro" v-model="searchProVal" placeholder="请输入要查找的项目" />
         </div>
         <div class="MyProHeaItem addBtn"><Button type="primary" v-on:click="newAdd()">新增项目</Button></div>
       </div>
@@ -13,7 +13,7 @@
           <Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <Select v-model="model2" style="width:200px">
-          <Option v-for="item in selectList2" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          <Option v-for="item in proTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </div>
       <!--tabs 切换-->
@@ -26,8 +26,8 @@
         </Tabs>
       </div>
       <div class="content">
-        <div class="cntItem" v-for="item in projectViewData.list" :key="item.projectUID" @click="toProDetail(item.projectUID)">
-          <div class="cntItemLeft">
+        <div class="cntItem" v-for="item in projectViewData.list" :key="item.projectUID">
+          <div class="cntItemLeft" @click="toProDetail(item.projectUID)">
             <div class="proTit">项目名称: {{item.projectName}}</div>
             <div class="proPrincipals">负责人: {{item.projectManager}}</div>
             <div class="proDuration">{{item.startDate}} 至 {{item.endDate}}</div>
@@ -35,9 +35,13 @@
           <div class="cntItemRight">
             <div class="proType"><span>剩余时间: 3天</span><span>项目类型: {{item.projectType}}</span></div>
             <div class="proPregress">
-              <i-circle :percent="item.proportion" :size="70">
+              <i-circle :percent="item.proportion" :size="60">
                 <span class="demo-Circle-inner" style="font-size:24px">{{item.proportion}}%</span>
               </i-circle>
+            </div>
+            <div style="text-align: right; padding-right: 30px;">
+              <Button size="small" style="margin-left: 15px;" @click="responsePro(item.projectUID)">回复</Button>
+              <Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID)">删除</Button>
             </div>
             <div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
           </div>
@@ -64,7 +68,7 @@
       <Modal v-model="newAddDialog" title="新建项目" width="620" @on-ok="ok" @on-cancel="cancel">
         <div style="padding-bottom: 10px;">
           <el-row>
-            <el-col style="width: 286px; margin-right: 10px; margin-top: 10px;">
+            <el-col class="el-col-self" style="width: 286px; margin-top: 10px;">
               <el-card :body-style="{ padding: '0px' }" class="cartHover">
                 <div style="padding: 14px;" @click="openProCreatedForm()">
                   <div class="modelItem">
@@ -72,7 +76,6 @@
                     <el-tag type="danger" style="float: right">空白模板</el-tag>
                   </div>
                   <div class="modelPeo">
-                    <!--<div class="modelTime">项目周期：<span style="font-size: 14px">自定义</span></div>-->
                     <div class="button">创建人：管理员</div>
                   </div>
                   <div class="bottom clearfix">
@@ -81,7 +84,7 @@
                 </div>
               </el-card>
             </el-col>
-            <el-col style="width: 286px; margin-top: 10px;" v-for="(model, index) in modelList" v-bind:key="index">
+            <el-col class="el-col-self" style="width: 286px; margin-top: 10px;" v-for="(model, index) in modelList" v-bind:key="index">
               <el-card :body-style="{ padding: '0px' }" class="cartHover">
                 <div style="padding: 14px;" @click="openProCreatedForm(model.id)">
                   <div class="modelItem">
@@ -109,14 +112,16 @@
           </el-form-item>
           <el-form-item label="项目类型" prop="projectType">
             <!--<el-input v-model="ruleForm.projectType"></el-input>-->
-            <el-select style="width: 100%" v-model="ruleForm.projectType" placeholder="请选择项目类型">
-              <el-option label="集团战略" value="集团战略"></el-option>
-              <el-option label="公司项目" value="公司项目"></el-option>
-              <el-option label="部门项目" value="部门项目"></el-option>
-              <el-option label="小组项目" value="小组项目"></el-option>
-              <el-option label="个人项目" value="个人项目"></el-option>
+            <el-select style="width: 100%" v-model="ruleForm.projectType" placeholder="请选择项目类型" @change="getProjectType($event)">
+              <el-option v-for="item in proTypeListPure" :value="item.value" :key="item.value" :label="item.label"></el-option>
+              <!--<el-option label="公司项目" value="公司项目"></el-option>-->
+              <!--<el-option label="部门项目" value="部门项目"></el-option>-->
+              <!--<el-option label="小组项目" value="小组项目"></el-option>-->
+              <!--<el-option label="个人项目" value="个人项目"></el-option>-->
             </el-select>
           </el-form-item>
+          <div v-if="projectPath" class="proTypePath">{{projectPath}}</div>
+          <!--<el-input v-model="projectPath" readonly placeholder="请选择项目类型" style="width: 52%;"></el-input>-->
           <el-form-item label="项目周期" prop="value2">
             <el-date-picker style="width: 100%"
                             v-model="ruleForm.value2"
@@ -162,6 +167,73 @@
         </el-form>
       </Modal>
     </div>
+    <!--对话框 项目分类 产品研发 start-->
+    <el-dialog title="产品研发" :visible.sync="dialogFormVisible" width="35%">
+      <div class="showImg">
+        <el-tree
+          :data="data2"
+          show-checkbox
+          @check="changeState"
+          node-key="id"
+          ref="treeForm"
+          :check-strictly="true"
+          @check-change="handleClick"
+          :props="defaultProps">
+        </el-tree>
+      </div>
+      <div style="text-align: center;margin: 40px 0">
+        <el-button type="primary" @click="getPathProject()">确定选择</el-button>
+      </div>
+    </el-dialog>
+    <!--产品研发 end-->
+    <!--抽屉 回复 历史记录-->
+    <!--新增 抽屉 查看历史记录 start-->
+    <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
+      <div class="el-textarea" v-loading="historyLoading">
+        <!--enctype="multipart/form-data"-->
+        <form id="uploadFile">
+          <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
+          <div class="cannetProject2">
+            <div style="display: inline-block">
+              <img src="../../static/img/fujian.png" alt="">
+              <a href="javascript:;" class="file" @change="getFileName">选择文件
+                <input type="file" name="myfile">
+              </a>
+              <input type="hidden" name="projectUID" v-bind:value="proId">
+              <input type="hidden" name="rtype" v-bind:value="3">
+              <span class="showFileName"></span>
+            </div>
+            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
+          </div>
+        </form>
+      </div>
+      <!--操作记录-->
+      <div class="discription lis" style="margin-top: 15px;">
+        <div class="logBox">
+          <div v-bind:key="logs.index" class="TimeLine" style="position: relative;" v-for="(logs, index) in taskLogs">
+            <div class="quan">{{index+1}}</div>
+            <div class="timeDate">{{logs.oTime}}</div>
+            <div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}
+              <div class="contBoxContentWrap">
+                <div class="contBoxContent" v-if="logs.comment">评论：{{logs.comment}}</div>
+                <div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0">
+                  <span v-if="logs.uploads[0].isImage" @click="showBigImage(logs.uploads[0].previewUrl, logs.uploads[0].showName)" class="filepre">附件预览</span>
+                  <a v-bind:download="logs.uploads[0].showName" v-bind:href="logs.uploads[0].downloadUrl">下载：{{logs.uploads[0].showName}}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <el-row style="margin-top: 30px;" v-if="totalData > 10">
+          <el-button icon="el-icon-plus" @click="getPageNum()" v-bind:disabled="notMore">加载更多</el-button>
+        </el-row>
+      </div>
+    </Drawer>
+    <!--分页 start-->
+    <div style="padding: 10px 0 30px 0; text-align: center;">
+      <Page :total="pageTotalRow" :page-size="10" size="small" @on-change="pageNumChange" />
+    </div>
+    <!--分页 end-->
   </div>
 </template>
 
@@ -170,6 +242,39 @@ export default {
   name: 'MyPro',
   data () {
     return {
+      // 产品研发 树形结构 单选
+      i: 0,
+      // 新增
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      // 产品研发 项目类型数据
+      data2: [],
+      // 产品研发 显示具体类型
+      projectPath: '',
+      projectPathId: '',
+      // 新增 对话框 产品研发
+      dialogFormVisible: false,
+      // 新增
+      totalData: 0,
+      // 新增
+      taskLogs: [],
+      butnDisabled: true,
+      proId: '',
+      commitComent: '',
+      // 新增 历史loading
+      historyLoading: false,
+      // 新增 历史记录 抽屉
+      DrawerHistory: false,
+      // 总条数
+      pageTotalRow: 10,
+      // 页码
+      pageNum: 1,
+      // 历史记录 页码
+      logPageNum: 1,
+      // 搜索项目
+      searchProVal: '',
       // 是否选择了"新建项目模板"
       isModel: false,
       duration: 0,
@@ -178,48 +283,36 @@ export default {
       statusVal: '',
       newAddDialog: false,
       newAddDiaModel: false,
+      // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
       selectList1: [
         {
           value: 'all',
           label: '全部项目'
         },
         {
-          value: 'managedByMe',
+          value: '2',
           label: '我负责的'
         },
         {
-          value: 'createdByMe',
+          value: '1',
           label: '我创建的'
         },
         {
-          value: 'myJoin',
+          value: '3',
           label: '我参与的'
         }
       ],
-      selectList2: [
+      // 项目分类列表
+      proTypeListPure: this.$store.state.projectType,
+      // 项目分类列表 (带“全部”)
+      proTypeList: [
         {
           value: 'all',
           label: '全部项目'
-        },
-        {
-          value: '0',
-          label: '公司项目'
-        },
-        {
-          value: '1',
-          label: '部门项目'
-        },
-        {
-          value: '2',
-          label: '小组项目'
-        },
-        {
-          value: '3',
-          label: '个人项目'
         }
       ],
       model1: 'all',
-      model2: 'all',
+      model2: '0',
       projectViewData: {},
       totalModelNum: 0,
       // 模板
@@ -227,12 +320,26 @@ export default {
         pageNum: '1',
         pageSize: 5
       },
+      // 新增 添加评论
+      addProjectCommentPayload: {
+        projectUID: '',
+        content: '',
+        formIds: ''
+      },
       // 查询个人项目列表
       myProjectViewPayload: {
+        // 项目名称，模糊查询
+        projectName: '',
         userId: this.$store.state.userId,
+        // 项目状态（0:未开始； 2：进行中:3：已完成;"":全部）
         status: '',
         pageNum: '1',
+        // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
+        type: '',
+        // 项目类型 公司项目:'0' 部门项目:'1' 小组项目:'2' 个人项目:'3' 集团战略:'4' 产品研发:'5'  全部: ''
         projectType: '',
+        // 项目分类记录id
+        projectClassifyId: '',
         pageSize: 10
       },
       ruleForm: {
@@ -271,23 +378,56 @@ export default {
     }
   },
   created: function () {
+    // j
+    var that = this
+    this.proTypeList = this.proTypeList.concat(that.$store.state.projectType)
+    this.log('this.proTypeList:', this.proTypeList)
     // 查询个人项目列表
     this.queryMyProjectView()
     // j
-    this.queryProjectTypeList()
+    // this.queryProjectTypeList()
     // 查询用户信息
     this.getUserInfo()
     // 查询模板信息
     // this.getModelDetail()
     // 初始化token
-    this.settoken()
+    // this.settoken()
   },
   watch: {
+    // 历史记录输入框
+    commitComent: function (val, oVal) {
+      if (val) {
+        this.butnDisabled = false
+      } else {
+        this.butnDisabled = true
+      }
+    },
+    pageNum: function (val, old) {
+      this.myProjectViewPayload.pageNum = val
+      this.queryMyProjectView()
+    },
+    searchProVal: function (val, old) {
+      this.myProjectViewPayload.projectName = val
+      this.queryMyProjectView()
+      // if (val) {
+      //   this.queryMyProjectView()
+      // }
+    },
     statusVal: function (val1, val2) {
       if (val1) {
         this.myProjectViewPayload.status = val1
       } else {
         this.myProjectViewPayload.status = ''
+      }
+      this.queryMyProjectView()
+    },
+    model1: function (val1, val2) {
+      this.log('model1-val1:', val1)
+      if (val1 && val1 !== 'all') {
+        this.log('走了：', val1)
+        this.myProjectViewPayload.type = val1
+      } else {
+        this.myProjectViewPayload.type = ''
       }
       this.queryMyProjectView()
     },
@@ -301,38 +441,195 @@ export default {
     }
   },
   methods: {
-    settoken: function () {
-      this.ajax('/general/setToken', {}).then(res => {
-        this.token = res._jfinal_token
+    // 确定选择
+    getPathProject: function () {
+      this.dialogFormVisible = false
+    },
+    // 新增 产品研发
+    handleClick: function (data, checked, node) {
+      var that = this
+      that.i++
+      if (that.i % 2 === 0) {
+        if (checked) {
+          that.$refs.treeForm.setCheckedNodes([])
+          that.$refs.treeForm.setCheckedNodes([data])
+        } else {
+          that.$refs.treeForm.setCheckedNodes([])
+        }
+      }
+    },
+    // 新增 产品研发
+    changeState: function (data, checked, node) {
+      this.log('changeState:', data)
+      this.projectPath = data.specificPath
+      this.projectPathId = data.id
+    },
+    // 新增 对话框 产品研发类型树形结构
+    getProjectType: function (e) {
+      console.log('eeee', e)
+      var that = this
+      if (e === '5') {
+        // that.showProject = false
+        that.dialogFormVisible = true
+        that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
+          that.log('getUserInfo', res)
+          if (res.code === 200) {
+            that.data2 = res.data
+            // for (var i = 0; i <= res.data.length; i++) {
+            //   // if (res.data[i].sonFlag) {
+            //   //   res.data[i].children = [{
+            //   //     id: 1,
+            //   //     name: '测试'
+            //   //   }]
+            //   // }
+            // }
+          }
+        })
+      } else {
+        that.showProject = true
+        that.projectPath = ''
+        that.projectPathId = ''
+      }
+    },
+    // 新增
+    getFileName: function () {
+      var filePath = $('#myfile').val()
+      var arr = filePath.split('\\')
+      var fileName = arr[arr.length - 1]
+      $('.showFileName').html(fileName)
+    },
+    // 新增 点击“回复”按钮
+    addMarkInfo () {
+      var that = this
+      that.addProjectCommentPayload.projectUID = that.proId
+      that.addProjectCommentPayload.content = that.commitComent
+      that.addProjectCommentPayload.formIds = ''
+      if (that.commitComent) {
+        that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
+          that.log('addProjectComment:', res)
+          if (res.code === 200) {
+            that.$message({
+              type: 'success',
+              message: res.msg
+            })
+            that.getHistoryCont()
+            that.commitComent = ''
+          }
+        })
+      }
+    },
+    // 新增 获取历史记录
+    getHistoryCont () {
+      var that = this
+      // var planid = this.$route.params.pid
+      that.ajax('/myProject/getLogAndComment', {projectUID: that.proId, pageSize: 10, pageNum: that.logPageNum}).then(res => {
+        that.log('getLogAndComment:', res)
+        if (res.code === 200) {
+          for (var i = 0; i < res.data.list.length; i++) {
+            if (res.data.list[i].uploads.length > 0) {
+              if (that.isImage(res.data.list[i].uploads[0].showName)) {
+                res.data.list[i].uploads[0].isImage = true
+              } else {
+                res.data.list[i].uploads[0].isImage = false
+              }
+              var downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].uploads[0].realUrl + '&showName=' + res.data.list[i].uploads[0].showName
+              res.data.list[i].uploads[0].downloadUrl = downurl
+            }
+          }
+          that.taskLogs = res.data.list
+          that.totalData = res.data.totalRow
+          if (that.taskLogs.length === that.totalData) {
+            that.log('ss')
+            that.notMore = true
+          }
+          that.log('taskLogs:', res)
+        }
       })
     },
+    pageNumChange: function (num) {
+      this.log('num:', num)
+      this.pageNum = num
+    },
+    confirm () {
+      this.$Modal.confirm({
+        title: 'Title',
+        content: '<p>Content of dialog</p><p>Content of dialog</p>',
+        onOk: () => {
+          this.$Message.info('Clicked ok')
+        },
+        onCancel: () => {
+          this.$Message.info('Clicked cancel')
+        }
+      })
+    },
+    // 点击回复 项目列表页上的回复 评论项目
+    responsePro: function (pId) {
+      this.proId = pId
+      this.DrawerHistory = true
+      this.getHistoryCont()
+    },
+    // 删除项目
+    delPro: function (pId) {
+      var that = this
+      this.$Modal.confirm({
+        title: 'Title',
+        content: '确定要删除此项目？此操作不可撤回！',
+        onOk: () => {
+          this.ajax('/myProject/delProjectById', {projectUID: pId}).then(res => {
+            console.log('delProjectById', res)
+            if (res.code === 200) {
+              this.$Message.info('删除成功！')
+              that.queryMyProjectView()
+            }
+          })
+        },
+        onCancel: () => {
+          // this.$Message.info('Clicked cancel')
+        }
+      })
+    },
+    // 新增搜索项目
+    searchPro: function (iptName) {
+      this.log('iptName:', iptName)
+      this.myProjectViewPayload.projectName = iptName
+      this.queryMyProjectView()
+    },
+    // 新增
+    // settoken: function () {
+    //   this.ajax('/general/setToken', {}).then(res => {
+    //     this.token = res._jfinal_token
+    //   })
+    // },
+    // 新增 查询用户信息
     getUserInfo: function () {
       var that = this
       this.ajax('/general/getUserInfo', {}).then(res => {
         if (res.code === 200) {
           console.log('getUserInfo', res)
+          that.$store.state.userId = res.data.ID
           that.ruleForm.projectManager = res.data.Name + ' (' + res.data.jName + ')'
           that.Mid = res.data.ID
         }
       })
     },
     // 查询个人项目列表 (项目卡片)
-    queryProjectTypeList () {
-      // var that = this
-      this.ajax('/general/myProjectList', {}).then(res => {
-        console.log('项目类型:', res)
-        if (res.code === 200) {
-          // res.data.list
-        }
-      })
-    },
+    // queryProjectTypeList () {
+    //   // var that = this
+    //   this.ajax('/general/myProjectList', {}).then(res => {
+    //     console.log('项目类型:', res)
+    //     if (res.code === 200) {
+    //       // res.data.list
+    //     }
+    //   })
+    // },
     // 查询个人项目列表 (项目卡片)
     queryMyProjectView () {
       var that = this
-      this.ajax('/general/myProjectView', that.myProjectViewPayload).then(res => {
+      this.ajax('/myProject/myProjectView', that.myProjectViewPayload).then(res => {
         console.log('项目卡片', res)
         if (res.code === 200) {
           // res.data.list
+          this.pageTotalRow = res.data.totalRow
           for (var i = 0; i < res.data.list.length; i++) {
             res.data.list[i].startDate = res.data.list[i].startDate.split(' ')[0]
             res.data.list[i].endDate = res.data.list[i].endDate.split(' ')[0]
@@ -352,6 +649,7 @@ export default {
         }
       })
     },
+    // 新建 点击项目列表项 前往项目详请
     toProDetail: function (id) {
       this.$store.state.proId = id
       this.$router.push('/')
@@ -415,6 +713,7 @@ export default {
       this.ruleForm.value2.push(result)
       this.ruleForm.value2.push(resultEnd)
     },
+    // 新建 点击顶部新建项目按钮
     newAdd: function () {
       var that = this
       this.newAddDialog = true
@@ -427,7 +726,7 @@ export default {
         // console.log('个人任务:', that.taskListData)
       })
     },
-    // 打开新建项目表单
+    // 新建 新建项目 模板选择 打开相应的表单
     openProCreatedForm: function (modelId) {
       this.newAddDiaModel = true
       if (modelId) {
@@ -441,8 +740,10 @@ export default {
       // this.$router.push('/NewAddPro')
     },
     ctime (e) {
-      console.log(e)
+      // console.log(55555555555)
+      // console.log(e)
     },
+    // 新建 搜索选择项目负责人
     querySearchAsync (queryString, cb) {
       var that = this
       if (queryString) {
@@ -470,6 +771,7 @@ export default {
         })
       }
     },
+    // 新建 人员选择
     handleSelect (item) {
       // console.log(item.userId)
       this.Mid = item.userId
@@ -593,7 +895,7 @@ export default {
 <style scoped>
 .MyProCnt{
   min-width: 600px;
-  max-width: 1000px;
+  /*max-width: 1000px;*/
 }
   .MyProHeader{
     display: flex;
@@ -708,5 +1010,136 @@ export default {
     height: 24px;
     line-height: 24px;
     margin-top: 10px;
+  }
+  .el-col-self:nth-child(2n + 1){
+    margin-right: 10px;
+  }
+  .proTypePath{
+    font-size: 12px;
+    padding-left: 100px;
+    margin-top: -16px;
+    color: #777;
+    margin-bottom: 10px;
+  }
+  /*历史记录 start*/
+  .el-textarea{
+    margin-top: 15px;
+    margin-left: 0px;
+  }
+  .el-textarea__inner{
+    width: 100%;
+    min-height: 80px;
+  }
+  .cannetProject2{
+    height: 40px;
+    width: 100%;
+    color: #1296db;
+    display: flex;
+    justify-content: space-between;
+    line-height: 40px;
+    font-size: 14px;
+    /*font-family: '黑体';*/
+    padding:0 10px;
+    background-color: #f5f8fa;
+  }
+  .cannetProject2 div img{
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;
+    width: 18px;
+  }
+  .showFileName{
+    float: right;
+    margin-left: 10px;
+  }
+  /*新增 操作记录*/
+  .TimeLine:last-of-type .timeCont{
+    border-left: none !important;
+  }
+  .quan{
+    width: 14px;
+    height: 14px;
+    border: 1px solid #3a8ee6;
+    border-radius: 8px;
+    display: inline-block;
+    line-height:14px;
+    text-align: center;
+    font-size: 10px;
+    color: #3a8ee6;
+  }
+  .timeDate{
+    display: inline-block;
+    margin-left: 16px;
+    position: absolute;
+    top: 4px;
+    font-weight: bold;
+  }
+  .timeCont{
+    padding-top: 20px;
+    margin-left: 8px;
+    border-left: 1px solid #ddd;
+    padding-left: 30px;
+    font-size: 14px;
+    color: #999;
+    padding-bottom: 1px;
+  }
+  .contBoxContentWrap{
+    margin-top: 6px;
+    margin-bottom: 6px;
+    background-color: #f5f5f5;
+  }
+  .contentHide .contBoxContentWrap{
+    display: none;
+  }
+  .contentHide .contBoxContent{
+    display: none;
+  }
+  .contentShow .contBoxContent{
+    display: block;
+  }
+  .contBoxContent{
+    color: #999;
+    font-size: 12px;
+    padding-left: 8px;
+    line-height: 22px;
+  }
+  .filepre{
+    color: #3a8ee6;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  .file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+    margin-top: 6px;
+  }
+  .file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+  }
+  .file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+  }
+  /*历史记录 start*/
+  /*历史记录 end*/
+</style>
+<style>
+  el-col-self:nth-child(2n + 1){
+    margin-right: 10px;
   }
 </style>

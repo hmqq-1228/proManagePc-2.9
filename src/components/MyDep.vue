@@ -59,7 +59,7 @@
                   <div style="margin-top: 8px;">
                     <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
                     <span style="color: #888;" v-if="fileList.length === 0">暂无附件</span>
-                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}<div class="el-icon-close"></div>, </span>
                   </div>
                 </div>
                 <div class="selectRight">
@@ -354,7 +354,7 @@ export default {
     },
     getUserInfo: function () {
       var that = this
-      this.ajax('/general/getUserInfo', {}).then(res => {
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
           that.log('getUserInfo', res)
           // var defaultUser = res.data.Name + '(' + res.data.jName + ')'
@@ -569,7 +569,7 @@ export default {
         })
       } else {
         that.$message({
-          message: '请填写动态任务名',
+          message: '请填写任务名',
           type: 'warning'
         })
         that.loading3 = false
@@ -594,12 +594,14 @@ export default {
     },
     // 派任务（发动态）清空表单
     clearDynamicsForm: function () {
+      console.log('time', this.startTimeFirst)
+      console.log('time2', this.endTimeFirst)
       this.taskNameText = ''
       this.CommunityTaskPayload.jobName = ''
       this.selDateStart = this.startTimeFirst
-      this.CommunityTaskPayload.startTime = ''
+      this.CommunityTaskPayload.startTime = this.startTimeFirst
       this.selDateEnd = this.endTimeFirst
-      this.CommunityTaskPayload.endTime = ''
+      this.CommunityTaskPayload.endTime = this.endTimeFirst
       this.taskIntro = ''
       this.CommunityTaskPayload.description = ''
       this.attachmentId = ''

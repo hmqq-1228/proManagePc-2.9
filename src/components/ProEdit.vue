@@ -8,146 +8,7 @@
       </el-breadcrumb>
     </div>
     <div class="hello" style="margin-top: 15px;">
-      <!--新增 抽屉 成员管理 ks-->
-      <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember">
-        <div class="searchBox">
-          <div class="searchSelectIpt">
-            <el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"
-                       :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
-                       :remote-method="remoteMethod" :loading="loading2">
-              <el-option v-for="item in options4" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                         :value="item.Name + '-' + item.ID">
-              </el-option>
-            </el-select>
-          </div>
-          <div class="searchBtn"><Button type="primary">添加</Button></div>
-          <div class="searchOpenTree"><Button>组织架构</Button></div>
-        </div>
-      </Drawer>
-      <!--新增 抽屉 成员管理 js-->
-      <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
-        <div class="slidTop">
-          <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
-          <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
-        </div>
-        <div class="taskMsg">
-          <div class="taskLf">
-            <div class="taskName">{{taskBasicMsg.jobName}}</div>
-            <div class="taskDetail" v-bind:title="taskBasicMsg.description">{{taskBasicMsg.description}}</div>
-          </div>
-          <div class="taskRt">
-            <div v-if="taskBasicMsg.status === '0'"><img src="../../static/img/unstart.png" alt=""></div>
-            <div v-if="taskBasicMsg.status === '1'"><img src="../../static/img/doing.png" alt=""></div>
-            <div v-if="taskBasicMsg.status === '2'"><img src="../../static/img/finish.png" alt=""></div>
-          </div>
-        </div>
-        <div class="taskTime">
-          <el-collapse>
-            <el-collapse-item style="padding: 0 10px;">
-              <template slot="title">
-                <img src="../../static/img/time.png" alt=""><span style="margin-left: 10px;">起止时间: {{taskBasicMsg.taskStartDate}} 到 {{taskBasicMsg.taskFinishDate}}</span>
-                <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum >= 0">剩余 <span style="color: #53b5ff;font-size: 16px;font-weight: bold">{{taskBasicMsg.dayNum}}</span> 天</div>
-                <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum < 0"><span style="color:red;font-size: 16px;">已逾期</span></div>
-                <div style="margin-left: 10%;" v-if="!taskBasicMsg.dayNum"><span style="color:#27CF97;font-size: 16px;">已完成</span></div>
-              </template>
-              <div class="managePro">
-                <div><img src="../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span>{{taskBasicMsg.userName}}</span></div>
-                <div><img src="../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>
-              </div>
-              <div class="managePro" style="margin-top: 10px;">
-                <div><img src="../../static/img/kaishi.png" alt=""><span class="proLabel">实际开始:</span><span v-if="taskBasicMsg.dealWithDate">{{taskBasicMsg.dealWithDate}}</span><span v-if="!taskBasicMsg.dealWithDate">暂未开始</span></div>
-                <div><img src="../../static/img/jiesu.png" alt=""><span class="proLabel">实际结束:</span><span v-if="taskBasicMsg.realFinishDate">{{taskBasicMsg.realFinishDate}}</span><span v-if="!taskBasicMsg.realFinishDate">暂未完成</span></div>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-        </div>
-        <div class="cannetProject">
-          <div style="display: inline-block"><img src="../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
-          <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>
-          <span v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
-        </div>
-        <div class="cannetProject">
-          <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
-          <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
-        </div>
-        <div class="cannetProject">
-          <div style="display: inline-block"><img src="../../static/img/fujian.png" alt=""><span>项目附件:</span></div>
-          <div style="display: inline-block;font-size: 14px;" v-if="taskBasicMsg.showName">
-            <span style="display: inline-block;">{{taskBasicMsg.showName}}</span>
-            <span v-if="taskBasicMsg.isImg" @click="showImagePre" style="margin-left: 10px;display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
-            <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
-          </div>
-          <div style="display: inline-block;font-size: 14px;" v-if="!taskBasicMsg.showName">暂无附件</div>
-        </div>
-        <div class="cannetProject" v-if="false">
-          <Button type="primary" style="margin-right: 30px;">Primary</Button><Button type="primary" style="margin-right: 30px;">Primary</Button><Button type="primary">Primary</Button>
-        </div>
-        <div class="cannetProject1">
-          <div style="display: inline-block"><img src="../../static/img/goutong.png" alt=""><span>沟 通</span></div>
-        </div>
-        <div class="el-textarea" v-loading="loading">
-          <form id="uploadFile" enctype="multipart/form-data">
-            <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
-            <div class="cannetProject2">
-              <div style="display: inline-block">
-                <img src="../../static/img/fujian.png" alt="">
-                <a href="javascript:;" class="file" @change="getFileName">选择文件
-                  <input type="file" name="myfile" id="myfile">
-                </a>
-                <input type="hidden" name="rid" v-bind:value="rid">
-                <input type="hidden" name="rtype" v-bind:value="3">
-                <span class="showFileName"></span>
-              </div>
-              <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
-            </div>
-          </form>
-        </div>
-        <div class="cannetProject1-1">
-          <div style="display: inline-block"><img src="../../static/img/jilu.png" alt=""><span>沟通记录</span></div>
-        </div>
-        <div class="timeLine">
-          <Timeline v-if="commentList && commentList.length > 0">
-            <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
-              <p class="time">{{comment.createDate}}</p>
-              <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
-              <p class="content" v-if="comment.showName">附件:
-                <span style="display: inline-block"> {{comment.showName}}</span>
-                <span v-if="comment.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(comment.previewUrl)">预览</span>
-                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="comment.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
-              </p>
-            </Timeline-item>
-          </Timeline>
-          <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
-          <div style="text-align: center">
-            <Page :total="totalNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentPage($event)"></Page>
-          </div>
-        </div>
-        <div class="cannetProject1-1" style="margin-top: 0">
-          <div style="display: inline-block"><img src="../../static/img/history.png" alt=""><span>操作记录</span></div>
-        </div>
-        <div class="timeLine">
-          <Timeline>
-            <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
-              <p class="time">{{history.oTime}}</p>
-              <p class="content">{{history.oName}}{{history.oContent}}</p>
-              <p class="content" v-if="history.showName"><span>附件:</span>
-                <span style="display: inline-block"> {{history.showName}}</span>
-                <span v-if="history.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(history.previewUrl)">预览</span>
-                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="history.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
-              </p>
-            </Timeline-item>
-          </Timeline>
-          <div style="text-align: center">
-            <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
-          </div>
-        </div>
-      </Drawer>
-      <el-dialog title="图片预览" :visible.sync="dialogFormVisible">
-        <div class="showImg"><img v-bind:src="taskBasicMsg.previewUrl" alt=""></div>
-      </el-dialog>
-      <el-dialog title="图片预览" :visible.sync="dialogShowImg">
-        <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
-      </el-dialog>
+      <!--content 标题 简介 等-->
       <div class="topperTitle">
         <div class="topCon">
           <div class="topConLf">
@@ -158,6 +19,14 @@
             <div>
               <div class="myMsg"><div><img src="../../static/img/my.png" alt=""></div><div style="margin-left: 10px;">{{proDetailMsg.projectManager}}</div></div>
               <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">{{startPlanDate}} 到 {{endPlanDate}}</div></div>
+              <div class="myMsg">
+                <div style="color: #28558c; font-size: 20px; margin-top: -6px"><Icon type="md-download" /></div>
+                <div style="margin-left: 10px;">附件: {{proDetailMsg.projectManager}}</div>
+              </div>
+              <div class="editHistoryBtn" style="margin-top: 15px;">
+                <Button type="primary" size="small" style="margin-right: 15px;" v-on:click="proBaseEditClick()">编辑</Button>
+                <Button type="primary" size="small" v-on:click="openHisDrawer">历史记录</Button>
+              </div>
             </div>
             <div class="imgBox" v-if="proDetailMsg.state === '0'"><img src="../../static/img/unstart.png" alt=""></div>
             <div class="imgBox" v-if="proDetailMsg.state === '2'"><img src="../../static/img/doing.png" alt=""></div>
@@ -167,17 +36,22 @@
         <div class="planList">
           <div class="planName"><Icon size="30" type="ios-person-outline" /></div>
           <div class="planBox">
-            <div v-if="memberList.length > 0" v-for="member in memberList" v-bind:key="member.userName" @click="selectProject(plan.id,$event)">{{member.userName}}</div>
+            <div v-if="memberList.length > 0" v-for="member in memberList" v-bind:key="member.userName">{{member.userName}}</div>
             <div class="moreBtn" v-on:click="moreMemberClick()"><Button>更多 / 编辑</Button></div>
           </div>
         </div>
       </div>
       <div class="devide">
-        <div>项目详情</div>
+        <div class="proTreeHeader">
+          <div>项目详情</div>
+          <div><Button size="small" type="primary" v-on:click="addNode(firstPlanId)">+ 计划 / 任务</Button></div>
+        </div>
       </div>
+      <!---->
       <div class="block">
         <el-tree
           :data="data5"
+          :props="defaultTreeProps"
           node-key="id"
           @node-expand="getNodeMsg($event)"
           :expand-on-click-node="false">
@@ -202,11 +76,338 @@
                 <span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>
                 <span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>
               </span>
+              <span class="treeTime">
+                <Dropdown @on-click="moreSelectOptions($event, data.id)">
+                  <a href="javascript:void(0)">下拉菜单<Icon type="ios-arrow-down"></Icon></a>
+                  <DropdownMenu slot="list">
+                    <DropdownItem name="add">添加</DropdownItem>
+                    <DropdownItem name="del">删除</DropdownItem>
+                    <!--<DropdownItem disabled>豆汁儿</DropdownItem>-->
+                    <DropdownItem name="edit">编辑</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </span>
             </span>
           </span>
         </el-tree>
       </div>
+      <!--新增 添加计划或者任务 start-->
+      <!--bgcover开始 增加计划-->
+      <div class="bgCover" v-if="bgCoverShow">
+        <div class="bgCoverCnt" v-loading="loading">
+          <div class="colose" @click="onPlanTaskCancel()">&#935;</div>
+          <div class="bgCoverTabs">
+            <el-tabs v-model="activeNameBgCover" @tab-click="handleClickPlanTask">
+              <el-tab-pane label="增加计划" name="first" v-bind:disabled="panshow">
+                <!--计划form-->
+                <div class="planTaskBox">
+                  <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+                    <el-form-item label="计划名称" prop="name" maxlength="100" width="100" style="margin-bottom: 30px;">
+                      <el-input class="planNameIpt" v-model="form.name" style="width: 300px;" maxlength="20"></el-input>
+                    </el-form-item>
+                    <el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">
+                      <el-col :span="20">
+                        <el-date-picker type="datetime"
+                                        :picker-options="pickerOptions0"
+                                        format="yyyy-MM-dd HH:mm:ss"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        :default-value="defaultTime"
+                                        v-model="form.date1" style="width: 300px;"
+                        ></el-date-picker>
+                      </el-col>
+                    </el-form-item>
+                    <el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">
+                      <el-col :span="20">
+                        <el-date-picker type="datetime"
+                                        :picker-options="pickerOptions0"
+                                        format="yyyy-MM-dd HH:mm:ss"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        :default-value="defaultTime"
+                                        v-model="form.date2" style="width: 300px;"
+                        ></el-date-picker>
+                      </el-col>
+                    </el-form-item>
+                    <el-form-item label="计划描述" prop="description" maxlength="100" width="100" style="margin-bottom: 30px;">
+                      <el-input class="planNameIpt" type="textarea" :rows="2" v-model="form.description" style="width: 300px;"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                      <el-button type="primary" @click="onPlanSubmit('form')">立即创建</el-button>
+                      <el-button @click="onPlanTaskCancel()">取消</el-button>
+                    </el-form-item>
+                  </el-form>
+                </div>
+                <!---->
+              </el-tab-pane>
+              <el-tab-pane label="增加任务" name="second">
+                <!--任务form-->
+                <div class="planTaskBox" style="position: relative;padding-top: 0;">
+                  <el-form ref="addTaskForm" :rules="taskRules" :model="addTaskForm" label-width="80px">
+                    <el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">
+                      <el-input class="planNameIpt" v-model="addTaskForm.jobName" style="width: 300px;" v-bind:disabled="isDisabled" maxlength="20"></el-input>
+                    </el-form-item>
+                    <el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">
+                      <div class="ratestar" style="padding-top: 6px;">
+                        <el-rate v-model="addTaskForm.jobLevel" v-on:change="rateChange($event)" v-bind:disabled="isDisabled"></el-rate>
+                      </div>
+                    </el-form-item>
+                    <!--指派人员多选 多人指派-->
+                    <el-form-item label="任务指派" prop="userArr" maxlength="100">
+                      <el-col :span="24">
+                        <el-select v-model="value9" multiple filterable remote style="width: 300px"
+                                   :reserve-keyword="false" placeholder="请输入关键词"
+                                   :remote-method="addTaskRemoteMethod" :loading="loading2">
+                          <el-option v-for="item in addTaskOptions" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
+                                     :value="item.Name + '(' + item.jName + ')' + '_' + item.ID">
+                          </el-option>
+                        </el-select>
+                      </el-col>
+                    </el-form-item>
+                    <!--开始时间-->
+                    <el-form-item label="开始时间" prop="date1">
+                      <el-col :span="20">
+                        <el-date-picker type="datetime"
+                                        v-bind:disabled="isDisabled"
+                                        :picker-options="pickerOptions0"
+                                        format="yyyy-MM-dd HH:mm:ss"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        :default-value="defaultTime"
+                                        v-model="addTaskForm.date1" style="width: 300px;"
+                        >
+                        </el-date-picker>
+                      </el-col>
+                    </el-form-item>
+                    <el-form-item label="结束时间" prop="date2">
+                      <el-col :span="20">
+                        <el-date-picker type="datetime"
+                                        v-bind:disabled="isDisabled"
+                                        :picker-options="pickerOptions0"
+                                        format="yyyy-MM-dd HH:mm:ss"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        :default-value="defaultTime"
+                                        v-model="addTaskForm.date2" style="width: 300px;"
+                        ></el-date-picker>
+                      </el-col>
+                    </el-form-item>
+                    <el-form-item label="任务描述" prop="description" maxlength="100" width="100">
+                      <el-input class="planNameIpt" v-bind:disabled="isDisabled" type="textarea" :rows="2" v-model="addTaskForm.description" style="width: 300px;"></el-input>
+                    </el-form-item>
+                    <el-form-item style="height: 40px;"></el-form-item>
+                    <el-form-item>
+                      <el-button type="primary" @click="onTaskSubmit('addTaskForm')">立即创建</el-button>
+                      <el-button @click="onPlanTaskCancel()">取消</el-button>
+                    </el-form-item>
+                  </el-form>
+                  <form id="mytaskForm" enctype="multipart/form-data" style="position: absolute;bottom:40px;padding-left: 12px;">
+                    <div style="font-size: 14px;color: #555;height: 30px;line-height: 30px;display: inline-block;">添加附件</div>&nbsp;&nbsp;
+                    <input type="file" id="myfile" name="myfile" placeholder="请选择文件" style="width: 200px;" />
+                    <input type="hidden" name="formId" v-bind:value="formId">
+                    <div style="padding-left: 70px;font-size: 12px;height: 16px;color: #409eff">{{upLoadName}}</div>
+                  </form>
+                </div>
+                <!---->
+              </el-tab-pane>
+            </el-tabs>
+          </div>
+        </div>
+      </div>
+      <!--新增 添加计划或者任务 end-->
+      <!--新增 抽屉 成员管理 ks-->
+      <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember">
+        <!--<Button v-on:click="test()">TEST</Button>-->
+        <div style="font-size: 16px; margin-bottom: 10px;">添加项目成员</div>
+        <div class="searchBox">
+          <div class="searchSelectIpt">
+            <el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"
+                       :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
+                       :remote-method="remoteMethod" :loading="loading2">
+              <el-option v-for="item in options4" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
+                         :value="item.Name + '-' + item.ID">
+              </el-option>
+            </el-select>
+          </div>
+          <div class="searchBtn"><Button type="primary" v-on:click="addMember()">添加</Button></div>
+          <div class="searchOpenTree" @click="organizationalClick"><Button>组织架构</Button></div>
+        </div>
+        <div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">成员列表</div>
+        <div class="memberTable">
+          <div class="memTblTitle">
+            <div class="tblTitItem">角色</div>
+            <div class="tblTitItem">姓名</div>
+            <div class="tblTitItem">查看</div>
+            <div class="tblTitItem">编辑</div>
+            <div class="tblTitItem">清空</div>
+          </div>
+          <div class="memTblList">
+            <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">
+              <div class="memListItem">{{mem.peopleRoleText}}</div>
+              <div class="memListItem">{{mem.userName}}</div>
+              <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
+              <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
+              <div class="memListItem">x</div>
+            </div>
+          </div>
+        </div>
+        <!--组织架构 start-->
+        <div v-if="organizationalShow" style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">组织架构</div>
+        <!--organizationalShow-->
+        <div class="organizationalBox" v-if="organizationalShow">
+          <div>
+            <el-tree
+              :data="data2"
+              show-checkbox
+              @node-click="append($event)"
+              @check="changeState"
+              node-key="id"
+              :default-expanded-keys="[1,2]"
+              :props="defaultProps">
+            </el-tree>
+          </div>
+          <div class="organizationalBtn"><Button type="primary" @click="addMenber()">添加</Button></div>
+        </div>
+        <!--<div class="caozuo">-->
+          <!--<div class="el-icon-d-arrow-right" @click="addMenber()"></div>-->
+        <!--</div>-->
+        <!--组织架构 end-->
+      </Drawer>
+      <!--新增 抽屉 成员管理 js-->
+      <!--新增 抽屉 编辑基本信息 start-->
+      <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerBaseEdit">
+        <div>
+          <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+            <FormItem label="项目名称" prop="proName">
+              <Input v-model="formValidate.proName" placeholder="Enter your name" />
+            </FormItem>
+            <FormItem label="项目类型" prop="proType">
+              <Select v-model="formValidate.proType" placeholder="Select your city">
+                <Option value="集团战略">集团战略</Option>
+                <Option value="公司项目">公司项目</Option>
+                <Option value="部门项目">部门项目</Option>
+                <Option value="小组项目">小组项目</Option>
+                <Option value="个人项目">个人项目</Option>
+                <Option value="产品研发">产品研发</Option>
+              </Select>
+            </FormItem>
+            <FormItem label="负责人" prop="proManager">
+              <el-autocomplete style="width: 100%"
+                               v-model="formValidate.proManager"
+                               :fetch-suggestions="querySearchAsync"
+                               placeholder="请输入项目负责人姓名"
+                               :trigger-on-focus="false"
+                               @select="handleSelect"
+              ></el-autocomplete>
+            </FormItem>
+            <FormItem label="开始时间" prop="startDate">
+              <DatePicker type="datetime" v-model="formValidate.startDate" @on-change="startDateChange" placeholder="Select date and time" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="结束时间" prop="endDate">
+              <DatePicker type="datetime" v-model="formValidate.endDate" placeholder="Select date and time" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="项目简介" prop="desc">
+              <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..." />
+            </FormItem>
+            <FormItem>
+              <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
+              <Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
+            </FormItem>
+          </Form>
+        </div>
+      </Drawer>
+      <!--新增 抽屉 编辑基本信息 end-->
+      <!--新增 抽屉 查看历史记录 start-->
+      <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
+        <div class="el-textarea" v-loading="historyLoading">
+          <!--enctype="multipart/form-data"-->
+          <form id="uploadFile">
+            <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
+            <div class="cannetProject2">
+              <div style="display: inline-block">
+                <img src="../../static/img/fujian.png" alt="">
+                <a href="javascript:;" class="file" @change="getFileName">选择文件
+                  <input type="file" name="myfile">
+                </a>
+                <input type="hidden" name="projectUID" v-bind:value="proId">
+                <input type="hidden" name="rtype" v-bind:value="3">
+                <span class="showFileName"></span>
+              </div>
+              <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
+            </div>
+          </form>
+        </div>
+        <!--操作记录-->
+        <div class="discription lis" style="margin-top: 15px;">
+          <!--<h3>历史记录</h3>-->
+          <!--<div class="add" @click="addRemark()"><img src="../../static/img/msg.png" alt="">添加评论</div>-->
+          <div class="logBox">
+            <div v-bind:key="logs.index" class="TimeLine" style="position: relative;" v-for="(logs, index) in taskLogs">
+              <div class="quan">{{index+1}}</div>
+              <div class="timeDate">{{logs.oTime}}</div>
+              <div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}
+                <div class="contBoxContentWrap">
+                  <div class="contBoxContent" v-if="logs.comment">评论：{{logs.comment}}</div>
+                  <div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0">
+                    <span v-if="logs.uploads[0].isImage" @click="showBigImage(logs.uploads[0].previewUrl, logs.uploads[0].showName)" class="filepre">附件预览</span>
+                    <a v-bind:download="logs.uploads[0].showName" v-bind:href="logs.uploads[0].downloadUrl">下载：{{logs.uploads[0].showName}}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <el-row style="margin-top: 30px;" v-if="totalData > 10">
+            <el-button icon="el-icon-plus" @click="getPageNum()" v-bind:disabled="notMore">加载更多</el-button>
+          </el-row>
+        </div>
+      </Drawer>
+      <!--新增 抽屉 查看历史记录 end-->
+      <!--<div class="block">-->
+        <!--<el-tree-->
+          <!--:data="data5"-->
+          <!--node-key="id"-->
+          <!--@node-expand="getNodeMsg($event)"-->
+          <!--:expand-on-click-node="false">-->
+          <!--<span class="custom-tree-node" slot-scope="{ node, data }">-->
+            <!--<span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>-->
+            <!--<span class="proMsg">-->
+              <!--<span class="treeName">-->
+                <!--<span v-if="data.type === '2'">-->
+                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>-->
+                  <!--<span style="float: left;margin-left: 16px;">{{data.userName}}</span>-->
+                <!--</span>-->
+              <!--</span>-->
+              <!--<span class="treeState">-->
+                 <!--<span v-if="data.type === '2'">-->
+                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>-->
+                  <!--<span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>-->
+                  <!--<span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>-->
+                  <!--<span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>-->
+                 <!--</span>-->
+              <!--</span>-->
+              <!--<span class="treeTime">-->
+                <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>-->
+                <!--<span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>-->
+              <!--</span>-->
+            <!--</span>-->
+          <!--</span>-->
+        <!--</el-tree>-->
+      <!--</div>-->
     </div>
+    <!--删除确认-->
+    <Modal v-model="modal2" width="360">
+      <p slot="header" style="color:#f60;text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>删除确认</span>
+      </p>
+      <div style="text-align:center">
+        <p>将删除此项及其下的所有子项.</p>
+        <p>确定要删除?</p>
+      </div>
+      <div slot="footer">
+        <Button type="error" size="large" long :loading="modal_loading" @click="delNode">确认删除</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -215,10 +416,169 @@ export default {
   name: 'ProEdit',
   data () {
     return {
+      // 成员管理 初始值
+      iniMem: [],
+      // 成员管理
+      getPeople: [],
+      // 成员管理
+      dataPeo: [],
+      // 新增
+      getNextPeople: [],
+      // 成员管理
+      deId: [],
+      // 成员管理 组织架构
+      data2: [],
+      // 组织架构
+      defaultProps: {
+        children: 'children',
+        label: 'Name'
+      },
+      // 组织架构
+      organizationalShow: false,
+      // 新增
+      modal2: false,
+      modal_loading: false,
+      // 新增
+      defaultTreeProps: {
+        children: 'children',
+        label: 'name'
+      },
+      // 新增
+      firstPlanId: '',
+      // 新增
+      token: '',
+      // 新增
+      upLoadName: '',
+      // 新增
+      formId: '',
+      // 新增
+      addTaskOptions: [],
+      // 新增
+      defaultTime: '',
+      // 新增
+      isDisabled: false,
+      // 新增
+      pickerOptions0: {
+        canSee: 'CanSee',
+        canEdit: 'CanEdit'
+      },
+      // 新增 切换
+      panshow: false,
+      // 新增 添加计划 切换
+      activeNameBgCover: 'first',
+      // 新增 添加计划或者任务 表单弹窗
+      bgCoverShow: false,
+      // 新增
+      totalData: 0,
+      // 新增
+      taskLogs: [],
+      // 新增
+      pagenum: 1,
+      // 新增
+      showBigImageVisible: false,
+      // 新增
+      preImageUrl: '',
+      // 新增 历史loading
+      historyLoading: false,
+      // 新增 历史记录 抽屉
+      DrawerHistory: false,
+      // 新增 项目组成员列表
+      proGrpMemList: '',
+      // 新增
+      single1: true,
+      // 新增
+      single2: false,
       // 新增
       loading2: false,
       // 新增
       options4: [],
+      // 新建
+      addPlanPayload: {
+        parentPlanId: '',
+        name: '',
+        start: '',
+        finish: '',
+        description: ''
+      },
+      // 新建
+      addTaskPayload: {
+        parentId: '',
+        attachmentId: '',
+        jobName: '',
+        taskStartDate: '',
+        taskFinishDate: '',
+        description: '',
+        jobLevel: 1,
+        users: []
+      },
+      // 增加任务 表单
+      addTaskForm: {
+        jobName: '',
+        userArr: [],
+        userName: '',
+        jobLevel: 1,
+        date1: '',
+        date2: '',
+        state2: '',
+        description: '',
+        taskUserId: ''
+      },
+      // 增加任务 验证
+      taskRules: {
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+        jobName: [
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+        userArr: [
+          { required: true, message: '请选择任务指派人', trigger: 'change' }
+        ],
+        jobLevel: [
+          { required: true, message: '请选择任务等级', trigger: 'change' }
+        ],
+        date1: [
+          { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
+        ],
+        date2: [
+          { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
+        ]
+      },
+      // 新增 增加计划 表单
+      form: {
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        description: '',
+        resource: '',
+        desc: ''
+      },
+      // 新增 增加计划 验证
+      rules: {
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+        jobName: [
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+        userArr: [
+          { required: true, message: '请选择任务指派人', trigger: 'change' }
+        ],
+        jobLevel: [
+          { required: true, message: '请选择任务等级', trigger: 'change' }
+        ],
+        date1: [
+          { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
+        ],
+        date2: [
+          { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
+        ]
+      },
+      // 新增
+      value9: [],
       // 新增
       taskForm: {
         jobName: '',
@@ -233,9 +593,13 @@ export default {
         taskUserId: ''
       },
       // 新增
+      Mid: '',
+      // 新增
       seracMem: '',
       // 新增 成员管理 抽屉
       DrawerMember: false,
+      // 新增 编辑基本信息 抽屉
+      DrawerBaseEdit: false,
       // 新加 ks
       memberList: [],
       // 新加 js
@@ -248,6 +612,7 @@ export default {
       downurl: '',
       fileName: '',
       totalNum: 1,
+      currentNodeId: '',
       currentProId: '',
       currentType: 1,
       totalHistoryNum: 1,
@@ -283,13 +648,77 @@ export default {
       // 新增
       moreUserSelectPayload: {
         projectManager: ''
+      },
+      // 新增
+      addMemPayload: {
+        projectUID: '',
+        hrocPeople: []
+      },
+      // 新增 编辑基本信息
+      editBaseInfoPayload: {
+        projectUID: '',
+        projectName: '',
+        projectType: '',
+        projectManager: '',
+        projectManagerID: '',
+        introduction: '',
+        startDate: '',
+        endDate: '',
+        formIds: '',
+        projectClassifyId: ''
+      },
+      // 新增
+      autoCompleteNamesPayload: {
+        projectManager: ''
+      },
+      // 新增 添加评论
+      addProjectCommentPayload: {
+        projectUID: '',
+        content: '',
+        formIds: ''
+      },
+      // 新增
+      formValidate: {
+        proName: '',
+        proType: '',
+        proManager: '',
+        startDate: '',
+        endDate: '',
+        desc: ''
+      },
+      ruleValidate: {
+        proName: [
+          { required: true, message: '请输入项目名字', trigger: 'blur' }
+        ],
+        proType: [
+          { required: true, message: '请选择项目类型', trigger: 'change' }
+        ],
+        proManager: [
+          { required: true, message: '请选择项目负责人', trigger: 'change' }
+        ],
+        startDate: [
+          { required: true, type: 'date', message: '请选择开始日期', trigger: 'change' }
+        ],
+        startDateTime: [
+          { required: true, type: 'string', message: '请选择开始时间', trigger: 'change' }
+        ],
+        endDate: [
+          { required: true, type: 'date', message: '请选择结束日期', trigger: 'change' }
+        ],
+        endDateTime: [
+          { required: true, type: 'string', message: '请选择结束时间', trigger: 'change' }
+        ],
+        desc: [
+          { required: true, message: '请简要填写项目描述', trigger: 'blur' },
+          { type: 'string', min: 5, message: '简介不得少于5个字符', trigger: 'blur' }
+        ]
       }
     }
   },
   created: function () {
     this.proId = this.$store.state.proId
-    console.log('this.proId:', this.proId)
-    this.getProjectDetail()
+    // console.log('this.proId:', this.proId)
+    // this.getProjectDetail()
     // 调用新接口 获取项目详情
     this.queryProDetail()
     // this.setRouterNameList = this.$store.state.routerList
@@ -303,10 +732,14 @@ export default {
     }
   },
   watch: {
+    value9: function (newValue, oldValue) {
+      this.addTaskForm.userArr = newValue
+      // this.log('this.taskForm.state2:', this.taskForm.state2)
+    },
     proId: function (val, oVal) {
       this.currentProId = val
       this.currentType = this.type
-      this.getProjectDetail()
+      // this.getProjectDetail()
     },
     commitComent: function (val, oVal) {
       if (val) {
@@ -316,9 +749,509 @@ export default {
       }
     },
     fileName: function (val, oval) {
+    },
+    proDetailMsg: function (newVal, oldVal) {
+      this.formValidate.proName = newVal.projectName
+      this.formValidate.proManager = newVal.projectManager
+      this.formValidate.desc = newVal.content
+      this.formValidate.proType = newVal.projectType
+      this.formValidate.startDate = newVal.startDate
+      this.formValidate.endDate = newVal.endDate
     }
   },
   methods: {
+    // 权限 编辑 查看
+    checkBoxChangeEdit (checked, id, role) {
+      var that = this
+      this.log('权限编辑查看：', checked + '-' + id + '-' + role)
+      this.ajax('/myProject/editRole', JSON.stringify({projectUID: that.proId, projectOrg: [{id: id, role: role}]})).then(res => {
+        that.log('editRole:', res)
+      })
+    },
+    // 点击组织架构下的部门节点 查询部门和人员
+    append (data) {
+      var that = this
+      var dID = data.ID
+      this.$set(data, 'children', [])
+      this.ajax('/myProject/queryDepartment', {departmentID: dID}).then(res => {
+        if (res.code === 200) {
+          that.getNextPart = res.data.department
+          for (var i = 0; i < res.data.member.length; i++) {
+            res.data.member[i].Name = res.data.member[i].Name + ' ( ' + res.data.member[i].jName + ' )'
+          }
+          that.getNextPeople = res.data.member
+          data.children = that.getNextPeople.concat(that.getNextPart)
+        }
+      })
+    },
+    // 选中部门或者人员前面的方框
+    changeState (e, state) {
+      var that = this
+      this.log('changeState:', 888888)
+      that.deId = state.checkedNodes
+      this.ajax('/myProject/queryMember', {departmentIDs: JSON.stringify(that.deId)}).then(res => {
+        that.log('queryMember_1:', res)
+        if (res.code === 200) {
+          for (var i = 0; i < res.data.length; i++) {
+            res.data[i].Name = res.data[i].Name.split(' ')[0]
+          }
+          this.getPeople = res.data
+          // that.log('getMember:', this.getPeople)
+          // that.token = res._jfinal_token
+          if (that.deId.length > 0) {
+            $('.el-icon-d-arrow-right').addClass('active')
+          } else if (that.deId.length === 0) {
+            $('.el-icon-d-arrow-right').removeClass('active')
+          }
+        }
+      })
+    },
+    addMenber () {
+      var that = this
+      if (that.deId.length > 0) {
+        that.loading = true
+        that.ajax('/myProject/addMembers', JSON.stringify({
+          projectUID: that.proId,
+          hrocPeople: that.getPeople
+        })).then(res => {
+          that.log('addMembers_99999:', res)
+          if (res.code === 200) {
+            that.queryProGroupMember()
+            that.queryProDetail()
+            // that.getProjectPeo()
+            that.loading = false
+            // that.deId = []
+          }
+        })
+      } else if (this.deId.length === 0) {
+        $('.el-icon-d-arrow-right').removeClass('active')
+      }
+    },
+    // 点击 组织架构
+    organizationalClick () {
+      this.organizationalShow = true
+      this.getDepartment()
+    },
+    // 查询部门
+    getDepartment () {
+      var that = this
+      this.ajax('/myProject/queryDepartment', {}).then(res => {
+        this.log('queryDepartment:', res)
+        if (res.code === 200) {
+          that.data2 = res.data.department
+          for (var i = 0; i < res.data.member.length; i++) {
+            res.data.member[i].Name = res.data.member[i].Name + ' ( ' + res.data.member[i].jName + ' )'
+          }
+          that.dataPeo = res.data.member
+          that.data2 = this.dataPeo.concat(this.data2)
+        }
+      })
+    },
+    moreSelectOptions: function (nodeName, nodeId) {
+      this.log('nodeName:', nodeName)
+      this.log('nodeId:', nodeId)
+      this.currentNodeId = nodeId
+      if (nodeName === 'add') {
+        this.addNode(nodeId)
+      } else if (nodeName === 'del') {
+        this.modal2 = true
+        // this.delNode(nodeId)
+      }
+    },
+    // 新建 添加子节点
+    addNode: function (nodeId) {
+      this.currentNodeId = nodeId
+      this.bgCoverShow = true
+    },
+    // 新建 删除子节点
+    delNode: function () {
+      var that = this
+      // this.currentNodeId = nodeId
+      this.modal_loading = true
+      that.ajax('/myProject/delPlanOrTask', {id: that.currentNodeId}).then(res => {
+        that.log('delPlanOrTask:', res)
+        if (res.code === 200) {
+          // that.getChildNode(that.currentNodeId)
+          that.queryProDetail()
+          this.modal_loading = false
+          this.modal2 = false
+          that.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+        } else {
+          that.loading = false
+          that.$message({
+            message: res.msg
+          })
+        }
+      })
+    },
+    // 新建
+    rateChange: function (rateval) {
+      this.addTaskPayload.jobLevel = rateval
+    },
+    // 新建 创建添加计划
+    onPlanSubmit (formName) {
+      var that = this
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          that.loading = true
+          that.addPlanPayload.parentPlanId = this.currentNodeId
+          that.addPlanPayload.name = this.form.name
+          that.addPlanPayload.start = this.form.date1
+          that.addPlanPayload.finish = this.form.date2
+          that.addPlanPayload.description = this.form.description
+          // that.addPlanPayload._jfinal_token = this.token parentPlanId
+          that.ajax('/myProject/addPlan', that.addPlanPayload).then(res => {
+            that.log('addplan:', res)
+            if (res.code === 200) {
+              that.bgCoverShow = false
+              that.token = res._jfinal_token
+              that.loading = false
+              that.formDataClear()
+              // that.getChildNode(that.currentNodeId)
+              that.queryProDetail()
+              that.$message({
+                message: '创建计划成功！',
+                type: 'success'
+              })
+            } else {
+              that.loading = false
+              that.$message({
+                message: res.msg
+              })
+            }
+          })
+        }
+      })
+    },
+    // 获取自己计划或任务
+    getChildNode: function (childNodeId) {
+      var that = this
+      that.ajax('/myProject/getPlanOrTaskById', {id: childNodeId}).then(res => {
+        that.log('当期节点的子级返回:', res)
+        if (res.code === 200) {
+          var oldData5 = that.data5
+          for (var i = 0; i < that.data5.length; i++) {
+            if (that.data5[i].id === childNodeId) {
+              var zzArr = []
+              for (var t = 0; t < res.data.length; t++) {
+                zzArr.push(res.data[t])
+              }
+              oldData5.children = zzArr
+            }
+            // res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
+            // res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
+            // res.data.planOrJobList[i].children = [{
+            //   id: 1,
+            //   name: '测试'
+            // }]
+          }
+          that.data5 = oldData5
+          that.log('that.data5:', that.data5)
+          // e.children = res.data.planOrJobList
+        }
+      })
+    },
+    // 新增
+    handleClickPlanTask: function (tab) {
+    },
+    // 新增
+    formDataClear: function () {
+      this.taskForm.state2 = ''
+      this.taskForm.jobName = ''
+      this.taskForm.date1 = ''
+      this.taskForm.date2 = ''
+      this.taskForm.description = ''
+      this.taskForm.jobLevel = 1
+      this.upLoadName = ''
+      // 计划
+      this.form.name = ''
+      this.form.date1 = ''
+      this.form.date2 = ''
+      this.form.description = ''
+      // 多人
+      this.addTaskPayload.users = []
+      this.options4 = []
+      this.value9 = []
+    },
+    // 新增
+    onPlanTaskCancel () {
+      var that = this
+      that.isDisabled = false
+      that.bgCoverShow = false
+      that.formDataClear()
+    },
+    // 新增 提交 添加任务
+    // 创建添加任务
+    onTaskSubmit: function (taskForm) {
+      var that = this
+      var fileV = false
+      // var fileV = $('#myfile').val()
+      that.$refs[taskForm].validate((valid) => {
+        if (valid) {
+          var user = ''
+          for (var i = 0; i < that.value9.length; i++) {
+            var lian = i === (that.value9.length - 1) ? '' : '_'
+            user = user + that.value9[i].split('_')[0] + '-' + that.value9[i].split('_')[1] + lian
+          }
+          this.log('user:', user)
+          // this.addTaskPayload.users. parentId
+          // parentId: '',
+          //   attachmentId: '',
+          //   jobName: '',
+          //   taskStartDate: '',
+          //   taskFinishDate: '',
+          //   description: '',
+          //   jobLevel: 1,
+          //   users: []
+          that.loading = true
+          this.addTaskPayload.parentId = this.currentNodeId
+          this.addTaskPayload.jobName = this.addTaskForm.jobName
+          this.addTaskPayload.jobLevel = this.addTaskForm.jobLevel
+          this.addTaskPayload.users = user
+          this.addTaskPayload.taskStartDate = this.addTaskForm.date1
+          this.addTaskPayload.taskFinishDate = this.addTaskForm.date2
+          this.addTaskPayload.description = this.addTaskForm.description
+          // this.addTaskPayload._jfinal_token = this.token
+          // this.addTaskPayload.formId = this.formId
+          this.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
+            if (res.code === 200) {
+              that.formId = res.formId
+              // that.token = res._jfinal_token
+              if (!fileV) {
+                that.loading = false
+                that.formId = ''
+                that.bgCoverShow = false
+                // that.formDataClear()
+                // that.queryManagePlan5()
+                that.queryProDetail()
+                that.$message({
+                  message: '创建任务成功！',
+                  type: 'success'
+                })
+              } else {
+                that.delayfuc()
+              }
+            } else {
+              that.$message({
+                message: res.msg
+              })
+              that.loading = false
+            }
+          })
+        }
+      })
+    },
+    // 新增 增加计划任务
+    addTaskRemoteMethod (query) {
+      var that = this
+      this.log('query:', query)
+      if (query !== '') {
+        this.loading2 = true
+        that.moreUserSelectPayload.projectManager = query
+        this.ajax('/general/autoCompleteNames', that.moreUserSelectPayload).then(res => {
+          that.log('autoCompleteNames:', res)
+          if (res.code === 200) {
+            that.addTaskOptions = res.msg
+            this.loading2 = false
+          }
+        })
+      } else {
+        this.addTaskOptions = []
+      }
+    },
+    // 新增 点击“历史记录”打开历史记录抽屉
+    openHisDrawer () {
+      this.DrawerHistory = true
+      this.getHistoryCont()
+    },
+    // 新增 获取历史记录
+    getHistoryCont () {
+      var that = this
+      // var planid = this.$route.params.pid
+      that.ajax('/myProject/getLogAndComment', {projectUID: that.proId, pageSize: 10, pageNum: that.pagenum}).then(res => {
+        that.log('getLogAndComment:', res)
+        if (res.code === 200) {
+          for (var i = 0; i < res.data.list.length; i++) {
+            if (res.data.list[i].uploads.length > 0) {
+              if (that.isImage(res.data.list[i].uploads[0].showName)) {
+                res.data.list[i].uploads[0].isImage = true
+              } else {
+                res.data.list[i].uploads[0].isImage = false
+              }
+              var downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].uploads[0].realUrl + '&showName=' + res.data.list[i].uploads[0].showName
+              res.data.list[i].uploads[0].downloadUrl = downurl
+            }
+          }
+          that.taskLogs = res.data.list
+          that.totalData = res.data.totalRow
+          if (that.taskLogs.length === that.totalData) {
+            that.log('ss')
+            that.notMore = true
+          }
+          that.log('taskLogs:', res)
+        }
+      })
+    },
+    // 新增 检查图片
+    showBigImage (url, imgName) {
+      if (url) {
+        if (this.isImage(imgName)) {
+          this.preImageUrl = url
+          this.showBigImageVisible = true
+        }
+      } else {
+        this.$message('地址无效')
+      }
+    },
+    // 新增
+    getFileName: function () {
+      var filePath = $('#myfile').val()
+      var arr = filePath.split('\\')
+      var fileName = arr[arr.length - 1]
+      $('.showFileName').html(fileName)
+    },
+    // 新增
+    startDateChange (date) {
+      this.log('startDate:', date)
+    },
+    // 新建 人员选择
+    handleSelect (item) {
+      // console.log(item.userId)
+      this.Mid = item.userId
+    },
+    // 新建 搜索选择项目负责人
+    querySearchAsync (queryString, cb) {
+      var that = this
+      if (queryString) {
+        that.autoCompleteNamesPayload.projectManager = queryString
+        this.ajax('/general/autoCompleteNames', that.autoCompleteNamesPayload).then(res => {
+          // console.log('search:', res)
+          if (res.code === 200) {
+            var dddarr = []
+            if (res.msg.length > 0) {
+              for (var i = 0; i < res.msg.length; i++) {
+                var obj = {}
+                obj.value = res.msg[i].Name + ' (' + res.msg[i].jName + ')'
+                obj.userId = res.msg[i].ID
+                // obj.jName = res.msg[i].jName
+                dddarr.push(obj)
+              }
+              // 调用 callback 返回建议列表的数据
+              cb(dddarr)
+            } else {
+              var aaaddd = []
+              that.$message('未能搜索到该人员')
+              cb(aaaddd)
+            }
+          }
+        })
+      }
+    },
+    // 新增
+    proBaseEditClick () {
+      this.DrawerBaseEdit = true
+    },
+    // 时间格式化
+    DateFormat (date) {
+      var finalFarmat = ''
+      var newdate = new Date(date)
+      var y = newdate.getFullYear()
+      var mon = (newdate.getMonth() + 1) < 10 ? ('0' + (newdate.getMonth() + 1)) : (newdate.getMonth() + 1)
+      var d = newdate.getDate() < 10 ? ('0' + newdate.getDate()) : newdate.getDate()
+      var h = newdate.getHours() < 10 ? ('0' + newdate.getHours()) : newdate.getHours()
+      var min = newdate.getMinutes() < 10 ? ('0' + newdate.getMinutes()) : newdate.getMinutes()
+      var s = newdate.getSeconds() < 10 ? ('0' + newdate.getSeconds()) : newdate.getSeconds()
+      finalFarmat = y + '-' + mon + '-' + d + ' ' + h + ':' + min + ':' + s
+      return finalFarmat
+    },
+    // 新增
+    handleSubmit (name) {
+      var that = this
+      this.$refs[name].validate((valid) => {
+        if (valid) {
+          that.log('that.proId:', that.proId)
+          that.editBaseInfoPayload.projectUID = that.proId
+          that.editBaseInfoPayload.projectName = that.formValidate.proName
+          that.editBaseInfoPayload.projectType = that.formValidate.proType
+          that.editBaseInfoPayload.projectManager = that.formValidate.proManager
+          that.editBaseInfoPayload.projectManagerID = that.Mid
+          that.editBaseInfoPayload.introduction = that.formValidate.desc
+          that.editBaseInfoPayload.startDate = that.DateFormat(that.formValidate.startDate)
+          that.editBaseInfoPayload.endDate = that.DateFormat(that.formValidate.endDate)
+          that.ajax('/myProject/editBaseInfo', that.editBaseInfoPayload).then(res => {
+            that.log('editBaseInfo:', res)
+            if (res.code === 200) {
+              that.$Message.success('Success!')
+              that.queryProDetail()
+              // that.queryProGroupMember()
+              // that.proGrpMemList = res.data
+              // that.options4 = res.data peopleRole
+              // this.loading2 = false
+            }
+          })
+        } else {
+          this.$Message.error('Fail!')
+        }
+      })
+    },
+    // 新增
+    handleReset (name) {
+      this.$refs[name].resetFields()
+    },
+    // 新增 测试
+    test () {
+      this.log('value9:', this.taskForm.value9)
+    },
+    // 新增 增加项目组成员
+    addMember () {
+      var that = this
+      if (that.taskForm.value9.length > 0) {
+        for (var i = 0; i < that.taskForm.value9.length; i++) {
+          var obj = {Name: '', ID: ''}
+          obj.Name = that.taskForm.value9[i].split('-')[0]
+          obj.ID = that.taskForm.value9[i].split('-')[1]
+          that.addMemPayload.hrocPeople.push(obj)
+        }
+        that.addMemPayload.projectUID = this.proId
+        that.log('that.addMemPayload:', that.addMemPayload)
+        this.ajax('/myProject/addMembers', JSON.stringify(that.addMemPayload)).then(res => {
+          that.log('addMembers:', res)
+          if (res.code === 200) {
+            that.queryProGroupMember()
+            that.queryProDetail()
+            // that.proGrpMemList = res.data
+            // that.options4 = res.data peopleRole
+            // this.loading2 = false
+          }
+        })
+      }
+    },
+    // 新增 查询项目组成员getMembersByProjectUID
+    queryProGroupMember () {
+      var that = this
+      this.ajax('/myProject/getMembersByProjectUID', {projectUID: that.proId}).then(res => {
+        that.log('getMembersByProjectUID:', res)
+        if (res.code === 200) {
+          that.proGrpMemList = res.data
+          for (var i = 0; i < res.data.length; i++) {
+            if (res.data[i].peopleRole === '1') {
+              res.data[i].peopleRoleText = '创建人'
+            } else if (res.data[i].peopleRole === '2') {
+              res.data[i].peopleRoleText = '负责人'
+            } else if (res.data[i].peopleRole === '3') {
+              res.data[i].peopleRoleText = '执行人'
+            } else {
+              res.data[i].peopleRoleText = '组成员'
+            }
+          }
+          // that.options4 = res.data peopleRole
+          // this.loading2 = false
+        }
+      })
+    },
     // 新增 成员搜索
     remoteMethod (query) {
       var that = this
@@ -340,7 +1273,20 @@ export default {
     // 新增
     moreMemberClick: function () {
       this.DrawerMember = true
+      this.queryProGroupMember()
     },
+    // zhanwei
+    // createDate: "2019-03-02 13:26:22"
+    // creator: "董广"
+    // finish: "2019-03-29 00:00:00"
+    // id: "Pdbc5c36fb9fb4cc5991393a0ec3e16a0"
+    // jobLevel: ""
+    // name: "这个一级计划01"
+    // sonFlag: true
+    // start: "2019-03-11 00:00:00"
+    // status: ""
+    // type: "1"
+    // userName: null
     // 新增 获取项目详情
     queryProDetail: function () {
       var that = this
@@ -348,6 +1294,11 @@ export default {
         that.log('新getProjectDetail:', res)
         if (res.code === 200) {
           that.memberList = res.data.memberList
+          that.proDetailMsg = res.data
+          that.startPlanDate = res.data.startDate.split(' ')[0]
+          that.endPlanDate = res.data.endDate.split(' ')[0]
+          that.data5 = res.data.planOrJobList
+          that.firstPlanId = res.data.firstPlanId
           // for (var i = 0; i < res.data.planOrJobList.length; i++) {
           //   res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
           //   res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
@@ -360,18 +1311,26 @@ export default {
         }
       })
     },
-    resetScro: function () {
-      $('.ivu-drawer-body').scrollTop(0)
+    breadcrumbGetPlan: function (pid, index) {
+      var that = this
+      that.data5 = []
+      that.currentProId = pid
+      // that.getProjectDetail(that.$store.state.routerList[index].type)
+      that.$store.commit('resetBreadcrumb', index)
     },
+    // resetScro: function () {
+    //   $('.ivu-drawer-body').scrollTop(0)
+    // },
     // j
-    drawerClose: function () {
-      $('.ivu-drawer-body').scrollTop(0)
-    },
+    // drawerClose: function () {
+    //   $('.ivu-drawer-body').scrollTop(0)
+    // },
     getNodeMsg: function (e) {
       // this.value4 = true
       var that = this
       this.$set(e, 'children', [])
-      that.ajax('/leader/getPlanOrTaskById', {id: e.id}).then(res => {
+      that.ajax('/myProject/getPlanOrTaskById', {id: e.id}).then(res => {
+        that.log('子级返回:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.planOrJobList.length; i++) {
             res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
@@ -385,216 +1344,186 @@ export default {
         }
       })
     },
-    getProjectDetail: function (typeNum) {
-      var that = this
-      if (typeNum) {
-        that.currentType = typeNum
-      }
-      that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
-        if (res.code === 200) {
-          that.proDetailMsg = res.data.projectDetail
-          that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID, type: that.currentType})
-          that.setRouterNameList = that.$store.state.routerList
-          that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
-          that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
-          that.planList = res.data.planOrJobList
-          if (res.data.planOrJobList.length > 0) {
-            that.activeId = res.data.planOrJobList[0].id
-          } else {
-            that.activeId = ''
-          }
-          that.selectProjectId()
-        }
-      })
-    },
-    selectProjectId: function () {
-      var that = this
-      that.data5 = []
-      that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
-        if (res.code === 200) {
-          for (var i = 0; i < res.data.planOrJobList.length; i++) {
-            res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
-            res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
-            res.data.planOrJobList[i].children = [{
-              id: 1,
-              name: '测试'
-            }]
-          }
-          that.data5 = res.data.planOrJobList
-        }
-      })
-    },
-    selectProject: function (id, e) {
-      var that = this
-      that.data5 = []
-      var obj = e.currentTarget
-      if (id) {
-        that.activeId = id
-      }
-      $(obj).addClass('active').siblings().removeClass('active')
-      if ($(obj).hasClass('active')) {
-        that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
-          if (res.code === 200) {
-            for (var i = 0; i < res.data.planOrJobList.length; i++) {
-              res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
-              res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
-              res.data.planOrJobList[i].children = [{
-                id: 1,
-                name: '测试'
-              }]
-            }
-            that.data5 = res.data.planOrJobList
-          }
-        })
-      }
-    },
+    // getProjectDetail: function (typeNum) {
+    //   var that = this
+    //   if (typeNum) {
+    //     that.currentType = typeNum
+    //   }
+    //   that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
+    //     if (res.code === 200) {
+    //       that.proDetailMsg = res.data.projectDetail
+    //       that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID, type: that.currentType})
+    //       that.setRouterNameList = that.$store.state.routerList
+    //       that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
+    //       that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
+    //       that.planList = res.data.planOrJobList
+    //       if (res.data.planOrJobList.length > 0) {
+    //         that.activeId = res.data.planOrJobList[0].id
+    //       } else {
+    //         that.activeId = ''
+    //       }
+    //       that.selectProjectId()
+    //     }
+    //   })
+    // },
+    // selectProjectId: function () {
+    //   var that = this
+    //   that.data5 = []
+    //   that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
+    //     if (res.code === 200) {
+    //       for (var i = 0; i < res.data.planOrJobList.length; i++) {
+    //         res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
+    //         res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
+    //         res.data.planOrJobList[i].children = [{
+    //           id: 1,
+    //           name: '测试'
+    //         }]
+    //       }
+    //       that.data5 = res.data.planOrJobList
+    //     }
+    //   })
+    // },
+    // selectProject: function (id, e) {
+    //   var that = this
+    //   that.data5 = []
+    //   var obj = e.currentTarget
+    //   if (id) {
+    //     that.activeId = id
+    //   }
+    //   $(obj).addClass('active').siblings().removeClass('active')
+    //   if ($(obj).hasClass('active')) {
+    //     that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
+    //       if (res.code === 200) {
+    //         for (var i = 0; i < res.data.planOrJobList.length; i++) {
+    //           res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
+    //           res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
+    //           res.data.planOrJobList[i].children = [{
+    //             id: 1,
+    //             name: '测试'
+    //           }]
+    //         }
+    //         that.data5 = res.data.planOrJobList
+    //       }
+    //     })
+    //   }
+    // },
     showDetailPage: function (data) {
-      var that = this
-      console.log('dataaaaa:', data)
-      // that.resetScro()
-      if (data.type === '2') {
-        that.taskId = data.id
-        that.taskComment.uid = data.id
-        that.taskHistoryList.uid = data.id
-        that.value4 = true
-        that.getCommicateCont()
-        that.getHistoryList()
-        that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
-          if (res.code === 200) {
-            that.taskBasicMsg = res.data
-            that.rid = res.data.uid
-            if (that.isImage(res.data.showName)) {
-              res.data.isImg = true
-            } else {
-              res.data.isImg = false
-            }
-            that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
-            that.resetScro()
-          }
-        })
-      }
+      // var that = this
+      // if (data.type === '2') {
+      //   that.taskId = data.id
+      //   that.taskComment.uid = data.id
+      //   that.taskHistoryList.uid = data.id
+      //   that.value4 = true
+      //   that.getCommicateCont()
+      //   that.getHistoryList()
+      //   that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
+      //     if (res.code === 200) {
+      //       that.taskBasicMsg = res.data
+      //       that.rid = res.data.uid
+      //       if (that.isImage(res.data.showName)) {
+      //         res.data.isImg = true
+      //       } else {
+      //         res.data.isImg = false
+      //       }
+      //       that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
+      //       that.resetScro()
+      //     }
+      //   })
+      // }
     },
-    showImagePre: function () {
-      this.dialogFormVisible = true
-    },
-    showImagePreCom: function (url) {
-      if (url) {
-        this.commentPreviewUrl = url
-        this.dialogShowImg = true
-      }
-    },
-    getCommicateCont: function () {
-      var that = this
-      that.ajax('/leader/getTaskComment', that.taskComment).then(res => {
-        if (res.code === 200) {
-          that.commentList = res.data.list
-          that.totalNum = res.data.totalRow
-          for (var i = 0; i < that.commentList.length; i++) {
-            if (that.isImage(res.data.list[i].showName)) {
-              res.data.list[i].isImg = true
-            } else {
-              res.data.list[i].isImg = false
-            }
-            res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
-          }
-        }
-      })
-    },
-    getCurrentPage: function (e) {
-      this.taskComment.pageNum = e
-      this.getCommicateCont()
-    },
-    getHistoryList: function () {
-      var that = this
-      that.ajax('/leader/getTaskLog', that.taskHistoryList).then(res => {
-        if (res.code === 200) {
-          that.historyList = res.data.list
-          that.totalHistoryNum = res.data.totalRow
-          for (var i = 0; i < that.historyList.length; i++) {
-            if (that.isImage(res.data.list[i].showName)) {
-              res.data.list[i].isImg = true
-            } else {
-              res.data.list[i].isImg = false
-            }
-            that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
-          }
-        }
-      })
-    },
-    getCurrentHistoryPage: function (e) {
-      this.taskHistoryList.pageNum = e
-      this.getHistoryList()
-    },
-    getFileName: function () {
-      var filePath = $('#myfile').val()
-      var arr = filePath.split('\\')
-      var fileName = arr[arr.length - 1]
-      $('.showFileName').html(fileName)
-    },
+    // showImagePre: function () {
+    //   this.dialogFormVisible = true
+    // },
+    // showImagePreCom: function (url) {
+    //   if (url) {
+    //     this.commentPreviewUrl = url
+    //     this.dialogShowImg = true
+    //   }
+    // },
+    // getCommicateCont: function () {
+    //   var that = this
+    //   that.ajax('/leader/getTaskComment', that.taskComment).then(res => {
+    //     if (res.code === 200) {
+    //       that.commentList = res.data.list
+    //       that.totalNum = res.data.totalRow
+    //       for (var i = 0; i < that.commentList.length; i++) {
+    //         if (that.isImage(res.data.list[i].showName)) {
+    //           res.data.list[i].isImg = true
+    //         } else {
+    //           res.data.list[i].isImg = false
+    //         }
+    //         res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+    //       }
+    //     }
+    //   })
+    // },
+    // getCurrentPage: function (e) {
+    //   this.taskComment.pageNum = e
+    //   this.getCommicateCont()
+    // },
+    // getHistoryList: function () {
+    //   var that = this
+    //   that.ajax('/leader/getTaskLog', that.taskHistoryList).then(res => {
+    //     if (res.code === 200) {
+    //       that.historyList = res.data.list
+    //       that.totalHistoryNum = res.data.totalRow
+    //       for (var i = 0; i < that.historyList.length; i++) {
+    //         if (that.isImage(res.data.list[i].showName)) {
+    //           res.data.list[i].isImg = true
+    //         } else {
+    //           res.data.list[i].isImg = false
+    //         }
+    //         that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+    //       }
+    //     }
+    //   })
+    // },
+    // getCurrentHistoryPage: function (e) {
+    //   this.taskHistoryList.pageNum = e
+    //   this.getHistoryList()
+    // },
+    // getFileName: function () {
+    //   var filePath = $('#myfile').val()
+    //   var arr = filePath.split('\\')
+    //   var fileName = arr[arr.length - 1]
+    //   $('.showFileName').html(fileName)
+    // },
+    // 新增 点击“回复”按钮
     addMarkInfo () {
       var that = this
-      var url = that.$store.state.baseServiceUrl
-      var formData = new FormData($('#uploadFile')[0])
-      var taxtV = $('#textArea').val()
-      that.loading = true
-      if (taxtV) {
-        $.ajax({
-          type: 'post',
-          url: url + '/general/addOrEditComment',
-          data: formData,
-          cache: false,
-          processData: false,
-          contentType: false,
-          crossDomain: true,
-          xhrFields: {
-            withCredentials: true
-          }
-        }).then(function (data) {
-          if (data.code === 200) {
+      that.addProjectCommentPayload.projectUID = that.proId
+      that.addProjectCommentPayload.content = that.commitComent
+      that.addProjectCommentPayload.formIds = ''
+      if (that.commitComent) {
+        that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
+          that.log('addProjectComment:', res)
+          if (res.code === 200) {
             that.$message({
               type: 'success',
-              message: data.msg
+              message: res.msg
             })
-            that.getCommicateCont()
+            that.getHistoryCont()
             that.commitComent = ''
-            $('.showFileName').html('')
-            $('#myfile').val('')
-            that.loading = false
-          } else {
-            that.$message({
-              type: 'error',
-              message: data.msg
-            })
-            $('.showFileName').html('')
-            that.commitComent = ''
-            $('#myfile').val('')
-            that.loading = false
           }
         })
-      } else {
-        that.$message({
-          type: 'error',
-          message: '备注不能为空！'
-        })
-        that.loading = false
       }
-    },
-    getNextPlan: function (pId) {
-      var that = this
-      that.value4 = false
-      that.planList = []
-      that.data5 = []
-      that.currentProId = pId
-      that.setRouterNameList = that.$store.state.routerList
-      that.getProjectDetail(2)
-    },
-    breadcrumbGetPlan: function (pid, index) {
-      var that = this
-      that.data5 = []
-      that.currentProId = pid
-      that.getProjectDetail(that.$store.state.routerList[index].type)
-      that.$store.commit('resetBreadcrumb', index)
     }
+    // getNextPlan: function (pId) {
+    //   var that = this
+    //   that.value4 = false
+    //   that.planList = []
+    //   that.data5 = []
+    //   that.currentProId = pId
+    //   that.setRouterNameList = that.$store.state.routerList
+    //   that.getProjectDetail(2)
+    // },
+    // breadcrumbGetPlan: function (pid, index) {
+    //   var that = this
+    //   that.data5 = []
+    //   that.currentProId = pid
+    //   that.getProjectDetail(that.$store.state.routerList[index].type)
+    //   that.$store.commit('resetBreadcrumb', index)
+    // }
   }
 }
 </script>
@@ -646,7 +1575,7 @@ export default {
     -webkit-box-orient:vertical;
   }
   .topConRt{
-    width: 15%;
+    width: 240px;
     position: relative;
   }
   .imgBox{
@@ -664,7 +1593,7 @@ export default {
     display: flex;
     font-size: 15px;
     justify-content: start;
-    line-height: 25px;
+    _line-height: 25px;
   }
   .planName{
     width: 34px;
@@ -745,7 +1674,7 @@ export default {
     width: 100px;
   }
   .proMsg{
-    width: 700px;
+    width: 800px;
     float: right;
     display: flex;
     justify-content: space-between;
@@ -865,7 +1794,7 @@ export default {
   }
   .cannetProject2{
     height: 40px;
-    width: 90%;
+    width: 100%;
     color: #1296db;
     display: flex;
     justify-content: space-between;
@@ -897,11 +1826,11 @@ export default {
     margin-right: 10px;
   }
   .el-textarea{
-    margin-top: 20px;
-    margin-left: 10px;
+    margin-top: 15px;
+    margin-left: 0px;
   }
   .el-textarea__inner{
-    width: 90%;
+    width: 100%;
     min-height: 80px;
   }
   .file {
@@ -979,5 +1908,168 @@ export default {
   }
   .searchBtn,.searchOpenTree{
     margin-left: 15px;
+  }
+  .memberTable{
+    width: 500px;
+    text-align: center;
+    border: 1px solid #eee;
+  }
+  .memTblTitle{
+    display: flex;
+    background-color: #f8f8f9;
+    border-bottom: 1px solid #eee;
+  }
+  .tblTitItem{
+    width: 20%;
+    line-height: 32px;
+  }
+  .memTblList{
+    width: 500px;
+  }
+  .memTblListItem{
+    display: flex;
+    border-bottom: 1px solid #eee;
+  }
+  .memTblListItem:nth-last-child(1){
+    border-bottom: none;
+  }
+  .memTblListItem:hover{
+    background-color: #ebf7ff;
+  }
+  .memListItem{
+    width: 20%;
+    line-height: 32px;
+  }
+  /*新增 操作记录*/
+  .TimeLine:last-of-type .timeCont{
+    border-left: none !important;
+  }
+  .quan{
+    width: 14px;
+    height: 14px;
+    border: 1px solid #3a8ee6;
+    border-radius: 8px;
+    display: inline-block;
+    line-height:14px;
+    text-align: center;
+    font-size: 10px;
+    color: #3a8ee6;
+  }
+  .timeDate{
+    display: inline-block;
+    margin-left: 16px;
+    position: absolute;
+    top: 4px;
+    font-weight: bold;
+  }
+  .timeCont{
+    padding-top: 20px;
+    margin-left: 8px;
+    border-left: 1px solid #ddd;
+    padding-left: 30px;
+    font-size: 14px;
+    color: #999;
+    padding-bottom: 1px;
+  }
+  .listColor{
+    _color: #3a8ee6;
+    color: #666;
+    font-weight: bold;;
+  }
+  .contBoxContentWrap{
+    margin-top: 6px;
+    margin-bottom: 6px;
+    background-color: #f5f5f5;
+  }
+  .contentHide .contBoxContentWrap{
+    display: none;
+  }
+  .contentHide .contBoxContent{
+    display: none;
+  }
+  .contentShow .contBoxContent{
+    display: block;
+  }
+  .contBoxContent{
+    color: #999;
+    font-size: 12px;
+    padding-left: 8px;
+    line-height: 22px;
+  }
+  .filepre{
+    color: #3a8ee6;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  /*树形结构*/
+  .proTreeHeader{
+    display: flex;
+    justify-content: space-between;
+  }
+  /*新增 添加计划或者任务 表单弹窗*/
+  .bgCover{
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+  }
+  .bgCoverCnt{
+    _width: 400px;
+    _height: 460px;
+    background-color: #fff;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -250px;
+    margin-top: -250px;
+    padding: 50px;
+  }
+  .colose {
+    float: right;
+    margin: -40px -33px;
+    font-size: 20px;
+    color: #409EFF;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .planTaskBox{
+    padding-top: 30px;
+  }
+  /*成员管理 组织架构*/
+  .organizationalBox{
+    display: flex;
+  }
+  .organizationalBox>div:nth-child(1){
+    width: 433px;
+    margin-right: 10px;
+    border: 1px solid #eee;
+  }
+  .organizationalBox>div:nth-child(2){
+    /*flex-grow: 1;*/
+    width: 80px;
+  }
+  .caozuo{
+    float: left;
+    width: 100px;
+    position: relative;
+    margin-left: 40px;
+    text-align: center;
+  }
+  .el-icon-d-arrow-right{
+    margin: auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    line-height: 36px;
+    font-size: 20px;
+  }
+  .active{
+    color: #fff;
+    background-color:#409EFF;
   }
 </style>

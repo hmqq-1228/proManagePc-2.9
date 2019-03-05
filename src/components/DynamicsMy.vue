@@ -181,8 +181,8 @@
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
         <div style="display: flex;justify-content: space-between">
-          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-          <div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          <div style="width: 50px;cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+          <div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
         </div>
       </div>
       <div class="taskMsg">
@@ -353,7 +353,7 @@
       </div>
       <div class="taskListChild">
         <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
-          <div class="childTaskName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
+          <div class="childTaskName" style="cursor: pointer;" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
           <div class="childTaskMsg">
             <div v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
             <div v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
@@ -873,7 +873,7 @@ export default {
     },
     getUserInfo: function () {
       var that = this
-      this.ajax('/general/getUserInfo', {}).then(res => {
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
           that.log('getUserInfo', res)
           that.defImplementer.name = res.data.Name
@@ -944,9 +944,22 @@ export default {
                 if (res.data.list[i].logPage[t].oTime.substring(0, 4) === thisYear) {
                   var appleDate = res.data.list[i].logPage[t].oTime.replace(/-/g, '/')
                   var date = new Date(appleDate)
+                  var minTime
+                  var houTime
+                  if (date.getMinutes() < 10) {
+                    minTime = '0' + date.getMinutes()
+                  } else {
+                    minTime = date.getMinutes()
+                  }
+                  if (date.getHours() < 10) {
+                    houTime = '0' + date.getHours()
+                  } else {
+                    houTime = date.getHours()
+                  }
                   res.data.list[i].logPage[t].year = date.getFullYear()
                   res.data.list[i].logPage[t].mondate = (date.getMonth() + 1) + '/' + date.getDate()
-                  res.data.list[i].logPage[t].houMin = date.getHours() + ':' + date.getMinutes()
+                  res.data.list[i].logPage[t].houMin = houTime + ':' + minTime
+                  console.log('9999999999999999999999999999999', res.data.list[i].logPage[t].houMin)
                   res.data.list[i].logPage[t].keyid = 'id_' + i + '_' + t + '_' + res.data.list[i].logPage[t].oContent
                   if (t === 1) {
                     res.data.list[i].logPage[t].logStyle = 'latest'
@@ -1862,7 +1875,7 @@ export default {
             })
             that.getTaskList()
             that.getHistoryList()
-            that.getTaskChildList()
+            that.getTaskChildList(that.taskId2)
             // 清空发动态的表单
             that.clearDynamicsForm2()
           } else {
@@ -2692,6 +2705,7 @@ export default {
     line-height: 48px;
     display: flex;
     justify-content: space-between;
+    border-bottom: 1px dashed #f1f1f1;
   }
   .taskItemChild2{
     height: 48px;
@@ -2848,8 +2862,9 @@ export default {
     display: flex;
   }
   .selectRight2{
-    width: 190px;
+    width: 210px;
     display: flex;
+    justify-content: flex-end;
   }
   .selectMoreInfo{
     line-height: 30px;

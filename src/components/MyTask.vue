@@ -268,8 +268,8 @@
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
         <div style="display: flex;justify-content: space-between">
-          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-          <div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          <div style="width: 50px;cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+          <div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
         </div>
       </div>
       <div class="taskMsg2">
@@ -322,8 +322,11 @@
         <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
           <span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">
             <span style="display: inline-block;">{{file.showName}}</span>
-            <span v-if="file.isImg" @click="showImagePre(file.previewUrl)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
-            <span style="display: inline-block;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+            <div style="display: inline-block;font-size: 12px;">
+              <span style="display: inline-block;color: #53b5ff;cursor: pointer;" @click="deleteFile(file.id)">删除</span>
+              <span v-if="file.isImg" @click="showImagePre(file.previewUrl)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
+              <span style="display: inline-block;color: #53b5ff;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+            </div>
           </span>
         </div>
         <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
@@ -442,7 +445,8 @@
         <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
           <div class="childTaskName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
           <div class="childTaskMsg">
-            <div>{{childTask.overDay}}</div>
+            <div v-if="childTask.dayNum >= 0">剩余 <span style="color:#13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
+            <div v-if="childTask.dayNum < 0">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
             <div>{{childTask.userName}}</div>
             <div class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div>
           </div>
@@ -579,6 +583,9 @@ export default {
   name: 'MyTask',
   data () {
     return {
+      showDownMsg: false,
+      endTimeFirst: '',
+      startTimeFirst: '',
       // 修改任务
       modifyTaskVisible: false,
       detailTaskform: {
@@ -967,7 +974,6 @@ export default {
     }
   },
   created () {
-    this.settoken()
     this.getUserInfo()
     this.getProBelong()
     this.setDefaultTime()
@@ -980,9 +986,14 @@ export default {
     // }
   },
   methods: {
-    settoken: function () {
-      this.ajax('/general/setToken', {}).then(res => {
-        this.token = res._jfinal_token
+    deleteFile: function (id) {
+      var that = this
+      that.ajax('/file/deleteRealFile', {attachmentId: id}).then(res => {
+        // this.log('选择所属项目:', res)
+        if (res.code === 200) {
+          that.$message.success('删除成功！')
+          that.toDetail(that.taskId2)
+        }
       })
     },
     modifyTask: function (id) {
@@ -1039,7 +1050,7 @@ export default {
     },
     queryMyProjectList () {
       var that = this
-      this.ajax('/general/myProjectList', that.myProjectListPayload).then(res => {
+      this.ajax('/myProject/myProjectList', that.myProjectListPayload).then(res => {
         // this.log('选择所属项目:', res)
         if (res.code === 200) {
           that.projectList = res.data
@@ -1125,7 +1136,7 @@ export default {
     },
     getUserInfo: function () {
       var that = this
-      this.ajax('/general/getUserInfo', {}).then(res => {
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
           that.log('getUserInfo', res)
           that.defImplementer.name = res.data.Name
@@ -1249,8 +1260,8 @@ export default {
     // 设置默认时间
     setDefaultTime: function () {
       // 获取当前时间
-      var startTime = this.getNowFormartTime()
-      var date = new Date(startTime)
+      this.startTimeFirst = this.getNowFormartTime()
+      var date = new Date(this.startTimeFirst)
       var nextDayStamp = date.getTime() + (24 * 60 * 60 * 1000)
       var nextDateObj = new Date(nextDayStamp)
       var nextDayYear = nextDateObj.getFullYear()
@@ -1271,9 +1282,9 @@ export default {
       if (nextDayMinutes < 10) {
         nextDayMinutes = '0' + nextDayMinutes
       }
-      var endTime = nextDayYear + '-' + nextDayMonth + '-' + nextDayDate + ' ' + nextDayHours + ':' + nextDayMinutes + ':00'
-      this.selDateStart = startTime
-      this.selDateEnd = endTime
+      this.endTimeFirst = nextDayYear + '-' + nextDayMonth + '-' + nextDayDate + ' ' + nextDayHours + ':' + nextDayMinutes + ':00'
+      this.selDateStart = this.startTimeFirst
+      this.selDateEnd = this.endTimeFirst
     },
     // 选择时间
     selectDate: function (e) {
@@ -1458,6 +1469,7 @@ export default {
               type: 'success'
             })
             that.queryMyTaskView()
+            that.getTaskChildList(that.taskId2)
             // 清空发动态的表单
             that.getHistoryList()
             that.clearDynamicsForm2()
@@ -1482,10 +1494,10 @@ export default {
       this.taskNameText = ''
       this.fileList = []
       this.CommunityTaskPayload.jobName = ''
-      this.selDateStart = ''
-      this.CommunityTaskPayload.startTime = ''
-      this.selDateEnd = ''
-      this.CommunityTaskPayload.endTime = ''
+      this.selDateStart = this.startTimeFirst
+      this.CommunityTaskPayload.startTime = this.startTimeFirst
+      this.selDateEnd = this.endTimeFirst
+      this.CommunityTaskPayload.endTime = this.endTimeFirst
       this.taskIntro = ''
       this.CommunityTaskPayload.description = ''
       this.attachmentId = ''
@@ -2909,6 +2921,7 @@ export default {
     line-height: 48px;
     display: flex;
     justify-content: space-between;
+    border-bottom: 1px dashed #f1f1f1;
   }
   .taskItemChild2{
     height: 48px;
