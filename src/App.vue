@@ -73,8 +73,15 @@ export default {
   },
   created: function () {
     this.getProManageMenu()
+    this.getMenu()
   },
   methods: {
+    getMenu: function () {
+      // leader/getProjectList
+      this.ajax('/leader/getProjectList', {}).then(res => {
+        this.log('侧边栏:', res)
+      })
+    },
     getProManageMenu: function () {
       var that = this
       that.ajax('/leader/getProjectList', {}).then(res => {
@@ -86,12 +93,6 @@ export default {
             ],
             projectType: '我的日程'
           }
-          // var obj2 = {
-          //   projectList: [
-          //     {projectName: '我的动态', projectUID: 's013'}
-          //   ],
-          //   projectType: '我的动态'
-          // }
           var obj3 = {
             projectList: [
               {projectName: '我的项目', projectUID: 's014'}
