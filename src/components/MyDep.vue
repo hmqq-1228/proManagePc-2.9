@@ -838,7 +838,6 @@ export default {
   .fileUploadCao{
     display: flex;
     justify-content: space-between;
-    background-color: #f5f8fa;
     padding: 10px;
   }
   .selectLeft{

@@ -306,7 +306,7 @@
             </div>
             <div class="paiTaskIptLeft">
               <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-              <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建任务名称" /></div>
+              <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入任务名称" /></div>
             </div>
             <div class="paiTaskIptRight">
               <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
@@ -586,9 +586,9 @@ export default {
       fileListComment: [],
       taskFinishedVisible: false,
       loading9: false,
-      commitComentF: '',
+      commitComentF: '已完成',
       fileListFinish: [],
-      butnDisabledF: true,
+      butnDisabledF: false,
       // 修改任务
       loadingEdit: false,
       modifyTaskVisible: false,
@@ -815,10 +815,10 @@ export default {
       }
     },
     commitComentF: function (val, oVal) {
-      if (val) {
-        this.butnDisabledF = false
-      } else {
+      if (val === '') {
         this.butnDisabledF = true
+      } else {
+        this.butnDisabledF = false
       }
     },
     projectManager: function (val, oVal) {
@@ -830,7 +830,7 @@ export default {
     },
     taskFinishedVisible: function (val, oVal) {
       if (val === false) {
-        this.commitComentF = ''
+        this.commitComentF = '已完成'
         this.fileListFinish = []
         $('.showFileName2').html('')
         $('#myfileF').val('')
@@ -978,7 +978,6 @@ export default {
                   res.data.list[i].logPage[t].year = date.getFullYear()
                   res.data.list[i].logPage[t].mondate = (date.getMonth() + 1) + '/' + date.getDate()
                   res.data.list[i].logPage[t].houMin = houTime + ':' + minTime
-                  console.log('9999999999999999999999999999999', res.data.list[i].logPage[t].houMin)
                   res.data.list[i].logPage[t].keyid = 'id_' + i + '_' + t + '_' + res.data.list[i].logPage[t].oContent
                   if (t === 1) {
                     res.data.list[i].logPage[t].logStyle = 'latest'
@@ -1642,7 +1641,7 @@ export default {
           that.toDetail(that.taskId2)
           that.getTaskList()
           that.getHistoryList()
-          that.commitComentF = ''
+          that.commitComentF = '已完成'
           that.fileListFinish = []
           $('.showFileName2').html('')
           $('#myfileF').val('')
@@ -1654,7 +1653,7 @@ export default {
     concelFinished: function () {
       var that = this
       that.taskFinishedVisible = false
-      that.commitComentF = ''
+      that.commitComentF = '已完成'
       $('.showFileName2').html('')
       $('#myfileF').val('')
     },
@@ -2340,7 +2339,6 @@ export default {
     padding: 10px;
     padding-top: 0;
     box-sizing: border-box;
-    background-color: #f5f8fa;
   }
   .timeLineTitle{
     color:#aaa;
@@ -2618,7 +2616,6 @@ export default {
     font-size: 14px;
     /*font-family: '黑体';*/
     padding:0 10px;
-    background-color: #f5f8fa;
   }
   .cannetProject2 div img{
     float: left;
@@ -2866,7 +2863,6 @@ export default {
   .fileUploadCao{
     display: flex;
     justify-content: space-between;
-    background-color: #f5f8fa;
     padding: 10px;
   }
   .selectLeft{

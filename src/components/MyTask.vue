@@ -393,7 +393,7 @@
             </div>
             <div class="paiTaskIptLeft">
               <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-              <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建任务名称" /></div>
+              <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入任务名称" /></div>
             </div>
             <div class="paiTaskIptRight">
               <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
@@ -644,8 +644,8 @@ export default {
       // 任务完成
       taskFinishedVisible: false,
       loading9: false,
-      commitComentF: '',
-      butnDisabledF: true,
+      commitComentF: '已完成',
+      butnDisabledF: false,
       totalRowNum: 0,
       myTaskList: [],
       projectList: [],
@@ -940,10 +940,10 @@ export default {
       }
     },
     commitComentF: function (val, oVal) {
-      if (val) {
-        this.butnDisabledF = false
-      } else {
+      if (val === '') {
         this.butnDisabledF = true
+      } else {
+        this.butnDisabledF = false
       }
     },
     projectManager: function (val, oVal) {
@@ -964,7 +964,7 @@ export default {
     },
     taskFinishedVisible: function (val, oVal) {
       if (val === false) {
-        this.commitComentF = ''
+        this.commitComentF = '已完成'
         this.fileListFinish = []
         $('.showFileName2').html('')
         $('#myfileF').val('')
@@ -1997,7 +1997,7 @@ export default {
           that.toDetail(that.taskId2)
           that.queryMyTaskView()
           that.getHistoryList()
-          that.commitComentF = ''
+          that.commitComentF = '已完成'
           that.fileListFinish = []
           $('.showFileName2').html('')
           $('#myfileF').val('')
@@ -2009,7 +2009,7 @@ export default {
     concelFinished: function () {
       var that = this
       that.taskFinishedVisible = false
-      that.commitComentF = ''
+      that.commitComentF = '已完成'
       $('.showFileName2').html('')
       $('#myfileF').val('')
     },
@@ -2102,6 +2102,12 @@ export default {
           that.projectManager = ''
           that.commitComentT = ''
           that.fileListTrans = []
+        } else {
+          that.$message({
+            type: 'error',
+            message: res.msg
+          })
+          that.loading11 = false
         }
       })
     },
@@ -2427,7 +2433,6 @@ export default {
   .fileUploadCao{
     display: flex;
     justify-content: space-between;
-    background-color: #f5f8fa;
     padding: 10px;
   }
   .selectLeft{
@@ -2779,7 +2784,6 @@ export default {
     font-size: 14px;
     /*font-family: '黑体';*/
     padding:0 10px;
-    background-color: #f5f8fa;
   }
   .cannetProject2 div img{
     float: left;
