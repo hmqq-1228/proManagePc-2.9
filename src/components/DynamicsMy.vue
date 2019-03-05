@@ -235,8 +235,11 @@
         <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
           <span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">
             <span style="display: inline-block;">{{file.showName}}</span>
-            <span v-if="file.isImg" @click="showImagePre(file.previewUrl)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
-            <span style="display: inline-block;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+            <div style="display: inline-block;font-size: 12px;">
+              <span @click="deleteFile(file.id)" style="display: inline-block;color: #53b5ff;cursor: pointer;">删除</span>
+              <span v-if="file.isImg" @click="showImagePre(file.previewUrl)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
+              <span style="display: inline-block;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+            </div>
           </span>
         </div>
         <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
@@ -879,6 +882,22 @@ export default {
           that.defImplementer.name = res.data.Name
           that.defImplementer.id = res.data.ID
         }
+      })
+    },
+    deleteFile: function (id) {
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteRealFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            that.toDetail(that.taskId2)
+          }
+        })
       })
     },
     // 任务列表
@@ -1888,7 +1907,7 @@ export default {
         })
       } else {
         that.$message({
-          message: '请填写动态任务名',
+          message: '请填写任务名',
           type: 'warning'
         })
         that.loading32 = false
@@ -2656,10 +2675,6 @@ export default {
     border-color: #78C3F3;
     color: #004974;
     text-decoration: none;
-  }
-  .showFileName{
-    float: right;
-    margin-left: 10px;
   }
   .time{
     font-size: 14px;
