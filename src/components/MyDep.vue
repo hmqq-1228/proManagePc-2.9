@@ -59,7 +59,7 @@
                   <div style="margin-top: 8px;">
                     <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
                     <span style="color: #888;" v-if="fileList.length === 0">暂无附件</span>
-                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}<div class="el-icon-close"></div>, </span>
+                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFile(file.attachmentId)"></div>, </span>
                   </div>
                 </div>
                 <div class="selectRight">
@@ -364,6 +364,31 @@ export default {
           that.defImplementer.id = res.data.ID
           // this.taskForm.value9.push(defaultUser1)
         }
+      })
+    },
+    delUploadFile: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileList.length; i++) {
+              if (id === that.fileList[i].attachmentId) {
+                that.fileList.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileList)
+            $('#myfile').val('')
+          }
+        })
+      }).catch(() => {
+        return false
       })
     },
     // 设置任务级别
