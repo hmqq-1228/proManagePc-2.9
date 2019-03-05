@@ -391,7 +391,7 @@ export default {
     // 查询模板信息
     // this.getModelDetail()
     // 初始化token
-    this.settoken()
+    // this.settoken()
   },
   watch: {
     // 历史记录输入框
@@ -595,11 +595,11 @@ export default {
       this.queryMyProjectView()
     },
     // 新增
-    settoken: function () {
-      this.ajax('/general/setToken', {}).then(res => {
-        this.token = res._jfinal_token
-      })
-    },
+    // settoken: function () {
+    //   this.ajax('/general/setToken', {}).then(res => {
+    //     this.token = res._jfinal_token
+    //   })
+    // },
     // 新增 查询用户信息
     getUserInfo: function () {
       var that = this

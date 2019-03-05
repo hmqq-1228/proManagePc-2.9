@@ -427,9 +427,15 @@ export default {
               } else {
                 if (res.data.list[i].logs[t].oTime.substring(0, 4) === thisYear) {
                   var date = new Date(that.dateCompatibility(res.data.list[i].logs[t].oTime))
+                  var minTime
+                  if (date.getMinutes() < 10) {
+                    minTime = '0' + date.getMinutes()
+                  } else {
+                    minTime = date.getMinutes()
+                  }
                   res.data.list[i].logs[t].year = date.getFullYear()
                   res.data.list[i].logs[t].mondate = (date.getMonth() + 1) + '/' + date.getDate()
-                  res.data.list[i].logs[t].houMin = date.getHours() + ':' + date.getMinutes()
+                  res.data.list[i].logs[t].houMin = date.getHours() + ':' + minTime
                   res.data.list[i].logs[t].keyid = 'id_' + i + '_' + t + '_' + res.data.list[i].logs[t].oContent
                   if (t === 1) {
                     res.data.list[i].logs[t].logStyle = 'latest'

@@ -59,7 +59,7 @@
                   <div style="margin-top: 8px;">
                     <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
                     <span style="color: #888;" v-if="fileList.length === 0">暂无附件</span>
-                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}<div class="el-icon-close"></div>, </span>
                   </div>
                 </div>
                 <div class="selectRight">
@@ -185,6 +185,8 @@ export default {
       // 默认指派
       fileList: [],
       defImplementerName: '李四',
+      startTimeFirst: '',
+      endTimeFirst: '',
       defImplementer: {
         name: '张三',
         id: ''
@@ -352,7 +354,7 @@ export default {
     },
     getUserInfo: function () {
       var that = this
-      this.ajax('/general/getUserInfo', {}).then(res => {
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
           that.log('getUserInfo', res)
           // var defaultUser = res.data.Name + '(' + res.data.jName + ')'
@@ -445,9 +447,10 @@ export default {
     },
     // 设置默认时间
     setDefaultTime: function () {
+      var that = this
       // 获取当前时间
-      var startTime = this.getNowFormartTime()
-      var date = new Date(startTime)
+      that.startTimeFirst = this.getNowFormartTime()
+      var date = new Date(that.startTimeFirst)
       var nextDayStamp = date.getTime() + (24 * 60 * 60 * 1000)
       var nextDateObj = new Date(nextDayStamp)
       var nextDayYear = nextDateObj.getFullYear()
@@ -468,9 +471,9 @@ export default {
       if (nextDayMinutes < 10) {
         nextDayMinutes = '0' + nextDayMinutes
       }
-      var endTime = nextDayYear + '-' + nextDayMonth + '-' + nextDayDate + ' ' + nextDayHours + ':' + nextDayMinutes + ':00'
-      this.selDateStart = startTime
-      this.selDateEnd = endTime
+      that.endTimeFirst = nextDayYear + '-' + nextDayMonth + '-' + nextDayDate + ' ' + nextDayHours + ':' + nextDayMinutes + ':00'
+      that.selDateStart = that.startTimeFirst
+      that.selDateEnd = that.endTimeFirst
     },
     // 选择时间
     selectDate: function (e) {
@@ -566,7 +569,7 @@ export default {
         })
       } else {
         that.$message({
-          message: '请填写动态任务名',
+          message: '请填写任务名',
           type: 'warning'
         })
         that.loading3 = false
@@ -591,12 +594,14 @@ export default {
     },
     // 派任务（发动态）清空表单
     clearDynamicsForm: function () {
+      console.log('time', this.startTimeFirst)
+      console.log('time2', this.endTimeFirst)
       this.taskNameText = ''
       this.CommunityTaskPayload.jobName = ''
-      this.selDateStart = ''
-      this.CommunityTaskPayload.startTime = ''
-      this.selDateEnd = ''
-      this.CommunityTaskPayload.endTime = ''
+      this.selDateStart = this.startTimeFirst
+      this.CommunityTaskPayload.startTime = this.startTimeFirst
+      this.selDateEnd = this.endTimeFirst
+      this.CommunityTaskPayload.endTime = this.endTimeFirst
       this.taskIntro = ''
       this.CommunityTaskPayload.description = ''
       this.attachmentId = ''
