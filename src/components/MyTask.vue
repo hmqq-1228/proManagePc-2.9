@@ -993,7 +993,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        that.ajax('/file/deleteRealFile', {attachmentId: id}).then(res => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
           // this.log('选择所属项目:', res)
           if (res.code === 200) {
             that.$message.success('删除成功！')
@@ -1010,7 +1010,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        that.ajax('/file/deleteRealFile', {attachmentId: id}).then(res => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
           // this.log('选择所属项目:', res)
           if (res.code === 200) {
             that.$message.success('删除成功！')

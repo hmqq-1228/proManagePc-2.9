@@ -166,7 +166,7 @@
                   <div style="margin-top: 8px;">
                     <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList2.length}}</span> 个附件:</span>
                     <span style="color: #888;" v-if="fileList2.length === 0">暂无附件</span>
-                    <span style="color: #409EFF" v-if="fileList2.length > 0" v-for="(file, index) in fileList2" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                    <span style="color: #409EFF" v-if="fileList2.length > 0" v-for="(file, index) in fileList2" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}  <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileDel(file.attachmentId)"></div>, </span>
                   </div>
                 </div>
                 <div class="selectRight2">
@@ -217,7 +217,7 @@
               <div>
                 <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
                 <span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>
-                <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
               </div>
             </div>
             <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
@@ -348,7 +348,7 @@
             <div>
               <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListFinish.length}}</span> 个附件:</span>
               <span style="color: #888;" v-if="fileListFinish.length === 0">暂无附件</span>
-              <span style="color: #409EFF" v-if="fileListFinish.length > 0" v-for="(file, index) in fileListFinish" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+              <span style="color: #409EFF" v-if="fileListFinish.length > 0" v-for="(file, index) in fileListFinish" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}  <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileFinish(file.attachmentId)"></div>, </span>
             </div>
           </div>
           <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -387,7 +387,7 @@
             <div>
               <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListTrans.length}}</span> 个附件:</span>
               <span style="color: #888;" v-if="fileListTrans.length === 0">暂无附件</span>
-              <span style="color: #409EFF" v-if="fileListTrans.length > 0" v-for="(file, index) in fileListTrans" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+              <span style="color: #409EFF" v-if="fileListTrans.length > 0" v-for="(file, index) in fileListTrans" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileTran(file.attachmentId)"></div>, </span>
             </div>
           </div>
           <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -741,6 +741,107 @@ export default {
             }
             console.log('edit', that.fileListEdit)
             $('#myfileEdit').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    delUploadFileComment: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            that.getCommicateCont()
+            for (var i = 0; i < that.fileListComment.length; i++) {
+              if (id === that.fileListComment[i].attachmentId) {
+                that.fileListComment.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileListComment)
+            $('#myfile2').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    delUploadFileFinish: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileListFinish.length; i++) {
+              if (id === that.fileListFinish[i].attachmentId) {
+                that.fileListFinish.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileListFinish)
+            $('#myfileF').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    delUploadFileTran: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileListTrans.length; i++) {
+              if (id === that.fileListTrans[i].attachmentId) {
+                that.fileListTrans.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileListTrans)
+            $('#myfileTransfer').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    delUploadFileDel: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileList2.length; i++) {
+              if (id === that.fileList2[i].attachmentId) {
+                that.fileList2.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileList2)
+            $('#myfileDel').val('')
           }
         })
       }).catch(() => {
