@@ -59,7 +59,7 @@
                   <div style="margin-top: 8px;">
                     <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
                     <span style="color: #888;" v-if="fileList.length === 0">暂无附件</span>
-                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFile(file.attachmentId)"></div>, </span>
                   </div>
                 </div>
                 <div class="selectRight">
@@ -988,12 +988,34 @@ export default {
   methods: {
     deleteFile: function (id) {
       var that = this
-      that.ajax('/file/deleteRealFile', {attachmentId: id}).then(res => {
-        // this.log('选择所属项目:', res)
-        if (res.code === 200) {
-          that.$message.success('删除成功！')
-          that.toDetail(that.taskId2)
-        }
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteRealFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            that.toDetail(that.taskId2)
+          }
+        })
+      })
+    },
+    delUploadFile: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteRealFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+          }
+        })
       })
     },
     modifyTask: function (id) {
@@ -1420,7 +1442,7 @@ export default {
         })
       } else {
         that.$message({
-          message: '请填写动态任务名',
+          message: '请填写任务名',
           type: 'warning'
         })
         that.loading3 = false
@@ -1483,7 +1505,7 @@ export default {
         })
       } else {
         that.$message({
-          message: '请填写动态任务名',
+          message: '请填写任务名',
           type: 'warning'
         })
         that.loading32 = false
@@ -2082,53 +2104,6 @@ export default {
           that.fileListTrans = []
         }
       })
-      // var url = that.$store.state.baseServiceUrl
-      // var formData = new FormData($('#taskTransfer')[0])
-      // var transText = $('#Transfer').val()
-      // if (transText && that.projectManager) {
-      //   that.loading11 = true
-      //   that.taskTransferVisible = false
-      //   $.ajax({
-      //     type: 'post',
-      //     url: url + '/general/finishTask',
-      //     data: formData,
-      //     cache: false,
-      //     processData: false,
-      //     contentType: false,
-      //     crossDomain: true,
-      //     xhrFields: {
-      //       withCredentials: true
-      //     }
-      //   }).then(function (data) {
-      //     if (data.code === 200) {
-      //       that.$message({
-      //         type: 'success',
-      //         message: data.msg
-      //       })
-      //       that.toDetail(that.taskId2)
-      //       that.queryMyTaskView()
-      //       that.value4 = false
-      //       that.loading11 = false
-      //       that.taskTransferVisible = false
-      //       $('#myfileTransfer').val('')
-      //       $('.showFileNameTran').html('')
-      //       that.projectManager = ''
-      //       that.commitComentT = ''
-      //     } else {
-      //       that.$message({
-      //         type: 'error',
-      //         message: data.msg
-      //       })
-      //       that.loading11 = false
-      //     }
-      //   })
-      // } else {
-      //   that.$message({
-      //     type: 'error',
-      //     message: '移交人和备注不能为空！'
-      //   })
-      //   that.loading11 = false
-      // }
     },
     querySearchAsync (queryString, cb) {
       var that = this
