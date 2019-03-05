@@ -287,7 +287,7 @@ export default {
       selectList1: [
         {
           value: 'all',
-          label: '全部任务'
+          label: '全部项目'
         },
         {
           value: '2',
@@ -312,7 +312,7 @@ export default {
         }
       ],
       model1: 'all',
-      model2: 'all',
+      model2: '0',
       projectViewData: {},
       totalModelNum: 0,
       // 模板
@@ -895,7 +895,7 @@ export default {
 <style scoped>
 .MyProCnt{
   min-width: 600px;
-  max-width: 1000px;
+  /*max-width: 1000px;*/
 }
   .MyProHeader{
     display: flex;
