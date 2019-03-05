@@ -4,9 +4,6 @@
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
           <div>贝豪实业项目管理中心</div>
-          <!--<div style="text-align: right;font-size: 15px;font-weight: normal;cursor: pointer" @click="backToIndex()">-->
-            <!--返回旧版 <i class="el-icon-d-arrow-right"></i>-->
-          <!--</div>-->
         </div>
       </el-header>
       <el-container>
@@ -19,7 +16,8 @@
               background-color="#2f64a5"
               text-color="#fff"
               active-text-color="#ffd04b">
-              <el-submenu v-for="(name, index) in proManageName" :index="JSON.stringify(index)" v-bind:key="index">
+              <!--侧边栏 集团战略-->
+              <el-submenu v-for="(name, index) in slideMenuGroup" :index="JSON.stringify(index)" v-bind:key="index">
                 <template slot="title">
                   <i class="el-icon-location"></i>
                   <span>{{name.projectType}}</span>
@@ -28,23 +26,11 @@
                   <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
-              <el-menu-item v-for="(name, index2) in proManageName2" :index="JSON.stringify(index2)" v-bind:key="name.projectUID" @click="getProjectDetail(name.projectUID, 1,name.projectName, name.projectName)">
+              <!--侧边栏 非集团战略-->
+              <el-menu-item v-for="(name, index2) in slideMenu" :index="JSON.stringify(index2)" v-bind:key="name.projectType + '-' + index2" @click="toMenu(name.projectType)">
                 <i class="el-icon-menu"></i>
-                <span slot="title">{{name.projectName}}</span>
+                <span slot="title">{{name.projectType}}</span>
               </el-menu-item>
-              <!--<el-submenu index="2">-->
-                <!--<template slot="title">-->
-                  <!--<i class="el-icon-menu"></i>-->
-                  <!--<span slot="title">我的日程</span>-->
-                <!--</template>-->
-                <!--<el-menu-item index="5" @click="linkJump()">我的日程</el-menu-item>-->
-              <!--</el-submenu>-->
-              <!--<el-submenu index="3">-->
-                <!--<template slot="title">-->
-                  <!--<i class="el-icon-document"></i>-->
-                  <!--<span slot="title">活动管理</span>-->
-                <!--</template>-->
-              <!--</el-submenu>-->
             </el-menu>
           </el-col>
           </el-row>
@@ -62,50 +48,50 @@ export default {
   name: 'App',
   data () {
     return {
-      proManageName: '',
-      proManageName2: [
-        // {projectName: '我的日程', projectUID: 's012'},
-        {projectName: '我的动态', projectUID: 's013'},
-        {projectName: '我的任务', projectUID: 's014'}],
+      // 侧边栏 集团战略
+      slideMenuGroup: [],
+      // 非集团战略的侧边栏
+      slideMenu: [],
       proId: '',
       nav: 1
     }
   },
   created: function () {
-    this.getProManageMenu()
+    this.queryMenu()
   },
   methods: {
-    getProManageMenu: function () {
+    toMenu: function (menuName) {
       var that = this
-      that.ajax('/leader/getProjectList', {}).then(res => {
-        console.log('muneue', res)
+      this.log('menuName:', menuName)
+      switch (menuName) {
+        case '我的项目':
+          that.$router.push('/MyPro')
+          break
+        case '我的日程':
+          that.$router.push('/Schedule')
+          break
+        case '我的动态':
+          that.$router.push('/MyDep')
+          break
+        case '我的任务':
+          that.$router.push('/MyTask')
+          break
+        default:
+          this.log('未找到')
+      }
+    },
+    // 查询侧边栏
+    queryMenu: function () {
+      var that = this
+      this.ajax('/myTask/getProjectList', {}).then(res => {
+        this.log('请求侧边栏:', res)
         if (res.code === 200) {
-          var obj = {
-            projectList: [
-              {projectName: '我的日程', projectUID: 's012'}
-            ],
-            projectType: '我的日程'
-          }
-          // var obj2 = {
-          //   projectList: [
-          //     {projectName: '我的动态', projectUID: 's013'}
-          //   ],
-          //   projectType: '我的动态'
-          // }
-          var obj3 = {
-            projectList: [
-              {projectName: '我的项目', projectUID: 's014'}
-            ],
-            projectType: '我的项目'
-          }
-          res.data.push(obj)
-          // res.data.push(obj2)
-          res.data.push(obj3)
-          that.proManageName = res.data
-          console.log('proManageName', that.proManageName)
-          if (res.data[0].projectType === '集团战略') {
-            that.proId = res.data[0].projectList[0].projectUID
-            that.$store.state.proId = res.data[0].projectList[0].projectUID
+          for (var i = 0; i < res.data.length; i++) {
+            if (res.data[i].projectType === '集团战略') {
+              that.slideMenuGroup.push(res.data[i])
+            } else {
+              that.slideMenu.push(res.data[i])
+            }
           }
           that.$store.commit('setRouterName', {name: res.data[0].projectList[0].projectName, id: res.data[0].projectList[0].projectUID, type: 1})
         }
@@ -129,13 +115,7 @@ export default {
           this.$router.push('/MyPro')
         }
       }
-      // console.log('nav:2:', this.nav)
     }
-    // backToIndex: function () {
-    //   console.log('back')
-    //   // this.$router.push('https://pms.baho.cn/pmsSys/index.html#/')
-    //   window.location.href = 'https://pms.baho.cn/pmsSys/index.html#/'
-    // }
   }
 }
 </script>

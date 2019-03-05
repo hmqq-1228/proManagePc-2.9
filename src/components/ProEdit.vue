@@ -33,25 +33,78 @@
             <div class="imgBox" v-if="proDetailMsg.state === '3'"><img src="../../static/img/finish.png" alt=""></div>
           </div>
         </div>
-        <div class="planList">
-          <div class="planName"><Icon size="30" type="ios-person-outline" /></div>
-          <div class="planBox">
+        <div class="memList">
+          <div class="memName"><Icon size="30" type="ios-person-outline" /></div>
+          <div class="memBox">
             <div v-if="memberList.length > 0" v-for="member in memberList" v-bind:key="member.userName">{{member.userName}}</div>
             <div class="moreBtn" v-on:click="moreMemberClick()"><Button>更多 / 编辑</Button></div>
           </div>
         </div>
+        <!-- 一级计划 start -->
+        <div class="planList">
+          <div class="planName">项<br />目<br />计<br />划</div>
+          <div class="planBox">
+            <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
+            <Button style="margin-top: 16px; margin-left: 20px" size="small" v-on:click="addNode(firstPlanId)">+ 计划 / 任务</Button>
+          </div>
+          <!--<div class="planBox2" v-if="planList.length === 0">暂无子计划</div>-->
+        </div>
+        <!-- 一级项目计划 end -->
       </div>
       <div class="devide">
         <div class="proTreeHeader">
           <div>项目详情</div>
-          <div><Button size="small" type="primary" v-on:click="addNode(firstPlanId)">+ 计划 / 任务</Button></div>
+          <div><Button size="small" type="primary" v-on:click="addNode(activeId)">+ 计划 / 任务</Button></div>
         </div>
       </div>
-      <!---->
+      <!--项目计划树 start-->
+      <!--<div class="block">-->
+        <!--<el-tree-->
+          <!--:data="data5"-->
+          <!--:props="defaultTreeProps"-->
+          <!--node-key="id"-->
+          <!--@node-expand="getNodeMsg($event)"-->
+          <!--:expand-on-click-node="false">-->
+          <!--<span class="custom-tree-node" slot-scope="{ node, data }">-->
+            <!--<span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>-->
+            <!--<span class="proMsg">-->
+              <!--<span class="treeName">-->
+                <!--<span v-if="data.type === '2'">-->
+                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>-->
+                  <!--<span style="float: left;margin-left: 16px;">{{data.userName}}</span>-->
+                <!--</span>-->
+              <!--</span>-->
+              <!--<span class="treeState">-->
+                 <!--<span v-if="data.type === '2'">-->
+                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>-->
+                  <!--<span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>-->
+                  <!--<span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>-->
+                  <!--<span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>-->
+                 <!--</span>-->
+              <!--</span>-->
+              <!--<span class="treeTime">-->
+                <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>-->
+                <!--<span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>-->
+              <!--</span>-->
+              <!--<span class="treeTime">-->
+                <!--<Dropdown @on-click="moreSelectOptions($event, data.id)">-->
+                  <!--<a href="javascript:void(0)">下拉菜单<Icon type="ios-arrow-down"></Icon></a>-->
+                  <!--<DropdownMenu slot="list">-->
+                    <!--<DropdownItem name="add">添加</DropdownItem>-->
+                    <!--<DropdownItem name="del">删除</DropdownItem>-->
+                    <!--<DropdownItem name="edit">编辑</DropdownItem>-->
+                  <!--</DropdownMenu>-->
+                <!--</Dropdown>-->
+              <!--</span>-->
+            <!--</span>-->
+          <!--</span>-->
+        <!--</el-tree>-->
+      <!--</div>-->
+      <!--项目计划树 end-->
+      <!--项目计划树 老版本 start-->
       <div class="block">
         <el-tree
           :data="data5"
-          :props="defaultTreeProps"
           node-key="id"
           @node-expand="getNodeMsg($event)"
           :expand-on-click-node="false">
@@ -82,7 +135,6 @@
                   <DropdownMenu slot="list">
                     <DropdownItem name="add">添加</DropdownItem>
                     <DropdownItem name="del">删除</DropdownItem>
-                    <!--<DropdownItem disabled>豆汁儿</DropdownItem>-->
                     <DropdownItem name="edit">编辑</DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
@@ -91,6 +143,7 @@
           </span>
         </el-tree>
       </div>
+      <!--项目计划树 老版本 end-->
       <!--新增 添加计划或者任务 start-->
       <!--bgcover开始 增加计划-->
       <div class="bgCover" v-if="bgCoverShow">
@@ -362,6 +415,263 @@
         </div>
       </Drawer>
       <!--新增 抽屉 查看历史记录 end-->
+      <!--新增 抽屉 任务详情 start-->
+      <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
+        <div class="slidTop">
+          <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
+          <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
+          <div style="display: flex;justify-content: space-between">
+            <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+            <div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          </div>
+        </div>
+        <div class="taskMsg">
+          <div class="taskLf">
+            <div class="taskName">{{taskBasicMsg.jobName}}</div>
+            <div class="taskDetail" v-bind:title="taskBasicMsg.description">{{taskBasicMsg.description}}</div>
+          </div>
+          <div class="taskRt">
+            <div v-if="taskBasicMsg.status === '0'"><img src="../../static/img/unstart.png" alt=""></div>
+            <div v-if="taskBasicMsg.status === '1'"><img src="../../static/img/doing.png" alt=""></div>
+            <div v-if="taskBasicMsg.status === '2'"><img src="../../static/img/finish.png" alt=""></div>
+          </div>
+        </div>
+        <div class="taskTime">
+          <el-collapse>
+            <el-collapse-item style="padding: 0 10px;">
+              <template slot="title">
+                <img src="../../static/img/time.png" alt=""><span style="margin-left: 10px;">起止时间: {{taskBasicMsg.taskStartDate}} 到 {{taskBasicMsg.taskFinishDate}}</span>
+                <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum >= 0">剩余 <span style="color: #53b5ff;font-size: 16px;font-weight: bold">{{taskBasicMsg.dayNum}}</span> 天</div>
+                <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum < 0"><span style="color:red;font-size: 16px;">已逾期</span></div>
+                <div style="margin-left: 10%;" v-if="!taskBasicMsg.dayNum"><span v-bind:class="'topState' + taskBasicMsg.status">{{taskBasicMsg.statusStr}}</span></div>
+              </template>
+              <div class="managePro">
+                <div><img src="../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span>{{taskBasicMsg.userName}}</span></div>
+                <div><img src="../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>
+              </div>
+              <div class="managePro" style="margin-top: 10px;">
+                <div><img src="../../static/img/kaishi.png" alt=""><span class="proLabel">实际开始:</span><span v-if="taskBasicMsg.dealWithDate">{{taskBasicMsg.dealWithDate}}</span><span style="color: #888;" v-if="!taskBasicMsg.dealWithDate">暂未开始</span></div>
+                <div><img src="../../static/img/jiesu.png" alt=""><span class="proLabel">实际结束:</span><span v-if="taskBasicMsg.realFinishDate">{{taskBasicMsg.realFinishDate}}</span><span style="color: #888;" v-if="!taskBasicMsg.realFinishDate">暂未完成</span></div>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+        <div class="cannetProject">
+          <div style="display: inline-block"><img src="../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
+          <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>
+          <span style="font-size: 14px;color: #888;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
+        </div>
+        <div class="cannetProject">
+          <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
+          <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
+        </div>
+        <div class="cannetProject">
+          <div style="display: inline-block"><img src="../../static/img/taskFa.png" alt=""><span>父级任务:</span></div>
+          <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.parentTaskName" @click="toDetail(taskBasicMsg.parentTaskID)">{{taskBasicMsg.parentTaskName}}</div>
+          <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级任务</div>
+        </div>
+        <div class="cannetProjectFile">
+          <div style="display: inline-block"><img src="../../static/img/fujian.png" alt=""><span>项目附件:</span></div>
+          <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
+          <span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">
+            <span style="display: inline-block;">{{file.showName}}</span>
+            <span v-if="file.isImg" @click="showImagePre(file.previewUrl)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
+            <span style="display: inline-block;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+          </span>
+          </div>
+          <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
+        </div>
+        <div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">
+          <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
+          <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
+          <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
+          <Button type="info" @click="taskToDevided()">任务分解</Button>
+        </div>
+        <div class="cannetProject" v-if="taskBasicMsg.isRestart">
+          <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
+        </div>
+        <div style="position: relative;width: 90%;margin-left: 10px;" v-if="toShowDevided">
+          <div v-loading="loading32">
+            <div class="paiTaskIptBox" style="position: relative;">
+              <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+                <div class="selectUserIpt">
+                  <el-select v-model="taskForm2.value9" multiple filterable remote style="width: 100%;"
+                             :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
+                             :remote-method="remoteMethod2" :loading="loading22">
+                    <el-option v-for="item in options42" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
+                               :value="item.Name + '-' + item.ID">
+                    </el-option>
+                  </el-select>
+                </div>
+                <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
+                <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
+              </div>
+              <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">
+                <div class="selectDateBox">
+                  <div class="selectDateItem">
+                    <el-date-picker
+                      v-model="selDateStart2"
+                      type="datetime"
+                      :picker-options="pickerOptions0"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="选择开始时间">
+                    </el-date-picker>
+                  </div>
+                  <!--<div style="margin-left: 10px; margin-right: 10px;">至</div>-->
+                  <div class="selectDateItem">
+                    <el-date-picker
+                      v-model="selDateEnd2"
+                      type="datetime"
+                      :picker-options="pickerOptions0"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="选择结束时间">
+                    </el-date-picker>
+                  </div>
+                </div>
+                <div class="selectUserBtn">
+                  <el-button v-on:click="selectDateCancel2()">取消</el-button>
+                  <el-button v-on:click="selectDateOk2()">确定</el-button>
+                </div>
+              </div>
+              <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight2 + 'px', top: taskLevelTop2 + 'px', left: taskLevelLeft2 + 'px'}" v-on:mouseleave="rateMouseLeave2()">
+                <div class="rateBox">
+                  <el-rate v-model="levelValue2"></el-rate>
+                </div>
+              </div>
+              <div class="paiTaskIptLeft">
+                <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+                <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建任务名称" /></div>
+              </div>
+              <div class="paiTaskIptRight">
+                <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
+                <div class="paiTaskIptRightCnt" v-on:click="selectUser2($event)">
+                  <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
+                  <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
+                  <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
+                  <!--<span> {{defImplementer.name}}</span>-->
+                </div>
+                <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
+                <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
+                <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div>
+              </div>
+            </div>
+            <div class="taskRelation" v-if="taskRelationShow2">
+              <div class="relationIntro">
+                <textarea class="relationIntroArea" v-model="taskIntro2" placeholder="请输入任务简介"></textarea>
+              </div>
+            </div>
+            <div class="taskFileUpload">
+              <div class="fileUploadCao">
+                <div class="selectLeft">
+                  <form id="uploadFileDel" enctype="multipart/form-data">
+                    <input type="file" v-on:change="fileChange2" id="myfileDel" name="myfile" placeholder="请选择文件"/><br>
+                    <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
+                  </form>
+                  <div style="margin-top: 8px;">
+                    <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList2.length}}</span> 个附件:</span>
+                    <span style="color: #888;" v-if="fileList2.length === 0">暂无附件</span>
+                    <span style="color: #409EFF" v-if="fileList2.length > 0" v-for="(file, index) in fileList2" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                  </div>
+                </div>
+                <div class="selectRight2">
+                  <div class="selectMoreInfo" v-on:click="moreClick2()">
+                    <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
+                  </div>
+                  <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">分解</i-button></div>
+                  <div class="submitBtn" v-on:click="cancelDevide()"><i-button >取消</i-button></div>
+                </div>
+              </div>
+              <div class="fileUploadPre"></div>
+            </div>
+          </div>
+        </div>
+        <div class="cannetProject1">
+          <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务</span></div>
+        </div>
+        <div class="taskListChild">
+          <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
+            <div class="childTaskName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
+            <div class="childTaskMsg">
+              <div v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
+              <div v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
+              <div>{{childTask.userName}}</div>
+              <div class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div>
+            </div>
+          </div>
+          <div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="childTaskList.length === 0">
+            暂无子任务
+          </div>
+        </div>
+        <div class="cannetProject1">
+          <div style="display: inline-block"><img src="../../static/img/goutong.png" alt=""><span>沟 通</span></div>
+        </div>
+        <div class="el-textarea" v-loading="loading2">
+          <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent"></textarea>
+          <div class="cannetProject21">
+            <div style="display: inline-block">
+              <form id="uploadFileRe" enctype="multipart/form-data" style="height: 40px;">
+                <img src="../../static/img/fujian.png" alt="">
+                <a href="javascript:;" class="file">选择文件
+                  <input type="file" name="myfile" id="myfile2" @change="getFileName">
+                </a>
+                <!--<input type="hidden" name="rid" v-bind:value="rid2">-->
+                <!--<input type="hidden" name="rtype" v-bind:value="3">-->
+                <span class="showFileName"></span>
+              </form>
+              <div>
+                <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
+                <span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>
+                <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+              </div>
+            </div>
+            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
+          </div>
+        </div>
+        <div class="cannetProject1-1">
+          <div style="display: inline-block"><img src="../../static/img/jilu.png" alt=""><span>沟通记录</span></div>
+        </div>
+        <div class="timeLine">
+          <Timeline v-if="commentList && commentList.length > 0">
+            <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
+              <p class="time">{{comment.createDate}}</p>
+              <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
+              <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
+              <p class="content" v-if="com.showName">附件:
+                <span style="display: inline-block"> {{com.showName}}</span>
+                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(com.previewUrl)">预览</span>
+                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+              </p>
+            </span>
+            </Timeline-item>
+          </Timeline>
+          <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
+          <div style="text-align: center">
+            <Page :total="totalNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentPage($event)"></Page>
+          </div>
+        </div>
+        <div class="cannetProject1-1" style="margin-top: 0">
+          <div style="display: inline-block"><img src="../../static/img/history.png" alt=""><span>操作记录</span></div>
+        </div>
+        <div class="timeLine">
+          <Timeline>
+            <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
+              <p class="time">{{history.oTime}}</p>
+              <p class="content">{{history.oName}}{{history.oContent}}</p>
+              <span v-for="(his, index2) in history.attachment" v-bind:key="index2">
+              <p class="content" v-if="his.showName"><span>附件:</span>
+                <span style="display: inline-block"> {{his.showName}}</span>
+                <span v-if="his.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(his.previewUrl)">预览</span>
+                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="his.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+              </p>
+            </span>
+            </Timeline-item>
+          </Timeline>
+          <div style="text-align: center">
+            <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
+          </div>
+        </div>
+      </Drawer>
+      <!--任务详情 end-->
       <!--<div class="block">-->
         <!--<el-tree-->
           <!--:data="data5"-->
@@ -416,6 +726,12 @@ export default {
   name: 'ProEdit',
   data () {
     return {
+      // 任务详情 start
+      fileListComment: [],
+      childTaskList: [],
+      toShowDevided: false,
+      // 任务详情 end
+      notMore: false,
       // 成员管理 初始值
       iniMem: [],
       // 成员管理
@@ -718,7 +1034,7 @@ export default {
   created: function () {
     this.proId = this.$store.state.proId
     // console.log('this.proId:', this.proId)
-    // this.getProjectDetail()
+    this.getProjectDetail()
     // 调用新接口 获取项目详情
     this.queryProDetail()
     // this.setRouterNameList = this.$store.state.routerList
@@ -847,6 +1163,7 @@ export default {
         }
       })
     },
+    // 节点操作 展开更多 添加
     moreSelectOptions: function (nodeName, nodeId) {
       this.log('nodeName:', nodeName)
       this.log('nodeId:', nodeId)
@@ -863,7 +1180,7 @@ export default {
       this.currentNodeId = nodeId
       this.bgCoverShow = true
     },
-    // 新建 删除子节点
+    // 新建 展开更多 删除子节点
     delNode: function () {
       var that = this
       // this.currentNodeId = nodeId
@@ -910,6 +1227,7 @@ export default {
               that.token = res._jfinal_token
               that.loading = false
               that.formDataClear()
+              that.getProjectDetail()
               // that.getChildNode(that.currentNodeId)
               that.queryProDetail()
               that.$message({
@@ -997,15 +1315,6 @@ export default {
             user = user + that.value9[i].split('_')[0] + '-' + that.value9[i].split('_')[1] + lian
           }
           this.log('user:', user)
-          // this.addTaskPayload.users. parentId
-          // parentId: '',
-          //   attachmentId: '',
-          //   jobName: '',
-          //   taskStartDate: '',
-          //   taskFinishDate: '',
-          //   description: '',
-          //   jobLevel: 1,
-          //   users: []
           that.loading = true
           this.addTaskPayload.parentId = this.currentNodeId
           this.addTaskPayload.jobName = this.addTaskForm.jobName
@@ -1025,7 +1334,9 @@ export default {
                 that.formId = ''
                 that.bgCoverShow = false
                 // that.formDataClear()
+                // that.queryProDetail()
                 // that.queryManagePlan5()
+                that.getProjectDetail()
                 that.queryProDetail()
                 that.$message({
                   message: '创建任务成功！',
@@ -1297,7 +1608,7 @@ export default {
           that.proDetailMsg = res.data
           that.startPlanDate = res.data.startDate.split(' ')[0]
           that.endPlanDate = res.data.endDate.split(' ')[0]
-          that.data5 = res.data.planOrJobList
+          // that.data5 = res.data.planOrJobList
           that.firstPlanId = res.data.firstPlanId
           // for (var i = 0; i < res.data.planOrJobList.length; i++) {
           //   res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
@@ -1318,18 +1629,19 @@ export default {
       // that.getProjectDetail(that.$store.state.routerList[index].type)
       that.$store.commit('resetBreadcrumb', index)
     },
-    // resetScro: function () {
-    //   $('.ivu-drawer-body').scrollTop(0)
-    // },
+    resetScro: function () {
+      $('.ivu-drawer-body').scrollTop(0)
+    },
     // j
     // drawerClose: function () {
     //   $('.ivu-drawer-body').scrollTop(0)
     // },
+    // 点击 项目详情 下的树结构节点 获取子计划或任务
     getNodeMsg: function (e) {
       // this.value4 = true
       var that = this
       this.$set(e, 'children', [])
-      that.ajax('/myProject/getPlanOrTaskById', {id: e.id}).then(res => {
+      that.ajax('/leader/getPlanOrTaskById', {id: e.id}).then(res => {
         that.log('子级返回:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.planOrJobList.length; i++) {
@@ -1344,92 +1656,101 @@ export default {
         }
       })
     },
-    // getProjectDetail: function (typeNum) {
-    //   var that = this
-    //   if (typeNum) {
-    //     that.currentType = typeNum
-    //   }
-    //   that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
-    //     if (res.code === 200) {
-    //       that.proDetailMsg = res.data.projectDetail
-    //       that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID, type: that.currentType})
-    //       that.setRouterNameList = that.$store.state.routerList
-    //       that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
-    //       that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
-    //       that.planList = res.data.planOrJobList
-    //       if (res.data.planOrJobList.length > 0) {
-    //         that.activeId = res.data.planOrJobList[0].id
-    //       } else {
-    //         that.activeId = ''
-    //       }
-    //       that.selectProjectId()
-    //     }
-    //   })
-    // },
-    // selectProjectId: function () {
-    //   var that = this
-    //   that.data5 = []
-    //   that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
-    //     if (res.code === 200) {
-    //       for (var i = 0; i < res.data.planOrJobList.length; i++) {
-    //         res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
-    //         res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
-    //         res.data.planOrJobList[i].children = [{
-    //           id: 1,
-    //           name: '测试'
-    //         }]
-    //       }
-    //       that.data5 = res.data.planOrJobList
-    //     }
-    //   })
-    // },
-    // selectProject: function (id, e) {
-    //   var that = this
-    //   that.data5 = []
-    //   var obj = e.currentTarget
-    //   if (id) {
-    //     that.activeId = id
-    //   }
-    //   $(obj).addClass('active').siblings().removeClass('active')
-    //   if ($(obj).hasClass('active')) {
-    //     that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
-    //       if (res.code === 200) {
-    //         for (var i = 0; i < res.data.planOrJobList.length; i++) {
-    //           res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
-    //           res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
-    //           res.data.planOrJobList[i].children = [{
-    //             id: 1,
-    //             name: '测试'
-    //           }]
-    //         }
-    //         that.data5 = res.data.planOrJobList
-    //       }
-    //     })
-    //   }
-    // },
+    // 页面初始化 获取一级计划 根据项目id获取项目下的一级计划
+    getProjectDetail: function (typeNum) {
+      var that = this
+      if (typeNum) {
+        that.currentType = typeNum
+      }
+      that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
+        that.log('一级计划接口：', res)
+        if (res.code === 200) {
+          that.proDetailMsg = res.data.projectDetail
+          // that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID, type: that.currentType})
+          // that.setRouterNameList = that.$store.state.routerList
+          that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
+          that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
+          that.planList = res.data.planOrJobList
+          that.log(6666666)
+          if (res.data.planOrJobList.length > 0) {
+            that.log(88888)
+            that.activeId = res.data.planOrJobList[0].id
+          } else {
+            that.activeId = ''
+          }
+          that.log('走了走了走了走了走了走了走了')
+          that.selectProjectId()
+        }
+      })
+    },
+    // 根据计划或任务Id 获取子级结构
+    selectProjectId: function () {
+      var that = this
+      that.data5 = []
+      that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
+        that.log('nnnnnnnnn', res)
+        if (res.code === 200) {
+          for (var i = 0; i < res.data.planOrJobList.length; i++) {
+            res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
+            res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
+            res.data.planOrJobList[i].children = [{
+              id: 1,
+              name: '测试'
+            }]
+          }
+          that.data5 = res.data.planOrJobList
+        }
+      })
+    },
+    // 点击一级计划 获取一级下的子计划和任务
+    selectProject: function (id, e) {
+      var that = this
+      that.data5 = []
+      this.log('点击一级计划')
+      var obj = e.currentTarget
+      if (id) {
+        that.activeId = id
+      }
+      $(obj).addClass('active').siblings().removeClass('active')
+      if ($(obj).hasClass('active')) {
+        that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
+          if (res.code === 200) {
+            for (var i = 0; i < res.data.planOrJobList.length; i++) {
+              res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
+              res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
+              res.data.planOrJobList[i].children = [{
+                id: 1,
+                name: '测试'
+              }]
+            }
+            that.data5 = res.data.planOrJobList
+          }
+        })
+      }
+    },
     showDetailPage: function (data) {
-      // var that = this
-      // if (data.type === '2') {
-      //   that.taskId = data.id
-      //   that.taskComment.uid = data.id
-      //   that.taskHistoryList.uid = data.id
-      //   that.value4 = true
-      //   that.getCommicateCont()
-      //   that.getHistoryList()
-      //   that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
-      //     if (res.code === 200) {
-      //       that.taskBasicMsg = res.data
-      //       that.rid = res.data.uid
-      //       if (that.isImage(res.data.showName)) {
-      //         res.data.isImg = true
-      //       } else {
-      //         res.data.isImg = false
-      //       }
-      //       that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
-      //       that.resetScro()
-      //     }
-      //   })
-      // }
+      var that = this
+      if (data.type === '2') {
+        that.taskId = data.id
+        that.taskComment.uid = data.id
+        that.taskHistoryList.uid = data.id
+        that.value4 = true
+        that.getCommicateCont()
+        that.getHistoryList()
+        that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
+          if (res.code === 200) {
+            that.taskBasicMsg = res.data
+            that.rid = res.data.uid
+            if (that.isImage(res.data.showName)) {
+              res.data.isImg = true
+            } else {
+              res.data.isImg = false
+            }
+            that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
+            that.resetScro()
+          }
+        })
+      }
     },
     // showImagePre: function () {
     //   this.dialogFormVisible = true
@@ -1440,23 +1761,23 @@ export default {
     //     this.dialogShowImg = true
     //   }
     // },
-    // getCommicateCont: function () {
-    //   var that = this
-    //   that.ajax('/leader/getTaskComment', that.taskComment).then(res => {
-    //     if (res.code === 200) {
-    //       that.commentList = res.data.list
-    //       that.totalNum = res.data.totalRow
-    //       for (var i = 0; i < that.commentList.length; i++) {
-    //         if (that.isImage(res.data.list[i].showName)) {
-    //           res.data.list[i].isImg = true
-    //         } else {
-    //           res.data.list[i].isImg = false
-    //         }
-    //         res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
-    //       }
-    //     }
-    //   })
-    // },
+    getCommicateCont: function () {
+      var that = this
+      that.ajax('/leader/getTaskComment', that.taskComment).then(res => {
+        if (res.code === 200) {
+          that.commentList = res.data.list
+          that.totalNum = res.data.totalRow
+          for (var i = 0; i < that.commentList.length; i++) {
+            if (that.isImage(res.data.list[i].showName)) {
+              res.data.list[i].isImg = true
+            } else {
+              res.data.list[i].isImg = false
+            }
+            res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+          }
+        }
+      })
+    },
     // getCurrentPage: function (e) {
     //   this.taskComment.pageNum = e
     //   this.getCommicateCont()
@@ -1507,7 +1828,98 @@ export default {
           }
         })
       }
+    },
+    // 任务详情 start
+    getTaskChildList: function (id) {
+      var that = this
+      if (id) {
+        that.ajax('/myTask/myChildTask', {taskId: id}).then(res => {
+          if (res.code === 200) {
+            that.log('myChildTask:', res)
+            that.childTaskList = res.data
+          }
+        })
+      } else {
+        that.ajax('/myTask/myChildTask', {taskId: that.taskId}).then(res => {
+          if (res.code === 200) {
+            that.log('myChildTask:', res)
+            that.childTaskList = res.data
+          }
+        })
+      }
+    },
+    getHistoryList: function () {
+      var that = this
+      that.ajax('/myTask/getTaskLog', that.taskHistoryList).then(res => {
+        if (res.code === 200) {
+          that.historyList = res.data.list
+          that.totalHistoryNum = res.data.totalRow
+          if (that.historyList.length > 0) {
+            for (var i = 0; i < that.historyList.length; i++) {
+              for (var j = 0; j < that.historyList[i].attachment.length; j++) {
+                if (that.isImage(res.data.list[i].attachment[j].showName)) {
+                  res.data.list[i].attachment[j].isImg = true
+                } else {
+                  res.data.list[i].attachment[j].isImg = false
+                }
+                res.data.list[i].attachment[j].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].attachment[j].realUrl + '&showName=' + res.data.list[i].attachment[j].showName
+              }
+            }
+          }
+        }
+      })
+    },
+    addMarkInfo4 () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileRe')[0])
+      if (formData) {
+        $.ajax({
+          type: 'post',
+          url: url + '/file/uploadFileAjax',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          that.log('upload:', data)
+          if (data.code === 200) {
+            // that.attachmentId2 = data.data.attachmentId
+            var obj = {
+              attachmentId: data.data.attachmentId,
+              fileName: data.data.showName
+            }
+            that.fileListComment.push(obj)
+            that.log('attachmentId:', data.data.attachmentId2)
+            that.$message({
+              type: 'success',
+              message: '文件' + data.msg
+            })
+          } else if (data.code === 300) {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          }
+        })
+      } else {
+        // that.loading = false
+        that.$message({
+          type: 'error',
+          message: '评论内容不能为空'
+        })
+      }
     }
+    // 任务详情 end
     // getNextPlan: function (pId) {
     //   var that = this
     //   that.value4 = false
@@ -1595,7 +2007,7 @@ export default {
     justify-content: start;
     _line-height: 25px;
   }
-  .planName{
+  .memName{
     width: 34px;
     font-size: 14px;
     color: #fff;
@@ -1607,13 +2019,13 @@ export default {
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
   }
-  .planList{
+  .memList{
     width: 100%;
     display: flex;
     margin-top: 30px;
     background-color: #f5f8fa;
   }
-  .planBox{
+  .memBox{
     width: 98%;
     float: left;
     max-height: 104px;
@@ -1629,7 +2041,7 @@ export default {
     text-align: center;
     _line-height: 104px;
   }
-  .planBox div{
+  .memBox div{
     float: left;
     margin-left: 25px;
     color: #777;
@@ -1637,7 +2049,7 @@ export default {
     cursor: pointer;
     line-height: 38px;
   }
-  .planBox div.moreBtn{
+  .memBox div.moreBtn{
     padding: 4px 8px;
     float: left;
     margin-left: 25px;
@@ -1679,7 +2091,7 @@ export default {
     display: flex;
     justify-content: space-between;
   }
-  .planBox .active{
+  .memBox .active{
     color: #fff;
     background-color: #409EFF;
   }
@@ -1688,142 +2100,6 @@ export default {
   }
   .dataName:hover{
     color: chocolate;
-  }
-  .slidTop{
-    height: 40px;
-    line-height: 40px;
-    font-size: 15px;
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #f1f1f1;
-  }
-  .topState0 img,.topState1 img,.topState2 img{
-    float: left;
-    margin-top: 6px;
-  }
-  .topState0{
-    color: #ffc107;
-  }
-  .topState1{
-    color: #26a2ff;
-  }
-  .topState2{
-    color: #27CF97;
-  }
-  .taskLf{
-    padding: 10px;
-    width: 80%;
-  }
-  .taskName{
-    font-size: 16px;
-    font-weight: bold;
-    font-family: '黑体';
-  }
-  .taskDetail{
-    font-size: 14px;
-    margin-top: 10px;
-    text-indent: 2em;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    text-overflow:ellipsis;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
-  }
-  .taskRt{
-    width: 20%;
-    position: relative;
-  }
-  .taskRt div{
-    width: 90px;
-    float: right;
-    margin: 10px;
-  }
-  .taskRt div img{
-    width: 100%;
-  }
-  .taskMsg{
-    background-color: #f5f8fa;
-    display: flex;
-    justify-content: space-between;
-  }
-  .managePro{
-    display: flex;
-    justify-content: space-between;
-  }
-  .managePro div{
-    width: 50%;
-  }
-  .managePro div img{
-    float: left;
-    margin-right: 20px;
-  }
-  .managePro div .proLabel{
-    color: #1296db;
-    display: inline-block;
-    margin-right: 20px;
-  }
-  .cannetProject{
-    height: 49px;
-    line-height: 49px;
-    border-bottom: 1px solid #f1f1f1;
-    font-size: 15px;
-    font-family: '黑体';
-    padding:0 10px;
-  }
-  .cannetProject1{
-    height: 40px;
-    line-height: 40px;
-    border-bottom: 1px solid #f1f1f1;
-    background-color: #f5f8fa;
-    font-size: 16px;
-    font-family: '黑体';
-    font-weight: bold;
-    padding:0 10px;
-  }
-  .cannetProject1-1{
-    height: 40px;
-    line-height: 40px;
-    border-bottom: 1px solid #f1f1f1;
-    background-color: #f5f8fa;
-    font-size: 16px;
-    font-family: '黑体';
-    font-weight: bold;
-    padding:0 10px;
-    margin-top: 20px;
-    border-top: 1px solid #f1f1f1;
-  }
-  .cannetProject2{
-    height: 40px;
-    width: 100%;
-    color: #1296db;
-    display: flex;
-    justify-content: space-between;
-    line-height: 40px;
-    font-size: 14px;
-    /*font-family: '黑体';*/
-    padding:0 10px;
-    background-color: #f5f8fa;
-  }
-  .cannetProject2 div img{
-    float: left;
-    margin-top: 10px;
-    margin-right: 10px;
-    width: 18px;
-  }
-  .cannetProject div img{
-    float: left;
-    margin-top: 15px;
-    margin-right: 10px;
-  }
-  .cannetProject1 div img{
-    float: left;
-    margin-top: 9px;
-    margin-right: 10px;
-  }
-  .cannetProject1-1 div img{
-    float: left;
-    margin-top: 9px;
-    margin-right: 10px;
   }
   .el-textarea{
     margin-top: 15px;
@@ -2072,4 +2348,271 @@ export default {
     color: #fff;
     background-color:#409EFF;
   }
+  /* 一级项目计划 */
+  .planList{
+    width: 100%;
+    display: flex;
+    margin-top: 30px;
+    background-color: #f5f8fa;
+  }
+  .planName{
+    width: 34px;
+    font-size: 14px;
+    color: #fff;
+    float: left;
+    padding: 10px;
+    text-align: center;
+    background-color: #409EFF;
+    border-radius: 0px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+  }
+  .planBox{
+    width: 98%;
+    float: left;
+    max-height: 104px;
+    overflow: scroll;
+    overflow-x: hidden;
+    border-top: 1px solid #f0f0f0;
+  }
+  .planBox{
+    width: 98%;
+    float: left;
+    max-height: 104px;
+    overflow: scroll;
+    overflow-x: hidden;
+    border-top: 1px solid #f0f0f0;
+  }
+  .planBox2{
+    width: 98%;
+    float: left;
+    color: #6f7180;
+    max-height: 104px;
+    text-align: center;
+    line-height: 104px;
+  }
+  .planBox div{
+    padding: 4px 20px;
+    float: left;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-left: 25px;
+    margin-top: 15px;
+    color: #777;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .planBox .active{
+    color: #fff;
+    background-color: #409EFF;
+  }
+  /**
+   * =================================================================
+   *                          任务详情 start
+   * =================================================================
+   */
+  .slidTop{
+    height: 40px;
+    line-height: 40px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .topState0 img,.topState1 img,.topState2 img{
+    float: left;
+    margin-top: 6px;
+  }
+  .topState0{
+    color: #ffc107;
+  }
+  .topState1{
+    color: #26a2ff;
+  }
+  .topState2{
+    color: #27CF97;
+  }
+  .taskMsg{
+    background-color: #f5f8fa;
+    display: flex;
+    justify-content: space-between;
+  }
+  .taskLf{
+    padding: 10px;
+    width: 80%;
+  }
+  .taskName{
+    font-size: 16px;
+    font-weight: bold;
+    font-family: '黑体';
+  }
+  .taskDetail{
+    font-size: 14px;
+    margin-top: 10px;
+    text-indent: 2em;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow:ellipsis;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+  .taskRt{
+    width: 20%;
+    position: relative;
+  }
+  .taskRt div{
+    width: 90px;
+    float: right;
+    margin: 10px;
+  }
+  .taskRt div img{
+    width: 100%;
+  }
+  .managePro{
+    display: flex;
+    justify-content: space-between;
+  }
+  .managePro div{
+    width: 50%;
+  }
+  .managePro div img{
+    float: left;
+    margin-right: 20px;
+  }
+  .managePro div .proLabel{
+    color: #1296db;
+    display: inline-block;
+    margin-right: 20px;
+  }
+  .cannetProject{
+    height: 49px;
+    line-height: 49px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 15px;
+    font-family: '黑体';
+    padding:0 10px;
+  }
+  .cannetProject1{
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f1f1f1;
+    background-color: #f5f8fa;
+    font-size: 16px;
+    font-family: '黑体';
+    font-weight: bold;
+    padding:0 10px;
+  }
+  .cannetProject21{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    line-height: 40px;
+    font-size: 14px;
+    /*font-family: '黑体';*/
+    padding:0 10px;
+    background-color: #f5f8fa;
+  }
+  .cannetProject1-1{
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f1f1f1;
+    background-color: #f5f8fa;
+    font-size: 16px;
+    font-family: '黑体';
+    font-weight: bold;
+    padding:0 10px;
+    margin-top: 20px;
+    border-top: 1px solid #f1f1f1;
+  }
+  .cannetProject2{
+    height: 40px;
+    width: 90%;
+    color: #1296db;
+    display: flex;
+    justify-content: space-between;
+    line-height: 40px;
+    font-size: 14px;
+    /*font-family: '黑体';*/
+    padding:0 10px;
+    background-color: #f5f8fa;
+  }
+  .cannetProjectFile{
+    line-height: 49px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 15px;
+    font-family: '黑体';
+    padding:0 10px;
+  }
+  .cannetProject2 div img{
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;
+    width: 18px;
+  }
+  .cannetProject div img,.cannetProjectFile div img{
+    float: left;
+    margin-top: 15px;
+    margin-right: 10px;
+  }
+  .cannetProject1 div img{
+    float: left;
+    margin-top: 9px;
+    margin-right: 10px;
+  }
+  .cannetProject1-1 div img{
+    float: left;
+    margin-top: 9px;
+    margin-right: 10px;
+  }
+  .taskListChild{
+    padding: 0 20px;
+  }
+  .taskItemChild{
+    height: 48px;
+    line-height: 48px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .taskItemChild2{
+    height: 48px;
+    line-height: 48px;
+  }
+  .childTaskName{
+    width: 60%;
+    color: #409EFF;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .childTaskMsg{
+    width: 40%;
+    text-align: right;
+  }
+  .childTaskMsg>div{
+    display: inline-block;
+    margin-right: 20px;
+  }
+  .taskDel:hover {
+    color: #409EFF;
+    cursor: pointer;
+  }
+  .timeLine{
+    padding: 20px;
+  }
+  .time{
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .content{
+    padding-left: 5px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  /**
+   * =================================================================
+   *                          任务详情 end
+   * =================================================================
+   */
 </style>
