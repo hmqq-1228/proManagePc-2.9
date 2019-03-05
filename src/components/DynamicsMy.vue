@@ -1862,6 +1862,7 @@ export default {
             })
             that.getTaskList()
             that.getHistoryList()
+            that.getTaskChildList()
             // 清空发动态的表单
             that.clearDynamicsForm2()
           } else {

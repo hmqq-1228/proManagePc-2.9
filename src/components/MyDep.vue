@@ -185,6 +185,8 @@ export default {
       // 默认指派
       fileList: [],
       defImplementerName: '李四',
+      startTimeFirst: '',
+      endTimeFirst: '',
       defImplementer: {
         name: '张三',
         id: ''
@@ -445,9 +447,10 @@ export default {
     },
     // 设置默认时间
     setDefaultTime: function () {
+      var that = this
       // 获取当前时间
-      var startTime = this.getNowFormartTime()
-      var date = new Date(startTime)
+      that.startTimeFirst = this.getNowFormartTime()
+      var date = new Date(that.startTimeFirst)
       var nextDayStamp = date.getTime() + (24 * 60 * 60 * 1000)
       var nextDateObj = new Date(nextDayStamp)
       var nextDayYear = nextDateObj.getFullYear()
@@ -468,9 +471,9 @@ export default {
       if (nextDayMinutes < 10) {
         nextDayMinutes = '0' + nextDayMinutes
       }
-      var endTime = nextDayYear + '-' + nextDayMonth + '-' + nextDayDate + ' ' + nextDayHours + ':' + nextDayMinutes + ':00'
-      this.selDateStart = startTime
-      this.selDateEnd = endTime
+      that.endTimeFirst = nextDayYear + '-' + nextDayMonth + '-' + nextDayDate + ' ' + nextDayHours + ':' + nextDayMinutes + ':00'
+      that.selDateStart = that.startTimeFirst
+      that.selDateEnd = that.endTimeFirst
     },
     // 选择时间
     selectDate: function (e) {
@@ -593,9 +596,9 @@ export default {
     clearDynamicsForm: function () {
       this.taskNameText = ''
       this.CommunityTaskPayload.jobName = ''
-      this.selDateStart = ''
+      this.selDateStart = this.startTimeFirst
       this.CommunityTaskPayload.startTime = ''
-      this.selDateEnd = ''
+      this.selDateEnd = this.endTimeFirst
       this.CommunityTaskPayload.endTime = ''
       this.taskIntro = ''
       this.CommunityTaskPayload.description = ''
