@@ -134,7 +134,7 @@
               </span>
               <span class="treeTime">
                 <Dropdown @on-click="moreSelectOptions($event, data.id, data.type)">
-                  <a href="javascript:void(0)">跟多操作<Icon type="ios-arrow-down"></Icon></a>
+                  <a href="javascript:void(0)">更多操作<Icon type="ios-arrow-down"></Icon></a>
                   <DropdownMenu slot="list">
                     <DropdownItem name="add">添加</DropdownItem>
                     <DropdownItem name="del">删除</DropdownItem>
@@ -509,7 +509,7 @@
       </Drawer>
       <!--新增 抽屉 编辑计划 end-->
       <!--新增 抽屉 任务详情 start-->
-      <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
+      <Drawer class="drawerScroll" :closable="false" width="750" v-model="value4">
         <div class="slidTop">
           <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
           <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
