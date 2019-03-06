@@ -53,11 +53,12 @@
               <div class="fileUploadCao">
                 <div class="selectLeft">
                   <form style="height: 30px;" id="uploadFile" enctype="multipart/form-data">
-                    <input type="file" v-on:change="fileChange" id="myfile" name="myfile" placeholder="请选择文件"/><br><br>
+                    <input type="file" :disabled="fileListDis" v-on:change="fileChange" id="myfile" name="myfile" placeholder="请选择文件"/><br><br>
                       <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
                   </form>
-                  <div style="margin-top: 8px;">
-                    <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
+                  <div style="margin-top: 8px;font-size: 12px;">
+                    <span style="color: #f00" v-if="fileList.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
+                    <span v-if="fileList.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
                     <span style="color: #888;" v-if="fileList.length === 0">暂无附件</span>
                     <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFile(file.attachmentId)"></div>, </span>
                   </div>
@@ -184,6 +185,8 @@ export default {
     return {
       // 默认指派
       fileList: [],
+      fileListDis: false,
+      fileListLen: 0,
       defImplementerName: '李四',
       startTimeFirst: '',
       endTimeFirst: '',
@@ -276,6 +279,13 @@ export default {
     },
     selDateStart: function (newQuestion, oldQuestion) {
       this.log('newQuestion:', newQuestion)
+    },
+    fileListLen: function (val, oVal) {
+      if (val >= 5) {
+        this.fileListDis = true
+      } else if (val < 5) {
+        this.fileListDis = false
+      }
     },
     projectBelong: function (newQuestion, oldQuestion) {
       this.log('projectBelong:', newQuestion)
@@ -383,6 +393,7 @@ export default {
                 that.fileList.splice(i, 1)
               }
             }
+            that.fileListLen = that.fileList.length
             console.log('edit', that.fileList)
             $('#myfile').val('')
           }
@@ -695,6 +706,7 @@ export default {
               fileName: data.data.showName
             }
             that.fileList.push(obj)
+            that.fileListLen = that.fileList.length
             that.$message({
               type: 'success',
               message: '文件' + data.msg
