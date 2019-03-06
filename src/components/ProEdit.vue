@@ -134,7 +134,7 @@
               </span>
               <span class="treeTime">
                 <Dropdown @on-click="moreSelectOptions($event, data.id, data.type)">
-                  <a href="javascript:void(0)">跟多操作<Icon type="ios-arrow-down"></Icon></a>
+                  <a href="javascript:void(0)">更多操作<Icon type="ios-arrow-down"></Icon></a>
                   <DropdownMenu slot="list">
                     <DropdownItem name="add">添加</DropdownItem>
                     <DropdownItem name="del">删除</DropdownItem>
@@ -179,7 +179,7 @@
               <div class="memListItem">{{mem.userName}}</div>
               <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
               <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
-              <div class="memListItem">x</div>
+              <div class="memListItem" v-on:click="delMember(mem.id)">x</div>
             </div>
           </div>
         </div>
@@ -509,7 +509,7 @@
       </Drawer>
       <!--新增 抽屉 编辑计划 end-->
       <!--新增 抽屉 任务详情 start-->
-      <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
+      <Drawer class="drawerScroll" :closable="false" width="750" v-model="value4">
         <div class="slidTop">
           <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
           <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
@@ -1506,6 +1506,7 @@ export default {
         }
       })
     },
+    // 成员管理
     addMenber () {
       var that = this
       if (that.deId.length > 0) {
@@ -1525,6 +1526,31 @@ export default {
         })
       } else if (this.deId.length === 0) {
         $('.el-icon-d-arrow-right').removeClass('active')
+      }
+    },
+    // 删除成员
+    delMember (memId) {
+      var that = this
+      if (memId) {
+        that.ajax('/myProject/delMembersById', {
+          projectUID: that.proId,
+          id: memId
+        }).then(res => {
+          that.log('删除成员:', res)
+          if (res.code === 200) {
+            that.$message({
+              type: 'success',
+              message: res.msg
+            })
+            that.queryProGroupMember()
+            that.queryProDetail()
+            // that.getProjectPeo()
+            that.loading = false
+            // that.deId = []
+          } else {
+            that.$message(res.msg)
+          }
+        })
       }
     },
     // 点击 组织架构
