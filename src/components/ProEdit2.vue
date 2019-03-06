@@ -61,6 +61,9 @@
       <el-dialog title="图片预览" :visible.sync="showBigImageVisible">
         <div class="showImg"><img v-bind:src="preImageUrl" alt=""></div>
       </el-dialog>
+      <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+        <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
+      </el-dialog>
       <!--项目计划树 start-->
       <!--<div class="block">-->
       <!--<el-tree-->
@@ -882,6 +885,7 @@ export default {
         finish: '',
         description: ''
       },
+      notMore: false,
       editTaskPayload: {
         id: '1',
         jobName: '',
@@ -989,7 +993,6 @@ export default {
       childTaskList: [],
       toShowDevided: false,
       // 任务详情 end
-      notMore: false,
       // 成员管理 初始值
       iniMem: [],
       // 成员管理
@@ -1344,6 +1347,7 @@ export default {
     value4: function (val, Oval) {
       if (val === false) {
         this.fileListComment = []
+        this.fileList2 = []
       }
     },
     fileListLen2: function (val, oVal) {
@@ -1835,7 +1839,7 @@ export default {
               res.data.list[i].uploads[j].downloadUrl = downurl
             }
           }
-          that.taskLogs = res.data.list
+          that.taskLogs = that.taskLogs.concat(res.data.list)
           that.totalData = res.data.totalRow
           if (that.taskLogs.length === that.totalData) {
             that.log('ss')
@@ -1844,6 +1848,12 @@ export default {
           that.log('taskLogs:', res)
         }
       })
+    },
+    getPageNum () {
+      this.pagenum++
+      this.log(this.pagenum)
+      // this.pagenum = e
+      this.getHistoryCont()
     },
     // 新增 检查图片
     showBigImage (url) {
@@ -1928,7 +1938,7 @@ export default {
           fileStr = fileStr + that.fileListComment[j].attachmentId + ','
         }
       }
-      that.ajax('/comment/addComment', {content: that.commitComent, attachmentId: fileStr, contentId: that.taskId2, parentCommentId: '11'}).then(res => {
+      that.ajax('/comment/addComment', {content: that.commitComent, attachmentId: fileStr, contentId: that.taskId, parentCommentId: '11'}).then(res => {
         if (res.code === 200) {
           that.log('myTaskView:', res)
           that.getCommicateCont()
@@ -2270,25 +2280,29 @@ export default {
     // showImagePre: function () {
     //   this.dialogFormVisible = true
     // },
-    // showImagePreCom: function (url) {
-    //   if (url) {
-    //     this.commentPreviewUrl = url
-    //     this.dialogShowImg = true
-    //   }
-    // },
+    showImagePreCom: function (url) {
+      if (url) {
+        this.commentPreviewUrl = url
+        this.dialogShowImg = true
+      }
+    },
     getCommicateCont: function () {
       var that = this
-      that.ajax('/leader/getTaskComment', that.taskComment).then(res => {
+      that.ajax('/myTask/getTaskComment', that.taskComment).then(res => {
         if (res.code === 200) {
           that.commentList = res.data.list
           that.totalNum = res.data.totalRow
-          for (var i = 0; i < that.commentList.length; i++) {
-            if (that.isImage(res.data.list[i].showName)) {
-              res.data.list[i].isImg = true
-            } else {
-              res.data.list[i].isImg = false
+          if (that.commentList.length > 0) {
+            for (var i = 0; i < that.commentList.length; i++) {
+              for (var j = 0; j < that.commentList[i].attachment.length; j++) {
+                if (that.isImage(res.data.list[i].attachment[j].showName)) {
+                  res.data.list[i].attachment[j].isImg = true
+                } else {
+                  res.data.list[i].attachment[j].isImg = false
+                }
+                res.data.list[i].attachment[j].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].attachment[j].realUrl + '&showName=' + res.data.list[i].attachment[j].showName
+              }
             }
-            res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
           }
         }
       })
@@ -3681,6 +3695,7 @@ export default {
     line-height: 48px;
     display: flex;
     justify-content: space-between;
+    border-bottom: 1px dashed #f1f1f1;
   }
   .taskItemChild2{
     height: 48px;
