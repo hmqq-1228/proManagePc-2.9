@@ -11,7 +11,7 @@
       <div style="font-size: 12px">
         <span style="color: #f00" v-if="fileListComment.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
         <span v-if="fileListComment.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
-        <span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>
+        <!--<span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>-->
         <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
       </div>
     </div>
@@ -116,7 +116,6 @@ export default {
 
 <style scoped>
   .cannetProject21{
-    width: 90%;
     display: flex;
     justify-content: space-between;
     line-height: 40px;

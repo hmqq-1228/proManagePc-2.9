@@ -196,14 +196,15 @@
         <form id="uploadFile">
           <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
           <div class="cannetProject2">
-            <div style="display: inline-block">
-              <img src="../../static/img/fujian.png" alt="">
-              <a href="javascript:;" class="file" @change="getFileName">选择文件
-                <input type="file" name="myfile">
-              </a>
-              <input type="hidden" name="projectUID" v-bind:value="proId">
-              <input type="hidden" name="rtype" v-bind:value="3">
-              <span class="showFileName"></span>
+            <div>
+              <component v-bind:is="fileUploadComp" fileFormId="proHistory" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>
+              <!--<img src="../../static/img/fujian.png" alt="">-->
+              <!--<a href="javascript:;" class="file" @change="getFileName">选择文件-->
+                <!--<input type="file" name="myfile">-->
+              <!--</a>-->
+              <!--<input type="hidden" name="projectUID" v-bind:value="proId">-->
+              <!--<input type="hidden" name="rtype" v-bind:value="3">-->
+              <!--<span class="showFileName"></span>-->
             </div>
             <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
           </div>
@@ -248,7 +249,9 @@ export default {
   },
   data () {
     return {
-      // 是否让子组件清空文件
+      // shi
+      pageN: 1,
+      // 附件上传 是否让子组件清空文件
       isClear: false,
       // 附件上传 附件ID拼接成字符串
       FileUploadIdStr: '',
@@ -281,6 +284,7 @@ export default {
       commitComent: '',
       // 新增 历史loading
       historyLoading: false,
+      notMore: false,
       // 新增 历史记录 抽屉
       DrawerHistory: false,
       // 总条数
@@ -525,11 +529,12 @@ export default {
       var that = this
       that.addProjectCommentPayload.projectUID = that.proId
       that.addProjectCommentPayload.content = that.commitComent
-      that.addProjectCommentPayload.formIds = ''
+      that.addProjectCommentPayload.attachmentId = that.setFileIdStr()
       if (that.commitComent) {
         that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
           that.log('addProjectComment:', res)
           if (res.code === 200) {
+            that.isClear = true
             that.$message({
               type: 'success',
               message: res.msg
@@ -577,10 +582,10 @@ export default {
         title: 'Title',
         content: '<p>Content of dialog</p><p>Content of dialog</p>',
         onOk: () => {
-          this.$Message.info('Clicked ok')
+          // this.$Message.info('Clicked ok')
         },
         onCancel: () => {
-          this.$Message.info('Clicked cancel')
+          // this.$Message.info('Clicked cancel')
         }
       })
     },
@@ -688,7 +693,7 @@ export default {
     },
     // 新建 是否选择模板 no
     cancel () {
-      this.$Message.info('Clicked cancel')
+      // this.$Message.info('Clicked cancel')
     },
     // 新建 提交表单
     newCreateOk () {
@@ -919,6 +924,12 @@ export default {
       }
       that.fileUploadArr = []
       return FileIdStr
+    },
+    getPageNum () {
+      this.pageN++
+      this.log(this.pageN)
+      // this.pagenum = e
+      this.getHistoryCont()
     }
   }
 }
@@ -1063,7 +1074,6 @@ export default {
     min-height: 80px;
   }
   .cannetProject2{
-    height: 40px;
     width: 100%;
     color: #1296db;
     display: flex;
