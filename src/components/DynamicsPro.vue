@@ -21,6 +21,7 @@
               <el-dropdown-item command="2">小组项目</el-dropdown-item>
               <el-dropdown-item command="3">个人项目</el-dropdown-item>
               <el-dropdown-item command="4">集团战略</el-dropdown-item>
+              <el-dropdown-item command="5">产品研发</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -305,6 +306,8 @@ export default {
         that.selectValue = '个人项目'
       } else if (newValue === '4') {
         that.selectValue = '集团战略'
+      } else if (newValue === '5') {
+        that.selectValue = '产品研发'
       }
     },
     searchValue: function (newValue, oldValue) {
@@ -622,7 +625,9 @@ export default {
       }
     },
     toDetail: function (id) {
-      this.$router.push('/proDetails/' + id)
+      console.log('id', id)
+      this.$router.push('/ProEdit')
+      this.$store.state.proId = id
     },
     currentChange: function (pageNum) {
       this.ProCommunityListPayload.pageNum = pageNum
@@ -999,7 +1004,6 @@ export default {
     padding: 10px;
     padding-top: 0;
     box-sizing: border-box;
-    background-color: #f5f8fa;
   }
   .timeLineTitle{
     color:#aaa;
@@ -1128,7 +1132,7 @@ export default {
   /**/
   .responseArea{
     height: 0px;
-    padding-top: 10px;
+    padding-top: 0;
     overflow: hidden;
     transition: height 0.5s;
   }

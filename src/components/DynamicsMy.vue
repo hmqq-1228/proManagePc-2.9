@@ -306,7 +306,7 @@
             </div>
             <div class="paiTaskIptLeft">
               <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-              <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建任务名称" /></div>
+              <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入任务名称" /></div>
             </div>
             <div class="paiTaskIptRight">
               <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
@@ -336,7 +336,7 @@
                 <div style="margin-top: 8px;">
                   <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList2.length}}</span> 个附件:</span>
                   <span style="color: #888;" v-if="fileList2.length === 0">暂无附件</span>
-                  <span style="color: #409EFF" v-if="fileList2.length > 0" v-for="(file, index) in fileList2" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                  <span style="color: #409EFF" v-if="fileList2.length > 0" v-for="(file, index) in fileList2" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileDel(file.attachmentId)"></div>, </span>
                 </div>
               </div>
               <div class="selectRight2">
@@ -352,7 +352,7 @@
         </div>
       </div>
       <div class="cannetProject1">
-        <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务</span></div>
+        <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务<span style="color: #409EFF">({{childTaskList.length}})</span></span></div>
       </div>
       <div class="taskListChild">
         <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
@@ -361,7 +361,7 @@
             <div v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
             <div v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
             <div>{{childTask.userName}}</div>
-            <div class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div>
+            <div class="taskDel" v-if="childTask.showDeleteFlag" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div>
           </div>
         </div>
         <div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="childTaskList.length === 0">
@@ -387,7 +387,7 @@
               <div>
                 <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
                 <span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>
-                <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
               </div>
             </div>
             <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
@@ -480,6 +480,16 @@
               <el-form-item label="任务描述" maxlength="100" width="100">
                 <el-input class="planNameIpt" type="textarea" style="resize:none;" :rows="2" v-model="detailTaskform.description"></el-input>
               </el-form-item>
+              <el-form-item label="任务附件">
+                <form id="uploadFileEdit" enctype="multipart/form-data">
+                  <input type="file" style="height: 25px;line-height: 20px;font-size: 12px;" v-on:change="fileChangeEdit" id="myfileEdit" name="myfile" placeholder="请选择文件"/>
+                </form>
+                <div style="line-height: 20px;font-size: 12px;">
+                  <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListEdit.length}}</span> 个附件:</span>
+                  <span style="color: #888;" v-if="fileListEdit.length === 0">暂无附件</span>
+                  <span style="color: #409EFF" v-if="fileListEdit.length > 0" v-for="(file, index) in fileListEdit" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.showName}}  <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFile(file.attachmentId)"></div>, </span>
+                </div>
+              </el-form-item>
               <div style="text-align: center">
                 <el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>
                 <el-button @click="modifyTaskVisible = false">关 闭</el-button>
@@ -508,7 +518,7 @@
           <div>
             <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListFinish.length}}</span> 个附件:</span>
             <span style="color: #888;" v-if="fileListFinish.length === 0">暂无附件</span>
-            <span style="color: #409EFF" v-if="fileListFinish.length > 0" v-for="(file, index) in fileListFinish" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+            <span style="color: #409EFF" v-if="fileListFinish.length > 0" v-for="(file, index) in fileListFinish" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileFinish(file.attachmentId)"></div>, </span>
           </div>
         </div>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -547,7 +557,7 @@
           <div>
             <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListTrans.length}}</span> 个附件:</span>
             <span style="color: #888;" v-if="fileListTrans.length === 0">暂无附件</span>
-            <span style="color: #409EFF" v-if="fileListTrans.length > 0" v-for="(file, index) in fileListTrans" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+            <span style="color: #409EFF" v-if="fileListTrans.length > 0" v-for="(file, index) in fileListTrans" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileTran(file.attachmentId)"></div>, </span>
           </div>
         </div>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -584,11 +594,12 @@ export default {
       msg: '任务动态',
       showTaskFileUrl: '',
       fileListComment: [],
+      fileListEdit: [],
       taskFinishedVisible: false,
       loading9: false,
-      commitComentF: '',
+      commitComentF: '已完成',
       fileListFinish: [],
-      butnDisabledF: true,
+      butnDisabledF: false,
       // 修改任务
       loadingEdit: false,
       modifyTaskVisible: false,
@@ -607,6 +618,7 @@ export default {
         taskStartDate: '',
         taskFinishDate: '',
         description: '',
+        attachmentId: '',
         _jfinal_token: ''
       },
       modifyTaskRules: {
@@ -815,10 +827,10 @@ export default {
       }
     },
     commitComentF: function (val, oVal) {
-      if (val) {
-        this.butnDisabledF = false
-      } else {
+      if (val === '') {
         this.butnDisabledF = true
+      } else {
+        this.butnDisabledF = false
       }
     },
     projectManager: function (val, oVal) {
@@ -830,7 +842,7 @@ export default {
     },
     taskFinishedVisible: function (val, oVal) {
       if (val === false) {
-        this.commitComentF = ''
+        this.commitComentF = '已完成'
         this.fileListFinish = []
         $('.showFileName2').html('')
         $('#myfileF').val('')
@@ -898,6 +910,133 @@ export default {
             that.toDetail(that.taskId2)
           }
         })
+      })
+    },
+    delUploadFile: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            that.toDetail()
+            for (var i = 0; i < that.fileListEdit.length; i++) {
+              if (id === that.fileListEdit[i].attachmentId) {
+                that.fileListEdit.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileListEdit)
+            $('#myfileEdit').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    delUploadFileComment: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            that.getCommicateCont()
+            for (var i = 0; i < that.fileListComment.length; i++) {
+              if (id === that.fileListComment[i].attachmentId) {
+                that.fileListComment.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileListComment)
+            $('#myfile2').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    delUploadFileFinish: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileListFinish.length; i++) {
+              if (id === that.fileListFinish[i].attachmentId) {
+                that.fileListFinish.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileListFinish)
+            $('#myfileF').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    delUploadFileTran: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileListTrans.length; i++) {
+              if (id === that.fileListTrans[i].attachmentId) {
+                that.fileListTrans.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileListTrans)
+            $('#myfileTransfer').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    delUploadFileDel: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileList2.length; i++) {
+              if (id === that.fileList2[i].attachmentId) {
+                that.fileList2.splice(i, 1)
+              }
+            }
+            console.log('edit', that.fileList2)
+            $('#myfileDel').val('')
+          }
+        })
+      }).catch(() => {
+        return false
       })
     },
     // 任务列表
@@ -978,7 +1117,6 @@ export default {
                   res.data.list[i].logPage[t].year = date.getFullYear()
                   res.data.list[i].logPage[t].mondate = (date.getMonth() + 1) + '/' + date.getDate()
                   res.data.list[i].logPage[t].houMin = houTime + ':' + minTime
-                  console.log('9999999999999999999999999999999', res.data.list[i].logPage[t].houMin)
                   res.data.list[i].logPage[t].keyid = 'id_' + i + '_' + t + '_' + res.data.list[i].logPage[t].oContent
                   if (t === 1) {
                     res.data.list[i].logPage[t].logStyle = 'latest'
@@ -1208,6 +1346,10 @@ export default {
         that.detailTaskform.taskStartDate = res.data.taskStartDate
         that.detailTaskform.taskFinishDate = res.data.taskFinishDate
         that.detailTaskform.description = res.data.description
+        for (var i = 0; i < res.data.attachment.length; i++) {
+          res.data.attachment[i].attachmentId = res.data.attachment[i].id
+        }
+        that.fileListEdit = res.data.attachment
         // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
         // var binStartTime = new Date(st).getTime()
         // var binEndTime = new Date(res.data.taskFinishDate).getTime()
@@ -1216,6 +1358,70 @@ export default {
         // }
       })
     },
+    fileChangeEdit: function (file) {
+      var that = this
+      var obj = file.currentTarget
+      var isfile = $(obj).val()
+      if (isfile) {
+        that.addMarkInfoEdit()
+      }
+      this.log('change了', file)
+    },
+    addMarkInfoEdit () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileEdit')[0])
+      that.formData2 = formData
+      if (formData) {
+        $.ajax({
+          type: 'post',
+          url: url + '/file/uploadFileAjax',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          that.log('upload:', data)
+          if (data.code === 200) {
+            // that.attachmentId2 = data.data.attachmentId
+            var obj = {
+              attachmentId: data.data.attachmentId,
+              showName: data.data.showName
+            }
+            that.fileListEdit.push(obj)
+            // if (that.fileListEdit.length === 5) {
+            //   that.fileDisabled = true
+            // } else {
+            //   that.fileDisabled = false
+            // }
+            that.$message({
+              type: 'success',
+              message: '文件' + data.msg
+            })
+          } else if (data.code === 300) {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          }
+        })
+      } else {
+        // that.loading = false
+        that.$message({
+          type: 'error',
+          message: '评论内容不能为空'
+        })
+      }
+    },
     levelChange: function (rateval) {
       this.detailTaskform.jobLevel = rateval
     },
@@ -1223,6 +1429,14 @@ export default {
       var that = this
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          var fileStr = ''
+          for (var j = 0; j < this.fileListEdit.length; j++) {
+            if (j === that.fileListEdit.length - 1) {
+              fileStr = fileStr + that.fileListEdit[j].attachmentId
+            } else {
+              fileStr = fileStr + that.fileListEdit[j].attachmentId + ','
+            }
+          }
           that.loadingEdit = true
           that.editTaskPayload.id = that.taskId2
           that.editTaskPayload.jobLevel = that.detailTaskform.jobLevel
@@ -1230,6 +1444,7 @@ export default {
           that.editTaskPayload.taskStartDate = that.detailTaskform.taskStartDate
           that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
           that.editTaskPayload.description = that.detailTaskform.description
+          that.editTaskPayload.attachmentId = fileStr
           that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
             that.log('editTask:', res)
             if (res.code === 200) {
@@ -1642,7 +1857,7 @@ export default {
           that.toDetail(that.taskId2)
           that.getTaskList()
           that.getHistoryList()
-          that.commitComentF = ''
+          that.commitComentF = '已完成'
           that.fileListFinish = []
           $('.showFileName2').html('')
           $('#myfileF').val('')
@@ -1654,7 +1869,7 @@ export default {
     concelFinished: function () {
       var that = this
       that.taskFinishedVisible = false
-      that.commitComentF = ''
+      that.commitComentF = '已完成'
       $('.showFileName2').html('')
       $('#myfileF').val('')
     },
@@ -2340,7 +2555,6 @@ export default {
     padding: 10px;
     padding-top: 0;
     box-sizing: border-box;
-    background-color: #f5f8fa;
   }
   .timeLineTitle{
     color:#aaa;
@@ -2618,7 +2832,6 @@ export default {
     font-size: 14px;
     /*font-family: '黑体';*/
     padding:0 10px;
-    background-color: #f5f8fa;
   }
   .cannetProject2 div img{
     float: left;
@@ -2866,7 +3079,6 @@ export default {
   .fileUploadCao{
     display: flex;
     justify-content: space-between;
-    background-color: #f5f8fa;
     padding: 10px;
   }
   .selectLeft{
