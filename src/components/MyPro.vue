@@ -148,11 +148,13 @@
             <el-input type="textarea" style="" rows = '10' v-model="ruleForm.introduction"></el-input>
           </el-form-item>
           <el-form-item label="项目附件" v-if="!ruleForm.showName">
-            <div v-if="!ruleForm.showName" style="color: #999;font-size: 12px;">暂无附件</div>
-            <div v-if="ruleForm.showName">
-              <a v-bind:href="ruleForm.downloadUrl" download="项目附件">{{ruleForm.showName}}
-                <i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i>
-              </a>
+            <!--<div v-if="!ruleForm.showName" style="color: #999;font-size: 12px;">暂无附件</div>-->
+            <div v-if="!ruleForm.showName">
+              <!--附件上传 组件 引入附件上传组件  v-bind:clearInfo=""-->
+              <component v-bind:is="fileUploadComp" fileFormId="createPro" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>
+              <!--<a v-bind:href="ruleForm.downloadUrl" download="项目附件">{{ruleForm.showName}}-->
+                <!--<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i>-->
+              <!--</a>-->
             </div>
             <!--<div style="color:#409EFF" v-on:click="downFuc($event)" v-bind:data-showname="ruleForm.showName" v-bind:data-realurl="ruleForm.realUrl">-->
             <!--{{ruleForm.showName}}<i style="font-weight: bold; padding: 5px;" class="el-icon-download"></i>-->
@@ -238,10 +240,22 @@
 </template>
 
 <script>
+import FileUpload from './FileUpload.vue'
 export default {
   name: 'MyPro',
+  components: {
+    FileUpload
+  },
   data () {
     return {
+      // 是否让子组件清空文件
+      isClear: false,
+      // 附件上传 附件ID拼接成字符串
+      FileUploadIdStr: '',
+      // 接收到的组件数组
+      fileUploadArr: [],
+      // 引入附件上传组件
+      fileUploadComp: 'FileUpload',
       // 新建项目 表单
       createProFormLoading: false,
       // 产品研发 树形结构 单选
@@ -357,7 +371,8 @@ export default {
         realUrl: '',
         position: '',
         introduction: '',
-        value2: []
+        value2: [],
+        projectClassifyId: ''
       },
       rules: {
         projectName: [
@@ -451,6 +466,8 @@ export default {
     // 新增 产品研发
     handleClick: function (data, checked, node) {
       var that = this
+      // that.log('产品研发子级data：', data)
+      // that.log('产品研发子级checked：', checked)
       that.i++
       if (that.i % 2 === 0) {
         if (checked) {
@@ -464,6 +481,7 @@ export default {
     // 新增 产品研发
     changeState: function (data, checked, node) {
       this.log('changeState:', data)
+      this.ruleForm.projectClassifyId = data.id
       this.projectPath = data.specificPath
       this.projectPathId = data.id
     },
@@ -492,6 +510,7 @@ export default {
         that.showProject = true
         that.projectPath = ''
         that.projectPathId = ''
+        that.ruleForm.projectClassifyId = ''
       }
     },
     // 新增
@@ -782,8 +801,6 @@ export default {
     // 新建项目 立即创建项目 (模板) 提交基本信息
     submitModelForm (formName) {
       var that = this
-      var fileV = false
-      // var fileV = $('#myfile').val()
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {
@@ -799,20 +816,18 @@ export default {
                 modelId: that.modId,
                 introduction: this.ruleForm.introduction,
                 // 附件ID
-                attachmentId: '',
+                attachmentId: that.setFileIdStr(),
                 // 如果项目类型是产品研发 projectClassifyId为研发下的分类ID
-                projectClassifyId: ''
+                projectClassifyId: that.ruleForm.projectClassifyId
               }).then(res => {
               console.log('立即创建(muban):', res)
               if (res.code === 200) {
+                // 通知附件上传子组件清空附件域
+                that.isClear = true
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
                 that.createProFormLoading = false
-                if (!fileV) {
-                  that.$router.push('/ProEdit')
-                } else {
-                  that.delayfuc()
-                }
+                that.$router.push('/ProEdit')
               } else {
                 this.$message({
                   type: 'error',
@@ -835,7 +850,6 @@ export default {
     // 新建项目 立即创建项目 (空白模板) 提交基本信息
     submitForm (formName) {
       var that = this
-      var fileV = false
       // var fileV = $('#myfile').val()
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -843,29 +857,24 @@ export default {
             that.createProFormLoading = true
             that.ajax('/myProject/addBaseInfo',
               {
-                projectName: this.ruleForm.projectName,
-                projectType: this.ruleForm.projectType,
-                startDate: this.ruleForm.value2[0],
-                endDate: this.ruleForm.value2[1],
-                projectManager: this.ruleForm.projectManager,
+                projectName: that.ruleForm.projectName,
+                projectType: that.ruleForm.projectType,
+                startDate: that.ruleForm.value2[0],
+                endDate: that.ruleForm.value2[1],
+                projectManager: that.ruleForm.projectManager,
                 projectManagerID: that.Mid,
-                introduction: this.ruleForm.introduction,
-                attachmentId: '',
+                introduction: that.ruleForm.introduction,
+                attachmentId: that.setFileIdStr(),
                 // 如果类型是产品研发，下面的分类id
-                projectClassifyId: ''
+                projectClassifyId: that.ruleForm.projectClassifyId
               }).then(res => {
               console.log('立即创建:', res)
               if (res.code === 200) {
+                that.isClear = true
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
                 that.createProFormLoading = false
-                if (!fileV) {
-                  that.createProFormLoading = false
-                  this.$router.push('/ProEdit')
-                  // console.log('model', res)
-                } else {
-                  that.delayfuc()
-                }
+                this.$router.push('/ProEdit')
               } else {
                 this.$message({
                   type: 'error',
@@ -888,6 +897,28 @@ export default {
     // 重置 基本信息表单重置按钮
     resetForm (formName) {
       this.$refs[formName].resetFields()
+    },
+    // 获取附件上传组件发来的附件信息
+    getFileInfo (obj) {
+      if (obj) {
+        this.isClear = false
+      }
+      this.fileUploadArr = obj
+      this.log('getFileInfo:', obj)
+    },
+    // 拼接附件上传的id为字符串
+    setFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.fileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.fileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.fileUploadArr[i].attachmentId + splitIcon
+      }
+      that.fileUploadArr = []
+      return FileIdStr
     }
   }
 }

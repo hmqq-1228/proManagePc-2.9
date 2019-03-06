@@ -21,7 +21,9 @@
               <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">{{startPlanDate}} 到 {{endPlanDate}}</div></div>
               <div class="myMsg">
                 <div style="color: #28558c; font-size: 20px; margin-top: -6px"><Icon type="md-download" /></div>
-                <div style="margin-left: 10px;">附件: {{proDetailMsg.projectManager}}</div>
+                <div style="margin-left: 10px; color: #28558c;">附件:
+                  <Icon v-bind:title="fileItem.showName" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl" style="font-size: 20px; " type="ios-document-outline" />
+                </div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 15px;">
                 <Button type="primary" size="small" style="margin-right: 15px;" v-on:click="proBaseEditClick()">编辑</Button>
@@ -255,13 +257,14 @@
             <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
             <div class="cannetProject2">
               <div style="display: inline-block">
-                <img src="../../static/img/fujian.png" alt="">
-                <a href="javascript:;" class="file" @change="getFileName">选择文件
-                  <input type="file" name="myfile">
-                </a>
-                <input type="hidden" name="projectUID" v-bind:value="proId">
-                <input type="hidden" name="rtype" v-bind:value="3">
-                <span class="showFileName"></span>
+                <!--<img src="../../static/img/fujian.png" alt="">-->
+                <component v-bind:is="fileUploadComp" fileFormId="history" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>
+                <!--<a href="javascript:;" class="file" @change="getFileName">选择文件-->
+                  <!--<input type="file" name="myfile">-->
+                <!--</a>-->
+                <!--<input type="hidden" name="projectUID" v-bind:value="proId">-->
+                <!--<input type="hidden" name="rtype" v-bind:value="3">-->
+                <!--<span class="showFileName"></span>-->
               </div>
               <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
             </div>
@@ -429,18 +432,28 @@
                     <el-form-item label="任务描述" prop="description" maxlength="100" width="100">
                       <el-input class="planNameIpt" v-bind:disabled="isDisabled" type="textarea" :rows="2" v-model="addTaskForm.description" style="width: 300px;"></el-input>
                     </el-form-item>
-                    <el-form-item style="height: 40px;"></el-form-item>
+                    <el-form-item label="添加附件" prop="description" maxlength="100" width="100">
+                      <!--新建任务 引入附件组件 上传文件-->
+                      <component v-bind:is="fileUploadComp" fileFormId="fileTest" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>
+                    </el-form-item>
+                    <!--<component v-bind:is="fileUploadComp" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>-->
+                    <!--<el-form-item style="height: 40px;"></el-form-item>-->
                     <el-form-item>
                       <el-button type="primary" @click="onTaskSubmit('addTaskForm')">立即创建</el-button>
                       <el-button @click="onPlanTaskCancel()">取消</el-button>
                     </el-form-item>
                   </el-form>
-                  <form id="mytaskForm" enctype="multipart/form-data" style="position: absolute;bottom:40px;padding-left: 12px;">
-                  <div style="font-size: 14px;color: #555;height: 30px;line-height: 30px;display: inline-block;">添加附件</div>&nbsp;&nbsp;
-                  <input type="file" id="myfile" name="myfile" placeholder="请选择文件" style="width: 200px;" />
-                  <input type="hidden" name="formId" v-bind:value="formId">
-                  <div style="padding-left: 70px;font-size: 12px;height: 16px;color: #409eff">{{upLoadName}}</div>
-                  </form>
+                  <!---->
+                  <!--<el-form-item label="添加附件" prop="description" maxlength="100" width="100">-->
+                    <!--&lt;!&ndash;新建任务 引入附件组件 上传文件&ndash;&gt;-->
+                    <!--<component v-bind:is="fileUploadComp" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>-->
+                  <!--</el-form-item>-->
+                  <!--<form id="mytaskForm" enctype="multipart/form-data" style="position: absolute;bottom:40px;padding-left: 12px;">-->
+                    <!--<div style="font-size: 14px;color: #555;height: 30px;line-height: 30px;display: inline-block;">添加附件</div>&nbsp;&nbsp;-->
+                    <!--<input type="file" id="myfile" name="myfile" placeholder="请选择文件" style="width: 200px;" />-->
+                    <!--<input type="hidden" name="formId" v-bind:value="formId">-->
+                    <!--<div style="padding-left: 70px;font-size: 12px;height: 16px;color: #409eff">{{upLoadName}}</div>-->
+                  <!--</form>-->
                 </div>
                 <!---->
               </el-tab-pane>
@@ -871,10 +884,22 @@
 </template>
 
 <script>
+import FileUpload from './FileUpload.vue'
 export default {
   name: 'ProEdit',
+  components: {
+    FileUpload
+  },
   data () {
     return {
+      // 是否让子组件清空文件
+      isClear: false,
+      // 附件上传 附件ID拼接成字符串
+      FileUploadIdStr: '',
+      // 接收到的组件数组
+      fileUploadArr: [],
+      // 引入附件上传组件
+      fileUploadComp: 'FileUpload',
       // 编辑计划
       editPlanPayload: {
         planId: '1',
@@ -1105,7 +1130,8 @@ export default {
         date2: '',
         state2: '',
         description: '',
-        taskUserId: ''
+        taskUserId: '',
+        file: ''
       },
       // 增加任务 验证
       taskRules: {
@@ -1114,6 +1140,9 @@ export default {
         ],
         jobName: [
           { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+        file: [
+          { required: false, message: '请输入名称', trigger: 'change' }
         ],
         userArr: [
           { required: true, message: '请选择任务指派人', trigger: 'change' }
@@ -1261,7 +1290,7 @@ export default {
       addProjectCommentPayload: {
         projectUID: '',
         content: '',
-        formIds: ''
+        attachmentId: ''
       },
       // 新增
       formValidate: {
@@ -1669,7 +1698,6 @@ export default {
     // 创建添加任务
     onTaskSubmit: function (taskForm) {
       var that = this
-      var fileV = false
       // var fileV = $('#myfile').val()
       that.$refs[taskForm].validate((valid) => {
         if (valid) {
@@ -1687,28 +1715,24 @@ export default {
           this.addTaskPayload.taskStartDate = this.addTaskForm.date1
           this.addTaskPayload.taskFinishDate = this.addTaskForm.date2
           this.addTaskPayload.description = this.addTaskForm.description
+          this.addTaskPayload.attachmentId = that.setFileIdStr()
           // this.addTaskPayload._jfinal_token = this.token
           // this.addTaskPayload.formId = this.formId
           this.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
             if (res.code === 200) {
+              // 告知附件子组件清空
+              that.isClear = true
               that.formId = res.formId
               // that.token = res._jfinal_token
-              if (!fileV) {
-                that.loading = false
-                that.formId = ''
-                that.bgCoverShow = false
-                // that.formDataClear()
-                // that.queryProDetail()
-                // that.queryManagePlan5()
-                that.getProjectDetail()
-                that.queryProDetail()
-                that.$message({
-                  message: '创建任务成功！',
-                  type: 'success'
-                })
-              } else {
-                that.delayfuc()
-              }
+              that.loading = false
+              that.formId = ''
+              that.bgCoverShow = false
+              that.getProjectDetail()
+              that.queryProDetail()
+              that.$message({
+                message: '创建任务成功！',
+                type: 'success'
+              })
             } else {
               that.$message({
                 message: res.msg
@@ -2177,11 +2201,12 @@ export default {
       var that = this
       that.addProjectCommentPayload.projectUID = that.proId
       that.addProjectCommentPayload.content = that.commitComent
-      that.addProjectCommentPayload.formIds = ''
+      that.addProjectCommentPayload.attachmentId = that.setFileIdStr()
       if (that.commitComent) {
         that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
           that.log('addProjectComment:', res)
           if (res.code === 200) {
+            that.isClear = true
             that.$message({
               type: 'success',
               message: res.msg
@@ -2893,6 +2918,28 @@ export default {
           return 'finished'
         }
       }
+    },
+    // 获取附件上传组件发来的附件信息
+    getFileInfo (obj) {
+      if (obj) {
+        this.isClear = false
+      }
+      this.fileUploadArr = obj
+      this.log('getFileInfo:', obj)
+    },
+    // 拼接附件上传的id为字符串
+    setFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.fileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.fileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.fileUploadArr[i].attachmentId + splitIcon
+      }
+      that.fileUploadArr = []
+      return FileIdStr
     }
     // 任务详情 end
     // getNextPlan: function (pId) {
@@ -3501,8 +3548,6 @@ export default {
     border-top: 1px solid #f1f1f1;
   }
   .cannetProject2{
-    height: 40px;
-    width: 90%;
     color: #1296db;
     display: flex;
     justify-content: space-between;
