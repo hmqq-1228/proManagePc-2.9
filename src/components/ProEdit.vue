@@ -44,8 +44,9 @@
         <div class="planList">
           <div class="planName">项<br />目<br />计<br />划</div>
           <div class="planBox">
+            <!--v-on:click="addNode(firstPlanId)"-->
             <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
-            <Button style="margin-top: 16px; margin-left: 20px" size="small" v-on:click="addNode(firstPlanId)">+ 计划 / 任务</Button>
+            <Button style="margin-top: 16px; margin-left: 20px" size="small" v-on:click="FistLevelPlanDetail()">+ 计划 / 任务</Button>
           </div>
           <!--<div class="planBox2" v-if="planList.length === 0">暂无子计划</div>-->
         </div>
@@ -415,7 +416,46 @@
         </div>
       </Drawer>
       <!--新增 抽屉 查看历史记录 end-->
-      <!---->
+      <!--新增 抽屉 一级计划详情 start -->
+      <Drawer title="一级计划 / 任务" width="740" :closable="false" v-model="FirstLevelTask">
+        <div class="tableHeader">
+          <div class="tableProTitle">项目:{{proDetailMsg.projectName}}</div>
+          <div class="tableProBtn" style="margin-bottom: 10px; font-size: 16px;">
+            <Button type="primary" size="small" v-on:click="addNode(proId)">添加一级</Button>
+          </div>
+        </div>
+        <el-table :data="FirstLevelPlanList" border style="width: 100%">
+          <el-table-column prop="planName" label="计划/任务" width="300"></el-table-column>
+          <el-table-column prop="planType" label="类型" width="70"></el-table-column>
+          <el-table-column prop="planDateDur" label="时间" width="200"></el-table-column>
+          <!--<el-table-column prop="planManager" label="责任人" width="120"></el-table-column>-->
+          <!--<el-table-column prop="address" label="地址" width="300"></el-table-column>-->
+          <!--<el-table-column prop="zip" label="邮编" width="120"></el-table-column>-->
+          <el-table-column label="操作" width="100" fixed="right">
+            <template slot-scope="scope">
+              <el-button @click="planHandleClick(scope.row)" type="text" size="small">查看</el-button>
+              <el-button type="text" size="small">编辑</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!--<div class="proTitle">这个是项目名</div>-->
+        <!--<div class="planTable">-->
+          <!--<div class="Plantable">-->
+
+          <!--</div>-->
+          <!--<div class="planTableItem">-->
+            <!--<div class="planItemTitle">一级计划标题</div>-->
+            <!--<div class="planItemType">计划</div>-->
+            <!--<div class="planItemTime">2019-03-01 2019-03-20</div>-->
+            <!--<div class="planItemManager">张三</div>-->
+            <!--<div class="planItemUse">-->
+              <!--<div class="planItemUseEdit"><el-button style="margin-left: 10px" size="mini" type="primary">编辑</el-button></div>-->
+              <!--<div class="planItemUseDel"><el-button style="margin-left: 10px" size="mini" type="primary">删除</el-button></div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      </Drawer>
+      <!--新增 抽屉 一级计划详情 end -->
       <!--新增 抽屉 任务详情 start-->
       <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
         <div class="slidTop">
@@ -796,6 +836,30 @@ export default {
   name: 'ProEdit',
   data () {
     return {
+      tableData: [{
+        planTime: '2016-05-02',
+        planTitle: '这个是计划',
+        planType: '计划',
+        planManager: '张三'
+      }, {
+        planTime: '2016-05-02',
+        planTitle: '这个是计划',
+        planType: '计划',
+        planManager: '张三'
+      }, {
+        planTime: '2016-05-02',
+        planTitle: '这个是计划',
+        planType: '计划',
+        planManager: '张三'
+      }, {
+        planTime: '2016-05-02',
+        planTitle: '这个是计划',
+        planType: '计划',
+        planManager: '张三'
+      }],
+      // 一级计划
+      FirstLevelTask: false,
+      // 一级计划
       moreUserSelectPayload2: {
         projectManager: ''
       },
@@ -1063,6 +1127,8 @@ export default {
       proDetailMsg: '',
       taskList: [],
       planList: [],
+      // 一级计划 详情 planList数据处理
+      FirstLevelPlanList: [],
       historyList: [],
       setRouterNameList: [],
       startPlanDate: '',
@@ -1234,9 +1300,30 @@ export default {
       } else {
         this.butnDisabledT = true
       }
+    },
+    planList: function (val, old) {
+      var that = this
+      if (val) {
+        for (var i = 0; i < val.length; i++) {
+          var obj = {
+            planName: val[i].name,
+            planType: val[i].type === '1' ? '计划' : '任务',
+            planDateDur: val[i].start.split(' ')[0] + ' 至 ' + val[i].finish.split(' ')[0]
+          }
+          that.FirstLevelPlanList.push(obj)
+        }
+      }
     }
   },
   methods: {
+    planHandleClick (row) {
+      console.log(row)
+    },
+    // 一级计划 详情
+    FistLevelPlanDetail () {
+      this.FirstLevelTask = true
+    },
+    // 一级计划 详情 结束
     // 权限 编辑 查看
     checkBoxChangeEdit (checked, id, role) {
       var that = this
@@ -3472,5 +3559,43 @@ export default {
   }
   .selectDateItem{
     margin-top: 20px;
+  }
+  /***
+   *
+   *  ===================================================================
+   *                     一级计划详情
+   *  ===================================================================
+   *
+   **/
+  .planTable{
+    border: 1px solid #eee;
+  }
+  .planTableItem{
+    display: flex;
+    border-bottom: 1px solid #eee;
+  }
+  .planItemTitle{
+    width: 150px;
+  }
+  .planItemType{
+    width: 50px;
+  }
+  .planItemTime{
+    width: 200px;
+  }
+  .planItemManager{
+    width: 80px;
+  }
+  .planItemUse{
+    width: 100px;
+    display: flex;
+  }
+  .planItemTitle,.planItemType,.planItemTime,.planItemManager,.planItemUse{
+    border-right: 1px solid #eee;
+    line-height: 40px;
+  }
+  .tableHeader{
+    display: flex;
+    justify-content: space-between;
   }
 </style>
