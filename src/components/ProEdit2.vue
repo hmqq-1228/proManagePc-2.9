@@ -21,7 +21,7 @@
               <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">{{startPlanDate}} 到 {{endPlanDate}}</div></div>
               <div class="myMsg">
                 <div style="color: #28558c; font-size: 20px; margin-top: -6px"><Icon type="md-download" /></div>
-                <div style="margin-left: 10px;">附件: {{proDetailMsg.projectManager}}</div>
+                <div style="margin-left: 10px;">附件: <Icon v-bind:title="fileItem.showName" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl" style="font-size: 20px; " type="ios-document-outline" /></div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 15px;">
                 <!--<Button type="primary" size="small" style="margin-right: 15px;" v-on:click="proBaseEditClick()">编辑</Button>-->
@@ -502,7 +502,7 @@
       </Drawer>
       <!--新增 抽屉 编辑计划 end-->
       <!--新增 抽屉 任务详情 start-->
-      <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
+      <Drawer class="drawerScroll" :closable="false" width="750" v-model="value4">
         <div class="slidTop">
           <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
           <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
