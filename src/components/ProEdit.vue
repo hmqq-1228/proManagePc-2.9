@@ -40,13 +40,13 @@
             <div class="moreBtn" v-on:click="moreMemberClick()"><Button>更多 / 编辑</Button></div>
           </div>
         </div>
-        <!-- 一级计划 start -->
+        <!-- 一级计划 项目计划 start -->
         <div class="planList">
           <div class="planName">项<br />目<br />计<br />划</div>
           <div class="planBox" style="position: relative;">
             <!--v-on:click="addNode(firstPlanId)"-->
             <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
-            <Button style="margin-top: 16px; margin-left: 20px; position: absolute; right: 10px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">编辑</Button>
+            <Button style="margin-top: 16px; margin-left: 20px; position: absolute; right: 10px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">添加 / 编辑</Button>
           </div>
           <!--<div class="planBox2" v-if="planList.length === 0">暂无子计划</div>-->
         </div>
@@ -2876,6 +2876,23 @@ export default {
           })
         }
       })
+    },
+    // 这个是table显示颜色
+    rowClass ({ row, column, rowIndex, columnIndex }) {
+      // console.log('rowStyle', row.projectUID)
+      if (columnIndex === 0 && row.projectUID !== this.$store.state.projectUID) {
+        return 'fontStyle'
+      } else if (columnIndex === 2) {
+        return 'btnStyle'
+      } else if (columnIndex === 8) {
+        if (row.status === '0') {
+          return 'toStart'
+        } else if (row.status === '1') {
+          return 'noDone'
+        } else if (row.status === '2') {
+          return 'finished'
+        }
+      }
     }
     // 任务详情 end
     // getNextPlan: function (pId) {

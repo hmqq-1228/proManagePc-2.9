@@ -105,7 +105,7 @@
         </div>
       </Modal>
       <!--新建项目 表单 dialog-->
-      <Modal v-model="newAddDiaModel" width="620" title="新建项目" @on-ok="newCreateOk" @on-cancel="newCreateCancel">
+      <Modal v-model="newAddDiaModel" width="620" title="新建项目" @on-ok="newCreateOk" @on-cancel="newCreateCancel" v-loading="createProFormLoading">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="项目名称" prop="projectName">
             <el-input v-model="ruleForm.projectName"></el-input>
@@ -242,6 +242,8 @@ export default {
   name: 'MyPro',
   data () {
     return {
+      // 新建项目 表单
+      createProFormLoading: false,
       // 产品研发 树形结构 单选
       i: 0,
       // 新增
@@ -278,6 +280,7 @@ export default {
       // 是否选择了"新建项目模板"
       isModel: false,
       duration: 0,
+      // 新建项目 模板Id
       modId: '',
       modelList: [],
       statusVal: '',
@@ -776,7 +779,7 @@ export default {
       // console.log(item.userId)
       this.Mid = item.userId
     },
-    // 立即创建 (模板) 提交基本信息
+    // 新建项目 立即创建项目 (模板) 提交基本信息
     submitModelForm (formName) {
       var that = this
       var fileV = false
@@ -784,30 +787,29 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {
-            that.loading = true
-            that.ajax('/model/addProject',
+            that.createProFormLoading = true
+            that.ajax('/myProject/addModelProject',
               {
-                projectManagerID: that.Mid,
-                modelId: that.modId,
                 projectName: this.ruleForm.projectName,
                 projectType: this.ruleForm.projectType,
                 startDate: this.ruleForm.value2[0],
                 endDate: this.ruleForm.value2[1],
+                projectManagerID: that.Mid,
                 projectManager: this.ruleForm.projectManager,
-                introduction: this.ruleForm.introduction
+                modelId: that.modId,
+                introduction: this.ruleForm.introduction,
+                // 附件ID
+                attachmentId: '',
+                // 如果项目类型是产品研发 projectClassifyId为研发下的分类ID
+                projectClassifyId: ''
               }).then(res => {
               console.log('立即创建(muban):', res)
               if (res.code === 200) {
-                that.token = res._jfinal_token
                 that.projectUID = res.data
+                that.$store.state.proId = res.data
+                that.createProFormLoading = false
                 if (!fileV) {
-                  that.loading = false
-                  // console.log('model', res)
-                  if (that.projectUID) {
-                    this.$store.state.proId = that.projectUID
-                    this.$router.push('/ProEdit')
-                    // that.$router.push('/proDetails/' + that.projectUID)
-                  }
+                  that.$router.push('/ProEdit')
                 } else {
                   that.delayfuc()
                 }
@@ -816,21 +818,21 @@ export default {
                   type: 'error',
                   message: res.msg
                 })
-                that.loading = false
+                that.createProFormLoading = false
               }
             })
           } else {
-            that.loading = false
+            that.createProFormLoading = false
             that.$message.error('请重新选择项目负责人')
           }
         } else {
           // console.log('网络错误!!')
-          that.loading = false
+          that.createProFormLoading = false
           return false
         }
       })
     },
-    // 立即创建 (空白模板) 提交基本信息
+    // 新建项目 立即创建项目 (空白模板) 提交基本信息
     submitForm (formName) {
       var that = this
       var fileV = false
@@ -838,30 +840,29 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {
-            that.loading = true
-            that.ajax('/general/addBaseInfo',
+            that.createProFormLoading = true
+            that.ajax('/myProject/addBaseInfo',
               {
-                projectManagerID: that.Mid,
                 projectName: this.ruleForm.projectName,
                 projectType: this.ruleForm.projectType,
                 startDate: this.ruleForm.value2[0],
                 endDate: this.ruleForm.value2[1],
                 projectManager: this.ruleForm.projectManager,
+                projectManagerID: that.Mid,
                 introduction: this.ruleForm.introduction,
-                _jfinal_token: this.token
+                attachmentId: '',
+                // 如果类型是产品研发，下面的分类id
+                projectClassifyId: ''
               }).then(res => {
               console.log('立即创建:', res)
               if (res.code === 200) {
-                that.token = res._jfinal_token
-                that.projectUID = res.projectUID
+                that.projectUID = res.data
+                that.$store.state.proId = res.data
+                that.createProFormLoading = false
                 if (!fileV) {
-                  that.loading = false
+                  that.createProFormLoading = false
+                  this.$router.push('/ProEdit')
                   // console.log('model', res)
-                  if (that.projectUID) {
-                    this.$store.state.proId = that.projectUID
-                    this.$router.push('/ProEdit')
-                    // that.$router.push('/proDetails/' + that.projectUID)
-                  }
                 } else {
                   that.delayfuc()
                 }
@@ -870,7 +871,7 @@ export default {
                   type: 'error',
                   message: res.msg
                 })
-                that.loading = false
+                that.createProFormLoading = false
               }
             })
           } else {
