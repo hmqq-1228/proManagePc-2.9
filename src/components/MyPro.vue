@@ -105,7 +105,7 @@
         </div>
       </Modal>
       <!--新建项目 表单 dialog-->
-      <Modal v-model="newAddDiaModel" width="620" title="新建项目" @on-ok="newCreateOk" @on-cancel="newCreateCancel">
+      <Modal v-model="newAddDiaModel" width="620" title="新建项目" @on-ok="newCreateOk" @on-cancel="newCreateCancel" v-loading="createProFormLoading">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="项目名称" prop="projectName">
             <el-input v-model="ruleForm.projectName"></el-input>
@@ -148,11 +148,13 @@
             <el-input type="textarea" style="" rows = '10' v-model="ruleForm.introduction"></el-input>
           </el-form-item>
           <el-form-item label="项目附件" v-if="!ruleForm.showName">
-            <div v-if="!ruleForm.showName" style="color: #999;font-size: 12px;">暂无附件</div>
-            <div v-if="ruleForm.showName">
-              <a v-bind:href="ruleForm.downloadUrl" download="项目附件">{{ruleForm.showName}}
-                <i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i>
-              </a>
+            <!--<div v-if="!ruleForm.showName" style="color: #999;font-size: 12px;">暂无附件</div>-->
+            <div v-if="!ruleForm.showName">
+              <!--附件上传 组件 引入附件上传组件  v-bind:clearInfo=""-->
+              <component v-bind:is="fileUploadComp" fileFormId="createPro" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>
+              <!--<a v-bind:href="ruleForm.downloadUrl" download="项目附件">{{ruleForm.showName}}-->
+                <!--<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i>-->
+              <!--</a>-->
             </div>
             <!--<div style="color:#409EFF" v-on:click="downFuc($event)" v-bind:data-showname="ruleForm.showName" v-bind:data-realurl="ruleForm.realUrl">-->
             <!--{{ruleForm.showName}}<i style="font-weight: bold; padding: 5px;" class="el-icon-download"></i>-->
@@ -194,14 +196,15 @@
         <form id="uploadFile">
           <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
           <div class="cannetProject2">
-            <div style="display: inline-block">
-              <img src="../../static/img/fujian.png" alt="">
-              <a href="javascript:;" class="file" @change="getFileName">选择文件
-                <input type="file" name="myfile">
-              </a>
-              <input type="hidden" name="projectUID" v-bind:value="proId">
-              <input type="hidden" name="rtype" v-bind:value="3">
-              <span class="showFileName"></span>
+            <div>
+              <component v-bind:is="fileUploadComp" fileFormId="proHistory" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>
+              <!--<img src="../../static/img/fujian.png" alt="">-->
+              <!--<a href="javascript:;" class="file" @change="getFileName">选择文件-->
+                <!--<input type="file" name="myfile">-->
+              <!--</a>-->
+              <!--<input type="hidden" name="projectUID" v-bind:value="proId">-->
+              <!--<input type="hidden" name="rtype" v-bind:value="3">-->
+              <!--<span class="showFileName"></span>-->
             </div>
             <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
           </div>
@@ -238,10 +241,26 @@
 </template>
 
 <script>
+import FileUpload from './FileUpload.vue'
 export default {
   name: 'MyPro',
+  components: {
+    FileUpload
+  },
   data () {
     return {
+      // shi
+      pageN: 1,
+      // 附件上传 是否让子组件清空文件
+      isClear: false,
+      // 附件上传 附件ID拼接成字符串
+      FileUploadIdStr: '',
+      // 接收到的组件数组
+      fileUploadArr: [],
+      // 引入附件上传组件
+      fileUploadComp: 'FileUpload',
+      // 新建项目 表单
+      createProFormLoading: false,
       // 产品研发 树形结构 单选
       i: 0,
       // 新增
@@ -265,6 +284,7 @@ export default {
       commitComent: '',
       // 新增 历史loading
       historyLoading: false,
+      notMore: false,
       // 新增 历史记录 抽屉
       DrawerHistory: false,
       // 总条数
@@ -278,6 +298,7 @@ export default {
       // 是否选择了"新建项目模板"
       isModel: false,
       duration: 0,
+      // 新建项目 模板Id
       modId: '',
       modelList: [],
       statusVal: '',
@@ -354,7 +375,8 @@ export default {
         realUrl: '',
         position: '',
         introduction: '',
-        value2: []
+        value2: [],
+        projectClassifyId: ''
       },
       rules: {
         projectName: [
@@ -448,6 +470,8 @@ export default {
     // 新增 产品研发
     handleClick: function (data, checked, node) {
       var that = this
+      // that.log('产品研发子级data：', data)
+      // that.log('产品研发子级checked：', checked)
       that.i++
       if (that.i % 2 === 0) {
         if (checked) {
@@ -461,6 +485,7 @@ export default {
     // 新增 产品研发
     changeState: function (data, checked, node) {
       this.log('changeState:', data)
+      this.ruleForm.projectClassifyId = data.id
       this.projectPath = data.specificPath
       this.projectPathId = data.id
     },
@@ -489,6 +514,7 @@ export default {
         that.showProject = true
         that.projectPath = ''
         that.projectPathId = ''
+        that.ruleForm.projectClassifyId = ''
       }
     },
     // 新增
@@ -503,11 +529,12 @@ export default {
       var that = this
       that.addProjectCommentPayload.projectUID = that.proId
       that.addProjectCommentPayload.content = that.commitComent
-      that.addProjectCommentPayload.formIds = ''
+      that.addProjectCommentPayload.attachmentId = that.setFileIdStr()
       if (that.commitComent) {
         that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
           that.log('addProjectComment:', res)
           if (res.code === 200) {
+            that.isClear = true
             that.$message({
               type: 'success',
               message: res.msg
@@ -555,10 +582,10 @@ export default {
         title: 'Title',
         content: '<p>Content of dialog</p><p>Content of dialog</p>',
         onOk: () => {
-          this.$Message.info('Clicked ok')
+          // this.$Message.info('Clicked ok')
         },
         onCancel: () => {
-          this.$Message.info('Clicked cancel')
+          // this.$Message.info('Clicked cancel')
         }
       })
     },
@@ -666,7 +693,7 @@ export default {
     },
     // 新建 是否选择模板 no
     cancel () {
-      this.$Message.info('Clicked cancel')
+      // this.$Message.info('Clicked cancel')
     },
     // 新建 提交表单
     newCreateOk () {
@@ -776,101 +803,89 @@ export default {
       // console.log(item.userId)
       this.Mid = item.userId
     },
-    // 立即创建 (模板) 提交基本信息
+    // 新建项目 立即创建项目 (模板) 提交基本信息
     submitModelForm (formName) {
       var that = this
-      var fileV = false
-      // var fileV = $('#myfile').val()
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {
-            that.loading = true
-            that.ajax('/model/addProject',
+            that.createProFormLoading = true
+            that.ajax('/myProject/addModelProject',
               {
-                projectManagerID: that.Mid,
-                modelId: that.modId,
                 projectName: this.ruleForm.projectName,
                 projectType: this.ruleForm.projectType,
                 startDate: this.ruleForm.value2[0],
                 endDate: this.ruleForm.value2[1],
+                projectManagerID: that.Mid,
                 projectManager: this.ruleForm.projectManager,
-                introduction: this.ruleForm.introduction
+                modelId: that.modId,
+                introduction: this.ruleForm.introduction,
+                // 附件ID
+                attachmentId: that.setFileIdStr(),
+                // 如果项目类型是产品研发 projectClassifyId为研发下的分类ID
+                projectClassifyId: that.ruleForm.projectClassifyId
               }).then(res => {
               console.log('立即创建(muban):', res)
               if (res.code === 200) {
-                that.token = res._jfinal_token
+                // 通知附件上传子组件清空附件域
+                that.isClear = true
                 that.projectUID = res.data
-                if (!fileV) {
-                  that.loading = false
-                  // console.log('model', res)
-                  if (that.projectUID) {
-                    this.$store.state.proId = that.projectUID
-                    this.$router.push('/ProEdit')
-                    // that.$router.push('/proDetails/' + that.projectUID)
-                  }
-                } else {
-                  that.delayfuc()
-                }
+                that.$store.state.proId = res.data
+                that.createProFormLoading = false
+                that.$router.push('/ProEdit')
               } else {
                 this.$message({
                   type: 'error',
                   message: res.msg
                 })
-                that.loading = false
+                that.createProFormLoading = false
               }
             })
           } else {
-            that.loading = false
+            that.createProFormLoading = false
             that.$message.error('请重新选择项目负责人')
           }
         } else {
           // console.log('网络错误!!')
-          that.loading = false
+          that.createProFormLoading = false
           return false
         }
       })
     },
-    // 立即创建 (空白模板) 提交基本信息
+    // 新建项目 立即创建项目 (空白模板) 提交基本信息
     submitForm (formName) {
       var that = this
-      var fileV = false
       // var fileV = $('#myfile').val()
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {
-            that.loading = true
-            that.ajax('/general/addBaseInfo',
+            that.createProFormLoading = true
+            that.ajax('/myProject/addBaseInfo',
               {
+                projectName: that.ruleForm.projectName,
+                projectType: that.ruleForm.projectType,
+                startDate: that.ruleForm.value2[0],
+                endDate: that.ruleForm.value2[1],
+                projectManager: that.ruleForm.projectManager,
                 projectManagerID: that.Mid,
-                projectName: this.ruleForm.projectName,
-                projectType: this.ruleForm.projectType,
-                startDate: this.ruleForm.value2[0],
-                endDate: this.ruleForm.value2[1],
-                projectManager: this.ruleForm.projectManager,
-                introduction: this.ruleForm.introduction,
-                _jfinal_token: this.token
+                introduction: that.ruleForm.introduction,
+                attachmentId: that.setFileIdStr(),
+                // 如果类型是产品研发，下面的分类id
+                projectClassifyId: that.ruleForm.projectClassifyId
               }).then(res => {
               console.log('立即创建:', res)
               if (res.code === 200) {
-                that.token = res._jfinal_token
-                that.projectUID = res.projectUID
-                if (!fileV) {
-                  that.loading = false
-                  // console.log('model', res)
-                  if (that.projectUID) {
-                    this.$store.state.proId = that.projectUID
-                    this.$router.push('/ProEdit')
-                    // that.$router.push('/proDetails/' + that.projectUID)
-                  }
-                } else {
-                  that.delayfuc()
-                }
+                that.isClear = true
+                that.projectUID = res.data
+                that.$store.state.proId = res.data
+                that.createProFormLoading = false
+                this.$router.push('/ProEdit')
               } else {
                 this.$message({
                   type: 'error',
                   message: res.msg
                 })
-                that.loading = false
+                that.createProFormLoading = false
               }
             })
           } else {
@@ -887,6 +902,34 @@ export default {
     // 重置 基本信息表单重置按钮
     resetForm (formName) {
       this.$refs[formName].resetFields()
+    },
+    // 获取附件上传组件发来的附件信息
+    getFileInfo (obj) {
+      if (obj) {
+        this.isClear = false
+      }
+      this.fileUploadArr = obj
+      this.log('getFileInfo:', obj)
+    },
+    // 拼接附件上传的id为字符串
+    setFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.fileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.fileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.fileUploadArr[i].attachmentId + splitIcon
+      }
+      that.fileUploadArr = []
+      return FileIdStr
+    },
+    getPageNum () {
+      this.pageN++
+      this.log(this.pageN)
+      // this.pagenum = e
+      this.getHistoryCont()
     }
   }
 }
@@ -1031,7 +1074,6 @@ export default {
     min-height: 80px;
   }
   .cannetProject2{
-    height: 40px;
     width: 100%;
     color: #1296db;
     display: flex;
