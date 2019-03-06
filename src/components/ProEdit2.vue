@@ -64,6 +64,9 @@
       <el-dialog title="图片预览" :visible.sync="dialogShowImg">
         <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
       </el-dialog>
+      <el-dialog title="图片预览" :visible.sync="dialogFileImg">
+        <div class="showImg"><img v-bind:src="filePreviewUrl" alt=""></div>
+      </el-dialog>
       <!--项目计划树 start-->
       <!--<div class="block">-->
       <!--<el-tree-->
@@ -675,10 +678,11 @@
           <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
             <div class="childTaskName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
             <div class="childTaskMsg">
+              <div v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
               <div v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
               <div v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
               <div>{{childTask.userName}}</div>
-              <div style="width: 20px;margin-right: 0"><div class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div></div>
+              <div style="width: 20px;margin-right: 0"><div class="taskDel" v-if="childTask.showDeleteFlag" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div></div>
             </div>
           </div>
           <div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="childTaskList.length === 0">
@@ -1207,6 +1211,8 @@ export default {
       currentType: 1,
       totalHistoryNum: 1,
       dialogShowImg: false,
+      filePreviewUrl: '',
+      dialogFileImg: false,
       commentPreviewUrl: '',
       loading: false,
       value4: false,
@@ -1480,6 +1486,27 @@ export default {
         })
       }).catch(() => {
         return false
+      })
+    },
+    // 删除子任务
+    childTaskDelete: function (id) {
+      var that = this
+      console.log('id', id)
+      that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
+          if (res.code === 200) {
+            that.log('delPlanOrTask:', res)
+            that.getTaskChildList(id)
+            that.selectProjectId()
+            that.getHistoryList()
+          }
+        }).catch(() => {
+          // that.loading = false
+        })
       })
     },
     planHandleClick (row, clickType) {
@@ -2277,9 +2304,11 @@ export default {
         // })
       }
     },
-    // showImagePre: function () {
-    //   this.dialogFormVisible = true
-    // },
+    showImagePre: function (url) {
+      console.log('url', url)
+      this.dialogFileImg = true
+      this.filePreviewUrl = url
+    },
     showImagePreCom: function (url) {
       if (url) {
         this.commentPreviewUrl = url
@@ -3910,5 +3939,15 @@ export default {
   }
   .tableProTitle{
     font-size: 16px;
+  }
+  /*// 子任务*/
+  .childTaskStyle0{
+    color: #ffc107;
+  }
+  .childTaskStyle1{
+    color: #13ce66;
+  }
+  .childTaskStyle2{
+    color: #409EFF;
   }
 </style>
