@@ -140,11 +140,6 @@ html,body{
   width: 100%;
   height: 100%;
 }
-.ProEdit .el-tree-node{
-  height: 40px;
-  padding: 10px 0;
-  border-bottom: 1px dashed #f1f1f1;
-}
 #app{
   height: 100%;
 }
