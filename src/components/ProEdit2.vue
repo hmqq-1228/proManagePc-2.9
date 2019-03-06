@@ -24,7 +24,7 @@
                 <div style="margin-left: 10px;">附件: {{proDetailMsg.projectManager}}</div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 15px;">
-                <Button type="primary" size="small" style="margin-right: 15px;" v-on:click="proBaseEditClick()">编辑</Button>
+                <!--<Button type="primary" size="small" style="margin-right: 15px;" v-on:click="proBaseEditClick()">编辑</Button>-->
                 <Button type="primary" size="small" v-on:click="openHisDrawer">历史记录</Button>
               </div>
             </div>
@@ -58,48 +58,51 @@
           <div v-if="planList.length > 0"><Button size="small" type="primary" v-on:click="addNode(activeId)">+ 计划 / 任务</Button></div>
         </div>
       </div>
+      <el-dialog title="图片预览" :visible.sync="showBigImageVisible">
+        <div class="showImg"><img v-bind:src="preImageUrl" alt=""></div>
+      </el-dialog>
       <!--项目计划树 start-->
       <!--<div class="block">-->
-        <!--<el-tree-->
-          <!--:data="data5"-->
-          <!--:props="defaultTreeProps"-->
-          <!--node-key="id"-->
-          <!--@node-expand="getNodeMsg($event)"-->
-          <!--:expand-on-click-node="false">-->
-          <!--<span class="custom-tree-node" slot-scope="{ node, data }">-->
-            <!--<span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>-->
-            <!--<span class="proMsg">-->
-              <!--<span class="treeName">-->
-                <!--<span v-if="data.type === '2'">-->
-                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>-->
-                  <!--<span style="float: left;margin-left: 16px;">{{data.userName}}</span>-->
-                <!--</span>-->
-              <!--</span>-->
-              <!--<span class="treeState">-->
-                 <!--<span v-if="data.type === '2'">-->
-                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>-->
-                  <!--<span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>-->
-                  <!--<span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>-->
-                  <!--<span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>-->
-                 <!--</span>-->
-              <!--</span>-->
-              <!--<span class="treeTime">-->
-                <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>-->
-                <!--<span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>-->
-              <!--</span>-->
-              <!--<span class="treeTime">-->
-                <!--<Dropdown @on-click="moreSelectOptions($event, data.id)">-->
-                  <!--<a href="javascript:void(0)">下拉菜单<Icon type="ios-arrow-down"></Icon></a>-->
-                  <!--<DropdownMenu slot="list">-->
-                    <!--<DropdownItem name="add">添加</DropdownItem>-->
-                    <!--<DropdownItem name="del">删除</DropdownItem>-->
-                    <!--<DropdownItem name="edit">编辑</DropdownItem>-->
-                  <!--</DropdownMenu>-->
-                <!--</Dropdown>-->
-              <!--</span>-->
-            <!--</span>-->
-          <!--</span>-->
-        <!--</el-tree>-->
+      <!--<el-tree-->
+      <!--:data="data5"-->
+      <!--:props="defaultTreeProps"-->
+      <!--node-key="id"-->
+      <!--@node-expand="getNodeMsg($event)"-->
+      <!--:expand-on-click-node="false">-->
+      <!--<span class="custom-tree-node" slot-scope="{ node, data }">-->
+      <!--<span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>-->
+      <!--<span class="proMsg">-->
+      <!--<span class="treeName">-->
+      <!--<span v-if="data.type === '2'">-->
+      <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>-->
+      <!--<span style="float: left;margin-left: 16px;">{{data.userName}}</span>-->
+      <!--</span>-->
+      <!--</span>-->
+      <!--<span class="treeState">-->
+      <!--<span v-if="data.type === '2'">-->
+      <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>-->
+      <!--<span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>-->
+      <!--<span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>-->
+      <!--<span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>-->
+      <!--</span>-->
+      <!--</span>-->
+      <!--<span class="treeTime">-->
+      <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>-->
+      <!--<span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>-->
+      <!--</span>-->
+      <!--<span class="treeTime">-->
+      <!--<Dropdown @on-click="moreSelectOptions($event, data.id)">-->
+      <!--<a href="javascript:void(0)">下拉菜单<Icon type="ios-arrow-down"></Icon></a>-->
+      <!--<DropdownMenu slot="list">-->
+      <!--<DropdownItem name="add">添加</DropdownItem>-->
+      <!--<DropdownItem name="del">删除</DropdownItem>-->
+      <!--<DropdownItem name="edit">编辑</DropdownItem>-->
+      <!--</DropdownMenu>-->
+      <!--</Dropdown>-->
+      <!--</span>-->
+      <!--</span>-->
+      <!--</span>-->
+      <!--</el-tree>-->
       <!--</div>-->
       <!--项目计划树 end-->
       <!--项目计划树 老版本 start-->
@@ -132,7 +135,7 @@
               </span>
               <span class="treeTime">
                 <Dropdown @on-click="moreSelectOptions($event, data.id, data.type)">
-                  <a href="javascript:void(0)">跟多操作<Icon type="ios-arrow-down"></Icon></a>
+                  <a href="javascript:void(0)">操作<Icon type="ios-arrow-down"></Icon></a>
                   <DropdownMenu slot="list">
                     <DropdownItem name="add">添加</DropdownItem>
                     <DropdownItem name="del">删除</DropdownItem>
@@ -199,7 +202,7 @@
           <div class="organizationalBtn"><Button type="primary" @click="addMenber()">添加</Button></div>
         </div>
         <!--<div class="caozuo">-->
-          <!--<div class="el-icon-d-arrow-right" @click="addMenber()"></div>-->
+        <!--<div class="el-icon-d-arrow-right" @click="addMenber()"></div>-->
         <!--</div>-->
         <!--组织架构 end-->
       </Drawer>
@@ -249,24 +252,24 @@
       <!--新增 抽屉 编辑基本信息 end-->
       <!--新增 抽屉 查看历史记录 start-->
       <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
-        <div class="el-textarea" v-loading="historyLoading">
-          <!--enctype="multipart/form-data"-->
-          <form id="uploadFile">
-            <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
-            <div class="cannetProject2">
-              <div style="display: inline-block">
-                <img src="../../static/img/fujian.png" alt="">
-                <a href="javascript:;" class="file" @change="getFileName">选择文件
-                  <input type="file" name="myfile">
-                </a>
-                <input type="hidden" name="projectUID" v-bind:value="proId">
-                <input type="hidden" name="rtype" v-bind:value="3">
-                <span class="showFileName"></span>
-              </div>
-              <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
-            </div>
-          </form>
-        </div>
+        <!--<div class="el-textarea" v-loading="historyLoading">-->
+          <!--&lt;!&ndash;enctype="multipart/form-data"&ndash;&gt;-->
+          <!--<form id="uploadFile">-->
+            <!--<textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>-->
+            <!--<div class="cannetProject2">-->
+              <!--<div style="display: inline-block">-->
+                <!--<img src="../../static/img/fujian.png" alt="">-->
+                <!--<a href="javascript:;" class="file" @change="getFileName">选择文件-->
+                  <!--<input type="file" name="myfile">-->
+                <!--</a>-->
+                <!--<input type="hidden" name="projectUID" v-bind:value="proId">-->
+                <!--<input type="hidden" name="rtype" v-bind:value="3">-->
+                <!--<span class="showFileName"></span>-->
+              <!--</div>-->
+              <!--<div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>-->
+            <!--</div>-->
+          <!--</form>-->
+        <!--</div>-->
         <!--操作记录-->
         <div class="discription lis" style="margin-top: 15px;">
           <!--<h3>历史记录</h3>-->
@@ -278,9 +281,9 @@
               <div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}
                 <div class="contBoxContentWrap">
                   <div class="contBoxContent" v-if="logs.comment">评论：{{logs.comment}}</div>
-                  <div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0">
-                    <span v-if="logs.uploads[0].isImage" @click="showBigImage(logs.uploads[0].previewUrl, logs.uploads[0].showName)" class="filepre">附件预览</span>
-                    <a v-bind:download="logs.uploads[0].showName" v-bind:href="logs.uploads[0].downloadUrl">下载：{{logs.uploads[0].showName}}</a>
+                  <div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0" v-for="(file, index2) in logs.uploads" v-bind:key="index2">
+                    <span v-if="file.isImage" @click="showBigImage(file.previewUrl)" class="filepre">预览</span>
+                    <a v-bind:download="file.showName" v-bind:href="file.downloadUrl">下载：{{file.showName}}</a>
                   </div>
                 </div>
               </div>
@@ -317,19 +320,19 @@
         </el-table>
         <!--<div class="proTitle">这个是项目名</div>-->
         <!--<div class="planTable">-->
-          <!--<div class="Plantable">-->
+        <!--<div class="Plantable">-->
 
-          <!--</div>-->
-          <!--<div class="planTableItem">-->
-            <!--<div class="planItemTitle">一级计划标题</div>-->
-            <!--<div class="planItemType">计划</div>-->
-            <!--<div class="planItemTime">2019-03-01 2019-03-20</div>-->
-            <!--<div class="planItemManager">张三</div>-->
-            <!--<div class="planItemUse">-->
-              <!--<div class="planItemUseEdit"><el-button style="margin-left: 10px" size="mini" type="primary">编辑</el-button></div>-->
-              <!--<div class="planItemUseDel"><el-button style="margin-left: 10px" size="mini" type="primary">删除</el-button></div>-->
-            <!--</div>-->
-          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="planTableItem">-->
+        <!--<div class="planItemTitle">一级计划标题</div>-->
+        <!--<div class="planItemType">计划</div>-->
+        <!--<div class="planItemTime">2019-03-01 2019-03-20</div>-->
+        <!--<div class="planItemManager">张三</div>-->
+        <!--<div class="planItemUse">-->
+        <!--<div class="planItemUseEdit"><el-button style="margin-left: 10px" size="mini" type="primary">编辑</el-button></div>-->
+        <!--<div class="planItemUseDel"><el-button style="margin-left: 10px" size="mini" type="primary">删除</el-button></div>-->
+        <!--</div>-->
+        <!--</div>-->
         <!--</div>-->
       </Drawer>
       <!--新增 抽屉 一级计划详情 end -->
@@ -351,15 +354,15 @@
                     <el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">
                       <el-col :span="20">
                         <el-date-picker type="datetime" :picker-options="pickerOptions0" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
-                        :default-value="defaultTime"
-                        v-model="form.date1" style="width: 300px;"
+                                        :default-value="defaultTime"
+                                        v-model="form.date1" style="width: 300px;"
                         ></el-date-picker>
                       </el-col>
                     </el-form-item>
                     <el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">
                       <el-col :span="20">
                         <el-date-picker type="datetime" :picker-options="pickerOptions0" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期" :default-value="defaultTime"
-                        v-model="form.date2" style="width: 300px;"
+                                        v-model="form.date2" style="width: 300px;"
                         ></el-date-picker>
                       </el-col>
                     </el-form-item>
@@ -390,10 +393,10 @@
                     <el-form-item label="任务指派" prop="userArr" maxlength="100">
                       <el-col :span="24">
                         <el-select v-model="value9" multiple filterable remote style="width: 300px"
-                        :reserve-keyword="false" placeholder="请输入关键词"
-                        :remote-method="addTaskRemoteMethod" :loading="loading2">
+                                   :reserve-keyword="false" placeholder="请输入关键词"
+                                   :remote-method="addTaskRemoteMethod" :loading="loading2">
                           <el-option v-for="item in addTaskOptions" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                          :value="item.Name + '(' + item.jName + ')' + '_' + item.ID">
+                                     :value="item.Name + '(' + item.jName + ')' + '_' + item.ID">
                           </el-option>
                         </el-select>
                       </el-col>
@@ -402,28 +405,28 @@
                     <el-form-item label="开始时间" prop="date1">
                       <el-col :span="20">
                         <el-date-picker type="datetime"
-                        v-bind:disabled="isDisabled"
-                        :picker-options="pickerOptions0"
-                        format="yyyy-MM-dd HH:mm:ss"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        placeholder="选择日期"
-                        :default-value="defaultTime"
-                        v-model="addTaskForm.date1" style="width: 300px;"
+                                        v-bind:disabled="isDisabled"
+                                        :picker-options="pickerOptions0"
+                                        format="yyyy-MM-dd HH:mm:ss"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        :default-value="defaultTime"
+                                        v-model="addTaskForm.date1" style="width: 300px;"
                         >
                         </el-date-picker>
                       </el-col>
                     </el-form-item>
                     <el-form-item label="结束时间" prop="date2">
                       <el-col :span="20">
-                      <el-date-picker type="datetime"
-                      v-bind:disabled="isDisabled"
-                      :picker-options="pickerOptions0"
-                      format="yyyy-MM-dd HH:mm:ss"
-                      value-format="yyyy-MM-dd HH:mm:ss"
-                      placeholder="选择日期"
-                      :default-value="defaultTime"
-                      v-model="addTaskForm.date2" style="width: 300px;"
-                      ></el-date-picker>
+                        <el-date-picker type="datetime"
+                                        v-bind:disabled="isDisabled"
+                                        :picker-options="pickerOptions0"
+                                        format="yyyy-MM-dd HH:mm:ss"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        :default-value="defaultTime"
+                                        v-model="addTaskForm.date2" style="width: 300px;"
+                        ></el-date-picker>
                       </el-col>
                     </el-form-item>
                     <el-form-item label="任务描述" prop="description" maxlength="100" width="100">
@@ -436,10 +439,10 @@
                     </el-form-item>
                   </el-form>
                   <form id="mytaskForm" enctype="multipart/form-data" style="position: absolute;bottom:40px;padding-left: 12px;">
-                  <div style="font-size: 14px;color: #555;height: 30px;line-height: 30px;display: inline-block;">添加附件</div>&nbsp;&nbsp;
-                  <input type="file" id="myfile" name="myfile" placeholder="请选择文件" style="width: 200px;" />
-                  <input type="hidden" name="formId" v-bind:value="formId">
-                  <div style="padding-left: 70px;font-size: 12px;height: 16px;color: #409eff">{{upLoadName}}</div>
+                    <div style="font-size: 14px;color: #555;height: 30px;line-height: 30px;display: inline-block;">添加附件</div>&nbsp;&nbsp;
+                    <input type="file" id="myfile" name="myfile" placeholder="请选择文件" style="width: 200px;" />
+                    <input type="hidden" name="formId" v-bind:value="formId">
+                    <div style="padding-left: 70px;font-size: 12px;height: 16px;color: #409eff">{{upLoadName}}</div>
                   </form>
                 </div>
                 <!---->
@@ -501,8 +504,8 @@
           <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
           <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
           <div style="display: flex;justify-content: space-between">
-            <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-            <div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+            <!--<div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>-->
+            <!--<div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>-->
           </div>
         </div>
         <div class="taskMsg">
@@ -561,14 +564,8 @@
           </div>
           <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
         </div>
-        <div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">
-          <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
-          <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
-          <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
+        <div class="cannetProject">
           <Button type="info" @click="taskToDevided()">任务分解</Button>
-        </div>
-        <div class="cannetProject" v-if="taskBasicMsg.isRestart">
-          <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
         </div>
         <!-- 任务分解 -->
         <div style="position: relative;width: 90%;margin-left: 10px;" v-if="toShowDevided">
@@ -643,15 +640,16 @@
             </div>
             <div class="taskFileUpload">
               <div class="fileUploadCao">
-                <div class="selectLeft">
+                <div class="selectLeft" style="width: 440px;">
                   <form id="uploadFileDel" enctype="multipart/form-data">
-                    <input type="file" v-on:change="fileChange2" id="myfileDel" name="myfile" placeholder="请选择文件"/><br>
+                    <input type="file" :disabled="fileListDis2" v-on:change="fileChange2" id="myfileDel" name="myfile" placeholder="请选择文件"/><br>
                     <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
                   </form>
-                  <div style="margin-top: 8px;">
-                    <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList2.length}}</span> 个附件:</span>
+                  <div style="margin-top: 8px;font-size: 12px;">
+                    <span style="color: #f00;" v-if="fileList2.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileList2.length}}</span> 个附件:</span>
+                    <span v-if="fileList2.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList2.length}}</span> 个附件:</span>
                     <span style="color: #888;" v-if="fileList2.length === 0">暂无附件</span>
-                    <span style="color: #409EFF" v-if="fileList2.length > 0" v-for="(file, index) in fileList2" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                    <span style="color: #409EFF" v-if="fileList2.length > 0" v-for="(file, index) in fileList2" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileDel(file.attachmentId)"></div>, </span>
                   </div>
                 </div>
                 <div class="selectRight2">
@@ -677,7 +675,7 @@
               <div v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
               <div v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
               <div>{{childTask.userName}}</div>
-              <div class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div>
+              <div style="width: 20px;margin-right: 0"><div class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div></div>
             </div>
           </div>
           <div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="childTaskList.length === 0">
@@ -694,19 +692,20 @@
               <form id="uploadFileRe" enctype="multipart/form-data" style="height: 40px;">
                 <img src="../../static/img/fujian.png" alt="">
                 <a href="javascript:;" class="file">选择文件
-                  <input type="file" name="myfile" id="myfile2" @change="getFileName">
+                  <input type="file" :disabled="commentDis" name="myfile" id="myfile2" @change="getFileName">
                 </a>
                 <!--<input type="hidden" name="rid" v-bind:value="rid2">-->
                 <!--<input type="hidden" name="rtype" v-bind:value="3">-->
                 <span class="showFileName"></span>
               </form>
-              <div>
-                <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
+              <div style="font-size: 12px;">
+                <span style="color: #f00;" v-if="fileListComment.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
+                <span v-if="fileListComment.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
                 <span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>
-                <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
+                <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
               </div>
             </div>
-            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
+            <div><i-button style="margin-top: 10px;" type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo2()">回复</i-button></div>
           </div>
         </div>
         <div class="cannetProject1-1">
@@ -822,35 +821,35 @@
       </el-dialog>
       <!--任务详情 end-->
       <!--<div class="block">-->
-        <!--<el-tree-->
-          <!--:data="data5"-->
-          <!--node-key="id"-->
-          <!--@node-expand="getNodeMsg($event)"-->
-          <!--:expand-on-click-node="false">-->
-          <!--<span class="custom-tree-node" slot-scope="{ node, data }">-->
-            <!--<span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>-->
-            <!--<span class="proMsg">-->
-              <!--<span class="treeName">-->
-                <!--<span v-if="data.type === '2'">-->
-                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>-->
-                  <!--<span style="float: left;margin-left: 16px;">{{data.userName}}</span>-->
-                <!--</span>-->
-              <!--</span>-->
-              <!--<span class="treeState">-->
-                 <!--<span v-if="data.type === '2'">-->
-                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>-->
-                  <!--<span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>-->
-                  <!--<span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>-->
-                  <!--<span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>-->
-                 <!--</span>-->
-              <!--</span>-->
-              <!--<span class="treeTime">-->
-                <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>-->
-                <!--<span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>-->
-              <!--</span>-->
-            <!--</span>-->
-          <!--</span>-->
-        <!--</el-tree>-->
+      <!--<el-tree-->
+      <!--:data="data5"-->
+      <!--node-key="id"-->
+      <!--@node-expand="getNodeMsg($event)"-->
+      <!--:expand-on-click-node="false">-->
+      <!--<span class="custom-tree-node" slot-scope="{ node, data }">-->
+      <!--<span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>-->
+      <!--<span class="proMsg">-->
+      <!--<span class="treeName">-->
+      <!--<span v-if="data.type === '2'">-->
+      <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>-->
+      <!--<span style="float: left;margin-left: 16px;">{{data.userName}}</span>-->
+      <!--</span>-->
+      <!--</span>-->
+      <!--<span class="treeState">-->
+      <!--<span v-if="data.type === '2'">-->
+      <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>-->
+      <!--<span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>-->
+      <!--<span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>-->
+      <!--<span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>-->
+      <!--</span>-->
+      <!--</span>-->
+      <!--<span class="treeTime">-->
+      <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>-->
+      <!--<span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>-->
+      <!--</span>-->
+      <!--</span>-->
+      <!--</span>-->
+      <!--</el-tree>-->
       <!--</div>-->
     </div>
     <!--删除确认-->
@@ -872,7 +871,7 @@
 
 <script>
 export default {
-  name: 'ProEdit',
+  name: 'ProEdit2',
   data () {
     return {
       // 编辑计划
@@ -950,6 +949,8 @@ export default {
       moreText2: '更多',
       moreIcon2: 'el-icon-arrow-down',
       fileList2: [],
+      fileListDis2: false,
+      fileListLen2: 0,
       defImplementer: {
         name: '张三',
         id: ''
@@ -983,6 +984,8 @@ export default {
       taskFinishedVisible: false,
       // 任务详情 start
       fileListComment: [],
+      commentDis: false,
+      fileListCommentLen: 0,
       childTaskList: [],
       toShowDevided: false,
       // 任务详情 end
@@ -1338,6 +1341,25 @@ export default {
       this.addTaskForm.userArr = newValue
       // this.log('this.taskForm.state2:', this.taskForm.state2)
     },
+    value4: function (val, Oval) {
+      if (val === false) {
+        this.fileListComment = []
+      }
+    },
+    fileListLen2: function (val, oVal) {
+      if (val >= 5) {
+        this.fileListDis2 = true
+      } else if (val < 5) {
+        this.fileListDis2 = false
+      }
+    },
+    fileListCommentLen: function (val, oVal) {
+      if (val >= 5) {
+        this.commentDis = true
+      } else if (val < 5) {
+        this.commentDis = false
+      }
+    },
     proId: function (val, oVal) {
       this.currentProId = val
       this.currentType = this.type
@@ -1403,6 +1425,59 @@ export default {
     }
   },
   methods: {
+    delUploadFileDel: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileList2.length; i++) {
+              if (id === that.fileList2[i].attachmentId) {
+                that.fileList2.splice(i, 1)
+              }
+            }
+            that.fileListLen2 = that.fileList2.length
+            console.log('edit', that.fileList2)
+            $('#myfileDel').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    delUploadFileComment: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            that.getCommicateCont()
+            for (var i = 0; i < that.fileListComment.length; i++) {
+              if (id === that.fileListComment[i].attachmentId) {
+                that.fileListComment.splice(i, 1)
+              }
+            }
+            that.fileListCommentLen = that.fileListComment.length
+            console.log('edit', that.fileListComment)
+            $('#myfile2').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
     planHandleClick (row, clickType) {
       var that = this
       that.currentNodeId = row.planId
@@ -1750,14 +1825,14 @@ export default {
         that.log('getLogAndComment:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.list.length; i++) {
-            if (res.data.list[i].uploads.length > 0) {
-              if (that.isImage(res.data.list[i].uploads[0].showName)) {
-                res.data.list[i].uploads[0].isImage = true
+            for (var j = 0; j < res.data.list[i].uploads.length; j++) {
+              if (that.isImage(res.data.list[i].uploads[j].showName)) {
+                res.data.list[i].uploads[j].isImage = true
               } else {
-                res.data.list[i].uploads[0].isImage = false
+                res.data.list[i].uploads[j].isImage = false
               }
-              var downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].uploads[0].realUrl + '&showName=' + res.data.list[i].uploads[0].showName
-              res.data.list[i].uploads[0].downloadUrl = downurl
+              var downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].uploads[j].realUrl + '&showName=' + res.data.list[i].uploads[j].showName
+              res.data.list[i].uploads[j].downloadUrl = downurl
             }
           }
           that.taskLogs = res.data.list
@@ -1771,22 +1846,99 @@ export default {
       })
     },
     // 新增 检查图片
-    showBigImage (url, imgName) {
+    showBigImage (url) {
       if (url) {
-        if (this.isImage(imgName)) {
-          this.preImageUrl = url
-          this.showBigImageVisible = true
-        }
+        this.preImageUrl = url
+        this.showBigImageVisible = true
       } else {
         this.$message('地址无效')
       }
     },
     // 新增
     getFileName: function () {
-      var filePath = $('#myfile').val()
+      var that = this
+      var filePath = $('#myfile2').val()
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
       $('.showFileName').html(fileName)
+      if (filePath) {
+        that.addMarkInfo4()
+      }
+    },
+    addMarkInfo4 () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileRe')[0])
+      if (formData) {
+        $.ajax({
+          type: 'post',
+          url: url + '/file/uploadFileAjax',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          that.log('upload:', data)
+          if (data.code === 200) {
+            // that.attachmentId2 = data.data.attachmentId
+            var obj = {
+              attachmentId: data.data.attachmentId,
+              fileName: data.data.showName
+            }
+            that.fileListComment.push(obj)
+            that.fileListCommentLen = that.fileListComment.length
+            that.log('attachmentId:', data.data.attachmentId2)
+            that.$message({
+              type: 'success',
+              message: '文件' + data.msg
+            })
+          } else if (data.code === 300) {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          }
+        })
+      } else {
+        // that.loading = false
+        that.$message({
+          type: 'error',
+          message: '评论内容不能为空'
+        })
+      }
+    },
+    addMarkInfo2 () {
+      var that = this
+      that.loading8 = true
+      console.log('comment', that.fileListComment)
+      var fileStr = ''
+      for (var j = 0; j < this.fileListComment.length; j++) {
+        if (j === that.fileListComment.length - 1) {
+          fileStr = fileStr + that.fileListComment[j].attachmentId
+        } else {
+          fileStr = fileStr + that.fileListComment[j].attachmentId + ','
+        }
+      }
+      that.ajax('/comment/addComment', {content: that.commitComent, attachmentId: fileStr, contentId: that.taskId2, parentCommentId: '11'}).then(res => {
+        if (res.code === 200) {
+          that.log('myTaskView:', res)
+          that.getCommicateCont()
+          that.fileListComment = []
+          that.commitComent = ''
+          $('.showFileName').html('')
+          $('#myfile2').val('')
+          that.loading8 = false
+        }
+      })
     },
     // 新增
     startDateChange (date) {
@@ -2232,56 +2384,6 @@ export default {
         }
       })
     },
-    addMarkInfo4 () {
-      var that = this
-      var url = that.$store.state.baseServiceUrl
-      var formData = new FormData($('#uploadFileRe')[0])
-      if (formData) {
-        $.ajax({
-          type: 'post',
-          url: url + '/file/uploadFileAjax',
-          data: formData,
-          cache: false,
-          processData: false,
-          contentType: false,
-          crossDomain: true,
-          xhrFields: {
-            withCredentials: true
-          }
-        }).then(function (data) {
-          that.log('upload:', data)
-          if (data.code === 200) {
-            // that.attachmentId2 = data.data.attachmentId
-            var obj = {
-              attachmentId: data.data.attachmentId,
-              fileName: data.data.showName
-            }
-            that.fileListComment.push(obj)
-            that.log('attachmentId:', data.data.attachmentId2)
-            that.$message({
-              type: 'success',
-              message: '文件' + data.msg
-            })
-          } else if (data.code === 300) {
-            that.$message({
-              type: 'error',
-              message: data.msg
-            })
-          } else {
-            that.$message({
-              type: 'error',
-              message: data.msg
-            })
-          }
-        })
-      } else {
-        // that.loading = false
-        that.$message({
-          type: 'error',
-          message: '评论内容不能为空'
-        })
-      }
-    },
     // 任务开始 开始任务
     startTask: function (id) {
       var that = this
@@ -2623,6 +2725,58 @@ export default {
         that.addMarkInfo3()
       }
       this.log('change了', file)
+    },
+    addMarkInfo3 () {
+      var that = this
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileDel')[0])
+      that.formData2 = formData
+      if (formData) {
+        $.ajax({
+          type: 'post',
+          url: url + '/file/uploadFileAjax',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          that.log('upload:', data)
+          if (data.code === 200) {
+            // that.attachmentId2 = data.data.attachmentId
+            var obj = {
+              attachmentId: data.data.attachmentId,
+              fileName: data.data.showName
+            }
+            that.fileList2.push(obj)
+            that.fileListLen2 = that.fileList2.length
+            that.log('attachmentId:', data.data.attachmentId2)
+            that.$message({
+              type: 'success',
+              message: '文件' + data.msg
+            })
+          } else if (data.code === 300) {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+          }
+        })
+      } else {
+        // that.loading = false
+        that.$message({
+          type: 'error',
+          message: '评论内容不能为空'
+        })
+      }
     },
     moreClick2: function () {
       var that = this
@@ -3094,10 +3248,6 @@ export default {
     color: #004974;
     text-decoration: none;
   }
-  .showFileName{
-    float: right;
-    margin-left: 10px;
-  }
   .time{
     font-size: 14px;
     font-weight: bold;
@@ -3179,12 +3329,12 @@ export default {
     border-left: none !important;
   }
   .quan{
-    width: 14px;
-    height: 14px;
+    width: 17px;
+    height: 17px;
     border: 1px solid #3a8ee6;
     border-radius: 8px;
     display: inline-block;
-    line-height:14px;
+    line-height:17px;
     text-align: center;
     font-size: 10px;
     color: #3a8ee6;
@@ -3462,7 +3612,7 @@ export default {
     padding:0 10px;
   }
   .cannetProject21{
-    width: 90%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     line-height: 24px;
@@ -3537,13 +3687,13 @@ export default {
     line-height: 48px;
   }
   .childTaskName{
-    width: 60%;
+    width: 40%;
     color: #409EFF;
     cursor: pointer;
     font-size: 14px;
   }
   .childTaskMsg{
-    width: 40%;
+    width: 60%;
     text-align: right;
   }
   .childTaskMsg>div{
@@ -3651,7 +3801,6 @@ export default {
   .fileUploadCao{
     display: flex;
     justify-content: space-between;
-    background-color: #f5f8fa;
     padding: 10px;
   }
   .selectLeft{

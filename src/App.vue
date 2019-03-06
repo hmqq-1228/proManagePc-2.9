@@ -65,6 +65,9 @@ export default {
       var that = this
       this.log('menuName:', menuName)
       switch (menuName) {
+        case '商品管理':
+          that.$router.push('/MyPro2')
+          break
         case '我的项目':
           that.$router.push('/MyPro')
           break
@@ -119,6 +122,8 @@ export default {
           this.$router.push('/MyTask')
         } else if (proName === '我的项目') {
           this.$router.push('/MyPro')
+        } else if (proName === '商品管理') {
+          this.$router.push('/MyPro2')
         }
       }
     }
@@ -134,6 +139,11 @@ export default {
 html,body{
   width: 100%;
   height: 100%;
+}
+.ProEdit .el-tree-node{
+  height: 40px;
+  padding: 10px 0;
+  border-bottom: 1px dashed #f1f1f1;
 }
 #app{
   height: 100%;
