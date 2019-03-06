@@ -176,7 +176,7 @@
       <!---->
     </div>
     <!---->
-    <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
+    <Drawer class="drawerScroll" :closable="false" width="750%" v-model="value4">
       <div class="slidTop">
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
