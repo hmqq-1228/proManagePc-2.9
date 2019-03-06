@@ -179,7 +179,7 @@
               <div class="memListItem">{{mem.userName}}</div>
               <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
               <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
-              <div class="memListItem">x</div>
+              <div class="memListItem" v-on:click="delMember(mem.id)">x</div>
             </div>
           </div>
         </div>
@@ -1506,6 +1506,7 @@ export default {
         }
       })
     },
+    // 成员管理
     addMenber () {
       var that = this
       if (that.deId.length > 0) {
@@ -1525,6 +1526,31 @@ export default {
         })
       } else if (this.deId.length === 0) {
         $('.el-icon-d-arrow-right').removeClass('active')
+      }
+    },
+    // 删除成员
+    delMember (memId) {
+      var that = this
+      if (memId) {
+        that.ajax('/myProject/delMembersById', {
+          projectUID: that.proId,
+          id: memId
+        }).then(res => {
+          that.log('删除成员:', res)
+          if (res.code === 200) {
+            that.$message({
+              type: 'success',
+              message: res.msg
+            })
+            that.queryProGroupMember()
+            that.queryProDetail()
+            // that.getProjectPeo()
+            that.loading = false
+            // that.deId = []
+          } else {
+            that.$message(res.msg)
+          }
+        })
       }
     },
     // 点击 组织架构
