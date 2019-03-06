@@ -298,6 +298,10 @@ export default {
       // 是否选择了"新建项目模板"
       isModel: false,
       duration: 0,
+      // 新增
+      autoCompleteNamesPayload: {
+        projectManager: ''
+      },
       // 新建项目 模板Id
       modId: '',
       modelList: [],
@@ -491,7 +495,6 @@ export default {
     },
     // 新增 对话框 产品研发类型树形结构
     getProjectType: function (e) {
-      console.log('eeee', e)
       var that = this
       if (e === '5') {
         // that.showProject = false
