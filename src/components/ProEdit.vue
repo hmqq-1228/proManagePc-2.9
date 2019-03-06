@@ -43,9 +43,10 @@
         <!-- 一级计划 start -->
         <div class="planList">
           <div class="planName">项<br />目<br />计<br />划</div>
-          <div class="planBox">
+          <div class="planBox" style="position: relative;">
+            <!--v-on:click="addNode(firstPlanId)"-->
             <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
-            <Button style="margin-top: 16px; margin-left: 20px" size="small" v-on:click="addNode(firstPlanId)">+ 计划 / 任务</Button>
+            <Button style="margin-top: 16px; margin-left: 20px; position: absolute; right: 10px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">编辑</Button>
           </div>
           <!--<div class="planBox2" v-if="planList.length === 0">暂无子计划</div>-->
         </div>
@@ -130,8 +131,8 @@
                 <span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>
               </span>
               <span class="treeTime">
-                <Dropdown @on-click="moreSelectOptions($event, data.id)">
-                  <a href="javascript:void(0)">下拉菜单<Icon type="ios-arrow-down"></Icon></a>
+                <Dropdown @on-click="moreSelectOptions($event, data.id, data.type)">
+                  <a href="javascript:void(0)">跟多操作<Icon type="ios-arrow-down"></Icon></a>
                   <DropdownMenu slot="list">
                     <DropdownItem name="add">添加</DropdownItem>
                     <DropdownItem name="del">删除</DropdownItem>
@@ -144,130 +145,6 @@
         </el-tree>
       </div>
       <!--项目计划树 老版本 end-->
-      <!--新增 添加计划或者任务 start-->
-      <!--bgcover开始 增加计划-->
-      <div class="bgCover" v-if="bgCoverShow">
-        <div class="bgCoverCnt" v-loading="loading">
-          <div class="colose" @click="onPlanTaskCancel()">&#935;</div>
-          <div class="bgCoverTabs">
-            <el-tabs v-model="activeNameBgCover" @tab-click="handleClickPlanTask">
-              <el-tab-pane label="增加计划" name="first" v-bind:disabled="panshow">
-                <!--计划form-->
-                <div class="planTaskBox">
-                  <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-                    <el-form-item label="计划名称" prop="name" maxlength="100" width="100" style="margin-bottom: 30px;">
-                      <el-input class="planNameIpt" v-model="form.name" style="width: 300px;" maxlength="20"></el-input>
-                    </el-form-item>
-                    <el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">
-                      <el-col :span="20">
-                        <el-date-picker type="datetime"
-                                        :picker-options="pickerOptions0"
-                                        format="yyyy-MM-dd HH:mm:ss"
-                                        value-format="yyyy-MM-dd HH:mm:ss"
-                                        placeholder="选择日期"
-                                        :default-value="defaultTime"
-                                        v-model="form.date1" style="width: 300px;"
-                        ></el-date-picker>
-                      </el-col>
-                    </el-form-item>
-                    <el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">
-                      <el-col :span="20">
-                        <el-date-picker type="datetime"
-                                        :picker-options="pickerOptions0"
-                                        format="yyyy-MM-dd HH:mm:ss"
-                                        value-format="yyyy-MM-dd HH:mm:ss"
-                                        placeholder="选择日期"
-                                        :default-value="defaultTime"
-                                        v-model="form.date2" style="width: 300px;"
-                        ></el-date-picker>
-                      </el-col>
-                    </el-form-item>
-                    <el-form-item label="计划描述" prop="description" maxlength="100" width="100" style="margin-bottom: 30px;">
-                      <el-input class="planNameIpt" type="textarea" :rows="2" v-model="form.description" style="width: 300px;"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button type="primary" @click="onPlanSubmit('form')">立即创建</el-button>
-                      <el-button @click="onPlanTaskCancel()">取消</el-button>
-                    </el-form-item>
-                  </el-form>
-                </div>
-                <!---->
-              </el-tab-pane>
-              <el-tab-pane label="增加任务" name="second">
-                <!--任务form-->
-                <div class="planTaskBox" style="position: relative;padding-top: 0;">
-                  <el-form ref="addTaskForm" :rules="taskRules" :model="addTaskForm" label-width="80px">
-                    <el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">
-                      <el-input class="planNameIpt" v-model="addTaskForm.jobName" style="width: 300px;" v-bind:disabled="isDisabled" maxlength="20"></el-input>
-                    </el-form-item>
-                    <el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">
-                      <div class="ratestar" style="padding-top: 6px;">
-                        <el-rate v-model="addTaskForm.jobLevel" v-on:change="rateChange($event)" v-bind:disabled="isDisabled"></el-rate>
-                      </div>
-                    </el-form-item>
-                    <!--指派人员多选 多人指派-->
-                    <el-form-item label="任务指派" prop="userArr" maxlength="100">
-                      <el-col :span="24">
-                        <el-select v-model="value9" multiple filterable remote style="width: 300px"
-                                   :reserve-keyword="false" placeholder="请输入关键词"
-                                   :remote-method="addTaskRemoteMethod" :loading="loading2">
-                          <el-option v-for="item in addTaskOptions" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                                     :value="item.Name + '(' + item.jName + ')' + '_' + item.ID">
-                          </el-option>
-                        </el-select>
-                      </el-col>
-                    </el-form-item>
-                    <!--开始时间-->
-                    <el-form-item label="开始时间" prop="date1">
-                      <el-col :span="20">
-                        <el-date-picker type="datetime"
-                                        v-bind:disabled="isDisabled"
-                                        :picker-options="pickerOptions0"
-                                        format="yyyy-MM-dd HH:mm:ss"
-                                        value-format="yyyy-MM-dd HH:mm:ss"
-                                        placeholder="选择日期"
-                                        :default-value="defaultTime"
-                                        v-model="addTaskForm.date1" style="width: 300px;"
-                        >
-                        </el-date-picker>
-                      </el-col>
-                    </el-form-item>
-                    <el-form-item label="结束时间" prop="date2">
-                      <el-col :span="20">
-                        <el-date-picker type="datetime"
-                                        v-bind:disabled="isDisabled"
-                                        :picker-options="pickerOptions0"
-                                        format="yyyy-MM-dd HH:mm:ss"
-                                        value-format="yyyy-MM-dd HH:mm:ss"
-                                        placeholder="选择日期"
-                                        :default-value="defaultTime"
-                                        v-model="addTaskForm.date2" style="width: 300px;"
-                        ></el-date-picker>
-                      </el-col>
-                    </el-form-item>
-                    <el-form-item label="任务描述" prop="description" maxlength="100" width="100">
-                      <el-input class="planNameIpt" v-bind:disabled="isDisabled" type="textarea" :rows="2" v-model="addTaskForm.description" style="width: 300px;"></el-input>
-                    </el-form-item>
-                    <el-form-item style="height: 40px;"></el-form-item>
-                    <el-form-item>
-                      <el-button type="primary" @click="onTaskSubmit('addTaskForm')">立即创建</el-button>
-                      <el-button @click="onPlanTaskCancel()">取消</el-button>
-                    </el-form-item>
-                  </el-form>
-                  <form id="mytaskForm" enctype="multipart/form-data" style="position: absolute;bottom:40px;padding-left: 12px;">
-                    <div style="font-size: 14px;color: #555;height: 30px;line-height: 30px;display: inline-block;">添加附件</div>&nbsp;&nbsp;
-                    <input type="file" id="myfile" name="myfile" placeholder="请选择文件" style="width: 200px;" />
-                    <input type="hidden" name="formId" v-bind:value="formId">
-                    <div style="padding-left: 70px;font-size: 12px;height: 16px;color: #409eff">{{upLoadName}}</div>
-                  </form>
-                </div>
-                <!---->
-              </el-tab-pane>
-            </el-tabs>
-          </div>
-        </div>
-      </div>
-      <!--新增 添加计划或者任务 end-->
       <!--新增 抽屉 成员管理 ks-->
       <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember">
         <!--<Button v-on:click="test()">TEST</Button>-->
@@ -415,6 +292,209 @@
         </div>
       </Drawer>
       <!--新增 抽屉 查看历史记录 end-->
+      <!--新增 抽屉 一级计划详情 start -->
+      <Drawer title="一级计划 / 任务" width="740" :closable="false" v-model="FirstLevelTask">
+        <div class="tableHeader">
+          <div class="tableProTitle">项目名:{{proDetailMsg.projectName}}</div>
+          <div class="tableProBtn" style="margin-bottom: 10px;">
+            <Button type="primary" size="small" v-on:click="addNode(firstPlanId)">添加一级</Button>
+          </div>
+        </div>
+        <el-table :data="FirstLevelPlanList" border style="width: 100%">
+          <el-table-column prop="planName" label="计划/任务" width="280"></el-table-column>
+          <el-table-column prop="planType" label="类型" width="70"></el-table-column>
+          <el-table-column prop="planDateDur" label="时间" width="200"></el-table-column>
+          <!--<el-table-column prop="planManager" label="责任人" width="120"></el-table-column>-->
+          <!--<el-table-column prop="address" label="地址" width="300"></el-table-column>-->
+          <!--<el-table-column prop="zip" label="邮编" width="120"></el-table-column>-->
+          <el-table-column label="操作" width="140" fixed="right">
+            <template slot-scope="scope">
+              <el-button @click="planHandleClick(scope.row, 'edit')" type="text" size="small">编辑</el-button>
+              <el-button @click="planHandleClick(scope.row, 'add')" type="text" size="small">添加</el-button>
+              <el-button @click="planHandleClick(scope.row, 'del')" type="text" size="small">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!--<div class="proTitle">这个是项目名</div>-->
+        <!--<div class="planTable">-->
+          <!--<div class="Plantable">-->
+
+          <!--</div>-->
+          <!--<div class="planTableItem">-->
+            <!--<div class="planItemTitle">一级计划标题</div>-->
+            <!--<div class="planItemType">计划</div>-->
+            <!--<div class="planItemTime">2019-03-01 2019-03-20</div>-->
+            <!--<div class="planItemManager">张三</div>-->
+            <!--<div class="planItemUse">-->
+              <!--<div class="planItemUseEdit"><el-button style="margin-left: 10px" size="mini" type="primary">编辑</el-button></div>-->
+              <!--<div class="planItemUseDel"><el-button style="margin-left: 10px" size="mini" type="primary">删除</el-button></div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      </Drawer>
+      <!--新增 抽屉 一级计划详情 end -->
+      <!--新增 添加计划或者任务 start-->
+      <!--bgcover开始 增加计划-->
+      <Drawer class="drawerScroll" title="计划表单" :closable="false" width="40%" style="z-index: 1005" v-model="bgCoverShow">
+        <!--<div class="bgCover" v-if="bgCoverShow">-->
+        <div class="bgCoverCnt" v-loading="loading">
+          <div class="colose" @click="onPlanTaskCancel()">&#935;</div>
+          <div class="bgCoverTabs">
+            <el-tabs v-model="activeNameBgCover" @tab-click="handleClickPlanTask">
+              <el-tab-pane label="增加计划" name="first" v-bind:disabled="panshow">
+                <!--计划form-->
+                <div class="planTaskBox">
+                  <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+                    <el-form-item label="计划名称" prop="name" maxlength="100" width="100" style="margin-bottom: 30px;">
+                      <el-input class="planNameIpt" v-model="form.name" style="width: 300px;" maxlength="20"></el-input>
+                    </el-form-item>
+                    <el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">
+                      <el-col :span="20">
+                        <el-date-picker type="datetime" :picker-options="pickerOptions0" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
+                        :default-value="defaultTime"
+                        v-model="form.date1" style="width: 300px;"
+                        ></el-date-picker>
+                      </el-col>
+                    </el-form-item>
+                    <el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">
+                      <el-col :span="20">
+                        <el-date-picker type="datetime" :picker-options="pickerOptions0" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期" :default-value="defaultTime"
+                        v-model="form.date2" style="width: 300px;"
+                        ></el-date-picker>
+                      </el-col>
+                    </el-form-item>
+                    <el-form-item label="计划描述" prop="description" maxlength="100" width="100" style="margin-bottom: 30px;">
+                      <el-input class="planNameIpt" type="textarea" :rows="2" v-model="form.description" style="width: 300px;"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                      <el-button type="primary" @click="onPlanSubmit('form')">立即创建</el-button>
+                      <el-button @click="onPlanTaskCancel()">取消</el-button>
+                    </el-form-item>
+                  </el-form>
+                </div>
+                <!---->
+              </el-tab-pane>
+              <el-tab-pane label="增加任务" name="second">
+                <!--任务form-->
+                <div class="planTaskBox" style="position: relative;padding-top: 0;">
+                  <el-form ref="addTaskForm" :rules="taskRules" :model="addTaskForm" label-width="80px">
+                    <el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">
+                      <el-input class="planNameIpt" v-model="addTaskForm.jobName" style="width: 300px;" v-bind:disabled="isDisabled" maxlength="20"></el-input>
+                    </el-form-item>
+                    <el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">
+                      <div class="ratestar" style="padding-top: 6px;">
+                        <el-rate v-model="addTaskForm.jobLevel" v-on:change="rateChange($event)" v-bind:disabled="isDisabled"></el-rate>
+                      </div>
+                    </el-form-item>
+                    <!--指派人员多选 多人指派-->
+                    <el-form-item label="任务指派" prop="userArr" maxlength="100">
+                      <el-col :span="24">
+                        <el-select v-model="value9" multiple filterable remote style="width: 300px"
+                        :reserve-keyword="false" placeholder="请输入关键词"
+                        :remote-method="addTaskRemoteMethod" :loading="loading2">
+                          <el-option v-for="item in addTaskOptions" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
+                          :value="item.Name + '(' + item.jName + ')' + '_' + item.ID">
+                          </el-option>
+                        </el-select>
+                      </el-col>
+                    </el-form-item>
+                    <!--开始时间-->
+                    <el-form-item label="开始时间" prop="date1">
+                      <el-col :span="20">
+                        <el-date-picker type="datetime"
+                        v-bind:disabled="isDisabled"
+                        :picker-options="pickerOptions0"
+                        format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        placeholder="选择日期"
+                        :default-value="defaultTime"
+                        v-model="addTaskForm.date1" style="width: 300px;"
+                        >
+                        </el-date-picker>
+                      </el-col>
+                    </el-form-item>
+                    <el-form-item label="结束时间" prop="date2">
+                      <el-col :span="20">
+                      <el-date-picker type="datetime"
+                      v-bind:disabled="isDisabled"
+                      :picker-options="pickerOptions0"
+                      format="yyyy-MM-dd HH:mm:ss"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="选择日期"
+                      :default-value="defaultTime"
+                      v-model="addTaskForm.date2" style="width: 300px;"
+                      ></el-date-picker>
+                      </el-col>
+                    </el-form-item>
+                    <el-form-item label="任务描述" prop="description" maxlength="100" width="100">
+                      <el-input class="planNameIpt" v-bind:disabled="isDisabled" type="textarea" :rows="2" v-model="addTaskForm.description" style="width: 300px;"></el-input>
+                    </el-form-item>
+                    <el-form-item style="height: 40px;"></el-form-item>
+                    <el-form-item>
+                      <el-button type="primary" @click="onTaskSubmit('addTaskForm')">立即创建</el-button>
+                      <el-button @click="onPlanTaskCancel()">取消</el-button>
+                    </el-form-item>
+                  </el-form>
+                  <form id="mytaskForm" enctype="multipart/form-data" style="position: absolute;bottom:40px;padding-left: 12px;">
+                  <div style="font-size: 14px;color: #555;height: 30px;line-height: 30px;display: inline-block;">添加附件</div>&nbsp;&nbsp;
+                  <input type="file" id="myfile" name="myfile" placeholder="请选择文件" style="width: 200px;" />
+                  <input type="hidden" name="formId" v-bind:value="formId">
+                  <div style="padding-left: 70px;font-size: 12px;height: 16px;color: #409eff">{{upLoadName}}</div>
+                  </form>
+                </div>
+                <!---->
+              </el-tab-pane>
+            </el-tabs>
+          </div>
+        </div>
+        <!--</div>-->
+      </Drawer>
+      <!--新增 添加计划或者任务 end-->
+      <!--新增 抽屉 编辑计划 start-->
+      <Drawer class="drawerScroll" title="编辑计划" :closable="false" width="40%" v-model="planEditShow">
+        <!---->
+        <div class="bgCoverTabs">
+          <!--计划form-->
+          <div class="planTaskBox">
+            <el-form ref="modify" :model="detailform" :rules="planRules" label-width="80px">
+              <el-form-item label="计划名称" prop="name" maxlength="100" width="100">
+                <el-input class="planNameIpt" v-model="detailform.name" maxlength="20"></el-input>
+              </el-form-item>
+              <el-form-item label="开始时间" prop="date1">
+                <el-col :span="11">
+                  <el-date-picker type="datetime"
+                                  format="yyyy-MM-dd HH:mm:ss"
+                                  value-format="yyyy-MM-dd HH:mm:ss"
+                                  placeholder="选择日期"
+                                  v-model="detailform.date1"
+                                  :picker-options="pickerOptionsPlanSt"
+                  ></el-date-picker>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="结束时间" prop="date2">
+                <el-col :span="11">
+                  <el-date-picker type="datetime"
+                                  format="yyyy-MM-dd HH:mm:ss"
+                                  value-format="yyyy-MM-dd HH:mm:ss"
+                                  placeholder="选择日期"
+                                  v-model="detailform.date2"
+                                  :picker-options="pickerOptionsPlanEt"
+                  ></el-date-picker>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="计划描述" maxlength="100" width="100">
+                <el-input class="planNameIpt" type="textarea" :rows="2" v-model="detailform.description"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="modifySub('modify')">保存</el-button>
+                <el-button @click="planEditShow = false">关 闭</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+          <!---->
+        </div>
+      </Drawer>
+      <!--新增 抽屉 编辑计划 end-->
       <!--新增 抽屉 任务详情 start-->
       <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
         <div class="slidTop">
@@ -795,6 +875,73 @@ export default {
   name: 'ProEdit',
   data () {
     return {
+      // 编辑计划
+      editPlanPayload: {
+        planId: '1',
+        name: '',
+        start: '',
+        finish: '',
+        description: ''
+      },
+      editTaskPayload: {
+        id: '1',
+        jobName: '',
+        jobLevel: 1,
+        taskStartDate: '',
+        taskFinishDate: '',
+        description: '',
+        _jfinal_token: ''
+      },
+      // 编辑计划
+      pickerOptionsPlanSt: {},
+      pickerOptionsPlanEt: {},
+      pickerOptionsTaskSt: {},
+      pickerOptionsTaskEt: {},
+      // 编辑计划
+      planRules: {
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+        date1: [
+          { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
+        ],
+        date2: [
+          { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
+        ]
+      },
+      // 编辑计划
+      detailform: {
+        name: '',
+        dataList: [],
+        date1: '2018-10-10 00:00:00',
+        date2: '2018-10-10 00:00:00',
+        description: ''
+      },
+      planEditShow: false,
+      tableData: [{
+        planTime: '2016-05-02',
+        planTitle: '这个是计划',
+        planType: '计划',
+        planManager: '张三'
+      }, {
+        planTime: '2016-05-02',
+        planTitle: '这个是计划',
+        planType: '计划',
+        planManager: '张三'
+      }, {
+        planTime: '2016-05-02',
+        planTitle: '这个是计划',
+        planType: '计划',
+        planManager: '张三'
+      }, {
+        planTime: '2016-05-02',
+        planTitle: '这个是计划',
+        planType: '计划',
+        planManager: '张三'
+      }],
+      // 一级计划
+      FirstLevelTask: false,
+      // 一级计划
       moreUserSelectPayload2: {
         projectManager: ''
       },
@@ -867,7 +1014,7 @@ export default {
         children: 'children',
         label: 'name'
       },
-      // 新增
+      // 新增 项目根计划ID
       firstPlanId: '',
       // 新增
       token: '',
@@ -1062,6 +1209,8 @@ export default {
       proDetailMsg: '',
       taskList: [],
       planList: [],
+      // 一级计划 详情 planList数据处理
+      FirstLevelPlanList: [],
       historyList: [],
       setRouterNameList: [],
       startPlanDate: '',
@@ -1233,9 +1382,55 @@ export default {
       } else {
         this.butnDisabledT = true
       }
+    },
+    planList: function (val, old) {
+      var that = this
+      if (val) {
+        that.FirstLevelPlanList = []
+        for (var i = 0; i < val.length; i++) {
+          var obj = {
+            planName: val[i].name,
+            planType: val[i].type === '1' ? '计划' : '任务',
+            planStartDate: val[i].start.split(' ')[0],
+            planFinishDate: val[i].finish.split(' ')[0],
+            planDateDur: val[i].start.split(' ')[0] + ' 至 ' + val[i].finish.split(' ')[0],
+            planId: val[i].id,
+            description: val[i].description ? val[i].description : ''
+          }
+          that.FirstLevelPlanList.push(obj)
+        }
+      }
     }
   },
   methods: {
+    planHandleClick (row, clickType) {
+      var that = this
+      that.currentNodeId = row.planId
+      console.log('planHandleClick:', row)
+      // planDateDur: "2018-10-10 至 2018-10-10"
+      // planStartDate planFinishDate
+      // planId: "P8de7eee479cd4fc9bdd43f4a323fd715"
+      // planName: "计划110110110110"
+      // planType: "计划"
+      if (clickType === 'edit') {
+        if (row.planType === '计划') {
+          that.detailform.name = row.planName
+          that.detailform.date1 = row.planStartDate
+          that.detailform.date2 = row.planFinishDate
+          that.detailform.description = row.description
+          that.planEditShow = true
+        }
+      } else if (clickType === 'add') {
+        that.addNode(row.planId, row.planType)
+      } else if (clickType === 'del') {
+        that.modal2 = true
+      }
+    },
+    // 一级计划 详情
+    FistLevelPlanDetail () {
+      this.FirstLevelTask = true
+    },
+    // 一级计划 详情 结束
     // 权限 编辑 查看
     checkBoxChangeEdit (checked, id, role) {
       var that = this
@@ -1324,19 +1519,27 @@ export default {
       })
     },
     // 节点操作 展开更多 添加
-    moreSelectOptions: function (nodeName, nodeId) {
+    moreSelectOptions: function (nodeName, nodeId, nodeType) {
       this.log('nodeName:', nodeName)
       this.log('nodeId:', nodeId)
       this.currentNodeId = nodeId
       if (nodeName === 'add') {
-        this.addNode(nodeId)
+        this.addNode(nodeId, nodeType)
       } else if (nodeName === 'del') {
         this.modal2 = true
         // this.delNode(nodeId)
       }
     },
     // 新建 添加子节点
-    addNode: function (nodeId) {
+    addNode: function (nodeId, nodeType) {
+      var that = this
+      if (nodeType) {
+        if (nodeType === '1' || nodeType === '计划') {
+          that.activeNameBgCover = 'first'
+        } else {
+          that.activeNameBgCover = 'second'
+        }
+      }
       this.currentNodeId = nodeId
       this.bgCoverShow = true
     },
@@ -1350,6 +1553,7 @@ export default {
         if (res.code === 200) {
           // that.getChildNode(that.currentNodeId)
           that.queryProDetail()
+          that.getProjectDetail()
           this.modal_loading = false
           this.modal2 = false
           that.$message({
@@ -2642,6 +2846,36 @@ export default {
           }
         })
       }
+    },
+    // 编辑计划 保存
+    // 修改点击了保存
+    modifySub: function (formName) {
+      // this.alert('计划点击了保存')
+      var that = this
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          that.loading = true
+          that.editPlanPayload.planId = that.currentNodeId
+          that.editPlanPayload.name = this.detailform.name
+          that.editPlanPayload.start = this.detailform.date1
+          that.editPlanPayload.finish = this.detailform.date2
+          that.editPlanPayload.description = this.detailform.description
+          that.ajax('/myProject/editPlan', that.editPlanPayload).then(res => {
+            that.log('editPlan:', res)
+            if (res.code === 200) {
+              that.$message({message: '保存成功！', type: 'success'})
+              // planEditShow
+              that.planEditShow = false
+              that.loading = false
+              that.getProjectDetail()
+              that.formDataClear()
+              // that.queryManagePlan5()
+            } else {
+              that.loading = false
+            }
+          })
+        }
+      })
     }
     // 任务详情 end
     // getNextPlan: function (pId) {
@@ -3014,18 +3248,18 @@ export default {
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 100;
+    z-index: 9999;
   }
   .bgCoverCnt{
     _width: 400px;
     _height: 460px;
-    background-color: #fff;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin-left: -250px;
-    margin-top: -250px;
-    padding: 50px;
+    /*background-color: #fff;*/
+    /*position: absolute;*/
+    /*left: 50%;*/
+    /*top: 50%;*/
+    /*margin-left: -250px;*/
+    /*margin-top: -250px;*/
+    /*padding: 50px;*/
   }
   .colose {
     float: right;
@@ -3471,5 +3705,46 @@ export default {
   }
   .selectDateItem{
     margin-top: 20px;
+  }
+  /***
+   *
+   *  ===================================================================
+   *                     一级计划详情
+   *  ===================================================================
+   *
+   **/
+  .planTable{
+    border: 1px solid #eee;
+  }
+  .planTableItem{
+    display: flex;
+    border-bottom: 1px solid #eee;
+  }
+  .planItemTitle{
+    width: 150px;
+  }
+  .planItemType{
+    width: 50px;
+  }
+  .planItemTime{
+    width: 200px;
+  }
+  .planItemManager{
+    width: 80px;
+  }
+  .planItemUse{
+    width: 100px;
+    display: flex;
+  }
+  .planItemTitle,.planItemType,.planItemTime,.planItemManager,.planItemUse{
+    border-right: 1px solid #eee;
+    line-height: 40px;
+  }
+  .tableHeader{
+    display: flex;
+    justify-content: space-between;
+  }
+  .tableProTitle{
+    font-size: 16px;
   }
 </style>
