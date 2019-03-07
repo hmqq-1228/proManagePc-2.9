@@ -145,8 +145,8 @@
               <div><img src="../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>
             </div>
             <div class="managePro" style="margin-top: 10px;">
-              <div><img src="../../static/img/kaishi.png" alt=""><span class="proLabel">实际开始:</span><span v-if="taskBasicMsg.dealWithDate">{{taskBasicMsg.dealWithDate}}</span><span v-if="!taskBasicMsg.dealWithDate">暂未开始</span></div>
-              <div><img src="../../static/img/jiesu.png" alt=""><span class="proLabel">实际结束:</span><span v-if="taskBasicMsg.realFinishDate">{{taskBasicMsg.realFinishDate}}</span><span v-if="!taskBasicMsg.realFinishDate">暂未完成</span></div>
+              <div><img src="../../static/img/kaishi.png" alt=""><span class="proLabel">实际开始:</span><span v-if="taskBasicMsg.dealWithDate">{{taskBasicMsg.dealWithDate}}</span><span style="color: #888" v-if="!taskBasicMsg.dealWithDate">暂未开始</span></div>
+              <div><img src="../../static/img/jiesu.png" alt=""><span class="proLabel">实际结束:</span><span v-if="taskBasicMsg.realFinishDate">{{taskBasicMsg.realFinishDate}}</span><span style="color: #888" v-if="!taskBasicMsg.realFinishDate">暂未完成</span></div>
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -154,20 +154,25 @@
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
         <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>
-        <span v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
+        <span style="color: #888;font-size: 14px;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
         <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
       </div>
       <div class="cannetProject">
-        <div style="display: inline-block"><img src="../../static/img/fujian.png" alt=""><span>项目附件:</span></div>
-        <div style="display: inline-block;font-size: 14px;" v-if="taskBasicMsg.showName">
-          <span style="display: inline-block;">{{taskBasicMsg.showName}}</span>
-          <span v-if="taskBasicMsg.isImg" @click="showImagePre" style="margin-left: 10px;display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
-          <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+        <div style="display: inline-block"><img src="../../static/img/fujian.png" alt=""><span>任务附件:</span></div>
+        <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
+          <span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">
+            <span style="display: inline-block;">{{file.showName}}</span>
+            <div style="display: inline-block;font-size: 12px;">
+              <!--<span style="display: inline-block;color: #53b5ff;cursor: pointer;" @click="deleteFile(file.id)">删除</span>-->
+              <span v-if="file.isImg" @click="showImagePre(file.previewUrl)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
+              <span style="display: inline-block;color: #53b5ff;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+            </div>
+          </span>
         </div>
-        <div style="display: inline-block;font-size: 14px;" v-if="!taskBasicMsg.showName">暂无附件</div>
+        <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
       </div>
       <div class="cannetProject" v-if="false">
         <Button type="primary" style="margin-right: 30px;">Primary</Button><Button type="primary" style="margin-right: 30px;">Primary</Button><Button type="primary">Primary</Button>
