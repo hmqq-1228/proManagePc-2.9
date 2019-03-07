@@ -187,7 +187,7 @@
         </div>
         <div class="taskListChild">
           <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
-            <div class="childTaskName" style="cursor: pointer;" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
+            <div class="childTaskName" :title="childTask.jobName" style="cursor: pointer;" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
             <div class="childTaskMsg">
               <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
               <div style="width: 80px;" v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
@@ -2460,6 +2460,9 @@ a {
   color: #409EFF;
   cursor: pointer;
   font-size: 14px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }
 .childTaskMsg{
   width: 60%;

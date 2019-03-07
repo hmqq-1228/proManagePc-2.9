@@ -552,7 +552,7 @@
         </div>
         <div class="cannetProject">
           <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
-          <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
+          <div style="display: inline-block;color: #409EFF;cursor: pointer;" @click="toProject(taskBasicMsg.projectUID)">{{taskBasicMsg.projectName}}</div>
         </div>
         <div class="cannetProject">
           <div style="display: inline-block"><img src="../../static/img/taskFa.png" alt=""><span>父级任务:</span></div>
@@ -676,7 +676,7 @@
         </div>
         <div class="taskListChild">
           <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
-            <div class="childTaskName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
+            <div class="childTaskName" :title="childTask.jobName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
             <div class="childTaskMsg">
               <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
               <div style="width: 80px;" v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
@@ -1435,6 +1435,10 @@ export default {
     }
   },
   methods: {
+    toProject: function (id) {
+      this.$store.state.proId = id
+      this.$router.push('/ProEdit')
+    },
     delUploadFileDel: function (id) {
       console.log('id', id)
       var that = this
@@ -3735,6 +3739,9 @@ export default {
     color: #409EFF;
     cursor: pointer;
     font-size: 14px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
   .childTaskMsg{
     width: 60%;

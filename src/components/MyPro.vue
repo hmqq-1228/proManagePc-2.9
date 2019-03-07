@@ -33,12 +33,17 @@
             <div class="proDuration">{{item.startDate}} 至 {{item.endDate}}</div>
           </div>
           <div class="cntItemRight">
-            <div class="proType"><span>剩余时间: 3天</span><span>项目类型: {{item.projectType}}</span></div>
+            <div class="proType"><span>项目类型: {{item.projectType}}</span></div>
+            <div class="proType">
+              <div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum < 0 && item.state != '3'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(item.dayNum)}}</span> 天</div>
+              <div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum >= 0 && item.state != '3'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{item.dayNum}}</span> 天</div>
+              <div style="text-align: right;font-size: 12px;color: #3a8ee6;font-weight: bold;display: inline-block" v-if="item.state === '3'">项目已完成</div>
+            </div>
             <div class="proPregress">
               <i-circle :percent="item.proportion" :size="60">
                 <span class="demo-Circle-inner" v-if="item.proportion < 50" style="font-size:18px;color: chocolate;">{{item.proportion}}%</span>
-                <span class="demo-Circle-inner" v-if="item.proportion > 50 && item.proportion < 80" style="font-size:18px;color: #409EFF;">{{item.proportion}}%</span>
-                <span class="demo-Circle-inner" v-if="item.proportion > 80" style="font-size:18px;color: #13ce66;">{{item.proportion}}%</span>
+                <span class="demo-Circle-inner" v-if="item.proportion >= 50 && item.proportion < 80" style="font-size:18px;color: #409EFF;">{{item.proportion}}%</span>
+                <span class="demo-Circle-inner" v-if="item.proportion >= 80" style="font-size:18px;color: #13ce66;">{{item.proportion}}%</span>
               </i-circle>
             </div>
             <div style="text-align: right; padding-right: 30px;">
@@ -236,7 +241,7 @@
     </Drawer>
     <!--分页 start-->
     <div style="padding: 10px 0 30px 0; text-align: center;">
-      <Page :total="pageTotalRow" :page-size="10" size="small" @on-change="pageNumChange" />
+      <Page :total="pageTotalRow" :page-size="10" :current="myProjectViewPayload.pageNum" size="small" @on-change="pageNumChange" />
     </div>
     <!--分页 end-->
   </div>
@@ -360,7 +365,7 @@ export default {
         userId: this.$store.state.userId,
         // 项目状态（0:未开始； 2：进行中:3：已完成;"":全部）
         status: '',
-        pageNum: '1',
+        pageNum: 1,
         // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
         type: '',
         // 项目类型 公司项目:'0' 部门项目:'1' 小组项目:'2' 个人项目:'3' 集团战略:'4' 产品研发:'5'  全部: ''
@@ -447,6 +452,7 @@ export default {
       } else {
         this.myProjectViewPayload.status = ''
       }
+      this.myProjectViewPayload.pageNum = 1
       this.queryMyProjectView()
     },
     model1: function (val1, val2) {
@@ -457,6 +463,7 @@ export default {
       } else {
         this.myProjectViewPayload.type = ''
       }
+      this.myProjectViewPayload.pageNum = 1
       this.queryMyProjectView()
     },
     model2: function (val1, val2) {
@@ -465,6 +472,7 @@ export default {
       } else {
         this.myProjectViewPayload.projectType = ''
       }
+      this.myProjectViewPayload.pageNum = 1
       this.queryMyProjectView()
     }
   },
