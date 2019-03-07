@@ -353,15 +353,22 @@
                     </el-form-item>
                     <el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">
                       <el-col :span="20">
-                        <el-date-picker type="datetime" :picker-options="pickerOptions0" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
-                        :default-value="defaultTime"
+                        <el-date-picker type="datetime"
+                        :picker-options="pickerOptionsPlan"
+                        format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        placeholder="选择日期"
                         v-model="form.date1" style="width: 300px;"
                         ></el-date-picker>
                       </el-col>
                     </el-form-item>
                     <el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">
                       <el-col :span="20">
-                        <el-date-picker type="datetime" :picker-options="pickerOptions0" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期" :default-value="defaultTime"
+                        <el-date-picker type="datetime"
+                        :picker-options="pickerOptionsPlan"
+                        format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        placeholder="选择日期"
                         v-model="form.date2" style="width: 300px;"
                         ></el-date-picker>
                       </el-col>
@@ -405,12 +412,10 @@
                     <el-form-item label="开始时间" prop="date1">
                       <el-col :span="20">
                         <el-date-picker type="datetime"
-                        v-bind:disabled="isDisabled"
-                        :picker-options="pickerOptions0"
+                        :picker-options="pickerOptionsPlan"
                         format="yyyy-MM-dd HH:mm:ss"
                         value-format="yyyy-MM-dd HH:mm:ss"
                         placeholder="选择日期"
-                        :default-value="defaultTime"
                         v-model="addTaskForm.date1" style="width: 300px;"
                         >
                         </el-date-picker>
@@ -419,12 +424,10 @@
                     <el-form-item label="结束时间" prop="date2">
                       <el-col :span="20">
                       <el-date-picker type="datetime"
-                      v-bind:disabled="isDisabled"
-                      :picker-options="pickerOptions0"
+                      :picker-options="pickerOptionsPlan"
                       format="yyyy-MM-dd HH:mm:ss"
                       value-format="yyyy-MM-dd HH:mm:ss"
                       placeholder="选择日期"
-                      :default-value="defaultTime"
                       v-model="addTaskForm.date2" style="width: 300px;"
                       ></el-date-picker>
                       </el-col>
@@ -1036,6 +1039,8 @@ export default {
     return {
       // 新建 修改任务
       fileListEdit: [],
+      disabledEndTime2: '',
+      disabledStarTime2: '',
       // 新建 修改任务
       fileListEditDis: false,
       // 新建 修改任务
@@ -1242,6 +1247,7 @@ export default {
         canSee: 'CanSee',
         canEdit: 'CanEdit'
       },
+      pickerOptionsPlan: {},
       // 新增 切换
       panshow: false,
       // 新增 添加计划 切换
@@ -1789,6 +1795,7 @@ export default {
     },
     // 新建 添加子节点
     addNode: function (nodeId, nodeType) {
+      console.log('nodeId', nodeId)
       var that = this
       if (nodeType) {
         if (nodeType === '1' || nodeType === '计划') {
@@ -1799,6 +1806,25 @@ export default {
       }
       this.currentNodeId = nodeId
       this.bgCoverShow = true
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: nodeId}).then(res => {
+        if (res.code === 200) {
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
+          var sT = new Date(st)
+          var eT = new Date(et)
+          that.disabledStarTime2 = sT.getTime()
+          that.disabledEndTime2 = eT.getTime()
+          that.pickerOptionsPlan.disabledDate = function (time) {
+            return time.getTime() < that.disabledStarTime2 || time.getTime() > that.disabledEndTime2
+          }
+          // that.log('delPlanOrTask:', disabledStarTime)
+          // that.log('delPlanOrTask22:', disabledEndTime)
+        } else {
+          that.$message({
+            message: res.msg
+          })
+        }
+      })
     },
     // 新建 展开更多 删除子节点
     delNode: function () {
