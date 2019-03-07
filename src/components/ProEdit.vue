@@ -207,7 +207,7 @@
       </Drawer>
       <!--新增 抽屉 成员管理 js-->
       <!--新增 抽屉 编辑基本信息 start-->
-      <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerBaseEdit">
+      <Drawer title="基本信息" width="740" :closable="false" v-model="DrawerBaseEdit">
         <div>
           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
             <FormItem label="项目名称" prop="proName">
@@ -236,7 +236,7 @@
               <DatePicker type="datetime" v-model="formValidate.startDate" @on-change="startDateChange" placeholder="Select date and time" style="width: 100%"></DatePicker>
             </FormItem>
             <FormItem label="结束时间" prop="endDate">
-              <DatePicker type="datetime" v-model="formValidate.endDate" placeholder="Select date and time" style="width: 100%"></DatePicker>
+              <DatePicker type="datetime" v-model="formValidate.endDate" @on-change="endDateChange" placeholder="Select date and time" style="width: 100%"></DatePicker>
             </FormItem>
             <FormItem label="项目简介" prop="desc">
               <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..." />
@@ -1570,6 +1570,7 @@ export default {
     proDetailMsg: function (newVal, oldVal) {
       this.formValidate.proName = newVal.projectName
       this.formValidate.proManager = newVal.projectManager
+      this.formValidate.projectManagerID = newVal.projectManagerID
       this.formValidate.desc = newVal.content
       this.formValidate.proType = newVal.projectType
       this.formValidate.startDate = newVal.startDate
@@ -2044,6 +2045,10 @@ export default {
     startDateChange (date) {
       this.log('startDate:', date)
     },
+    // 新增
+    endDateChange (date) {
+      this.log('endDate:', date)
+    },
     // 新建 人员选择
     handleSelect (item) {
       // console.log(item.userId)
@@ -2097,8 +2102,12 @@ export default {
     // 新增
     handleSubmit (name) {
       var that = this
+      this.log(100000001)
+      this.log('formValidate:', this.formValidate)
       this.$refs[name].validate((valid) => {
+        this.log(100000002)
         if (valid) {
+          this.log(100000003)
           that.log('that.proId:', that.proId)
           that.editBaseInfoPayload.projectUID = that.proId
           that.editBaseInfoPayload.projectName = that.formValidate.proName
@@ -2106,8 +2115,12 @@ export default {
           that.editBaseInfoPayload.projectManager = that.formValidate.proManager
           that.editBaseInfoPayload.projectManagerID = that.Mid
           that.editBaseInfoPayload.introduction = that.formValidate.desc
+          this.log(100000004)
           that.editBaseInfoPayload.startDate = that.DateFormat(that.formValidate.startDate)
           that.editBaseInfoPayload.endDate = that.DateFormat(that.formValidate.endDate)
+          // that.editBaseInfoPayload.startDate = that.formValidate.startDate
+          // that.editBaseInfoPayload.endDate = that.formValidate.endDate
+          this.log(100000005)
           that.ajax('/myProject/editBaseInfo', that.editBaseInfoPayload).then(res => {
             that.log('editBaseInfo:', res)
             if (res.code === 200) {
