@@ -129,8 +129,9 @@
               <Icon type="md-alarm" size="18"/>
               <span style="padding-left: 8px;float: right;margin-top: 2px;">{{myTask.taskStartDate.split(' ')[0]}} - {{myTask.taskFinishDate.split(' ')[0]}}</span>
             </div>
-            <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum < 0">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(myTask.dayNum)}}</span> 天</div>
-            <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum >= 0">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{myTask.dayNum}}</span> 天</div>
+            <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum < 0 && myTask.status != '2'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(myTask.dayNum)}}</span> 天</div>
+            <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum >= 0 && myTask.status != '2'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{myTask.dayNum}}</span> 天</div>
+            <div style="text-align: right;margin-top: 4px;font-size: 12px;color: #3a8ee6;font-weight: bold;" v-if="myTask.status === '2'">任务已完成</div>
           </div>
           <div v-bind:class="'taskTag'+ myTask.status">{{myTask.statusStr}}</div>
         </div>
@@ -142,6 +143,7 @@
         layout="prev, pager, next, total"
         @current-change="pageNumChenge($event)"
         :page-size="8"
+        :current-page="myTaskViewPayload.pageNum"
         :total="totalRowNum">
       </el-pagination>
     </div>
@@ -313,7 +315,7 @@
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
-        <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
+        <div style="display: inline-block;color: #409eff;cursor: pointer;" @click="toProject(taskBasicMsg.projectUID)">{{taskBasicMsg.projectName}}</div>
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../static/img/taskFa.png" alt=""><span>父级任务:</span></div>
@@ -447,12 +449,12 @@
       </div>
       <div class="taskListChild">
         <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
-          <div class="childTaskName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
+          <div class="childTaskName" :title="childTask.jobName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
           <div class="childTaskMsg">
-            <div v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
-            <div v-if="childTask.dayNum >= 0">剩余 <span style="color:#13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
-            <div v-if="childTask.dayNum < 0">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
-            <div>{{childTask.userName}}</div>
+            <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
+            <div style="width: 80px;" v-if="childTask.dayNum >= 0">剩余 <span style="color:#13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
+            <div style="width: 80px;" v-if="childTask.dayNum < 0">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
+            <div style="width: 150px;">{{childTask.userName}}</div>
             <div style="width: 20px;margin-right: 0"><div class="taskDel" v-if="childTask.showDeleteFlag" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div></div>
           </div>
         </div>
@@ -481,7 +483,7 @@
                 <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
               </div>
             </div>
-            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo2()">回复</i-button></div>
+            <div><i-button style="margin-top: 6px;" type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo2()">回复</i-button></div>
           </div>
       </div>
       <div class="cannetProject1-1">
@@ -841,7 +843,7 @@ export default {
         projectManager: ''
       },
       myTaskViewPayload: {
-        pageNum: '1',
+        pageNum: 1,
         pageSize: '8',
         projectUID: '',
         uid: this.$route.params.id,
@@ -1076,6 +1078,10 @@ export default {
     //     })
     //   })
     // },
+    toProject: function (id) {
+      this.$store.state.proId = id
+      this.$router.push('/ProEdit')
+    },
     delUploadFile: function (id) {
       console.log('id', id)
       var that = this
@@ -2183,7 +2189,7 @@ export default {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
-            that.getTaskChildList(id)
+            that.getTaskChildList(that.taskId2)
             that.queryMyTaskView()
             that.getHistoryList()
           }
@@ -2556,16 +2562,19 @@ export default {
     myTaskStyleChange: function (e) {
       console.log('eeeee', e)
       var that = this
+      that.myTaskViewPayload.pageNum = 1
       that.myTaskViewPayload.taskSource = e
       that.queryMyTaskView()
     },
     taskTypeState: function (e) {
       var that = this
+      that.myTaskViewPayload.pageNum = 1
       that.myTaskViewPayload.sType = e
       that.queryMyTaskView()
     },
     taskOfProject: function (e) {
       var that = this
+      that.myTaskViewPayload.pageNum = 1
       that.myTaskViewPayload.projectName = e
       that.queryMyTaskView()
     },
@@ -3214,6 +3223,9 @@ export default {
     color: #409EFF;
     cursor: pointer;
     font-size: 14px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
   .childTaskMsg{
     width: 60%;
