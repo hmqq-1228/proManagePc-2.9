@@ -206,7 +206,7 @@
         <!--组织架构 end-->
       </Drawer>
       <!--新增 抽屉 成员管理 js-->
-      <!--新增 抽屉 编辑基本信息 start-->
+      <!--新增 抽屉 编辑基本信息 修改基本信息 start-->
       <Drawer title="基本信息" width="740" :closable="false" v-model="DrawerBaseEdit">
         <div>
           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
@@ -248,7 +248,7 @@
           </Form>
         </div>
       </Drawer>
-      <!--新增 抽屉 编辑基本信息 end-->
+      <!--新增 抽屉 编辑基本信息 修改基本信息 end-->
       <!--新增 抽屉 查看历史记录 start-->
       <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
         <div class="el-textarea" v-loading="historyLoading">
@@ -842,13 +842,11 @@
       <el-dialog title="图片预览" :visible.sync="dialogShowImg">
         <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
       </el-dialog>
-      <!--修改任务-->
+      <!--修改任务 任务 修改-->
       <Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">
         <div class="bgCoverCnt2" v-loading="loadingEdit">
-          <!--<h2>修改任务</h2>-->
           <div class="colose" @click="modifyTaskVisible = false"><i class="el-icon-close"></i></div>
           <div class="bgCoverTabs">
-            <!--修改任务form-->
             <div class="planTaskBox">
               <el-form ref="modifyTask" :model="detailTaskform" :rules="modifyTaskRules" label-width="80px">
                 <el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">
@@ -872,8 +870,6 @@
                 </el-form-item>
                 <el-form-item label="结束时间" prop="taskFinishDate">
                   <el-col :span="24">
-                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                    <!--format="yyyy-MM-dd HH:mm:ss"-->
                     <el-date-picker type="datetime" style="width: 100%"
                                     format="yyyy-MM-dd HH:mm:ss"
                                     value-format="yyyy-MM-dd HH:mm:ss"
@@ -886,18 +882,8 @@
                 <el-form-item label="任务描述" maxlength="100" width="100">
                   <el-input class="planNameIpt" type="textarea" style="resize:none;" :rows="2" v-model="detailTaskform.description"></el-input>
                 </el-form-item>
-                <!--<div class="selectLeft"><component v-bind:is="FileUploadComp" fileFormId="TaskModify" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component></div>-->
                 <el-form-item label="任务附件">
                   <component v-bind:is="FileUploadComp" fileFormId="TaskModify" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
-                  <!--<form id="uploadFileEdit" enctype="multipart/form-data">-->
-                    <!--<input type="file" :disabled="fileListEditDis" style="height: 25px;line-height: 20px;font-size: 12px;" v-on:change="fileChangeEdit" id="myfileEdit" name="myfile" placeholder="请选择文件"/>-->
-                  <!--</form>-->
-                  <!--<div style="line-height: 20px;font-size: 12px;">-->
-                    <!--<span style="color: #F00;" v-if="fileListEdit.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListEdit.length}}</span> 个附件:</span>-->
-                    <!--<span v-if="fileListEdit.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListEdit.length}}</span> 个附件:</span>-->
-                    <!--<span style="color: #888;" v-if="fileListEdit.length === 0">暂无附件</span>-->
-                    <!--<span style="color: #409EFF" v-if="fileListEdit.length > 0" v-for="(file, index) in fileListEdit" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.showName}}  <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFile(file.attachmentId)"></div>, </span>-->
-                  <!--</div>-->
                 </el-form-item>
                 <div style="text-align: center">
                   <el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>
@@ -1479,12 +1465,26 @@ export default {
         attachmentId: ''
       },
       // 新增
+      formValidateD: {
+        proName: '',
+        proType: '',
+        proManager: '',
+        projectManagerID: '',
+        proBaseStartDate: '2019-03-09 00:00:00',
+        proBaseEndDate: '2019-03-10 00:00:00',
+        startDate2: 'Wed Mar 13 2019 00:00:00 GMT+0800 (中国标准时间)',
+        startDate3: 'Thu Mar 28 2019 00:00:00 GMT+0800 (中国标准时间)',
+        desc: ''
+      },
       formValidate: {
         proName: '',
         proType: '',
         proManager: '',
+        projectManagerID: '',
         startDate: '',
         endDate: '',
+        startDate2: 'Wed Mar 13 2019 00:00:00 GMT+0800 (中国标准时间)',
+        startDate3: 'Thu Mar 28 2019 00:00:00 GMT+0800 (中国标准时间)',
         desc: ''
       },
       // 任务开始
@@ -1512,13 +1512,13 @@ export default {
         proManager: [
           { required: true, message: '请选择项目负责人', trigger: 'change' }
         ],
-        startDate: [
+        proBaseStartDate: [
           { required: true, type: 'date', message: '请选择开始日期', trigger: 'change' }
         ],
         startDateTime: [
           { required: true, type: 'string', message: '请选择开始时间', trigger: 'change' }
         ],
-        endDate: [
+        proBaseEndDate: [
           { required: true, type: 'date', message: '请选择结束日期', trigger: 'change' }
         ],
         endDateTime: [
@@ -1568,6 +1568,7 @@ export default {
     fileName: function (val, oval) {
     },
     proDetailMsg: function (newVal, oldVal) {
+      this.log('KKKKKKKKKK:', newVal)
       this.formValidate.proName = newVal.projectName
       this.formValidate.proManager = newVal.projectManager
       this.formValidate.projectManagerID = newVal.projectManagerID
