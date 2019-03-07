@@ -133,7 +133,7 @@
                 <span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>
               </span>
               <span class="treeTime">
-                <Dropdown @on-click="moreSelectOptions($event, data.id, data.type)">
+                <Dropdown @on-click="moreSelectOptions($event, data.id, data.type, data)">
                   <a href="javascript:void(0)">更多操作<Icon type="ios-arrow-down"></Icon></a>
                   <DropdownMenu slot="list">
                     <DropdownItem name="add">添加</DropdownItem>
@@ -842,6 +842,137 @@
       <el-dialog title="图片预览" :visible.sync="dialogShowImg">
         <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
       </el-dialog>
+      <!--修改任务-->
+      <Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">
+        <div class="bgCoverCnt2" v-loading="loadingEdit">
+          <!--<h2>修改任务</h2>-->
+          <div class="colose" @click="modifyTaskVisible = false"><i class="el-icon-close"></i></div>
+          <div class="bgCoverTabs">
+            <!--修改任务form-->
+            <div class="planTaskBox">
+              <el-form ref="modifyTask" :model="detailTaskform" :rules="modifyTaskRules" label-width="80px">
+                <el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">
+                  <el-input class="planNameIpt" v-model="detailTaskform.jobName"></el-input>
+                </el-form-item>
+                <el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">
+                  <div class="ratestar" style="padding-top: 6px;">
+                    <el-rate v-model="detailTaskform.jobLevel" v-on:change="levelChange($event)"></el-rate>
+                  </div>
+                </el-form-item>
+                <el-form-item label="开始时间" prop="taskStartDate">
+                  <el-col :span="24">
+                    <el-date-picker style="width: 100%" type="datetime"
+                                    format="yyyy-MM-dd HH:mm:ss"
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    placeholder="选择日期"
+                                    v-model="detailTaskform.taskStartDate"
+                                    :picker-options="pickerOptionsTaskSt"
+                    ></el-date-picker>
+                  </el-col>
+                </el-form-item>
+                <el-form-item label="结束时间" prop="taskFinishDate">
+                  <el-col :span="24">
+                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                    <!--format="yyyy-MM-dd HH:mm:ss"-->
+                    <el-date-picker type="datetime" style="width: 100%"
+                                    format="yyyy-MM-dd HH:mm:ss"
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    placeholder="选择日期"
+                                    v-model="detailTaskform.taskFinishDate"
+                                    :picker-options="pickerOptionsTaskSt"
+                    ></el-date-picker>
+                  </el-col>
+                </el-form-item>
+                <el-form-item label="任务描述" maxlength="100" width="100">
+                  <el-input class="planNameIpt" type="textarea" style="resize:none;" :rows="2" v-model="detailTaskform.description"></el-input>
+                </el-form-item>
+                <!--<div class="selectLeft"><component v-bind:is="FileUploadComp" fileFormId="TaskModify" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component></div>-->
+                <el-form-item label="任务附件">
+                  <component v-bind:is="FileUploadComp" fileFormId="TaskModify" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+                  <!--<form id="uploadFileEdit" enctype="multipart/form-data">-->
+                    <!--<input type="file" :disabled="fileListEditDis" style="height: 25px;line-height: 20px;font-size: 12px;" v-on:change="fileChangeEdit" id="myfileEdit" name="myfile" placeholder="请选择文件"/>-->
+                  <!--</form>-->
+                  <!--<div style="line-height: 20px;font-size: 12px;">-->
+                    <!--<span style="color: #F00;" v-if="fileListEdit.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListEdit.length}}</span> 个附件:</span>-->
+                    <!--<span v-if="fileListEdit.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListEdit.length}}</span> 个附件:</span>-->
+                    <!--<span style="color: #888;" v-if="fileListEdit.length === 0">暂无附件</span>-->
+                    <!--<span style="color: #409EFF" v-if="fileListEdit.length > 0" v-for="(file, index) in fileListEdit" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.showName}}  <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFile(file.attachmentId)"></div>, </span>-->
+                  <!--</div>-->
+                </el-form-item>
+                <div style="text-align: center">
+                  <el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>
+                  <el-button @click="modifyTaskVisible = false">关 闭</el-button>
+                </div>
+              </el-form>
+            </div>
+            <!---->
+          </div>
+        </div>
+      </Drawer>
+      <!--<div class="bgCoverModifyTask" v-if="modifyTaskVisible">-->
+        <!--<div class="bgCoverCnt2" v-loading="loadingEdit">-->
+          <!--<h2>修改任务</h2>-->
+          <!--<div class="colose" @click="modifyTaskVisible = false"><i class="el-icon-close"></i></div>-->
+          <!--<div class="bgCoverTabs">-->
+            <!--&lt;!&ndash;修改任务form&ndash;&gt;-->
+            <!--<div class="planTaskBox">-->
+              <!--<el-form ref="modifyTask" :model="detailTaskform" :rules="modifyTaskRules" label-width="80px">-->
+                <!--<el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">-->
+                  <!--<el-input class="planNameIpt" v-model="detailTaskform.jobName"></el-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">-->
+                  <!--<div class="ratestar" style="padding-top: 6px;">-->
+                    <!--<el-rate v-model="detailTaskform.jobLevel" v-on:change="levelChange($event)"></el-rate>-->
+                  <!--</div>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="开始时间" prop="taskStartDate">-->
+                  <!--<el-col :span="24">-->
+                    <!--<el-date-picker style="width: 100%" type="datetime"-->
+                                    <!--format="yyyy-MM-dd HH:mm:ss"-->
+                                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                    <!--placeholder="选择日期"-->
+                                    <!--v-model="detailTaskform.taskStartDate"-->
+                                    <!--:picker-options="pickerOptionsTaskSt"-->
+                    <!--&gt;</el-date-picker>-->
+                  <!--</el-col>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="结束时间" prop="taskFinishDate">-->
+                  <!--<el-col :span="24">-->
+                    <!--&lt;!&ndash;value-format="yyyy-MM-dd HH:mm:ss"&ndash;&gt;-->
+                    <!--&lt;!&ndash;format="yyyy-MM-dd HH:mm:ss"&ndash;&gt;-->
+                    <!--<el-date-picker type="datetime" style="width: 100%"-->
+                                    <!--format="yyyy-MM-dd HH:mm:ss"-->
+                                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                    <!--placeholder="选择日期"-->
+                                    <!--v-model="detailTaskform.taskFinishDate"-->
+                                    <!--:picker-options="pickerOptionsTaskSt"-->
+                    <!--&gt;</el-date-picker>-->
+                  <!--</el-col>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="任务描述" maxlength="100" width="100">-->
+                  <!--<el-input class="planNameIpt" type="textarea" style="resize:none;" :rows="2" v-model="detailTaskform.description"></el-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="任务附件">-->
+                  <!--<form id="uploadFileEdit" enctype="multipart/form-data">-->
+                    <!--<input type="file" :disabled="fileListEditDis" style="height: 25px;line-height: 20px;font-size: 12px;" v-on:change="fileChangeEdit" id="myfileEdit" name="myfile" placeholder="请选择文件"/>-->
+                  <!--</form>-->
+                  <!--<div style="line-height: 20px;font-size: 12px;">-->
+                    <!--<span style="color: #F00;" v-if="fileListEdit.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListEdit.length}}</span> 个附件:</span>-->
+                    <!--<span v-if="fileListEdit.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListEdit.length}}</span> 个附件:</span>-->
+                    <!--<span style="color: #888;" v-if="fileListEdit.length === 0">暂无附件</span>-->
+                    <!--<span style="color: #409EFF" v-if="fileListEdit.length > 0" v-for="(file, index) in fileListEdit" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.showName}}  <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFile(file.attachmentId)"></div>, </span>-->
+                  <!--</div>-->
+                <!--</el-form-item>-->
+                <!--<div style="text-align: center">-->
+                  <!--<el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>-->
+                  <!--<el-button @click="modifyTaskVisible = false">关 闭</el-button>-->
+                <!--</div>-->
+              <!--</el-form>-->
+            <!--</div>-->
+            <!--&lt;!&ndash;&ndash;&gt;-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
       <!--任务详情 end-->
       <!--<div class="block">-->
         <!--<el-tree-->
@@ -903,6 +1034,40 @@ export default {
   },
   data () {
     return {
+      // 新建 修改任务
+      fileListEdit: [],
+      // 新建 修改任务
+      fileListEditDis: false,
+      // 新建 修改任务
+      modifyTaskRules: {
+        jobName: [
+          { required: true, message: '请输入任务名称', trigger: 'blur' }
+        ],
+        jobLevel: [
+          { required: true, message: '请选择任务等级', trigger: 'change' }
+        ],
+        taskStartDate: [
+          { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
+        ],
+        taskFinishDate: [
+          { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
+        ]
+      },
+      // 新建 修改任务
+      loadingEdit: false,
+      // 新建 修改任务
+      detailTaskform: {
+        id: '',
+        jobName: '',
+        jobLevel: 2,
+        taskStartDate: '2018-10-10 00:00:00',
+        taskFinishDate: '2018-10-10 00:00:00',
+        description: ''
+      },
+      // 新建 修改任务
+      modifyTaskVisible: false,
+      // 新建 修改任务
+      taskIdEdit: '',
       // 接收到的组件数组 新组件
       FileUploadArr: [],
       // 是否让子组件清空文件 新组件
@@ -1469,6 +1634,9 @@ export default {
           that.detailform.date2 = row.planFinishDate
           that.detailform.description = row.description
           that.planEditShow = true
+        } else if (row.planType === '任务') {
+          // 编辑任务
+          that.modifyTask(that.currentNodeId)
         }
       } else if (clickType === 'add') {
         that.addNode(row.planId, row.planType)
@@ -1595,15 +1763,28 @@ export default {
       })
     },
     // 节点操作 展开更多 添加
-    moreSelectOptions: function (nodeName, nodeId, nodeType) {
+    moreSelectOptions: function (nodeName, nodeId, nodeType, nodeData) {
+      var that = this
       this.log('nodeName:', nodeName)
       this.log('nodeId:', nodeId)
+      this.log('nodeType:', nodeType)
+      this.log('nodeData:', nodeData)
       this.currentNodeId = nodeId
       if (nodeName === 'add') {
         this.addNode(nodeId, nodeType)
       } else if (nodeName === 'del') {
         this.modal2 = true
         // this.delNode(nodeId)
+      } else if (nodeName === 'edit') {
+        if (nodeType === '2') {
+          that.modifyTask(nodeId)
+        } else if (nodeType === '1') {
+          that.detailform.name = nodeData.name
+          that.detailform.date1 = nodeData.start
+          that.detailform.date2 = nodeData.finish
+          that.detailform.description = nodeData.description
+          that.planEditShow = true
+        }
       }
     },
     // 新建 添加子节点
@@ -2119,18 +2300,18 @@ export default {
     selectProjectId: function () {
       var that = this
       that.data5 = []
-      that.ajax('/leader/getPlanOrTaskById', {id: that.activeId}).then(res => {
+      that.ajax('/myProject/getPlanOrTaskById', {id: that.activeId}).then(res => {
         that.log('nnnnnnnnn', res)
         if (res.code === 200) {
-          for (var i = 0; i < res.data.planOrJobList.length; i++) {
-            res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
-            res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
-            res.data.planOrJobList[i].children = [{
+          for (var i = 0; i < res.data.length; i++) {
+            res.data[i].start = res.data[i].start.split(' ')[0]
+            res.data[i].finish = res.data[i].finish.split(' ')[0]
+            res.data[i].children = [{
               id: 1,
               name: '测试'
             }]
           }
-          that.data5 = res.data.planOrJobList
+          that.data5 = res.data
         }
       })
     },
@@ -3082,6 +3263,75 @@ export default {
       that.projectManager = ''
       that.commitComentT = ''
       that.taskTransferVisible = false
+    },
+    // 编辑任务 修改任务
+    modifyTask: function (id) {
+      var that = this
+      that.taskIdEdit = id
+      that.modifyTaskVisible = true
+      that.ajax('/myTask/queryTaskDetailSingle', {taskId: id}).then(res => {
+        that.detailTaskform.jobName = res.data.jobName
+        that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
+        that.detailTaskform.taskStartDate = res.data.taskStartDate
+        that.detailTaskform.taskFinishDate = res.data.taskFinishDate
+        that.detailTaskform.description = res.data.description
+        for (var i = 0; i < res.data.attachment.length; i++) {
+          res.data.attachment[i].attachmentId = res.data.attachment[i].id
+        }
+        that.fileListEdit = res.data.attachment
+      })
+    },
+    levelChange: function (rateval) {
+      this.detailTaskform.jobLevel = rateval
+    },
+    fileChangeEdit: function (file) {
+      var that = this
+      var obj = file.currentTarget
+      var isfile = $(obj).val()
+      if (isfile) {
+        that.addMarkInfoEdit()
+      }
+      this.log('change了', file)
+    },
+    modifyTaskSub: function (formName) {
+      var that = this
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          var fileStr = ''
+          for (var j = 0; j < this.fileListEdit.length; j++) {
+            if (j === that.fileListEdit.length - 1) {
+              fileStr = fileStr + that.fileListEdit[j].attachmentId
+            } else {
+              fileStr = fileStr + that.fileListEdit[j].attachmentId + ','
+            }
+          }
+          that.loadingEdit = true
+          that.editTaskPayload.id = that.taskIdEdit
+          that.editTaskPayload.jobLevel = that.detailTaskform.jobLevel
+          that.editTaskPayload.jobName = that.detailTaskform.jobName
+          that.editTaskPayload.taskStartDate = that.detailTaskform.taskStartDate
+          that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
+          that.editTaskPayload.description = that.detailTaskform.description
+          that.editTaskPayload.attachmentId = that.SetFileIdStr()
+          that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+            that.log('editTask:', res)
+            if (res.code === 200) {
+              that.$message({
+                message: '保存成功！',
+                type: 'success'
+              })
+              that.IsClear = true
+              that.modifyTaskVisible = false
+              that.loadingEdit = false
+              that.toDetail(that.taskIdEdit)
+              that.selectProjectId()
+              that.getHistoryList()
+            } else {
+              that.loadingEdit = false
+            }
+          })
+        }
+      })
     }
     // 任务详情 end
     // getNextPlan: function (pId) {

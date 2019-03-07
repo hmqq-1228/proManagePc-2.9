@@ -270,6 +270,7 @@
           </div>
         </div>
       </Drawer>
+      <!-- 修改 -->
       <div class="bgCoverModifyTask" v-if="modifyTaskVisible">
         <div class="bgCoverCnt2" v-loading="loadingEdit">
           <h2>修改任务</h2>
@@ -1047,12 +1048,6 @@ export default {
           res.data.attachment[i].attachmentId = res.data.attachment[i].id
         }
         that.fileListEdit = res.data.attachment
-        // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
-        // var binStartTime = new Date(st).getTime()
-        // var binEndTime = new Date(res.data.taskFinishDate).getTime()
-        // this.pickerOptionsTaskSt.disabledDate = function (time) {
-        //   return time.getTime() > binEndTime || time.getTime() < binStartTime
-        // }
       })
     },
     levelChange: function (rateval) {

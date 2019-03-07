@@ -122,6 +122,7 @@ export default {
   }
   .FileCompFormIcon{
     width: 20px;
+    height: 40px;
     padding-top: 10px;
     margin-right: 10px;
   }

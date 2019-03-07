@@ -604,13 +604,15 @@ export default {
     delPro: function (pId) {
       var that = this
       this.$Modal.confirm({
-        title: 'Title',
+        title: '删除项目！',
+        loading: true,
         content: '确定要删除此项目？此操作不可撤回！',
         onOk: () => {
           this.ajax('/myProject/delProjectById', {projectUID: pId}).then(res => {
             console.log('delProjectById', res)
             if (res.code === 200) {
               this.$Message.info('删除成功！')
+              this.$Modal.remove()
               that.queryMyProjectView()
             }
           })
