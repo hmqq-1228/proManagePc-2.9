@@ -1,27 +1,24 @@
 <template>
-  <div class="UploadFileComp">
-    <div style="display: inline-block">
-      <form :id="fileFormId" enctype="multipart/form-data" style="height: 40px;">
-        <img src="../../static/img/fujian.png" alt="">
-        <a href="javascript:;" class="file">选择文件
-          <input type="file" :disabled="commentDis" name="myfile" :id="fileFormId + '_myfile2'" @change="getFileName">
-        </a>
-        <span class="showFileName">{{uploadFileName}}</span>
-      </form>
-      <div style="font-size: 12px">
-        <span style="color: #f00" v-if="fileListComment.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
-        <span v-if="fileListComment.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
-        <!--<span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>-->
-        <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
+  <div class="FileUploadComp">
+    <form class="FileCompForm" :id="fileFormId" enctype="multipart/form-data">
+      <div class="FileCompFormIcon"><img src="../../static/img/fujian.png" alt=""></div>
+      <div class="FileCompIptWrap">选择文件
+        <input type="file" :disabled="commentDis" name="myfile" :id="fileFormId + '_myfile2'" @change="getFileName">
       </div>
+      <div class="FileCompIptText">{{uploadFileName}}</div>
+    </form>
+    <div style="font-size: 12px">
+      <span style="color: #f00" v-if="fileListComment.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
+      <span v-if="fileListComment.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
+      <!--<span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>-->
+      <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
     </div>
-    <!--<div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>-->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'FileUpload',
+  name: 'FileUploadComp',
   props: ['clearInfo', 'fileFormId'],
   data () {
     return {
@@ -89,7 +86,7 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
-            that.$emit('FileInfoEmit', that.fileListComment)
+            that.$emit('FileDataEmit', that.fileListComment)
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
@@ -115,39 +112,44 @@ export default {
 </script>
 
 <style scoped>
-  .UploadFileComp{
-    display: flex;
-    justify-content: space-between;
-    line-height: 40px;
-    font-size: 14px;
-    /*font-family: '黑体';*/
-    padding:0 10px;
+  div img{
+    width: 100%;
   }
-  .file {
+  .FileUploadComp{
+  }
+  .FileCompForm{
+    display: flex;
+  }
+  .FileCompFormIcon{
+    width: 20px;
+    padding-top: 10px;
+    margin-right: 10px;
+  }
+  .FileCompIptWrap{
     position: relative;
-    display: inline-block;
     background: #D0EEFF;
     border: 1px solid #99D3F5;
     border-radius: 4px;
     padding: 4px 12px;
     overflow: hidden;
     color: #1E88C7;
-    text-decoration: none;
-    text-indent: 0;
     line-height: 20px;
     margin-top: 6px;
   }
-  .file input {
+  .FileCompIptWrap input{
+    width: 100%;
     position: absolute;
-    font-size: 100px;
-    right: 0;
+    left: 0;
     top: 0;
     opacity: 0;
   }
-  .file:hover {
+  .FileCompIptWrap:hover {
     background: #AADFFD;
     border-color: #78C3F3;
     color: #004974;
-    text-decoration: none;
+  }
+  .FileCompIptText{
+    padding-top: 16px;
+    margin-left: 10px;
   }
 </style>
