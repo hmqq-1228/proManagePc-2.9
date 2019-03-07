@@ -672,7 +672,7 @@
         </div>
         <!-- 任务分解 end -->
         <div class="cannetProject1">
-          <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务</span></div>
+          <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务<span style="color: #409EFF">({{childTaskList.length}})</span></span></div>
         </div>
         <div class="taskListChild">
           <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
