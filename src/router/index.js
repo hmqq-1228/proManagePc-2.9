@@ -8,7 +8,8 @@ import MyPro from '@/components/MyPro'
 import MyPro2 from '@/components/MyPro2'
 import ProEdit from '@/components/ProEdit'
 import ProEdit2 from '@/components/ProEdit2'
-// Schedule
+import TestUpload from '@/components/TestUpload'
+// Schedule TestUpload
 
 Vue.use(Router)
 
@@ -53,6 +54,11 @@ export default new Router({
       path: '/ProEdit2',
       name: 'ProEdit2',
       component: ProEdit2
+    },
+    {
+      path: '/TestUpload',
+      name: 'TestUpload',
+      component: TestUpload
     }
   ]
 })

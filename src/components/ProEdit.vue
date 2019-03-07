@@ -657,15 +657,16 @@
             <div class="taskFileUpload">
               <div class="fileUploadCao">
                 <div class="selectLeft">
-                  <form id="uploadFileDel" enctype="multipart/form-data">
-                    <input type="file" v-on:change="fileChange2" id="myfileDel" name="myfile" placeholder="请选择文件"/><br>
-                    <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
-                  </form>
-                  <div style="margin-top: 8px;">
-                    <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList2.length}}</span> 个附件:</span>
-                    <span style="color: #888;" v-if="fileList2.length === 0">暂无附件</span>
-                    <span style="color: #409EFF" v-if="fileList2.length > 0" v-for="(file, index) in fileList2" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
-                  </div>
+                  <!-- 任务分解 -->
+                  <component v-bind:is="FileUploadComp" fileFormId="taskDecompose" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+                  <!--<form id="uploadFileDel" enctype="multipart/form-data">-->
+                    <!--<input type="file" v-on:change="fileChange2" id="myfileDel" name="myfile" placeholder="请选择文件"/><br>-->
+                  <!--</form>-->
+                  <!--<div style="margin-top: 8px;">-->
+                    <!--<span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList2.length}}</span> 个附件:</span>-->
+                    <!--<span style="color: #888;" v-if="fileList2.length === 0">暂无附件</span>-->
+                    <!--<span style="color: #409EFF" v-if="fileList2.length > 0" v-for="(file, index) in fileList2" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>-->
+                  <!--</div>-->
                 </div>
                 <div class="selectRight2">
                   <div class="selectMoreInfo" v-on:click="moreClick2()">
@@ -703,23 +704,25 @@
         <div class="el-textarea" v-loading="loading2">
           <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent"></textarea>
           <div class="cannetProject21">
-            <div style="display: inline-block">
-              <form id="uploadFileRe" enctype="multipart/form-data" style="height: 40px;">
-                <img src="../../static/img/fujian.png" alt="">
-                <a href="javascript:;" class="file">选择文件
-                  <input type="file" name="myfile" id="myfile2" @change="getFileName">
-                </a>
-                <!--<input type="hidden" name="rid" v-bind:value="rid2">-->
-                <!--<input type="hidden" name="rtype" v-bind:value="3">-->
-                <span class="showFileName"></span>
-              </form>
-              <div>
-                <span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
-                <span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>
-                <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>
-              </div>
-            </div>
-            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
+            <!--引入组件 详情 沟通-->
+            <component v-bind:is="FileUploadComp" fileFormId="taskDetailConnect" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+            <!-- old code start -->
+            <!--<div style="display: inline-block">-->
+              <!--<form id="uploadFileRe" enctype="multipart/form-data" style="height: 40px;">-->
+                <!--<img src="../../static/img/fujian.png" alt="">-->
+                <!--<a href="javascript:;" class="file">选择文件-->
+                  <!--<input type="file" name="myfile" id="myfile2" @change="getFileName">-->
+                <!--</a>-->
+                <!--<span class="showFileName"></span>-->
+              <!--</form>-->
+              <!--<div>-->
+                <!--<span>已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>-->
+                <!--<span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>-->
+                <!--<span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}}, </span>-->
+              <!--</div>-->
+            <!--</div>-->
+            <!-- old code end -->
+            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="taskDetailconnect()">回复</i-button></div>
           </div>
         </div>
         <div class="cannetProject1-1">
@@ -833,6 +836,12 @@
         </div>
         <!--</div>-->
       </el-dialog>
+      <el-dialog title="图片预览" :visible.sync="dialogFormVisible">
+        <div class="showImg"><img v-bind:src="showFileUrl" alt=""></div>
+      </el-dialog>
+      <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+        <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
+      </el-dialog>
       <!--任务详情 end-->
       <!--<div class="block">-->
         <!--<el-tree-->
@@ -884,14 +893,24 @@
 </template>
 
 <script>
+import FileUploadComp from './FileUploadComp.vue'
 import FileUpload from './FileUpload.vue'
 export default {
   name: 'ProEdit',
   components: {
-    FileUpload
+    FileUpload,
+    FileUploadComp
   },
   data () {
     return {
+      // 接收到的组件数组 新组件
+      FileUploadArr: [],
+      // 是否让子组件清空文件 新组件
+      IsClear: false,
+      // 引入附件上传组件 新组件
+      FileUploadComp: 'FileUploadComp',
+      // k
+      // k
       // 是否让子组件清空文件
       isClear: false,
       // 附件上传 附件ID拼接成字符串
@@ -1089,6 +1108,8 @@ export default {
       // 新增
       options4: [],
       // 新建
+      // 新建
+      showFileUrl: '',
       addPlanPayload: {
         parentPlanId: '',
         name: '',
@@ -2165,28 +2186,51 @@ export default {
         // })
       }
     },
-    // showImagePre: function () {
-    //   this.dialogFormVisible = true
-    // },
-    // showImagePreCom: function (url) {
-    //   if (url) {
-    //     this.commentPreviewUrl = url
-    //     this.dialogShowImg = true
-    //   }
+    showImagePre: function (url) {
+      this.dialogFormVisible = true
+      this.showFileUrl = url
+    },
+    showImagePreCom: function (url) {
+      if (url) {
+        this.commentPreviewUrl = url
+        this.dialogShowImg = true
+      }
+    },
+    // getCommicateCont: function () {
+    //   var that = this
+    //   that.ajax('/myTask/getTaskComment', that.taskComment).then(res => {
+    //     that.log('getTaskComment:', res)
+    //     if (res.code === 200) {
+    //       that.commentList = res.data.list
+    //       that.totalNum = res.data.totalRow
+    //       for (var i = 0; i < that.commentList.length; i++) {
+    //         if (that.isImage(res.data.list[i].showName)) {
+    //           res.data.list[i].isImg = true
+    //         } else {
+    //           res.data.list[i].isImg = false
+    //         }
+    //         res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+    //       }
+    //     }
+    //   })
     // },
     getCommicateCont: function () {
       var that = this
-      that.ajax('/leader/getTaskComment', that.taskComment).then(res => {
+      that.ajax('/myTask/getTaskComment', that.taskComment).then(res => {
         if (res.code === 200) {
           that.commentList = res.data.list
           that.totalNum = res.data.totalRow
-          for (var i = 0; i < that.commentList.length; i++) {
-            if (that.isImage(res.data.list[i].showName)) {
-              res.data.list[i].isImg = true
-            } else {
-              res.data.list[i].isImg = false
+          if (that.commentList.length > 0) {
+            for (var i = 0; i < that.commentList.length; i++) {
+              for (var j = 0; j < that.commentList[i].attachment.length; j++) {
+                if (that.isImage(res.data.list[i].attachment[j].showName)) {
+                  res.data.list[i].attachment[j].isImg = true
+                } else {
+                  res.data.list[i].attachment[j].isImg = false
+                }
+                res.data.list[i].attachment[j].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].attachment[j].realUrl + '&showName=' + res.data.list[i].attachment[j].showName
+              }
             }
-            res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
           }
         }
       })
@@ -2242,6 +2286,46 @@ export default {
           }
         })
       }
+    },
+    // 新增 点击“回复”按钮
+    taskDetailconnect () {
+      var that = this
+      // that.addProjectCommentPayload.projectUID = that.proId
+      // that.addProjectCommentPayload.content = that.commitComent
+      // that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
+      // if (that.commitComent) {
+      //   that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
+      //     that.log('addProjectComment:', res)
+      //     if (res.code === 200) {
+      //       that.IsClear = true
+      //       that.$message({
+      //         type: 'success',
+      //         message: res.msg
+      //       })
+      //       that.getCommicateCont()
+      //       that.commitComent = ''
+      //     }
+      //   })
+      // }
+      //   k
+      that.ajax('/comment/addComment', {
+        content: that.commitComent,
+        attachmentId: that.SetFileIdStr(),
+        contentId: that.taskId,
+        parentCommentId: '11'
+      }).then(res => {
+        if (res.code === 200) {
+          that.IsClear = true
+          that.log('myTaskView:', res)
+          that.getCommicateCont()
+          // that.fileListComment = []
+          that.commitComent = ''
+          $('.showFileName').html('')
+          $('#myfile2').val('')
+          that.loading2 = false
+          that.$message.success('评论成功！')
+        }
+      })
     },
     // 任务详情 start
     getTaskChildList: function (id) {
@@ -2714,7 +2798,7 @@ export default {
           // value9没有值，取默认
           selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
-        that.CommunityTaskPayload2.attachmentId = fileStr
+        that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
         that.CommunityTaskPayload2.pStr = selectUserStr
         that.CommunityTaskPayload2.jobName = that.taskNameText2
         that.CommunityTaskPayload2.startTime = that.selDateStart2
@@ -2725,6 +2809,7 @@ export default {
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1
             that.token = res._jfinal_token
+            that.IsClear = true
             that.$message({
               message: '任务创建成功',
               type: 'success'
@@ -2953,6 +3038,14 @@ export default {
       this.fileUploadArr = obj
       this.log('getFileInfo:', obj)
     },
+    // 获取附件上传组件发来的附件信息 新组件
+    GetFileInfo (obj) {
+      if (obj) {
+        this.IsClear = false
+      }
+      this.FileUploadArr = obj
+      this.log('GetFileInfo:', obj)
+    },
     // 拼接附件上传的id为字符串
     setFileIdStr () {
       var that = this
@@ -2966,6 +3059,29 @@ export default {
       }
       that.fileUploadArr = []
       return FileIdStr
+    },
+    // 拼接附件上传的id为字符串
+    SetFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.FileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.FileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
+      }
+      that.FileUploadArr = []
+      return FileIdStr
+    },
+    concelTransfer: function () {
+      var that = this
+      that.loading11 = false
+      $('#myfileTransfer').val('')
+      $('.showFileNameTran').html('')
+      that.projectManager = ''
+      that.commitComentT = ''
+      that.taskTransferVisible = false
     }
     // 任务详情 end
     // getNextPlan: function (pId) {
@@ -3552,7 +3668,7 @@ export default {
     padding:0 10px;
   }
   .cannetProject21{
-    width: 90%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     line-height: 24px;

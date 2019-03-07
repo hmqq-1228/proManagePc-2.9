@@ -3,7 +3,7 @@
     <el-container>
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
-          <div>贝豪实业项目管理中心</div>
+          <div @click="testUpload">贝豪实业项目管理中心</div>
         </div>
       </el-header>
       <el-container>
@@ -54,13 +54,20 @@ export default {
       // 非集团战略的侧边栏
       slideMenu: [],
       proId: '',
-      nav: 1
+      nav: 1,
+      count: 0
     }
   },
   created: function () {
     this.queryMenu()
   },
   methods: {
+    testUpload: function () {
+      this.count++
+      if (this.count === 5) {
+        this.$router.push('/TestUpload')
+      }
+    },
     toMenu: function (menuName) {
       var that = this
       this.log('menuName:', menuName)
