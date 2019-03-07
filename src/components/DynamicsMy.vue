@@ -81,8 +81,9 @@
               </div>
               <div class="tabsTaskCntRight">
                 <div class="TaskManager">负责人：<span>{{taskItem.userName}}</span></div>
-                <div class="TaskManager" style="text-align: right;" v-if="taskItem.dayNum >= 0"> 剩余<span style="color: #13ce66;font-size: 18px;"> {{taskItem.dayNum}} </span>天</div>
-                <div class="TaskManager" style="text-align: right;" v-if="taskItem.dayNum < 0"> 逾期<span style="color: #f00;font-size: 18px;"> {{Math.abs(taskItem.dayNum)}} </span>天</div>
+                <div class="TaskManager" style="text-align: right;" v-if="taskItem.dayNum >= 0 && taskItem.status != '2'"> 剩余<span style="color: #13ce66;font-size: 18px;"> {{taskItem.dayNum}} </span>天</div>
+                <div class="TaskManager" style="text-align: right;" v-if="taskItem.dayNum < 0 && taskItem.status != '2'"> 逾期<span style="color: #f00;font-size: 18px;"> {{Math.abs(taskItem.dayNum)}} </span>天</div>
+                <div class="TaskManager" style="text-align: right;color: #3a8ee6;font-weight: bold" v-if="taskItem.status === '2'">任务已完成</div>
               </div>
             </div>
             <div class="fengeline">
@@ -223,7 +224,7 @@
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
-        <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
+        <div style="display: inline-block;color: #409EFF;cursor: pointer;" @click="toProject(taskBasicMsg.projectUID)">{{taskBasicMsg.projectName}}</div>
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../static/img/taskFa.png" alt=""><span>父级任务:</span></div>
@@ -357,12 +358,12 @@
       </div>
       <div class="taskListChild">
         <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
-          <div class="childTaskName" style="cursor: pointer;" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
+          <div class="childTaskName" :title="childTask.jobName" style="cursor: pointer;" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
           <div class="childTaskMsg">
-            <div v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
-            <div v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
-            <div v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
-            <div>{{childTask.userName}}</div>
+            <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
+            <div style="width: 80px;" v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
+            <div style="width: 80px;" v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
+            <div style="width: 150px;">{{childTask.userName}}</div>
             <div style="width: 20px;margin-right: 0;"><div class="taskDel" v-if="childTask.showDeleteFlag" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div></div>
           </div>
         </div>
@@ -393,7 +394,7 @@
                 <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
               </div>
             </div>
-            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
+            <div><i-button style="margin-top: 6px;" type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
           </div>
       </div>
       <div class="cannetProject1-1">
@@ -585,7 +586,7 @@
     </el-dialog>
     <!--分页器-->
     <div class="paginationBox" style="text-align: center; padding-top: 20px;">
-      <el-pagination v-bind:page-size="TaskCommunityListPayload.jobPageSize" layout="prev, pager, next" :total="taskTotalRow" v-on:current-change="currentChange"></el-pagination>
+      <el-pagination v-bind:page-size="TaskCommunityListPayload.jobPageSize" layout="prev, pager, next" :total="taskTotalRow" v-on:current-change="currentChange" :current-page="TaskCommunityListPayload.jobPageNum"></el-pagination>
     </div>
     <!---->
   </div>
@@ -938,6 +939,10 @@ export default {
     resetScro: function () {
       $('.ivu-drawer-body').scrollTop(0)
     },
+    toProject: function (id) {
+      this.$store.state.proId = id
+      this.$router.push('/ProEdit')
+    },
     getUserInfo: function () {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
@@ -1227,6 +1232,7 @@ export default {
       that.getTaskList()
     },
     handleCommand (command) {
+      this.TaskCommunityListPayload.jobPageNum = 1
       this.TaskCommunityListPayload.sType = command
       this.selectType = command
       this.getTaskList()
@@ -1824,7 +1830,7 @@ export default {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
-            that.getTaskChildList(id)
+            that.getTaskChildList(that.taskId2)
             that.getTaskList()
           }
         }).catch(() => {
@@ -3003,6 +3009,9 @@ export default {
     color: #409EFF;
     cursor: pointer;
     font-size: 14px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
   .childTaskMsg{
     width: 60%;

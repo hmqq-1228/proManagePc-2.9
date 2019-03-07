@@ -36,7 +36,9 @@
             <div class="proType"><span>剩余时间: 3天</span><span>项目类型: {{item.projectType}}</span></div>
             <div class="proPregress">
               <i-circle :percent="item.proportion" :size="60">
-                <span class="demo-Circle-inner" style="font-size:24px">{{item.proportion}}%</span>
+                <span class="demo-Circle-inner" v-if="item.proportion < 50" style="font-size:18px;color: chocolate;">{{item.proportion}}%</span>
+                <span class="demo-Circle-inner" v-if="item.proportion > 50 && item.proportion < 80" style="font-size:18px;color: #409EFF;">{{item.proportion}}%</span>
+                <span class="demo-Circle-inner" v-if="item.proportion > 80" style="font-size:18px;color: #13ce66;">{{item.proportion}}%</span>
               </i-circle>
             </div>
             <div style="text-align: right; padding-right: 30px;">

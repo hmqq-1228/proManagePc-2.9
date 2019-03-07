@@ -56,7 +56,7 @@
         </div>
         <div class="cannetProject">
           <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
-          <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
+          <div style="display: inline-block;cursor: pointer;color: #409EFF" @click="toProject(taskBasicMsg.projectUID)">{{taskBasicMsg.projectName}}</div>
         </div>
         <div class="cannetProject">
           <div style="display: inline-block"><img src="../../static/img/taskFa.png" alt=""><span>父级任务:</span></div>
@@ -189,10 +189,10 @@
           <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
             <div class="childTaskName" style="cursor: pointer;" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
             <div class="childTaskMsg">
-              <div v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
-              <div v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
-              <div v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
-              <div>{{childTask.userName}}</div>
+              <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
+              <div style="width: 80px;" v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
+              <div style="width: 80px;" v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
+              <div style="width: 150px;">{{childTask.userName}}</div>
               <div style="margin-right: 0;width: 20px;"><div class="taskDel" v-if="childTask.showDeleteFlag" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div></div>
             </div>
           </div>
@@ -223,7 +223,7 @@
                 <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
               </div>
             </div>
-            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
+            <div><i-button style="margin-top: 6px;" type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
           </div>
         </div>
         <div class="cannetProject1-1">
@@ -763,6 +763,10 @@ export default {
       $('.ivu-drawer-body').scrollTop(0)
     },
     // j
+    toProject: function (id) {
+      this.$store.state.proId = id
+      this.$router.push('/ProEdit')
+    },
     getUserInfo: function () {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
@@ -1624,7 +1628,7 @@ export default {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
-            that.getTaskChildList(id)
+            that.getTaskChildList(that.taskId)
             that.getHistoryList()
           }
         }).catch(() => {
