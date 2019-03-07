@@ -478,9 +478,9 @@
               </el-form-item>
               <el-form-item label="开始时间" prop="date1">
                 <el-col :span="11">
-                  <el-date-picker type="datetime"
-                                  format="yyyy-MM-dd HH:mm:ss"
-                                  value-format="yyyy-MM-dd HH:mm:ss"
+                  <el-date-picker type="date"
+                                  format="yyyy-MM-dd"
+                                  value-format="yyyy-MM-dd"
                                   placeholder="选择日期"
                                   v-model="detailform.date1"
                                   :picker-options="pickerOptionsPlanSt"
@@ -489,9 +489,9 @@
               </el-form-item>
               <el-form-item label="结束时间" prop="date2">
                 <el-col :span="11">
-                  <el-date-picker type="datetime"
-                                  format="yyyy-MM-dd HH:mm:ss"
-                                  value-format="yyyy-MM-dd HH:mm:ss"
+                  <el-date-picker type="date"
+                                  format="yyyy-MM-dd"
+                                  value-format="yyyy-MM-dd"
                                   placeholder="选择日期"
                                   v-model="detailform.date2"
                                   :picker-options="pickerOptionsPlanEt"
@@ -1101,13 +1101,13 @@ export default {
       planRules: {
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' }
-        ],
-        date1: [
-          { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
-        ],
-        date2: [
-          { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
         ]
+        // date1: [
+        //   { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
+        // ],
+        // date2: [
+        //   { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
+        // ]
       },
       // 编辑计划
       detailform: {
