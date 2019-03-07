@@ -25,7 +25,7 @@
         </div>
       </div>
     </div>
-    <div class="content">
+    <div class="contentData">
       <div class="weekHeader">
         <div class="weekItem">日</div>
         <div class="weekItem">一</div>
@@ -111,6 +111,9 @@
         <!---->
       </div>
     </div>
+    <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+      <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
+    </el-dialog>
     <!--抽屉-->
     <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
       <div class="slidTop">
@@ -172,20 +175,12 @@
       <div class="cannetProject1">
         <div style="display: inline-block"><img src="../../static/img/goutong.png" alt=""><span>沟 通</span></div>
       </div>
-      <div class="el-textarea" v-loading="loading">
+      <div class="el-textarea" v-loading="loading8">
         <form id="uploadFile" enctype="multipart/form-data">
           <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
-          <div class="cannetProject2">
-            <div style="display: inline-block">
-              <img src="../../static/img/fujian.png" alt="">
-              <a href="javascript:;" class="file" @change="getFileName">选择文件
-                <input type="file" name="myfile" id="myfile">
-              </a>
-              <input type="hidden" name="rid" v-bind:value="rid">
-              <input type="hidden" name="rtype" v-bind:value="3">
-              <span class="showFileName"></span>
-            </div>
-            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
+          <div class="cannetProject21">
+            <component v-bind:is="FileUploadComp" fileFormId="scheduleConnect" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+            <div><i-button type="info" style="margin-top: 6px;" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
           </div>
         </form>
       </div>
@@ -196,12 +191,14 @@
         <Timeline v-if="commentList && commentList.length > 0">
           <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
             <p class="time">{{comment.createDate}}</p>
-            <p class="content_chouti" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
-            <p class="content_chouti" v-if="comment.showName">附件:
-              <span style="display: inline-block"> {{comment.showName}}</span>
-              <span v-if="comment.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(comment.previewUrl)">预览</span>
-              <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="comment.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
-            </p>
+            <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
+            <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
+              <p class="content" v-if="com.showName">附件:
+                <span style="display: inline-block"> {{com.showName}}</span>
+                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(com.previewUrl)">预览</span>
+                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+              </p>
+            </span>
           </Timeline-item>
         </Timeline>
         <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
@@ -216,12 +213,14 @@
         <Timeline>
           <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
             <p class="time">{{history.oTime}}</p>
-            <p class="content_chouti">{{history.oName}}{{history.oContent}}</p>
-            <p class="content_chouti" v-if="history.showName"><span>附件:</span>
-              <span style="display: inline-block"> {{history.showName}}</span>
-              <span v-if="history.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(history.previewUrl)">预览</span>
-              <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="history.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
-            </p>
+            <p class="content">{{history.oName}}{{history.oContent}}</p>
+            <span v-for="(his, index2) in history.attachment" v-bind:key="index2">
+              <p class="content" v-if="his.showName"><span>附件:</span>
+                <span style="display: inline-block"> {{his.showName}}</span>
+                <span v-if="his.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(his.previewUrl)">预览</span>
+                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="his.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+              </p>
+            </span>
           </Timeline-item>
         </Timeline>
         <div style="text-align: center">
@@ -233,16 +232,29 @@
 </template>
 
 <script>
+import FileUploadComp from './FileUploadComp.vue'
 export default {
   name: 'Schedule',
+  components: {
+    FileUploadComp
+  },
   data () {
     return {
+      // 接收到的组件数组 新组件
+      FileUploadArr: [],
+      // 是否让子组件清空文件 新组件
+      IsClear: true,
+      // 引入附件上传组件 新组件
+      FileUploadComp: 'FileUploadComp',
       /** 抽屉 s */
       totalHistoryNum: 1,
       historyList: [],
       pageSize: 5,
       totalNum: 1,
+      loading8: false,
       butnDisabled: true,
+      dialogShowImg: false,
+      commentPreviewUrl: '',
       rid: '',
       commitComent: '',
       loading: false,
@@ -537,6 +549,32 @@ export default {
     // this.alert(this.testBrowser())
   },
   methods: {
+    GetFileInfo (obj) {
+      if (obj) {
+        this.IsClear = false
+      }
+      this.FileUploadArr = obj
+    },
+    showImagePreCom: function (url) {
+      if (url) {
+        this.commentPreviewUrl = url
+        this.dialogShowImg = true
+      }
+    },
+    // 拼接附件上传的id为字符串
+    SetFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.FileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.FileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
+      }
+      that.FileUploadArr = []
+      return FileIdStr
+    },
     toSchedule: function () {
       this.$router.push('/Schedule')
     },
@@ -1131,34 +1169,42 @@ export default {
     },
     getCommicateCont: function () {
       var that = this
-      that.ajax('/leader/getTaskComment', that.taskComment).then(res => {
+      that.ajax('/myTask/getTaskComment', that.taskComment).then(res => {
         if (res.code === 200) {
           that.commentList = res.data.list
           that.totalNum = res.data.totalRow
-          for (var i = 0; i < that.commentList.length; i++) {
-            if (that.isImage(res.data.list[i].showName)) {
-              res.data.list[i].isImg = true
-            } else {
-              res.data.list[i].isImg = false
+          if (that.commentList.length > 0) {
+            for (var i = 0; i < that.commentList.length; i++) {
+              for (var j = 0; j < that.commentList[i].attachment.length; j++) {
+                if (that.isImage(res.data.list[i].attachment[j].showName)) {
+                  res.data.list[i].attachment[j].isImg = true
+                } else {
+                  res.data.list[i].attachment[j].isImg = false
+                }
+                res.data.list[i].attachment[j].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].attachment[j].realUrl + '&showName=' + res.data.list[i].attachment[j].showName
+              }
             }
-            res.data.list[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
           }
         }
       })
     },
     getHistoryList: function () {
       var that = this
-      that.ajax('/leader/getTaskLog', that.taskHistoryList).then(res => {
+      that.ajax('/myTask/getTaskLog', that.taskHistoryList).then(res => {
         if (res.code === 200) {
           that.historyList = res.data.list
           that.totalHistoryNum = res.data.totalRow
-          for (var i = 0; i < that.historyList.length; i++) {
-            if (that.isImage(res.data.list[i].showName)) {
-              res.data.list[i].isImg = true
-            } else {
-              res.data.list[i].isImg = false
+          if (that.historyList.length > 0) {
+            for (var i = 0; i < that.historyList.length; i++) {
+              for (var j = 0; j < that.historyList[i].attachment.length; j++) {
+                if (that.isImage(res.data.list[i].attachment[j].showName)) {
+                  res.data.list[i].attachment[j].isImg = true
+                } else {
+                  res.data.list[i].attachment[j].isImg = false
+                }
+                res.data.list[i].attachment[j].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].attachment[j].realUrl + '&showName=' + res.data.list[i].attachment[j].showName
+              }
             }
-            that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
           }
         }
       })
@@ -1174,51 +1220,26 @@ export default {
     },
     addMarkInfo () {
       var that = this
-      var url = that.$store.state.baseServiceUrl
-      var formData = new FormData($('#uploadFile')[0])
-      var taxtV = $('#textArea').val()
-      that.loading = true
-      if (taxtV) {
-        $.ajax({
-          type: 'post',
-          url: url + '/general/addOrEditComment',
-          data: formData,
-          cache: false,
-          processData: false,
-          contentType: false,
-          crossDomain: true,
-          xhrFields: {
-            withCredentials: true
-          }
-        }).then(function (data) {
-          if (data.code === 200) {
-            that.$message({
-              type: 'success',
-              message: data.msg
-            })
-            that.getCommicateCont()
-            that.commitComent = ''
-            $('.showFileName').html('')
-            $('#myfile').val('')
-            that.loading = false
-          } else {
-            that.$message({
-              type: 'error',
-              message: data.msg
-            })
-            $('.showFileName').html('')
-            that.commitComent = ''
-            $('#myfile').val('')
-            that.loading = false
-          }
-        })
-      } else {
-        that.$message({
-          type: 'error',
-          message: '备注不能为空！'
-        })
-        that.loading = false
-      }
+      that.loading8 = true
+      that.ajax('/comment/addComment', {
+        content: that.commitComent,
+        attachmentId: that.SetFileIdStr(),
+        contentId: that.taskId,
+        parentCommentId: '11'
+      }).then(res => {
+        if (res.code === 200) {
+          that.log('myTaskView:', res)
+          that.getCommicateCont()
+          that.fileListComment = []
+          that.commitComent = ''
+          $('.showFileName').html('')
+          $('#myfile2').val('')
+          that.loading8 = false
+        } else {
+          that.$message.error('评论失败！')
+          that.loading8 = false
+        }
+      })
     }
   }
 }
@@ -1329,7 +1350,7 @@ export default {
   .formBtnOk{
     color: #3a8ee6;
   }
-  .content{
+  .contentData{
     _width: 1500px;
     margin: 0 auto;
     margin-top: 40px;
@@ -1596,6 +1617,15 @@ export default {
     padding:0 10px;
     background-color: #f5f8fa;
   }
+  .cannetProject21{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    line-height: 24px;
+    font-size: 14px;
+    /*font-family: '黑体';*/
+    padding:0 10px;
+  }
   .cannetProject2 div img{
     float: left;
     margin-top: 10px;
@@ -1694,6 +1724,9 @@ export default {
   .el-textarea__inner{
     width: 90%;
     min-height: 80px;
+  }
+  .showImg>img{
+    width: 100%;
   }
   /** 抽屉样式 e */
 </style>

@@ -39,6 +39,13 @@ export default {
         $('#' + that.fileFormId + '_myfile2').val('')
         that.uploadFileName = ''
       }
+    },
+    fileListCommentLen: function (val, oVal) {
+      if (val >= 5) {
+        this.commentDis = true
+      } else if (val < 5) {
+        this.commentDis = false
+      }
     }
   },
   methods: {
@@ -53,6 +60,32 @@ export default {
       if (filePath) {
         that.addMarkInfo4()
       }
+    },
+    delUploadFileComment: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileListComment.length; i++) {
+              if (id === that.fileListComment[i].attachmentId) {
+                that.fileListComment.splice(i, 1)
+              }
+            }
+            that.fileListCommentLen = that.fileListComment.length
+            console.log('edit', that.fileListComment)
+            $('#myfile2').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
     },
     addMarkInfo4 () {
       var that = this

@@ -3985,6 +3985,7 @@ export default {
     line-height: 48px;
     display: flex;
     justify-content: space-between;
+    border-bottom: 1px dashed #f1f1f1;
   }
   .taskItemChild2{
     height: 48px;

@@ -7,7 +7,9 @@
           <!--<Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
         <!--</Select>-->
         <Input v-model="value22" placeholder="default size" readonly style="width: 120px;"/>
-        <div @click="chooseProStyle()" style="display: inline-block"><Input v-model="getStyleVal" placeholder="请选择项目类型" readonly style="width: 200px;"/></div>
+        <div style="display: inline-block">
+          <div @click="chooseProStyle()" style="display: inline-block"><Input v-model="getStyleVal" placeholder="请选择项目类型" readonly style="width: 200px;"/></div><Button icon="md-close" @click="clearStyle()"></Button>
+        </div>
         <div class="MyProHeaItem search" style="display: inline-block;vertical-align: middle;margin-left: 10px;">
           <Input search enter-button @on-search="searchPro" v-model="searchProVal" placeholder="请输入要查找的项目" />
         </div>
@@ -42,17 +44,24 @@
         </Tabs>
       </div>
       <div class="content">
-        <div class="cntItem" v-for="item in projectViewData.list" :key="item.projectUID">
+        <div class="cntItem" v-if="projectViewData.length > 0" v-for="item in projectViewData" :key="item.projectUID">
           <div class="cntItemLeft" @click="toProDetail(item.projectUID)">
             <div class="proTit">项目名称: {{item.projectName}}</div>
             <div class="proPrincipals">负责人: {{item.projectManager}}</div>
             <div class="proDuration">{{item.startDate}} 至 {{item.endDate}}</div>
           </div>
           <div class="cntItemRight">
-            <div class="proType"><span>剩余时间: 3天</span><span>项目类型: {{item.projectType}}</span></div>
+            <div class="proType"><span>项目类型: {{item.projectType}}</span></div>
+            <div class="proType">
+              <div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum < 0 && item.state != '3'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(item.dayNum)}}</span> 天</div>
+              <div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum >= 0 && item.state != '3'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{item.dayNum}}</span> 天</div>
+              <div style="text-align: right;font-size: 12px;color: #3a8ee6;font-weight: bold;display: inline-block" v-if="item.state === '3'">项目已完成</div>
+            </div>
             <div class="proPregress">
-              <i-circle :percent="item.proportion" :size="60">
-                <span class="demo-Circle-inner" style="font-size:24px">{{item.proportion}}%</span>
+              <i-circle :percent="item.proportion" stroke-color="#5cb85c" :size="60">
+                <span class="demo-Circle-inner" v-if="item.proportion < 50" style="font-size:18px;color: chocolate;">{{item.proportion}}%</span>
+                <span class="demo-Circle-inner" v-if="item.proportion >= 50 && item.proportion < 80" style="font-size:18px;color: #409EFF;">{{item.proportion}}%</span>
+                <span class="demo-Circle-inner" v-if="item.proportion >= 80" style="font-size:18px;color: #13ce66;">{{item.proportion}}%</span>
               </i-circle>
             </div>
             <div style="text-align: right; padding-right: 50px;">
@@ -60,6 +69,9 @@
             </div>
             <div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
           </div>
+        </div>
+        <div style="height: 200px;text-align: center;font-size: 14px;line-height: 200px;color: #999;" v-if="projectViewData.length === 0">
+          没有符合该条件的数据
         </div>
         <!--<div class="cntItem">-->
         <!--<div class="cntItemLeft">-->
@@ -249,7 +261,7 @@
     </Drawer>
     <!--分页 start-->
     <div style="padding: 10px 0 30px 0; text-align: center;">
-      <Page :total="pageTotalRow" :page-size="10" size="small" @on-change="pageNumChange" />
+      <Page :total="pageTotalRow" show-total :page-size="10" size="small" :current="myProjectViewPayload.pageNum" @on-change="pageNumChange" />
     </div>
     <!--分页 end-->
   </div>
@@ -372,7 +384,7 @@ export default {
         userId: this.$store.state.userId,
         // 项目状态（0:未开始； 2：进行中:3：已完成;"":全部）
         status: '',
-        pageNum: '1',
+        pageNum: 1,
         // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
         type: '',
         // 项目类型 公司项目:'0' 部门项目:'1' 小组项目:'2' 个人项目:'3' 集团战略:'4' 产品研发:'5'  全部: ''
@@ -470,6 +482,7 @@ export default {
       } else {
         this.myProjectViewPayload.status = ''
       }
+      this.myProjectViewPayload.pageNum = 1
       this.queryMyProjectView()
     },
     model1: function (val1, val2) {
@@ -524,6 +537,11 @@ export default {
           that.data22 = res.data
         }
       })
+    },
+    clearStyle: function () {
+      this.getStyleVal = ''
+      this.myProjectViewPayload.projectClassifyId = this.getStyleVal
+      this.queryMyProjectView()
     },
     handleClick2: function (data, checked, node) {
       var that = this
@@ -851,7 +869,7 @@ export default {
               res.data.list[i].statusInfo = '已完成'
             }
           }
-          that.projectViewData = res.data
+          that.projectViewData = res.data.list
         }
       })
     },
