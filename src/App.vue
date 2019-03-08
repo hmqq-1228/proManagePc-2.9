@@ -63,8 +63,8 @@ export default {
     }
   },
   created: function () {
-    this.log('参数：proId:', this.$route.params.proId)
-    this.$store.state.proId = this.$route.params.proId
+    // this.log('参数：proId:', this.$route.params.proId)
+    // this.$store.state.proId = this.$route.params.proId
     this.queryMenu()
     this.getPmsVersion()
   },
@@ -128,6 +128,7 @@ export default {
             }
           }
           if (this.$route.params.proId) {
+            this.log(123)
             that.getProjectDetail(this.$route.params.proId)
           } else {
             if (that.slideMenuGroup.length > 0) {
@@ -143,6 +144,7 @@ export default {
     getProjectDetail: function (id, n, proType, proName) {
       if (proType === '集团战略') {
         if (id) {
+          this.$store.state.proId = id
           this.$store.state.navType = n
           this.$router.push('/ProEdit')
         }
