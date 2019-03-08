@@ -25,9 +25,13 @@
                   <Icon v-bind:title="fileItem.showName" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl" style="font-size: 20px; " type="ios-document-outline" />
                 </div>
               </div>
-              <div class="editHistoryBtn" style="margin-top: 15px;">
-                <Button type="primary" size="small" style="margin-right: 15px;" v-on:click="proBaseEditClick()">编辑</Button>
-                <Button type="primary" size="small" v-on:click="openHisDrawer">历史记录</Button>
+              <div class="editHistoryBtn" style="margin-top: 8px; color: #2d8cf0;">
+                <Icon size="20" style="margin-top: -3px;" type="ios-create-outline" />
+                <span style="margin-right: 10px; margin-left: 5px;" v-on:click="proBaseEditClick()">基本信息</span>
+                <Icon size="20" style="margin-top: -3px;" type="ios-time-outline" />
+                <span style="margin-left: 5px;" v-on:click="openHisDrawer">历史记录</span>
+                <!--<Button type="primary" size="small" style="margin-right: 15px;" v-on:click="proBaseEditClick()">基本信息</Button>-->
+                <!--<Button type="primary" size="small" v-on:click="openHisDrawer">历史记录</Button>-->
               </div>
             </div>
             <div class="imgBox" v-if="proDetailMsg.state === '0'"><img src="../../static/img/unstart.png" alt=""></div>
@@ -39,7 +43,9 @@
           <div class="memName"><Icon size="30" type="ios-person-outline" /></div>
           <div class="memBox">
             <div v-if="memberList.length > 0" v-for="member in memberList" v-bind:key="member.userName">{{member.userName}}</div>
-            <div class="moreBtn" v-on:click="moreMemberClick()"><Button>更多 / 编辑</Button></div>
+            <div class="moreBtn" v-on:click="moreMemberClick()">
+              <Button size="small" style="width: 84px;" type="primary">更多 / 编辑</Button>
+            </div>
           </div>
         </div>
         <!-- 一级计划 项目计划 start -->
@@ -48,7 +54,7 @@
           <div class="planBox" style="position: relative;">
             <!--v-on:click="addNode(firstPlanId)"-->
             <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
-            <Button style="margin-top: 16px; margin-left: 20px; position: absolute; right: 10px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">添加 / 编辑</Button>
+            <Button style="width: 84px; margin-top: 16px; margin-left: 20px; position: absolute; right: 1px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">添加 / 编辑</Button>
           </div>
           <!--<div class="planBox2" v-if="planList.length === 0">暂无子计划</div>-->
         </div>
@@ -57,7 +63,9 @@
       <div class="devide">
         <div class="proTreeHeader">
           <div>项目详情</div>
-          <div v-if="planList.length > 0"><Button size="small" type="primary" v-on:click="addNode(activeId)">+ 计划 / 任务</Button></div>
+          <div v-if="planList.length > 0" style="padding-right: 6px;">
+            <Button size="small" type="primary" style="width: 84px;" v-on:click="addNode(activeId)">+ 计划 / 任务</Button>
+          </div>
         </div>
       </div>
       <!--项目计划树 start-->
@@ -148,7 +156,7 @@
       </div>
       <!--项目计划树 老版本 end-->
       <!--新增 抽屉 成员管理 ks-->
-      <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember">
+      <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember" v-loading="DrawerMemberShow">
         <!--<Button v-on:click="test()">TEST</Button>-->
         <div style="font-size: 16px; margin-bottom: 10px;">添加项目成员</div>
         <div class="searchBox">
@@ -211,10 +219,10 @@
         <div>
           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
             <FormItem label="项目名称" prop="proName">
-              <Input v-model="formValidate.proName" placeholder="Enter your name" />
+              <Input v-model="formValidate.proName" placeholder="请输入项目名称" />
             </FormItem>
             <FormItem label="项目类型" prop="proType">
-              <Select v-model="formValidate.proType" placeholder="Select your city">
+              <Select v-model="formValidate.proType" placeholder="请选择项目类型">
                 <Option value="集团战略">集团战略</Option>
                 <Option value="公司项目">公司项目</Option>
                 <Option value="部门项目">部门项目</Option>
@@ -233,13 +241,13 @@
               ></el-autocomplete>
             </FormItem>
             <FormItem label="开始时间" prop="startDate">
-              <DatePicker type="datetime" v-model="formValidate.startDate" @on-change="startDateChange" placeholder="Select date and time" style="width: 100%"></DatePicker>
+              <DatePicker type="date" v-bind:value="formValidate.startDate" format="yyyy-MM-dd HH:mm:ss" @on-change="startDateChange" placeholder="请输入开始时间" style="width: 100%"></DatePicker>
             </FormItem>
             <FormItem label="结束时间" prop="endDate">
-              <DatePicker type="datetime" v-model="formValidate.endDate" @on-change="endDateChange" placeholder="Select date and time" style="width: 100%"></DatePicker>
+              <DatePicker type="date" v-bind:value="formValidate.endDate" format="yyyy-MM-dd HH:mm:ss" @on-change="endDateChange" placeholder="请输入结束时间" style="width: 100%"></DatePicker>
             </FormItem>
             <FormItem label="项目简介" prop="desc">
-              <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..." />
+              <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入项目简介" />
             </FormItem>
             <FormItem>
               <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
@@ -1389,6 +1397,8 @@ export default {
       seracMem: '',
       // 新增 成员管理 抽屉
       DrawerMember: false,
+      // 新增 成员管理 抽屉
+      DrawerMemberShow: false,
       // 新增 编辑基本信息 抽屉
       DrawerBaseEdit: false,
       // 新加 ks
@@ -1470,18 +1480,6 @@ export default {
         content: '',
         attachmentId: ''
       },
-      // 新增
-      formValidateD: {
-        proName: '',
-        proType: '',
-        proManager: '',
-        projectManagerID: '',
-        proBaseStartDate: '2019-03-09 00:00:00',
-        proBaseEndDate: '2019-03-10 00:00:00',
-        startDate2: 'Wed Mar 13 2019 00:00:00 GMT+0800 (中国标准时间)',
-        startDate3: 'Thu Mar 28 2019 00:00:00 GMT+0800 (中国标准时间)',
-        desc: ''
-      },
       formValidate: {
         proName: '',
         proType: '',
@@ -1489,8 +1487,6 @@ export default {
         projectManagerID: '',
         startDate: '',
         endDate: '',
-        startDate2: 'Wed Mar 13 2019 00:00:00 GMT+0800 (中国标准时间)',
-        startDate3: 'Thu Mar 28 2019 00:00:00 GMT+0800 (中国标准时间)',
         desc: ''
       },
       // 任务开始
@@ -1518,20 +1514,20 @@ export default {
         proManager: [
           { required: true, message: '请选择项目负责人', trigger: 'change' }
         ],
-        proBaseStartDate: [
-          { required: true, type: 'date', message: '请选择开始日期', trigger: 'change' }
+        startDate: [
+          { required: true, type: 'string', message: '请选择开始日期', trigger: 'change' }
+        ],
+        endDate: [
+          { required: true, type: 'string', message: '请选择结束日期', trigger: 'change' }
         ],
         startDateTime: [
           { required: true, type: 'string', message: '请选择开始时间', trigger: 'change' }
-        ],
-        proBaseEndDate: [
-          { required: true, type: 'date', message: '请选择结束日期', trigger: 'change' }
         ],
         endDateTime: [
           { required: true, type: 'string', message: '请选择结束时间', trigger: 'change' }
         ],
         desc: [
-          { required: true, message: '请简要填写项目描述', trigger: 'blur' },
+          { required: false, message: '请简要填写项目描述', trigger: 'blur' },
           { type: 'string', min: 5, message: '简介不得少于5个字符', trigger: 'blur' }
         ]
       }
@@ -1707,18 +1703,26 @@ export default {
     addMenber () {
       var that = this
       if (that.deId.length > 0) {
-        that.loading = true
+        that.DrawerMemberShow = true
         that.ajax('/myProject/addMembers', JSON.stringify({
           projectUID: that.proId,
           hrocPeople: that.getPeople
         })).then(res => {
-          that.log('addMembers_99999:', res)
+          that.DrawerMemberShow = false
           if (res.code === 200) {
             that.queryProGroupMember()
             that.queryProDetail()
             // that.getProjectPeo()
-            that.loading = false
+            that.$message({
+              type: 'success',
+              message: res.msg
+            })
             // that.deId = []
+          } else {
+            that.$message({
+              type: 'warning',
+              message: res.msg
+            })
           }
         })
       } else if (this.deId.length === 0) {
@@ -2071,10 +2075,12 @@ export default {
     // 新增
     startDateChange (date) {
       this.log('startDate:', date)
+      this.formValidate.startDate = date
     },
     // 新增
     endDateChange (date) {
       this.log('endDate:', date)
+      this.formValidate.endDate = date
     },
     // 新建 人员选择
     handleSelect (item) {
@@ -2129,30 +2135,24 @@ export default {
     // 新增
     handleSubmit (name) {
       var that = this
-      this.log(100000001)
-      this.log('formValidate:', this.formValidate)
       this.$refs[name].validate((valid) => {
-        this.log(100000002)
         if (valid) {
-          this.log(100000003)
-          that.log('that.proId:', that.proId)
           that.editBaseInfoPayload.projectUID = that.proId
           that.editBaseInfoPayload.projectName = that.formValidate.proName
           that.editBaseInfoPayload.projectType = that.formValidate.proType
           that.editBaseInfoPayload.projectManager = that.formValidate.proManager
           that.editBaseInfoPayload.projectManagerID = that.Mid
           that.editBaseInfoPayload.introduction = that.formValidate.desc
-          this.log(100000004)
           that.editBaseInfoPayload.startDate = that.DateFormat(that.formValidate.startDate)
           that.editBaseInfoPayload.endDate = that.DateFormat(that.formValidate.endDate)
           // that.editBaseInfoPayload.startDate = that.formValidate.startDate
           // that.editBaseInfoPayload.endDate = that.formValidate.endDate
-          this.log(100000005)
           that.ajax('/myProject/editBaseInfo', that.editBaseInfoPayload).then(res => {
             that.log('editBaseInfo:', res)
             if (res.code === 200) {
-              that.$Message.success('Success!')
+              that.$Message.success('保存成功!')
               that.queryProDetail()
+              that.DrawerBaseEdit = false
               // that.queryProGroupMember()
               // that.proGrpMemList = res.data
               // that.options4 = res.data peopleRole
@@ -2160,7 +2160,7 @@ export default {
             }
           })
         } else {
-          this.$Message.error('Fail!')
+          this.$Message.error('有未填写的必填项!')
         }
       })
     },
@@ -3487,6 +3487,10 @@ export default {
     overflow-x: hidden;
     border-top: 1px solid #f0f0f0;
   }
+  .editHistoryBtn{}
+  .editHistoryBtn span{
+    cursor: pointer;
+  }
   .planBox2{
     width: 98%;
     float: left;
@@ -3504,8 +3508,8 @@ export default {
     line-height: 38px;
   }
   .memBox div.moreBtn{
-    padding: 4px 8px;
-    float: left;
+    padding: 4px 0px;
+    float: right;
     margin-left: 25px;
     _color: #777;
     _font-size: 14px;
