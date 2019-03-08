@@ -112,7 +112,7 @@
         </div>
       </Modal>
       <!--新建项目 表单 dialog-->
-      <Modal v-model="newAddDiaModel" width="620" title="新建项目" @on-ok="newCreateOk" @on-cancel="newCreateCancel" v-loading="createProFormLoading">
+      <Modal v-model="newAddDiaModel" :loading="createProFormLoading" width="620" title="新建项目" @on-ok="newCreateOk" @on-cancel="newCreateCancel">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="项目名称" prop="projectName">
             <el-input v-model="ruleForm.projectName"></el-input>
@@ -120,7 +120,7 @@
           <el-form-item label="项目类型" prop="projectType">
             <!--<el-input v-model="ruleForm.projectType"></el-input>-->
             <el-select style="width: 100%" v-model="ruleForm.projectType" placeholder="请选择项目类型" @change="getProjectType($event)">
-              <el-option v-for="item in proTypeListPure" :value="item.value" :key="item.value" :label="item.label"></el-option>
+              <el-option v-for="item in proTypeListPure" :value="item.label" :key="item.value" :label="item.label"></el-option>
               <!--<el-option label="公司项目" value="公司项目"></el-option>-->
               <!--<el-option label="部门项目" value="部门项目"></el-option>-->
               <!--<el-option label="小组项目" value="小组项目"></el-option>-->
@@ -174,6 +174,8 @@
             <!--<el-button @click="resetForm('ruleForm')">重置</el-button>-->
           <!--</el-form-item>-->
         </el-form>
+        <!---->
+        <!--<Spin size="large" fix v-if="spinShow"></Spin>-->
       </Modal>
     </div>
     <!--对话框 项目分类 产品研发 start-->
@@ -256,6 +258,8 @@ export default {
   },
   data () {
     return {
+      // 加载转圈
+      createProLoading: false,
       // shi
       pageN: 1,
       // 附件上传 是否让子组件清空文件
@@ -267,7 +271,8 @@ export default {
       // 引入附件上传组件
       fileUploadComp: 'FileUpload',
       // 新建项目 表单
-      createProFormLoading: false,
+      spinShow: false,
+      createProFormLoading: true,
       // 产品研发 树形结构 单选
       i: 0,
       // 新增
@@ -304,7 +309,7 @@ export default {
       searchProVal: '',
       // 是否选择了"新建项目模板"
       isModel: false,
-      duration: 0,
+      duration: 100,
       // 新增
       autoCompleteNamesPayload: {
         projectManager: ''
@@ -378,7 +383,7 @@ export default {
         projectName: '',
         projectManager: '',
         delivery: false,
-        projectType: '',
+        projectType: '公司项目',
         showName: '',
         downloadUrl: '',
         previewUrl: '',
@@ -729,6 +734,7 @@ export default {
         if (res.code === 200) {
           // that.ruleForm.projectName = res.data.modelName
           that.duration = res.data.duration
+          that.log('that.duration:', that.duration)
           that.ruleForm.projectType = res.data.modelType
           that.setDefuleTime()
         }
@@ -777,6 +783,7 @@ export default {
         this.isModel = true
         this.getModelDetail()
       } else {
+        this.setDefuleTime()
         this.isModel = false
       }
       // this.$router.push('/NewAddPro')
@@ -824,7 +831,6 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {
-            that.createProFormLoading = true
             that.ajax('/myProject/addModelProject',
               {
                 projectName: this.ruleForm.projectName,
@@ -841,6 +847,9 @@ export default {
                 projectClassifyId: that.ruleForm.projectClassifyId
               }).then(res => {
               console.log('立即创建(muban):', res)
+              that.$Modal.remove()
+              that.newAddDialog = false
+              that.newAddDiaModel = false
               if (res.code === 200) {
                 // 通知附件上传子组件清空附件域
                 that.isClear = true
@@ -874,7 +883,6 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {
-            that.createProFormLoading = true
             that.ajax('/myProject/addBaseInfo',
               {
                 projectName: that.ruleForm.projectName,
@@ -889,27 +897,27 @@ export default {
                 projectClassifyId: that.ruleForm.projectClassifyId
               }).then(res => {
               console.log('立即创建:', res)
+              that.$Modal.remove()
+              that.newAddDialog = false
+              that.newAddDiaModel = false
               if (res.code === 200) {
                 that.isClear = true
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
-                that.createProFormLoading = false
                 this.$router.push('/ProEdit')
               } else {
                 this.$message({
                   type: 'error',
                   message: res.msg
                 })
-                that.createProFormLoading = false
               }
             })
           } else {
-            that.loading = false
             that.$message.error('请重新选择项目负责人')
           }
         } else {
           // console.log('网络错误!!')
-          that.loading = false
+          // that.loading = false
           return false
         }
       })

@@ -36,7 +36,8 @@
           </el-row>
         </el-aside>
         <el-main style="padding: 0 20px;">
-          <router-view/>
+          <router-view style="min-height: 800px;"/>
+          <div class="copyright">贝豪项目管理系统（PMS ©2019 Version-{{version}}）版权所有 翻版必究</div>
         </el-main>
       </el-container>
     </el-container>
@@ -55,13 +56,24 @@ export default {
       slideMenu: [],
       proId: '',
       nav: 1,
-      count: 0
+      count: 0,
+      version: ''
     }
   },
   created: function () {
+    this.log('参数：', this.$route.params.taskId)
     this.queryMenu()
+    this.getPmsVersion()
   },
   methods: {
+    getPmsVersion: function () {
+      var that = this
+      that.ajax('/general/getVersion', {}).then(res => {
+        if (res.code === 200) {
+          that.version = res.data
+        }
+      })
+    },
     testUpload: function () {
       this.count++
       if (this.count === 5) {
@@ -118,7 +130,7 @@ export default {
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
-          this.$router.push('/HelloWorld')
+          // this.$router.push('/HelloWorld')
         }
       } else {
         if (proName === '我的日程') {
@@ -149,6 +161,13 @@ html,body{
 }
 #app{
   height: 100%;
+}
+.copyright{
+  padding: 15px;
+  padding-top: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: #aaa;
 }
 .el-container{
   height: 100%;

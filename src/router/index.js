@@ -16,7 +16,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/HelloWorld',
+      path: '/',
       name: 'HelloWorld',
       component: HelloWorld
     },
@@ -32,6 +32,11 @@ export default new Router({
     },
     {
       path: '/MyTask',
+      name: 'MyTask',
+      component: MyTask
+    },
+    {
+      path: '/MyTask/:taskId',
       name: 'MyTask',
       component: MyTask
     },
