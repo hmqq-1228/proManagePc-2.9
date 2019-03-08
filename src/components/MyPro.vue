@@ -226,7 +226,8 @@
       <div class="discription lis" style="margin-top: 15px;">
         <div class="logBox">
           <div v-bind:key="logs.index" class="TimeLine" style="position: relative;" v-for="(logs, index) in taskLogs">
-            <div class="quan">{{index+1}}</div>
+            <div class="quan" v-if="index < 99">{{index+1}}</div>
+            <div class="quan" style="width: 24px;height: 24px;border-radius: 12px;line-height: 24px;margin-left: -3px;" v-if="index >= 99">{{index+1}}</div>
             <div class="timeDate">{{logs.oTime}}</div>
             <div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}
               <div class="contBoxContentWrap">
