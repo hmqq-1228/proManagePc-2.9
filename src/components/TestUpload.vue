@@ -32,6 +32,7 @@ export default {
   methods: {
     // 获取附件上传组件发来的附件信息
     GetFileInfo (obj) {
+      this.log('GetFileInfo:', obj)
       if (obj) {
         this.IsClear = false
       }

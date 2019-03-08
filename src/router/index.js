@@ -36,11 +36,6 @@ export default new Router({
       component: MyTask
     },
     {
-      path: '/MyTask/:taskId',
-      name: 'MyTask',
-      component: MyTask
-    },
-    {
       path: '/MyPro',
       name: 'MyPro',
       component: MyPro

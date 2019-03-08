@@ -266,7 +266,7 @@
             <div class="cannetProject2">
               <div style="display: inline-block">
                 <!--<img src="../../static/img/fujian.png" alt="">-->
-                <component v-bind:is="FileUploadComp" fileFormId="history" v-bind:clearInfo="IsClear" v-on:FileInfoEmit="GetFileInfo"></component>
+                <component v-bind:is="FileUploadComp" fileFormId="history" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
                 <!--<a href="javascript:;" class="file" @change="getFileName">选择文件-->
                   <!--<input type="file" name="myfile">-->
                 <!--</a>-->
@@ -445,7 +445,7 @@
                     </el-form-item>
                     <el-form-item label="添加附件" prop="description" maxlength="100" width="100">
                       <!--新建任务 引入附件组件 上传文件-->
-                      <component v-bind:is="FileUploadComp" fileFormId="fileTest" v-bind:clearInfo="IsClear" v-on:FileInfoEmit="GetFileInfo"></component>
+                      <component v-bind:is="FileUploadComp" fileFormId="fileTest" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
                     </el-form-item>
                     <!--<component v-bind:is="fileUploadComp" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>-->
                     <!--<el-form-item style="height: 40px;"></el-form-item>-->
@@ -1022,11 +1022,11 @@
 
 <script>
 import FileUploadComp from './FileUploadComp.vue'
-import FileUpload from './FileUpload.vue'
+// import FileUpload from './FileUpload.vue'
 export default {
   name: 'ProEdit',
   components: {
-    FileUpload,
+    // FileUpload,
     FileUploadComp
   },
   data () {
@@ -2494,7 +2494,7 @@ export default {
       that.addProjectCommentPayload.projectUID = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
-      console.log('idStr', that.SetFileIdStr())
+      console.log('idStr：', that.addProjectCommentPayload.attachmentId)
       // if (that.commitComent) {
       //   that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
       //     that.log('addProjectComment:', res)
@@ -3263,6 +3263,7 @@ export default {
     // 获取附件上传组件发来的附件信息
     // 获取附件上传组件发来的附件信息 新组件
     GetFileInfo (obj) {
+      this.log('GetFileInfo:', obj)
       if (obj) {
         this.IsClear = false
       }

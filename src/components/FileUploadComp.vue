@@ -113,12 +113,13 @@ export default {
               fileName: data.data.showName
             }
             that.fileListComment.push(obj)
-            that.log('fileListComment:', that.fileListComment.length)
+            // that.log('fileListComment:', that.fileListComment.length)
             that.fileListCommentLen = that.fileListComment.length
             that.$message({
               type: 'success',
               message: '文件' + data.msg
             })
+            that.log('fileListComment:', that.fileListComment)
             that.$emit('FileDataEmit', that.fileListComment)
           } else if (data.code === 300) {
             that.$message({
