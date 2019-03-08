@@ -187,7 +187,7 @@
               <div class="memListItem">{{mem.userName}}</div>
               <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
               <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
-              <div class="memListItem" v-on:click="delMember(mem.id)">x</div>
+              <div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>
             </div>
           </div>
         </div>
@@ -284,13 +284,14 @@
           <!--<div class="add" @click="addRemark()"><img src="../../static/img/msg.png" alt="">添加评论</div>-->
           <div class="logBox">
             <div v-bind:key="logs.index" class="TimeLine" style="position: relative;" v-for="(logs, index) in taskLogs">
-              <div class="quan">{{index+1}}</div>
+              <div class="quan" v-if="index < 99">{{index+1}}</div>
+              <div class="quan" style="width: 24px;height: 24px;border-radius: 12px;line-height: 24px;margin-left: -3px;" v-if="index >= 99">{{index+1}}</div>
               <div class="timeDate">{{logs.oTime}}</div>
               <div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}
                 <div class="contBoxContentWrap">
                   <div class="contBoxContent" v-if="logs.comment">评论：{{logs.comment}}</div>
                   <div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0" v-for="(file, index2) in logs.uploads" v-bind:key="index2">
-                    <span v-if="file.isImage" @click="showBigImage(file.previewUrl)" class="filepre">预览</span>
+                    <span v-if="file.isImage" @click="showBigImage1(file.previewUrl)" class="filepre">预览</span>
                     <a v-bind:download="file.showName" v-bind:href="file.downloadUrl">下载：{{file.showName}}</a>
                   </div>
                 </div>
@@ -780,6 +781,9 @@
           </div>
         </div>
       </Drawer>
+      <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+        <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
+      </el-dialog>
       <!--/ 任务完成/-->
       <el-dialog title="任务完成" :visible.sync="taskFinishedVisible" width="25%">
         <div class="el-textarea" v-loading="loading9" style="margin-top: 0">
@@ -850,8 +854,8 @@
       <el-dialog title="图片预览" :visible.sync="dialogFormVisible">
         <div class="showImg"><img v-bind:src="showFileUrl" alt=""></div>
       </el-dialog>
-      <el-dialog title="图片预览" :visible.sync="dialogShowImg">
-        <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
+      <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
+        <div class="showImg"><img v-bind:src="commentPreviewUrl1" alt=""></div>
       </el-dialog>
       <!--修改任务 任务 修改-->
       <Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">
@@ -1032,6 +1036,8 @@ export default {
   data () {
     return {
       pageN: 1,
+      commentPreviewUrl1: '',
+      dialogShowImg1: false,
       // 新建 修改任务
       fileListEdit: [],
       disabledEndTime2: '',
@@ -1713,6 +1719,7 @@ export default {
               message: res.msg
             })
             // that.deId = []
+            // that.taskForm.value9 = []
           } else {
             that.$message({
               type: 'warning',
@@ -2055,6 +2062,12 @@ export default {
         }
       })
     },
+    showBigImage1: function (url) {
+      if (url) {
+        this.commentPreviewUrl1 = url
+        this.dialogShowImg1 = true
+      }
+    },
     // 新增 检查图片
     showBigImage (url, imgName) {
       if (url) {
@@ -2183,6 +2196,7 @@ export default {
           obj.ID = that.taskForm.value9[i].split('-')[1]
           that.addMemPayload.hrocPeople.push(obj)
         }
+        console.log('value999999999:', that.addMemPayload.hrocPeople)
         that.addMemPayload.projectUID = this.proId
         that.log('that.addMemPayload:', that.addMemPayload)
         this.ajax('/myProject/addMembers', JSON.stringify(that.addMemPayload)).then(res => {
@@ -2190,6 +2204,8 @@ export default {
           if (res.code === 200) {
             that.queryProGroupMember()
             that.queryProDetail()
+            that.addMemPayload.hrocPeople = []
+            that.taskForm.value9 = []
             // that.proGrpMemList = res.data
             // that.options4 = res.data peopleRole
             // this.loading2 = false
@@ -2496,32 +2512,32 @@ export default {
     // 新增 点击“回复”按钮
     addMarkInfo () {
       var that = this
-      // that.loadingRe = true
+      that.loadingRe = true
       that.addProjectCommentPayload.projectUID = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
       console.log('idStr：', that.addProjectCommentPayload.attachmentId)
-      // if (that.commitComent) {
-      //   that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
-      //     that.log('addProjectComment:', res)
-      //     if (res.code === 200) {
-      //       that.IsClear = true
-      //       that.$message({
-      //         type: 'success',
-      //         message: res.msg
-      //       })
-      //       that.loadingRe = false
-      //       that.getHistoryCont()
-      //       that.commitComent = ''
-      //     } else {
-      //       that.$message({
-      //         type: 'success',
-      //         message: res.msg
-      //       })
-      //       that.loadingRe = false
-      //     }
-      //   })
-      // }
+      if (that.commitComent) {
+        that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
+          that.log('addProjectComment:', res)
+          if (res.code === 200) {
+            that.IsClear = true
+            that.$message({
+              type: 'success',
+              message: res.msg
+            })
+            that.loadingRe = false
+            that.getHistoryCont()
+            that.commitComent = ''
+          } else {
+            that.$message({
+              type: 'success',
+              message: res.msg
+            })
+            that.loadingRe = false
+          }
+        })
+      }
     },
     // 新增 点击“回复”按钮
     taskDetailconnect () {
@@ -3674,12 +3690,12 @@ export default {
     border-left: none !important;
   }
   .quan{
-    width: 14px;
-    height: 14px;
+    width: 17px;
+    height: 17px;
     border: 1px solid #3a8ee6;
     border-radius: 8px;
     display: inline-block;
-    line-height:14px;
+    line-height:17px;
     text-align: center;
     font-size: 10px;
     color: #3a8ee6;
