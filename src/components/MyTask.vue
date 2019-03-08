@@ -168,6 +168,7 @@
           <el-date-picker
             v-model="selDateStart"
             type="datetime"
+            :picker-options="pickerOptionsPlan"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择开始时间">
           </el-date-picker>
@@ -176,6 +177,7 @@
         <div class="selectDateItem">
           <el-date-picker
             v-model="selDateEnd"
+            :picker-options="pickerOptionsPlan"
             type="datetime"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择结束时间">
@@ -566,7 +568,7 @@
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
                                   v-model="detailTaskform.taskFinishDate"
-                                  :picker-options="pickerOptionsTaskSt"
+                                  :picker-options="pickerOptionsTaskEt"
                   ></el-date-picker>
                 </el-col>
               </el-form-item>
@@ -644,6 +646,7 @@ export default {
       },
       pickerOptionsTaskSt: {},
       pickerOptionsTaskEt: {},
+      pickerOptionsPlan: {},
       // ------
       token: '',
       fileList: [],
@@ -972,6 +975,7 @@ export default {
     },
     projectBelong: function (newQuestion, oldQuestion) {
       this.log('projectBelong:', newQuestion)
+      this.getProjectTime(newQuestion)
     },
     formData: function (newQuestion, oldQuestion) {
       this.log('新的newQuestion:', newQuestion)
@@ -1258,12 +1262,18 @@ export default {
           }
           that.fileListEdit = res.data.attachment
         }
-        // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
-        // var binStartTime = new Date(st).getTime()
-        // var binEndTime = new Date(res.data.taskFinishDate).getTime()
-        // this.pickerOptionsTaskSt.disabledDate = function (time) {
-        //   return time.getTime() > binEndTime || time.getTime() < binStartTime
-        // }
+        var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
+        var stF = res.data.parentSTime.split(' ')[0] + ' 00:00:00'
+        var binStartTime = new Date(st).getTime()
+        var binStartF = new Date(stF).getTime()
+        var binEndTime = new Date(res.data.taskFinishDate).getTime()
+        var binEndF = new Date(res.data.parentETime).getTime()
+        this.pickerOptionsTaskSt.disabledDate = function (time) {
+          return time.getTime() > binStartF || time.getTime() < binStartTime
+        }
+        this.pickerOptionsTaskEt.disabledDate = function (time) {
+          return time.getTime() > binEndF || time.getTime() < binEndTime
+        }
       })
     },
     levelChange: function (rateval) {
@@ -1525,6 +1535,32 @@ export default {
           this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID
           this.options = res.data
+          that.getProjectTime(that.projectBelong)
+        }
+      })
+    },
+    getProjectTime: function (id) {
+      var that = this
+      that.ajax('/myProject/getProjectDetail', {projectUID: id}).then(res => {
+        if (res.code === 200) {
+          console.log('projectBelong', res)
+          var st = res.data.startDate.split(' ')[0] + ' 00:00:00'
+          var et = res.data.endDate
+          var sT = new Date(st)
+          var eT = new Date(et)
+          that.disabledStarTime2 = sT.getTime()
+          that.disabledEndTime2 = eT.getTime()
+          that.pickerOptionsPlan.disabledDate = function (time) {
+            return time.getTime() < that.disabledStarTime2 || time.getTime() > that.disabledEndTime2
+          }
+          that.selDateStart = res.data.startDate
+          that.selDateEnd = res.data.endDate
+          // that.log('delPlanOrTask:', disabledStarTime)
+          // that.log('delPlanOrTask22:', disabledEndTime)
+        } else {
+          that.$message({
+            message: res.msg
+          })
         }
       })
     },
@@ -1608,8 +1644,8 @@ export default {
         nextDayMinutes = '0' + nextDayMinutes
       }
       this.endTimeFirst = nextDayYear + '-' + nextDayMonth + '-' + nextDayDate + ' ' + nextDayHours + ':' + nextDayMinutes + ':00'
-      this.selDateStart = this.startTimeFirst
-      this.selDateEnd = this.endTimeFirst
+      // this.selDateStart = this.startTimeFirst
+      // this.selDateEnd = this.endTimeFirst
     },
     // 选择时间
     selectDate: function (e) {

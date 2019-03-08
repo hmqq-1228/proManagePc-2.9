@@ -136,6 +136,7 @@
           <el-date-picker
             v-model="selDateStart"
             type="datetime"
+            :picker-options="pickerOptionsPlan"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择开始时间">
           </el-date-picker>
@@ -145,6 +146,7 @@
           <el-date-picker
             v-model="selDateEnd"
             type="datetime"
+            :picker-options="pickerOptionsPlan"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择结束时间">
           </el-date-picker>
@@ -187,6 +189,7 @@ export default {
       fileList: [],
       fileListDis: false,
       fileListLen: 0,
+      pickerOptionsPlan: {},
       defImplementerName: '李四',
       startTimeFirst: '',
       endTimeFirst: '',
@@ -289,6 +292,7 @@ export default {
     },
     projectBelong: function (newQuestion, oldQuestion) {
       this.log('projectBelong:', newQuestion)
+      this.getProjectTime(newQuestion)
     },
     formData: function (newQuestion, oldQuestion) {
       this.log('新的newQuestion:', newQuestion)
@@ -446,6 +450,32 @@ export default {
           this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID
           this.options = res.data
+          this.getProjectTime(this.projectBelong)
+        }
+      })
+    },
+    getProjectTime: function (id) {
+      var that = this
+      that.ajax('/myProject/getProjectDetail', {projectUID: id}).then(res => {
+        if (res.code === 200) {
+          console.log('projectBelong', res)
+          var st = res.data.startDate.split(' ')[0] + ' 00:00:00'
+          var et = res.data.endDate
+          var sT = new Date(st)
+          var eT = new Date(et)
+          that.disabledStarTime2 = sT.getTime()
+          that.disabledEndTime2 = eT.getTime()
+          that.pickerOptionsPlan.disabledDate = function (time) {
+            return time.getTime() < that.disabledStarTime2 || time.getTime() > that.disabledEndTime2
+          }
+          that.selDateStart = res.data.startDate
+          that.selDateEnd = res.data.endDate
+          // that.log('delPlanOrTask:', disabledStarTime)
+          // that.log('delPlanOrTask22:', disabledEndTime)
+        } else {
+          that.$message({
+            message: res.msg
+          })
         }
       })
     },
@@ -508,8 +538,8 @@ export default {
         nextDayMinutes = '0' + nextDayMinutes
       }
       that.endTimeFirst = nextDayYear + '-' + nextDayMonth + '-' + nextDayDate + ' ' + nextDayHours + ':' + nextDayMinutes + ':00'
-      that.selDateStart = that.startTimeFirst
-      that.selDateEnd = that.endTimeFirst
+      // that.selDateStart = that.startTimeFirst
+      // that.selDateEnd = that.endTimeFirst
     },
     // 选择时间
     selectDate: function (e) {
