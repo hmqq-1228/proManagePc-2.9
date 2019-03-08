@@ -118,7 +118,7 @@ export default {
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
-          this.$router.push('/')
+          this.$router.push('/HelloWorld')
         }
       } else {
         if (proName === '我的日程') {

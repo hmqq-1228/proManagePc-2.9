@@ -477,7 +477,7 @@
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
                                   v-model="detailTaskform.taskFinishDate"
-                                  :picker-options="pickerOptionsTaskSt"
+                                  :picker-options="pickerOptionsTaskEt"
                   ></el-date-picker>
                 </el-col>
               </el-form-item>
@@ -1410,6 +1410,18 @@ export default {
         that.detailTaskform.taskStartDate = res.data.taskStartDate
         that.detailTaskform.taskFinishDate = res.data.taskFinishDate
         that.detailTaskform.description = res.data.description
+        var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
+        var stF = res.data.parentSTime.split(' ')[0] + ' 00:00:00'
+        var binStartTime = new Date(st).getTime()
+        var binStartF = new Date(stF).getTime()
+        var binEndTime = new Date(res.data.taskFinishDate).getTime()
+        var binEndF = new Date(res.data.parentETime).getTime()
+        this.pickerOptionsTaskSt.disabledDate = function (time) {
+          return time.getTime() > binStartF || time.getTime() < binStartTime
+        }
+        this.pickerOptionsTaskEt.disabledDate = function (time) {
+          return time.getTime() > binEndF || time.getTime() < binEndTime
+        }
         for (var i = 0; i < res.data.attachment.length; i++) {
           res.data.attachment[i].attachmentId = res.data.attachment[i].id
         }
