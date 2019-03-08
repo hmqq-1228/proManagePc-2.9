@@ -169,6 +169,7 @@ export default {
     color: #1E88C7;
     line-height: 20px;
     margin-top: 6px;
+    height: 30px;
   }
   .FileCompIptWrap input{
     width: 100%;
@@ -183,7 +184,7 @@ export default {
     color: #004974;
   }
   .FileCompIptText{
-    padding-top: 16px;
+    /*padding-top: 16px;*/
     margin-left: 10px;
   }
 </style>

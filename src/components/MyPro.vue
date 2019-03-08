@@ -158,7 +158,7 @@
             <!--<div v-if="!ruleForm.showName" style="color: #999;font-size: 12px;">暂无附件</div>-->
             <div v-if="!ruleForm.showName">
               <!--附件上传 组件 引入附件上传组件  v-bind:clearInfo=""-->
-              <component v-bind:is="fileUploadComp" fileFormId="createPro" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>
+              <component v-bind:is="FileUploadComp" fileFormId="createPro" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
               <!--<a v-bind:href="ruleForm.downloadUrl" download="项目附件">{{ruleForm.showName}}-->
                 <!--<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i>-->
               <!--</a>-->
@@ -176,6 +176,9 @@
         </el-form>
       </Modal>
     </div>
+    <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+      <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
+    </el-dialog>
     <!--对话框 项目分类 产品研发 start-->
     <el-dialog title="产品研发" :visible.sync="dialogFormVisible" width="35%">
       <div class="showImg">
@@ -204,7 +207,7 @@
           <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
           <div class="cannetProject2">
             <div>
-              <component v-bind:is="fileUploadComp" fileFormId="proHistory" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>
+              <component v-bind:is="FileUploadComp" fileFormId="proHistory" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
               <!--<img src="../../static/img/fujian.png" alt="">-->
               <!--<a href="javascript:;" class="file" @change="getFileName">选择文件-->
                 <!--<input type="file" name="myfile">-->
@@ -226,9 +229,9 @@
             <div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}
               <div class="contBoxContentWrap">
                 <div class="contBoxContent" v-if="logs.comment">评论：{{logs.comment}}</div>
-                <div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0">
-                  <span v-if="logs.uploads[0].isImage" @click="showBigImage(logs.uploads[0].previewUrl, logs.uploads[0].showName)" class="filepre">附件预览</span>
-                  <a v-bind:download="logs.uploads[0].showName" v-bind:href="logs.uploads[0].downloadUrl">下载：{{logs.uploads[0].showName}}</a>
+                <div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0" v-for="(file, index2) in logs.uploads" v-bind:key="index2">
+                  <span v-if="file.isImage" @click="showBigImage(file.previewUrl)" class="filepre">预览</span>
+                  <a v-bind:download="file.showName" v-bind:href="file.downloadUrl">下载：{{file.showName}}</a>
                 </div>
               </div>
             </div>
@@ -248,24 +251,24 @@
 </template>
 
 <script>
-import FileUpload from './FileUpload.vue'
+import FileUploadComp from './FileUploadComp.vue'
 export default {
   name: 'MyPro',
   components: {
-    FileUpload
+    FileUploadComp
   },
   data () {
     return {
       // shi
       pageN: 1,
       // 附件上传 是否让子组件清空文件
-      isClear: false,
+      IsClear: false,
       // 附件上传 附件ID拼接成字符串
       FileUploadIdStr: '',
       // 接收到的组件数组
-      fileUploadArr: [],
+      FileUploadArr: [],
       // 引入附件上传组件
-      fileUploadComp: 'FileUpload',
+      FileUploadComp: 'FileUploadComp',
       // 新建项目 表单
       createProFormLoading: false,
       // 产品研发 树形结构 单选
@@ -345,6 +348,8 @@ export default {
       ],
       model1: 'all',
       model2: '0',
+      dialogShowImg: false,
+      commentPreviewUrl: '',
       projectViewData: {},
       totalModelNum: 0,
       // 模板
@@ -542,12 +547,12 @@ export default {
       var that = this
       that.addProjectCommentPayload.projectUID = that.proId
       that.addProjectCommentPayload.content = that.commitComent
-      that.addProjectCommentPayload.attachmentId = that.setFileIdStr()
+      that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
       if (that.commitComent) {
         that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
           that.log('addProjectComment:', res)
           if (res.code === 200) {
-            that.isClear = true
+            that.IsClear = true
             that.$message({
               type: 'success',
               message: res.msg
@@ -558,28 +563,34 @@ export default {
         })
       }
     },
+    showBigImage: function (url) {
+      if (url) {
+        this.commentPreviewUrl = url
+        this.dialogShowImg = true
+      }
+    },
     // 新增 获取历史记录
     getHistoryCont () {
       var that = this
       // var planid = this.$route.params.pid
-      that.ajax('/myProject/getLogAndComment', {projectUID: that.proId, pageSize: 10, pageNum: that.logPageNum}).then(res => {
+      that.ajax('/myProject/getLogAndComment', {projectUID: that.proId, pageSize: 10, pageNum: that.pageN}).then(res => {
         that.log('getLogAndComment:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.list.length; i++) {
-            if (res.data.list[i].uploads.length > 0) {
-              if (that.isImage(res.data.list[i].uploads[0].showName)) {
-                res.data.list[i].uploads[0].isImage = true
+            for (var j = 0; j < res.data.list[i].uploads.length; j++) {
+              if (that.isImage(res.data.list[i].uploads[j].showName)) {
+                res.data.list[i].uploads[j].isImage = true
               } else {
-                res.data.list[i].uploads[0].isImage = false
+                res.data.list[i].uploads[j].isImage = false
               }
-              var downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].uploads[0].realUrl + '&showName=' + res.data.list[i].uploads[0].showName
-              res.data.list[i].uploads[0].downloadUrl = downurl
+              var downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].uploads[j].realUrl + '&showName=' + res.data.list[i].uploads[j].showName
+              res.data.list[i].uploads[j].downloadUrl = downurl
             }
           }
-          that.taskLogs = res.data.list
+          that.taskLogs = that.taskLogs.concat(res.data.list)
           that.totalData = res.data.totalRow
           if (that.taskLogs.length === that.totalData) {
-            that.log('ss')
+            that.log('ss', that.taskLogs)
             that.notMore = true
           }
           that.log('taskLogs:', res)
@@ -836,14 +847,14 @@ export default {
                 modelId: that.modId,
                 introduction: this.ruleForm.introduction,
                 // 附件ID
-                attachmentId: that.setFileIdStr(),
+                attachmentId: that.SetFileIdStr(),
                 // 如果项目类型是产品研发 projectClassifyId为研发下的分类ID
                 projectClassifyId: that.ruleForm.projectClassifyId
               }).then(res => {
               console.log('立即创建(muban):', res)
               if (res.code === 200) {
                 // 通知附件上传子组件清空附件域
-                that.isClear = true
+                that.IsClear = true
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
                 that.createProFormLoading = false
@@ -884,13 +895,13 @@ export default {
                 projectManager: that.ruleForm.projectManager,
                 projectManagerID: that.Mid,
                 introduction: that.ruleForm.introduction,
-                attachmentId: that.setFileIdStr(),
+                attachmentId: that.SetFileIdStr(),
                 // 如果类型是产品研发，下面的分类id
                 projectClassifyId: that.ruleForm.projectClassifyId
               }).then(res => {
               console.log('立即创建:', res)
               if (res.code === 200) {
-                that.isClear = true
+                that.IsClear = true
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
                 that.createProFormLoading = false
@@ -919,25 +930,25 @@ export default {
       this.$refs[formName].resetFields()
     },
     // 获取附件上传组件发来的附件信息
-    getFileInfo (obj) {
+    GetFileInfo (obj) {
       if (obj) {
-        this.isClear = false
+        this.IsClear = false
       }
-      this.fileUploadArr = obj
+      this.FileUploadArr = obj
       this.log('getFileInfo:', obj)
     },
     // 拼接附件上传的id为字符串
-    setFileIdStr () {
+    SetFileIdStr () {
       var that = this
       var FileIdStr = ''
-      for (var i = 0; i < that.fileUploadArr.length; i++) {
+      for (var i = 0; i < that.FileUploadArr.length; i++) {
         var splitIcon = ','
-        if (i === that.fileUploadArr.length - 1) {
+        if (i === that.FileUploadArr.length - 1) {
           splitIcon = ''
         }
-        FileIdStr = FileIdStr + that.fileUploadArr[i].attachmentId + splitIcon
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
       }
-      that.fileUploadArr = []
+      that.FileUploadArr = []
       return FileIdStr
     },
     getPageNum () {
@@ -1114,12 +1125,12 @@ export default {
     border-left: none !important;
   }
   .quan{
-    width: 14px;
-    height: 14px;
+    width: 17px;
+    height: 17px;
     border: 1px solid #3a8ee6;
     border-radius: 8px;
     display: inline-block;
-    line-height:14px;
+    line-height:17px;
     text-align: center;
     font-size: 10px;
     color: #3a8ee6;
@@ -1191,6 +1202,9 @@ export default {
     border-color: #78C3F3;
     color: #004974;
     text-decoration: none;
+  }
+  .showImg>img{
+    width: 100%;
   }
   /*历史记录 start*/
   /*历史记录 end*/
