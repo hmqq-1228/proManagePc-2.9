@@ -613,7 +613,7 @@ export default {
           // this.log('选择所属项目:', res)
           if (res.code === 200) {
             that.$message.success('删除成功！')
-            that.getCommicateCont()
+            // that.getCommicateCont()
             for (var i = 0; i < that.fileListComment.length; i++) {
               if (id === that.fileListComment[i].attachmentId) {
                 that.fileListComment.splice(i, 1)
