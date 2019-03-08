@@ -16,7 +16,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/HelloWorld',
       name: 'HelloWorld',
       component: HelloWorld
     },
@@ -47,6 +47,11 @@ export default new Router({
     },
     {
       path: '/ProEdit',
+      name: 'ProEdit',
+      component: ProEdit
+    },
+    {
+      path: '/ProEdit/:proId',
       name: 'ProEdit',
       component: ProEdit
     },

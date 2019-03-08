@@ -4,6 +4,8 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  // 激活的导航索引
+  activeNavIndex: 'group_0_0',
   count: 0,
   userId: '',
   debug: true,
@@ -55,6 +57,10 @@ const mutations = {
   },
   resetBreadcrumb: function (state, index) {
     state.routerList.splice(index, state.routerList.length)
+  },
+  // 设置侧边栏导航的激活
+  setSlidNavActive: function (state, index) {
+    // j
   }
 }
 export default new Vuex.Store({

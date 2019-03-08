@@ -1,6 +1,6 @@
 <template>
   <div class="ProEdit">
-    <div v-show="false">{{getStoreProId}}</div>
+    <div>{{getStoreProId?'':''}}</div>
     <!--面包屑-->
     <div style="padding: 5px;padding-top:0;border-bottom: 1px solid #eee; color: #999;">
       <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -1552,7 +1552,8 @@ export default {
     proId: function (val, oVal) {
       this.currentProId = val
       this.currentType = this.type
-      // this.getProjectDetail()
+      this.getProjectDetail()
+      this.queryProDetail()
     },
     commitComent: function (val, oVal) {
       if (val) {
@@ -2317,6 +2318,11 @@ export default {
       var that = this
       if (typeNum) {
         that.currentType = typeNum
+      }
+      if (!that.$store.state.proId) {
+        that.log('store里项目id为空，跳转至首页')
+        that.$router.push('/')
+        return
       }
       that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
         that.log('一级计划接口：', res)
