@@ -1890,10 +1890,10 @@ export default {
       if (query !== '') {
         this.loading2 = true
         that.moreUserSelectPayload.projectManager = query
-        this.ajax('/general/autoCompleteNames', that.moreUserSelectPayload).then(res => {
+        this.ajax('/myProject/autoCompleteNames', that.moreUserSelectPayload).then(res => {
           that.log('autoCompleteNames:', res)
           if (res.code === 200) {
-            that.options4 = res.msg
+            that.options4 = res.data
             this.loading2 = false
           }
         })
@@ -1907,10 +1907,10 @@ export default {
       if (query !== '') {
         this.loading22 = true
         that.moreUserSelectPayload2.projectManager = query
-        this.ajax('/general/autoCompleteNames', that.moreUserSelectPayload2).then(res => {
+        this.ajax('/myProject/autoCompleteNames', that.moreUserSelectPayload2).then(res => {
           that.log('autoCompleteNames:', res)
           if (res.code === 200) {
-            that.options42 = res.msg
+            that.options42 = res.data
             this.loading22 = false
           }
         })
@@ -2243,7 +2243,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        that.ajax('/general/dealTask', {taskId: id}).then(res => {
+        that.ajax('/myTask/startTask', {taskId: id}).then(res => {
           if (res.code === 200) {
             that.log('dealTask:', res)
             that.toDetail(id)
@@ -2460,14 +2460,14 @@ export default {
       var that = this
       if (queryString) {
         that.projectManager = queryString
-        this.ajax('/general/autoCompleteNames', {projectManager: that.projectManager}).then(res => {
+        this.ajax('/myProject/autoCompleteNames', {projectManager: that.projectManager}).then(res => {
           if (res.code === 200) {
             var dddarr = []
-            if (res.msg.length > 0) {
-              for (var i = 0; i < res.msg.length; i++) {
+            if (res.data.length > 0) {
+              for (var i = 0; i < res.data.length; i++) {
                 var obj = {}
-                obj.value = res.msg[i].Name + ' (' + res.msg[i].jName + ')'
-                obj.userId = res.msg[i].ID
+                obj.value = res.data[i].Name + ' (' + res.data[i].jName + ')'
+                obj.userId = res.data[i].ID
                 // obj.jName = res.msg[i].jName
                 dddarr.push(obj)
               }
@@ -2503,7 +2503,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        that.ajax('/general/restartTask', {taskId: id}).then(res => {
+        that.ajax('/myTask/restartTask', {taskId: id}).then(res => {
           if (res.code === 200) {
             this.log('restartTask', res)
             that.toDetail(id)

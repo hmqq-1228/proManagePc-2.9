@@ -508,14 +508,14 @@ export default {
       var that = this
       if (queryString) {
         that.autoCompleteNamesPayload.projectManager = queryString
-        this.ajax('/general/autoCompleteNames', that.autoCompleteNamesPayload).then(res => {
+        this.ajax('/myProject/autoCompleteNames', that.autoCompleteNamesPayload).then(res => {
           if (res.code === 200) {
             var dddarr = []
-            if (res.msg.length > 0) {
-              for (var i = 0; i < res.msg.length; i++) {
+            if (res.data.length > 0) {
+              for (var i = 0; i < res.data.length; i++) {
                 var obj = {}
-                obj.value = res.msg[i].Name + ' (' + res.msg[i].jName + ')'
-                obj.userId = res.msg[i].ID
+                obj.value = res.data[i].Name + ' (' + res.data[i].jName + ')'
+                obj.userId = res.data[i].ID
                 // obj.jName = res.msg[i].jName
                 dddarr.push(obj)
               }
