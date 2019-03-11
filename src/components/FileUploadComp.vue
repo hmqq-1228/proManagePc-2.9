@@ -1,5 +1,5 @@
 <template>
-  <div class="FileUploadComp">
+  <div class="FileUploadComp" v-loading="loading21">
     <form class="FileCompForm" :id="fileFormId" enctype="multipart/form-data">
       <div class="FileCompFormIcon"><img src="../../static/img/fujian.png" alt=""></div>
       <div class="FileCompIptWrap">选择文件
@@ -25,6 +25,7 @@ export default {
   props: ['clearInfo', 'fileFormId', 'FileDataList'],
   data () {
     return {
+      loading21: false,
       uploadFileName: '',
       uploadFileRe: '',
       commentDis: false,
@@ -101,6 +102,7 @@ export default {
     },
     addMarkInfo4 () {
       var that = this
+      that.loading21 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#' + that.fileFormId)[0])
       this.log(456)
@@ -133,17 +135,21 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading21 = false
+            that.log('fileListComment:', that.fileListComment)
             that.$emit('FileDataEmit', that.fileListComment)
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading21 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading21 = false
           }
         })
       } else {
@@ -152,6 +158,7 @@ export default {
           type: 'error',
           message: '评论内容不能为空'
         })
+        that.loading21 = false
       }
     }
   }
@@ -198,7 +205,7 @@ export default {
     color: #004974;
   }
   .FileCompIptText{
-    /*padding-top: 16px;*/
+    padding-top: 10px;
     margin-left: 10px;
   }
 </style>

@@ -2842,6 +2842,7 @@ export default {
     },
     addMarkInfo5 () {
       var that = this
+      that.loading9 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileRe2')[0])
       if (formData) {
@@ -2870,24 +2871,28 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading9 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading9 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading9 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading9 = false
       }
     },
     transferTask: function () {
@@ -2936,6 +2941,7 @@ export default {
     },
     addMarkInfo6 () {
       var that = this
+      that.loading11 = false
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#taskTransfer')[0])
       if (formData) {
@@ -2964,24 +2970,28 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading11 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading11 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading11 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading11 = false
       }
     },
     taskTransfer () {

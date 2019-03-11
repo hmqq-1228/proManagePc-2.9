@@ -1445,6 +1445,7 @@ export default {
     },
     addMarkInfoEdit () {
       var that = this
+      that.loadingEdit = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileEdit')[0])
       that.formData2 = formData
@@ -1474,24 +1475,28 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loadingEdit = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loadingEdit = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loadingEdit = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loadingEdit = false
       }
     },
     levelChange: function (rateval) {
@@ -1548,6 +1553,7 @@ export default {
     },
     addMarkInfo4 () {
       var that = this
+      that.loading2 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileRe')[0])
       if (formData) {
@@ -1577,16 +1583,19 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading2 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading2 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading2 = false
           }
         })
       } else {
@@ -1595,6 +1604,7 @@ export default {
           type: 'error',
           message: '评论内容不能为空'
         })
+        that.loading2 = false
       }
     },
     // 任务开始
@@ -1661,6 +1671,7 @@ export default {
     },
     addMarkInfo6 () {
       var that = this
+      that.loading11 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#taskTransfer')[0])
       if (formData) {
@@ -1690,24 +1701,28 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading11 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading11 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading11 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading11 = false
       }
     },
     taskTransfer () {
@@ -1867,6 +1882,7 @@ export default {
     },
     addMarkInfo5 () {
       var that = this
+      that.loading9 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileRe2')[0])
       if (formData) {
@@ -1896,24 +1912,28 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading9 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading9 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading9 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading9 = false
       }
     },
     confirmFinished () {
@@ -2080,6 +2100,7 @@ export default {
     },
     addMarkInfo3 () {
       var that = this
+      that.loading32 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileDel')[0])
       that.formData2 = formData
@@ -2110,24 +2131,28 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading32 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading32 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading32 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading32 = false
       }
     },
     moreClick2: function () {
