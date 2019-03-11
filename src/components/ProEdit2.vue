@@ -362,16 +362,25 @@
                     </el-form-item>
                     <el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">
                       <el-col :span="20">
-                        <el-date-picker type="datetime" :picker-options="pickerOptions0" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
-                                        :default-value="defaultTime"
-                                        v-model="form.date1" style="width: 300px;"
+                        <el-date-picker type="datetime"
+                          :picker-options="pickerOptions0"
+                          format="yyyy-MM-dd HH:mm:ss"
+                          value-format="yyyy-MM-dd HH:mm:ss"
+                          placeholder="选择日期"
+                          :default-value="defaultTime"
+                          v-model="form.date1" style="width: 300px;"
                         ></el-date-picker>
                       </el-col>
                     </el-form-item>
                     <el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">
                       <el-col :span="20">
-                        <el-date-picker type="datetime" :picker-options="pickerOptions0" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期" :default-value="defaultTime"
-                                        v-model="form.date2" style="width: 300px;"
+                        <el-date-picker type="datetime"
+                          :picker-options="pickerOptions0"
+                          format="yyyy-MM-dd HH:mm:ss"
+                          value-format="yyyy-MM-dd HH:mm:ss"
+                          placeholder="选择日期"
+                          :default-value="defaultTime"
+                          v-model="form.date2" style="width: 300px;"
                         ></el-date-picker>
                       </el-col>
                     </el-form-item>
@@ -3092,6 +3101,10 @@ export default {
             var et = res.data.taskFinishDate
             var sT = new Date(st)
             var eT = new Date(et)
+            that.form.date1 = res.data.taskStartDate
+            that.form.date2 = res.data.taskFinishDate
+            that.addTaskForm.date1 = res.data.taskStartDate
+            that.addTaskForm.date2 = res.data.taskFinishDate
             that.disabledStarTime = sT.getTime()
             that.disabledEndTime = eT.getTime()
             that.pickerOptions0.disabledDate = function (time) {
