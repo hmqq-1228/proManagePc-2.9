@@ -422,6 +422,7 @@ export default {
     }
   },
   created: function () {
+    // activeNavIndex: this.$store.state.activeNavIndex,
     // j
     var that = this
     this.proTypeList = this.proTypeList.concat(that.$store.state.projectType)

@@ -11,23 +11,24 @@
           <el-row>
           <el-col :span="24">
             <el-menu
-              default-active="0"
+              :default-active="activeNavIndex"
               class="el-menu-vertical-demo"
+              @select="generalSelect"
               background-color="#2f64a5"
               text-color="#fff"
               active-text-color="#ffd04b">
               <!--侧边栏 集团战略-->
-              <el-submenu v-for="(name, index) in slideMenuGroup" :index="JSON.stringify(index)" v-bind:key="index">
+              <el-submenu v-for="(name, index) in slideMenuGroup" :index="'group_' + index" v-bind:key="index">
                 <template slot="title">
                   <i class="el-icon-location"></i>
                   <span>{{name.projectType}}</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="nameItem.projectUID" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
+                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="'group_' + index + '_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
               <!--侧边栏 非集团战略-->
-              <el-menu-item v-for="(name, index2) in slideMenu" :index="JSON.stringify(index2)" v-bind:key="name.projectType + '-' + index2" @click="toMenu(name.projectType)">
+              <el-menu-item v-for="(name, index2) in slideMenu" :index="'general_' + index2" v-bind:key="name.projectType + '-' + index2" @click="toMenu(name.projectType)">
                 <i class="el-icon-menu"></i>
                 <span slot="title">{{name.projectType}}</span>
               </el-menu-item>
@@ -49,6 +50,7 @@ export default {
   name: 'App',
   data () {
     return {
+      activeNavIndex: this.$store.state.activeNavIndex,
       isCollapse: true,
       // 侧边栏 集团战略
       slideMenuGroup: [],
@@ -61,11 +63,20 @@ export default {
     }
   },
   created: function () {
-    this.log('参数：', this.$route.params.taskId)
+    // this.log('参数：proId:', this.$route.params.proId)
+    // this.$store.state.proId = this.$route.params.proId
     this.queryMenu()
     this.getPmsVersion()
   },
+  watch: {
+    activeNavIndex (val, old) {
+      this.log('activeNavIndex:', val)
+    }
+  },
   methods: {
+    generalSelect: function (menu) {
+      this.log('generalSelect:', menu)
+    },
     getPmsVersion: function () {
       var that = this
       that.ajax('/myProject/getVersion', {}).then(res => {
@@ -116,10 +127,15 @@ export default {
               that.slideMenu.push(res.data[i])
             }
           }
-          if (that.slideMenuGroup.length > 0) {
-            that.getProjectDetail(that.slideMenuGroup[0].projectList[0].projectUID, '1', '集团战略')
+          if (this.$route.params.proId) {
+            this.log(123)
+            that.getProjectDetail(this.$route.params.proId)
           } else {
-            that.getProjectDetail(that.slideMenu[0].projectUID, '2', '', that.slideMenu[0].projectType)
+            if (that.slideMenuGroup.length > 0) {
+              that.getProjectDetail(that.slideMenuGroup[0].projectList[0].projectUID, '1', '集团战略')
+            } else {
+              that.getProjectDetail(that.slideMenu[0].projectUID, '2', '', that.slideMenu[0].projectType)
+            }
           }
           that.$store.commit('setRouterName', {name: res.data[0].projectList[0].projectName, id: res.data[0].projectList[0].projectUID, type: 1})
         }
@@ -130,7 +146,7 @@ export default {
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
-          // this.$router.push('/HelloWorld')
+          this.$router.push('/ProEdit')
         }
       } else {
         if (proName === '我的日程') {
@@ -143,6 +159,10 @@ export default {
           this.$router.push('/MyPro')
         } else if (proName === '商品管理') {
           this.$router.push('/MyPro2')
+        } else {
+          this.activeNavIndex = ''
+          this.$store.state.activeNavIndex = ''
+          this.$store.state.proId = id
         }
       }
     }
