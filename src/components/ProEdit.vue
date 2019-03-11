@@ -1571,7 +1571,7 @@ export default {
     fileName: function (val, oval) {
     },
     proDetailMsg: function (newVal, oldVal) {
-      this.log('KKKKKKKKKK:', newVal)
+      // this.log('KKKKKKKKKK:', newVal)
       this.formValidate.proName = newVal.projectName
       this.formValidate.proManager = newVal.projectManager
       this.formValidate.projectManagerID = newVal.projectManagerID
@@ -1626,7 +1626,7 @@ export default {
     planHandleClick (row, clickType) {
       var that = this
       that.currentNodeId = row.planId
-      console.log('planHandleClick:', row)
+      // console.log('planHandleClick:', row)
       // planDateDur: "2018-10-10 至 2018-10-10"
       // planStartDate planFinishDate
       // planId: "P8de7eee479cd4fc9bdd43f4a323fd715"
@@ -1659,7 +1659,7 @@ export default {
       var that = this
       this.log('权限编辑查看：', checked + '-' + id + '-' + role)
       this.ajax('/myProject/editRole', JSON.stringify({projectUID: that.proId, projectOrg: [{id: id, role: role}]})).then(res => {
-        that.log('editRole:', res)
+        // that.log('editRole:', res)
       })
     },
     // 点击组织架构下的部门节点 查询部门和人员
@@ -1681,10 +1681,10 @@ export default {
     // 选中部门或者人员前面的方框
     changeState (e, state) {
       var that = this
-      this.log('changeState:', 888888)
+      // this.log('changeState:', 888888)
       that.deId = state.checkedNodes
       this.ajax('/myProject/queryMember', {departmentIDs: JSON.stringify(that.deId)}).then(res => {
-        that.log('queryMember_1:', res)
+        // that.log('queryMember_1:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.length; i++) {
             res.data[i].Name = res.data[i].Name.split(' ')[0]
@@ -1739,7 +1739,7 @@ export default {
           projectUID: that.proId,
           id: memId
         }).then(res => {
-          that.log('删除成员:', res)
+          // that.log('删除成员:', res)
           if (res.code === 200) {
             that.$message({
               type: 'success',
@@ -1765,7 +1765,7 @@ export default {
     getDepartment () {
       var that = this
       this.ajax('/myProject/queryDepartment', {}).then(res => {
-        this.log('queryDepartment:', res)
+        // this.log('queryDepartment:', res)
         if (res.code === 200) {
           that.data2 = res.data.department
           for (var i = 0; i < res.data.member.length; i++) {
@@ -1779,10 +1779,10 @@ export default {
     // 节点操作 展开更多 添加
     moreSelectOptions: function (nodeName, nodeId, nodeType, nodeData) {
       var that = this
-      this.log('nodeName:', nodeName)
-      this.log('nodeId:', nodeId)
-      this.log('nodeType:', nodeType)
-      this.log('nodeData:', nodeData)
+      // this.log('nodeName:', nodeName)
+      // this.log('nodeId:', nodeId)
+      // this.log('nodeType:', nodeType)
+      // this.log('nodeData:', nodeData)
       this.currentNodeId = nodeId
       if (nodeName === 'add') {
         this.addNode(nodeId, nodeType)
@@ -1803,7 +1803,7 @@ export default {
     },
     // 新建 添加子节点
     addNode: function (nodeId, nodeType) {
-      console.log('nodeId', nodeId)
+      // this.log('nodeId', nodeId)
       var that = this
       if (nodeType) {
         if (nodeType === '1' || nodeType === '计划') {
@@ -1840,7 +1840,7 @@ export default {
       // this.currentNodeId = nodeId
       this.modal_loading = true
       that.ajax('/myProject/delPlanOrTask', {id: that.currentNodeId}).then(res => {
-        that.log('delPlanOrTask:', res)
+        // that.log('delPlanOrTask:', res)
         if (res.code === 200) {
           // that.getChildNode(that.currentNodeId)
           that.queryProDetail()
@@ -1876,7 +1876,7 @@ export default {
           that.addPlanPayload.description = this.form.description
           // that.addPlanPayload._jfinal_token = this.token parentPlanId
           that.ajax('/myProject/addPlan', that.addPlanPayload).then(res => {
-            that.log('addplan:', res)
+            // that.log('addplan:', res)
             if (res.code === 200) {
               that.bgCoverShow = false
               that.token = res._jfinal_token
@@ -1903,7 +1903,7 @@ export default {
     getChildNode: function (childNodeId) {
       var that = this
       that.ajax('/myProject/getPlanOrTaskById', {id: childNodeId}).then(res => {
-        that.log('当期节点的子级返回:', res)
+        // that.log('当期节点的子级返回:', res)
         if (res.code === 200) {
           var oldData5 = that.data5
           for (var i = 0; i < that.data5.length; i++) {
@@ -1922,7 +1922,7 @@ export default {
             // }]
           }
           that.data5 = oldData5
-          that.log('that.data5:', that.data5)
+          // that.log('that.data5:', that.data5)
           // e.children = res.data.planOrJobList
         }
       })
@@ -1968,7 +1968,7 @@ export default {
             var lian = i === (that.value9.length - 1) ? '' : '_'
             user = user + that.value9[i].split('_')[0] + '-' + that.value9[i].split('_')[1] + lian
           }
-          this.log('user:', user)
+          // this.log('user:', user)
           that.loading = true
           this.addTaskPayload.parentId = this.currentNodeId
           this.addTaskPayload.jobName = this.addTaskForm.jobName
@@ -2008,12 +2008,12 @@ export default {
     // 新增 增加计划任务
     addTaskRemoteMethod (query) {
       var that = this
-      this.log('query:', query)
+      // this.log('query:', query)
       if (query !== '') {
         this.loading2 = true
         that.moreUserSelectPayload.projectManager = query
         this.ajax('/myProject/autoCompleteNames', that.moreUserSelectPayload).then(res => {
-          that.log('autoCompleteNames:', res)
+          // that.log('autoCompleteNames:', res)
           if (res.code === 200) {
             that.addTaskOptions = res.data
             this.loading2 = false
@@ -2030,7 +2030,7 @@ export default {
     },
     getPageNum () {
       this.pageN++
-      this.log(this.pageN)
+      // this.log(this.pageN)
       // this.pagenum = e
       this.getHistoryCont()
     },
@@ -2039,7 +2039,7 @@ export default {
       var that = this
       // var planid = this.$route.params.pid
       that.ajax('/myProject/getLogAndComment', {projectUID: that.proId, pageSize: 10, pageNum: that.pageN}).then(res => {
-        that.log('getLogAndComment:', res)
+        // that.log('getLogAndComment:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.list.length; i++) {
             for (var j = 0; j < res.data.list[i].uploads.length; j++) {
@@ -2055,10 +2055,10 @@ export default {
           that.taskLogs = that.taskLogs.concat(res.data.list)
           that.totalData = res.data.totalRow
           if (that.taskLogs.length === that.totalData) {
-            that.log('ss', that.taskLogs)
+            // that.log('ss', that.taskLogs)
             that.notMore = true
           }
-          that.log('taskLogs:', res)
+          // that.log('taskLogs:', res)
         }
       })
     },
@@ -2088,12 +2088,12 @@ export default {
     },
     // 新增
     startDateChange (date) {
-      this.log('startDate:', date)
+      // this.log('startDate:', date)
       this.formValidate.startDate = date
     },
     // 新增
     endDateChange (date) {
-      this.log('endDate:', date)
+      // this.log('endDate:', date)
       this.formValidate.endDate = date
     },
     // 新建 人员选择
@@ -2162,7 +2162,7 @@ export default {
           // that.editBaseInfoPayload.startDate = that.formValidate.startDate
           // that.editBaseInfoPayload.endDate = that.formValidate.endDate
           that.ajax('/myProject/editBaseInfo', that.editBaseInfoPayload).then(res => {
-            that.log('editBaseInfo:', res)
+            // that.log('editBaseInfo:', res)
             if (res.code === 200) {
               that.$Message.success('保存成功!')
               that.queryProDetail()
@@ -2196,11 +2196,11 @@ export default {
           obj.ID = that.taskForm.value9[i].split('-')[1]
           that.addMemPayload.hrocPeople.push(obj)
         }
-        console.log('value999999999:', that.addMemPayload.hrocPeople)
+        // console.log('value999999999:', that.addMemPayload.hrocPeople)
         that.addMemPayload.projectUID = this.proId
-        that.log('that.addMemPayload:', that.addMemPayload)
+        // that.log('that.addMemPayload:', that.addMemPayload)
         this.ajax('/myProject/addMembers', JSON.stringify(that.addMemPayload)).then(res => {
-          that.log('addMembers:', res)
+          // that.log('addMembers:', res)
           if (res.code === 200) {
             that.queryProGroupMember()
             that.queryProDetail()
@@ -2217,7 +2217,7 @@ export default {
     queryProGroupMember () {
       var that = this
       this.ajax('/myProject/getMembersByProjectUID', {projectUID: that.proId}).then(res => {
-        that.log('getMembersByProjectUID:', res)
+        // that.log('getMembersByProjectUID:', res)
         if (res.code === 200) {
           that.proGrpMemList = res.data
           for (var i = 0; i < res.data.length; i++) {
@@ -2239,12 +2239,12 @@ export default {
     // 新增 成员搜索
     remoteMethod (query) {
       var that = this
-      this.log('query:', query)
+      // this.log('query:', query)
       if (query !== '') {
         this.loading2 = true
         that.moreUserSelectPayload.projectManager = query
         this.ajax('/myProject/autoCompleteNames', that.moreUserSelectPayload).then(res => {
-          that.log('autoCompleteNames:', res)
+          // that.log('autoCompleteNames:', res)
           if (res.code === 200) {
             that.options4 = res.data
             this.loading2 = false
@@ -2275,7 +2275,7 @@ export default {
     queryProDetail: function () {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
-        that.log('新getProjectDetail:', res)
+        // that.log('新getProjectDetail:', res)
         if (res.code === 200) {
           that.memberList = res.data.memberList
           that.proDetailMsg = res.data
@@ -2314,18 +2314,18 @@ export default {
       // this.value4 = true
       var that = this
       this.$set(e, 'children', [])
-      that.ajax('/leader/getPlanOrTaskById', {id: e.id}).then(res => {
-        that.log('子级返回:', res)
+      that.ajax('/myProject/getPlanOrTaskById', {id: e.id}).then(res => {
+        // that.log('子级返回:', res)
         if (res.code === 200) {
-          for (var i = 0; i < res.data.planOrJobList.length; i++) {
-            res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
-            res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
-            res.data.planOrJobList[i].children = [{
+          for (var i = 0; i < res.data.length; i++) {
+            res.data[i].start = res.data[i].start.split(' ')[0]
+            res.data[i].finish = res.data[i].finish.split(' ')[0]
+            res.data[i].children = [{
               id: 1,
               name: '测试'
             }]
           }
-          e.children = res.data.planOrJobList
+          e.children = res.data
         }
       })
     },
@@ -2336,12 +2336,12 @@ export default {
         that.currentType = typeNum
       }
       if (!that.$store.state.proId) {
-        that.log('store里项目id为空，跳转至首页')
+        // that.log('store里项目id为空，跳转至首页')
         that.$router.push('/')
         return
       }
       that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
-        that.log('一级计划接口：', res)
+        // that.log('一级计划接口：', res)
         if (res.code === 200) {
           that.proDetailMsg = res.data.projectDetail
           // that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID, type: that.currentType})
@@ -2363,7 +2363,7 @@ export default {
       var that = this
       that.data5 = []
       that.ajax('/myProject/getPlanOrTaskById', {id: that.activeId}).then(res => {
-        that.log('nnnnnnnnn', res)
+        // that.log('nnnnnnnnn', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.length; i++) {
             res.data[i].start = res.data[i].start.split(' ')[0]
@@ -3097,7 +3097,7 @@ export default {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          that.log('getUserInfo', res)
+          // that.log('getUserInfo', res)
           that.defImplementer.name = res.data.Name
           that.defImplementer.id = res.data.ID
         }

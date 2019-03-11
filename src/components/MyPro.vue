@@ -426,7 +426,6 @@ export default {
     // j
     var that = this
     this.proTypeList = this.proTypeList.concat(that.$store.state.projectType)
-    this.log('this.proTypeList:', this.proTypeList)
     // 查询个人项目列表
     this.queryMyProjectView()
     // j
@@ -522,7 +521,7 @@ export default {
         // that.showProject = false
         that.dialogFormVisible = true
         that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
-          that.log('getUserInfo', res)
+          // that.log('getUserInfo', res)
           if (res.code === 200) {
             that.data2 = res.data
             // for (var i = 0; i <= res.data.length; i++) {
@@ -635,7 +634,7 @@ export default {
         content: '确定要删除此项目？此操作不可撤回！',
         onOk: () => {
           this.ajax('/myProject/delProjectById', {projectUID: pId}).then(res => {
-            console.log('delProjectById', res)
+            // this.log('delProjectById', res)
             if (res.code === 200) {
               this.$Message.info('删除成功！')
               this.$Modal.remove()
@@ -665,7 +664,7 @@ export default {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          console.log('getUserInfo', res)
+          // console.log('getUserInfo', res)
           that.$store.state.userId = res.data.ID
           that.ruleForm.projectManager = res.data.Name + ' (' + res.data.jName + ')'
           that.Mid = res.data.ID
@@ -686,7 +685,7 @@ export default {
     queryMyProjectView () {
       var that = this
       this.ajax('/myProject/myProjectView', that.myProjectViewPayload).then(res => {
-        console.log('项目卡片', res)
+        // console.log('项目卡片', res)
         if (res.code === 200) {
           // res.data.list
           this.pageTotalRow = res.data.totalRow
