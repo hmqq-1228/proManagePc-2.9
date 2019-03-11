@@ -70,12 +70,12 @@ export default {
   },
   watch: {
     activeNavIndex (val, old) {
-      this.log('activeNavIndex:', val)
+      // this.log('activeNavIndex:', val)
     }
   },
   methods: {
     generalSelect: function (menu) {
-      this.log('generalSelect:', menu)
+      // this.log('generalSelect:', menu)
     },
     getPmsVersion: function () {
       var that = this
@@ -118,7 +118,7 @@ export default {
     queryMenu: function () {
       var that = this
       this.ajax('/myTask/getProjectList', {}).then(res => {
-        this.log('请求侧边栏:', res)
+        // this.log('请求侧边栏:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.length; i++) {
             if (res.data[i].projectType === '集团战略') {
@@ -128,7 +128,7 @@ export default {
             }
           }
           if (this.$route.params.proId) {
-            this.log(123)
+            // this.log(123)
             that.getProjectDetail(this.$route.params.proId)
           } else {
             if (that.slideMenuGroup.length > 0) {
