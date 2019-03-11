@@ -22,7 +22,8 @@
               <div class="myMsg">
                 <div style="color: #28558c; font-size: 20px; margin-top: -6px"><Icon type="md-download" /></div>
                 <div style="margin-left: 10px; color: #28558c;">附件:
-                  <Icon v-bind:title="fileItem.showName" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl" style="font-size: 20px; " type="ios-document-outline" />
+                  <span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0"><Icon v-bind:title="fileItem.showName" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl" style="font-size: 20px; " type="ios-document-outline" /></span>
+                  <span style="color: #aaa;font-size: 14px" v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0">暂无附件</span>
                 </div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 8px; color: #2d8cf0;">
@@ -719,10 +720,11 @@
           <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
             <div class="childTaskName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
             <div class="childTaskMsg">
-              <div v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
-              <div v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
-              <div>{{childTask.userName}}</div>
-              <div class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div>
+              <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
+              <div style="width: 80px;" v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
+              <div style="width: 80px;" v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
+              <div style="width: 160px;">{{childTask.userName}}</div>
+              <div style="margin-right: 0" class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div>
             </div>
           </div>
           <div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="childTaskList.length === 0">
@@ -753,7 +755,7 @@
               <!--</div>-->
             <!--</div>-->
             <!-- old code end -->
-            <div><i-button type="info" v-bind:disabled="butnDisabled" @click="taskDetailconnect()">回复</i-button></div>
+            <div><i-button type="info" style="margin-top: 6px;" v-bind:disabled="butnDisabled" @click="taskDetailconnect()">回复</i-button></div>
           </div>
         </div>
         <div class="cannetProject1-1">
@@ -1880,6 +1882,10 @@ export default {
           var et = res.data.finish
           var sT = new Date(st)
           var eT = new Date(et)
+          that.form.date1 = res.data.start
+          that.form.date2 = res.data.finish
+          that.addTaskForm.date1 = res.data.start
+          that.addTaskForm.date2 = res.data.finish
           that.disabledStarTime2 = sT.getTime()
           that.disabledEndTime2 = eT.getTime()
           that.pickerOptionsPlan.disabledDate = function (time) {
@@ -4102,7 +4108,6 @@ export default {
     font-size: 14px;
     /*font-family: '黑体';*/
     padding:0 10px;
-    background-color: #f5f8fa;
   }
   .cannetProject1-1{
     height: 40px;
@@ -4169,13 +4174,13 @@ export default {
     line-height: 48px;
   }
   .childTaskName{
-    width: 60%;
+    width: 40%;
     color: #409EFF;
     cursor: pointer;
     font-size: 14px;
   }
   .childTaskMsg{
-    width: 40%;
+    width: 60%;
     text-align: right;
   }
   .childTaskMsg>div{
@@ -4283,7 +4288,6 @@ export default {
   .fileUploadCao{
     display: flex;
     justify-content: space-between;
-    background-color: #f5f8fa;
     padding: 10px;
   }
   .selectLeft{
@@ -4378,5 +4382,14 @@ export default {
   }
   .tableProTitle{
     font-size: 16px;
+  }
+  .childTaskStyle0{
+    color: #ffc107;
+  }
+  .childTaskStyle1{
+    color: #13ce66;
+  }
+  .childTaskStyle2{
+    color: #409EFF;
   }
 </style>

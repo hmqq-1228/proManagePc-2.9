@@ -192,7 +192,7 @@
               <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
               <div style="width: 80px;" v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
               <div style="width: 80px;" v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
-              <div style="width: 150px;">{{childTask.userName}}</div>
+              <div style="width: 160px;">{{childTask.userName}}</div>
               <div style="margin-right: 0;width: 20px;"><div class="taskDel" v-if="childTask.showDeleteFlag" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div></div>
             </div>
           </div>
@@ -1871,7 +1871,7 @@ export default {
           that.toDetail()
           that.selectProjectId()
           that.getHistoryList()
-          that.commitComentF = ''
+          that.commitComentF = '已完成'
           that.fileListFinish = []
           $('.showFileName2').html('')
           $('#myfileF').val('')
