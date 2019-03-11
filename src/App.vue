@@ -68,7 +68,7 @@ export default {
   methods: {
     getPmsVersion: function () {
       var that = this
-      that.ajax('/general/getVersion', {}).then(res => {
+      that.ajax('/myProject/getVersion', {}).then(res => {
         if (res.code === 200) {
           that.version = res.data
         }

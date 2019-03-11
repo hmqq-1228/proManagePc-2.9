@@ -684,10 +684,10 @@ export default {
       if (query !== '') {
         this.loading2 = true
         that.moreUserSelectPayload.projectManager = query
-        this.ajax('/general/autoCompleteNames', that.moreUserSelectPayload).then(res => {
+        this.ajax('/myProject/autoCompleteNames', that.moreUserSelectPayload).then(res => {
           that.log('autoCompleteNames:', res)
           if (res.code === 200) {
-            that.options4 = res.msg
+            that.options4 = res.data
             this.loading2 = false
           }
         })

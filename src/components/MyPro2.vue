@@ -827,7 +827,7 @@ export default {
     // 新增 查询用户信息
     getUserInfo: function () {
       var that = this
-      this.ajax('/general/getUserInfo', {}).then(res => {
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
           console.log('getUserInfo', res)
           that.$store.state.userId = res.data.ID
@@ -972,15 +972,15 @@ export default {
       var that = this
       if (queryString) {
         that.autoCompleteNamesPayload.projectManager = queryString
-        this.ajax('/general/autoCompleteNames', that.autoCompleteNamesPayload).then(res => {
+        this.ajax('/myProject/autoCompleteNames', that.autoCompleteNamesPayload).then(res => {
           // console.log('search:', res)
           if (res.code === 200) {
             var dddarr = []
-            if (res.msg.length > 0) {
-              for (var i = 0; i < res.msg.length; i++) {
+            if (res.data.length > 0) {
+              for (var i = 0; i < res.data.length; i++) {
                 var obj = {}
-                obj.value = res.msg[i].Name + ' (' + res.msg[i].jName + ')'
-                obj.userId = res.msg[i].ID
+                obj.value = res.data[i].Name + ' (' + res.data[i].jName + ')'
+                obj.userId = res.data[i].ID
                 // obj.jName = res.msg[i].jName
                 dddarr.push(obj)
               }
@@ -1063,7 +1063,7 @@ export default {
         if (valid) {
           if (that.Mid) {
             that.loading = true
-            that.ajax('/general/addBaseInfo',
+            that.ajax('/myProject/addBaseInfo',
               {
                 projectManagerID: that.Mid,
                 projectName: this.ruleForm.projectName,
