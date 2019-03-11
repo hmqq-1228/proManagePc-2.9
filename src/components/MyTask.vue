@@ -232,15 +232,16 @@
       </div>
     </el-dialog>
     <!--任务移交-->
-    <el-dialog title="任务移交" :visible.sync="taskTransferVisible" v-loading="loading11" width="26%">
-      <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
-      <el-autocomplete style="width:90%"
-         v-model="projectManager"
-         :fetch-suggestions="querySearchAsync"
-         placeholder="请输入移交人姓名"
-         :trigger-on-focus="false"
-         @select="handleSelect"
-      ></el-autocomplete>
+    <el-dialog title="任务移交" :visible.sync="taskTransferVisible" width="26%">
+      <div v-loading="loading11">
+        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
+        <el-autocomplete style="width:90%"
+           v-model="projectManager"
+           :fetch-suggestions="querySearchAsync"
+           placeholder="请输入移交人姓名"
+           :trigger-on-focus="false"
+           @select="handleSelect"
+        ></el-autocomplete>
         <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交备注：</div>
         <textarea name="remark" class="el-textarea__inner" id="Transfer" type="text" v-model="commitComentT"></textarea>
         <!--<div class="cannetProject2">-->
@@ -267,6 +268,7 @@
           <i-button @click="concelTransfer()">取消</i-button>
           <i-button type="info" v-bind:disabled="butnDisabledT" @click="taskTransfer()">确定</i-button>
         </div>
+      </div>
         <!--</div>-->
     </el-dialog>
     <!---->
@@ -1329,6 +1331,7 @@ export default {
     },
     addMarkInfoEdit () {
       var that = this
+      that.loadingEdit = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileEdit')[0])
       that.formData2 = formData
@@ -1363,16 +1366,19 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loadingEdit = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loadingEdit = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loadingEdit = false
           }
         })
       } else {
@@ -1381,6 +1387,7 @@ export default {
           type: 'error',
           message: '内容不能为空'
         })
+        that.loadingEdit = false
       }
     },
     queryMyProjectList () {
@@ -1949,6 +1956,7 @@ export default {
     // 文件上传
     addMarkInfo () {
       var that = this
+      that.loading3 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFile')[0])
       that.formData = formData
@@ -1975,6 +1983,7 @@ export default {
             that.fileListLen = that.fileList.length
             // that.attachmentId = data.data.attachmentId
             that.log('attachmentId:', that.fileList)
+            that.loading3 = false
             that.$message({
               type: 'success',
               message: '文件' + data.msg
@@ -1984,23 +1993,27 @@ export default {
               type: 'error',
               message: data.msg
             })
+            that.loading3 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading3 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading3 = false
       }
     },
     addMarkInfo3 () {
       var that = this
+      that.loading32 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileDel')[0])
       that.formData2 = formData
@@ -2031,6 +2044,7 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading32 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
@@ -2041,14 +2055,16 @@ export default {
               type: 'error',
               message: data.msg
             })
+            that.loading32 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading32 = false
       }
     },
     // 抽屉
@@ -2066,6 +2082,7 @@ export default {
     // 沟通
     addMarkInfo4 () {
       var that = this
+      that.loading8 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileRe')[0])
       if (formData) {
@@ -2095,24 +2112,28 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading8 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading8 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading8 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading8 = false
       }
     },
     getTaskChildList: function (id) {
@@ -2275,6 +2296,7 @@ export default {
     },
     addMarkInfo5 () {
       var that = this
+      that.loading9 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileRe2')[0])
       if (formData) {
@@ -2304,24 +2326,28 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading9 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading9 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading9 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading9 = false
       }
     },
     confirmFinished () {
@@ -2374,6 +2400,7 @@ export default {
     },
     addMarkInfo6 () {
       var that = this
+      that.loading11 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#taskTransfer')[0])
       if (formData) {
@@ -2403,24 +2430,28 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading11 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading11 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading11 = false
           }
         })
       } else {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
+        that.loading11 = false
       }
     },
     taskTransfer () {

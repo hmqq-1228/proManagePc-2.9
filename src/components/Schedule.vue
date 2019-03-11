@@ -1235,6 +1235,7 @@ export default {
         if (res.code === 200) {
           that.log('myTaskView:', res)
           that.getCommicateCont()
+          that.IsClear = true
           that.fileListComment = []
           that.commitComent = ''
           $('.showFileName').html('')
@@ -1623,7 +1624,7 @@ export default {
     background-color: #f5f8fa;
   }
   .cannetProject21{
-    width: 90%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     line-height: 24px;
@@ -1727,11 +1728,18 @@ export default {
     margin-left: 10px;
   }
   .el-textarea__inner{
-    width: 90%;
+    width: 100%;
     min-height: 80px;
   }
   .showImg>img{
     width: 100%;
+  }
+  .noComment{
+    height: 100px;
+    width: 100%;
+    text-align: center;
+    line-height: 100px;
+    color: #999;
   }
   /** 抽屉样式 e */
 </style>

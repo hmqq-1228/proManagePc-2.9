@@ -713,6 +713,7 @@ export default {
     // 文件上传
     addMarkInfo () {
       var that = this
+      that.loading3 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFile')[0])
       that.formData = formData
@@ -741,16 +742,19 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading3 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading3 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading3 = false
           }
         })
       } else {
@@ -759,6 +763,7 @@ export default {
           type: 'error',
           message: '评论内容不能为空'
         })
+        that.loading3 = false
       }
     }
   }

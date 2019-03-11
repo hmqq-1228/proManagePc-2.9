@@ -40,7 +40,7 @@
           <div class="memName"><Icon size="30" type="ios-person-outline" /></div>
           <div class="memBox">
             <div v-if="memberList.length > 0" v-for="member in memberList" v-bind:key="member.userName">{{member.userName}}</div>
-            <div class="moreBtn" v-on:click="moreMemberClick()"><Button size="small" type="primary">更多 / 编辑</Button></div>
+            <div class="moreBtn" v-on:click="moreMemberClick()"><Button size="small" type="primary">添加 / 编辑</Button></div>
           </div>
         </div>
         <!-- 一级计划 start -->
@@ -181,7 +181,7 @@
             <div class="tblTitItem">姓名</div>
             <div class="tblTitItem">查看</div>
             <div class="tblTitItem">编辑</div>
-            <div class="tblTitItem">清空</div>
+            <div class="tblTitItem"><span class="clearAll" title="清空" v-on:click="delMember(0)">清空</span></div>
           </div>
           <div class="memTblList">
             <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">
@@ -189,7 +189,7 @@
               <div class="memListItem">{{mem.userName}}</div>
               <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
               <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
-              <div class="memListItem">x</div>
+              <div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>
             </div>
           </div>
         </div>
@@ -441,18 +441,14 @@
                     <el-form-item label="任务描述" prop="description" maxlength="100" width="100">
                       <el-input class="planNameIpt" v-bind:disabled="isDisabled" type="textarea" :rows="2" v-model="addTaskForm.description" style="width: 300px;"></el-input>
                     </el-form-item>
-                    <el-form-item style="height: 40px;"></el-form-item>
+                    <el-form-item label="任务附件">
+                      <component v-bind:is="FileUploadComp" fileFormId="fileTest" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+                    </el-form-item>
                     <el-form-item>
                       <el-button type="primary" @click="onTaskSubmit('addTaskForm')">立即创建</el-button>
                       <el-button @click="onPlanTaskCancel()">取消</el-button>
                     </el-form-item>
                   </el-form>
-                  <form id="mytaskForm" enctype="multipart/form-data" style="position: absolute;bottom:40px;padding-left: 12px;">
-                    <div style="font-size: 14px;color: #555;height: 30px;line-height: 30px;display: inline-block;">添加附件</div>&nbsp;&nbsp;
-                    <input type="file" id="myfile" name="myfile" placeholder="请选择文件" style="width: 200px;" />
-                    <input type="hidden" name="formId" v-bind:value="formId">
-                    <div style="padding-left: 70px;font-size: 12px;height: 16px;color: #409eff">{{upLoadName}}</div>
-                  </form>
                 </div>
                 <!---->
               </el-tab-pane>
@@ -880,10 +876,21 @@
 </template>
 
 <script>
+import FileUploadComp from './FileUploadComp.vue'
 export default {
   name: 'ProEdit2',
+  components: {
+    FileUploadComp
+  },
   data () {
     return {
+      FileUploadArr: [],
+      // 是否让子组件清空文件 新组件
+      IsClear: false,
+      // 引入附件上传组件 新组件
+      FileUploadComp: 'FileUploadComp',
+      // 附件上传 附件ID拼接成字符串
+      FileUploadIdStr: '',
       // 编辑计划
       editPlanPayload: {
         planId: '1',
@@ -1438,6 +1445,29 @@ export default {
     }
   },
   methods: {
+    // 获取附件上传组件发来的附件信息 新组件
+    GetFileInfo (obj) {
+      this.log('GetFileInfo:', obj)
+      if (obj) {
+        this.IsClear = false
+      }
+      this.FileUploadArr = obj
+      this.log('GetFileInfo:', obj)
+    },
+    // 拼接附件上传的id为字符串
+    SetFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.FileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.FileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
+      }
+      that.FileUploadArr = []
+      return FileIdStr
+    },
     toProject: function (id) {
       this.$store.state.proId = id
       this.$router.push('/ProEdit')
@@ -1551,6 +1581,31 @@ export default {
       this.ajax('/myProject/editRole', JSON.stringify({projectUID: that.proId, projectOrg: [{id: id, role: role}]})).then(res => {
         that.log('editRole:', res)
       })
+    },
+    // 删除成员
+    delMember (memId) {
+      var that = this
+      if (memId || memId === 0) {
+        that.ajax('/myProject/delMembersById', {
+          projectUID: that.proId,
+          id: memId
+        }).then(res => {
+          that.log('删除成员:', res)
+          if (res.code === 200) {
+            that.$message({
+              type: 'success',
+              message: res.msg
+            })
+            that.queryProGroupMember()
+            that.queryProDetail()
+            // that.getProjectPeo()
+            that.loading = false
+            // that.deId = []
+          } else {
+            that.$message(res.msg)
+          }
+        })
+      }
     },
     // 点击组织架构下的部门节点 查询部门和人员
     append (data) {
@@ -1800,6 +1855,7 @@ export default {
           this.addTaskPayload.taskStartDate = this.addTaskForm.date1
           this.addTaskPayload.taskFinishDate = this.addTaskForm.date2
           this.addTaskPayload.description = this.addTaskForm.description
+          this.addTaskPayload.attachmentId = that.SetFileIdStr()
           // this.addTaskPayload._jfinal_token = this.token
           // this.addTaskPayload.formId = this.formId
           this.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
@@ -1810,6 +1866,7 @@ export default {
                 that.loading = false
                 that.formId = ''
                 that.bgCoverShow = false
+                that.IsClear = true
                 // that.formDataClear()
                 // that.queryProDetail()
                 // that.queryManagePlan5()
@@ -2093,6 +2150,8 @@ export default {
           if (res.code === 200) {
             that.queryProGroupMember()
             that.queryProDetail()
+            that.addMemPayload.hrocPeople = []
+            that.taskForm.value9 = []
             // that.proGrpMemList = res.data
             // that.options4 = res.data peopleRole
             // this.loading2 = false
@@ -3959,5 +4018,10 @@ export default {
   }
   .childTaskStyle2{
     color: #409EFF;
+  }
+  .clearAll{
+    color: #409EFF;
+    cursor: pointer;
+    margin-left: 6px;
   }
 </style>

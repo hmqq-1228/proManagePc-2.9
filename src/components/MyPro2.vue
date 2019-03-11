@@ -642,6 +642,7 @@ export default {
     },
     addMarkInfo4 () {
       var that = this
+      that.loading8 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#uploadFileRe')[0])
       if (formData) {
@@ -671,16 +672,19 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
+            that.loading8 = false
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading8 = false
           } else {
             that.$message({
               type: 'error',
               message: data.msg
             })
+            that.loading8 = false
           }
         })
       } else {
@@ -689,6 +693,7 @@ export default {
           type: 'error',
           message: '内容不能为空'
         })
+        that.loading8 = false
       }
     },
     addMarkInfo2 () {
