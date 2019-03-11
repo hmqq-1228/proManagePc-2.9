@@ -17,12 +17,19 @@
           </div>
           <div class="topConRt">
             <div>
-              <div class="myMsg"><div><img src="../../static/img/my.png" alt=""></div><div style="margin-left: 10px;">{{proDetailMsg.projectManager}}</div></div>
+              <div class="myMsg">
+                <div><img src="../../static/img/my.png" alt=""></div><div style="margin-left: 10px;">{{proDetailMsg.projectManager}}</div>
+              </div>
               <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">{{startPlanDate}} 到 {{endPlanDate}}</div></div>
               <div class="myMsg">
-                <div style="color: #28558c; font-size: 20px; margin-top: -6px"><Icon type="md-download" /></div>
+                <div style="color: #28558c; font-size: 20px; margin-top: -6px"><Icon type="ios-image" /></div>
                 <div style="margin-left: 10px; color: #28558c;">附件:
-                  <span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0"><Icon v-bind:title="fileItem.showName" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl" style="font-size: 20px; " type="ios-document-outline" /></span>
+                  <span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0">
+                    <span v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl">
+                      <Icon v-bind:title="fileItem.showName" @click="showImagePre(fileItem.previewUrl, fileItem.showName)" style="font-size: 20px; " type="ios-document-outline" />
+                      <!--<Icon type="ios-arrow-round-down" />-->
+                    </span>
+                  </span>
                   <span style="color: #aaa;font-size: 14px" v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0">暂无附件</span>
                 </div>
               </div>
@@ -69,50 +76,6 @@
           </div>
         </div>
       </div>
-      <!--项目计划树 start-->
-      <!--<div class="block">-->
-        <!--<el-tree-->
-          <!--:data="data5"-->
-          <!--:props="defaultTreeProps"-->
-          <!--node-key="id"-->
-          <!--@node-expand="getNodeMsg($event)"-->
-          <!--:expand-on-click-node="false">-->
-          <!--<span class="custom-tree-node" slot-scope="{ node, data }">-->
-            <!--<span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>-->
-            <!--<span class="proMsg">-->
-              <!--<span class="treeName">-->
-                <!--<span v-if="data.type === '2'">-->
-                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>-->
-                  <!--<span style="float: left;margin-left: 16px;">{{data.userName}}</span>-->
-                <!--</span>-->
-              <!--</span>-->
-              <!--<span class="treeState">-->
-                 <!--<span v-if="data.type === '2'">-->
-                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>-->
-                  <!--<span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>-->
-                  <!--<span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>-->
-                  <!--<span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>-->
-                 <!--</span>-->
-              <!--</span>-->
-              <!--<span class="treeTime">-->
-                <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>-->
-                <!--<span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>-->
-              <!--</span>-->
-              <!--<span class="treeTime">-->
-                <!--<Dropdown @on-click="moreSelectOptions($event, data.id)">-->
-                  <!--<a href="javascript:void(0)">下拉菜单<Icon type="ios-arrow-down"></Icon></a>-->
-                  <!--<DropdownMenu slot="list">-->
-                    <!--<DropdownItem name="add">添加</DropdownItem>-->
-                    <!--<DropdownItem name="del">删除</DropdownItem>-->
-                    <!--<DropdownItem name="edit">编辑</DropdownItem>-->
-                  <!--</DropdownMenu>-->
-                <!--</Dropdown>-->
-              <!--</span>-->
-            <!--</span>-->
-          <!--</span>-->
-        <!--</el-tree>-->
-      <!--</div>-->
-      <!--项目计划树 end-->
       <!--项目计划树 老版本 start-->
       <div class="block">
         <el-tree
@@ -250,6 +213,10 @@
             </FormItem>
             <FormItem label="项目简介" prop="desc">
               <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入项目简介" />
+            </FormItem>
+            <!--基本信息 项目附件-->
+            <FormItem label="项目附件" prop="desc2">
+              <component v-bind:is="FileUploadComp" v-on:FilePreEmit="GetFilePreData" v-bind:FileDataList="proFileList" fileFormId="BaseInfo" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
             </FormItem>
             <FormItem>
               <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
@@ -600,7 +567,7 @@
           <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
           <span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">
             <span style="display: inline-block;">{{file.showName}}</span>
-            <span v-if="file.isImg" @click="showImagePre(file.previewUrl)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
+            <span v-if="file.isImg" @click="showImagePre(file.previewUrl, file.showName)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
             <span style="display: inline-block;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
           </span>
           </div>
@@ -1058,6 +1025,7 @@ export default {
     return {
       // 产品研发 树形结构 单选
       i: 0,
+      proFileList: [],
       pageN: 1,
       commentPreviewUrl1: '',
       dialogShowImg1: false,
@@ -1501,7 +1469,8 @@ export default {
         startDate: '',
         endDate: '',
         formIds: '',
-        projectClassifyId: ''
+        projectClassifyId: '',
+        attachmentId: ''
       },
       // 新增
       autoCompleteNamesPayload: {
@@ -1607,6 +1576,20 @@ export default {
     },
     proDetailMsg: function (newVal, oldVal) {
       var that = this
+      if (newVal) {
+        that.proFileList = []
+        var fileListArr = []
+        for (var i = 0; newVal.fileList && i < newVal.fileList.length; i++) {
+          var obj = {
+            attachmentId: newVal.fileList[i].id,
+            fileName: newVal.fileList[i].showName,
+            previewUrl: newVal.fileList[i].previewUrl
+          }
+          fileListArr.push(obj)
+        }
+        that.proFileList = that.proFileList.concat(fileListArr)
+      }
+      this.log('watch:proDetailMsg:', newVal)
       this.formValidate.proName = newVal.projectName
       this.formValidate.proManager = newVal.projectManager
       this.formValidate.projectManagerID = newVal.projectManagerID
@@ -2271,11 +2254,13 @@ export default {
           that.editBaseInfoPayload.projectClassifyId = that.formValidate.projectClassifyId
           that.editBaseInfoPayload.startDate = that.DateFormat(that.formValidate.startDate)
           that.editBaseInfoPayload.endDate = that.DateFormat(that.formValidate.endDate)
+          that.editBaseInfoPayload.attachmentId = that.SetFileIdStr()
           // that.editBaseInfoPayload.startDate = that.formValidate.startDate
           // that.editBaseInfoPayload.endDate = that.formValidate.endDate
           that.ajax('/myProject/editBaseInfo', that.editBaseInfoPayload).then(res => {
             // that.log('editBaseInfo:', res)
             if (res.code === 200) {
+              that.IsClear = true
               that.$Message.success('保存成功!')
               that.queryProDetail()
               that.DrawerBaseEdit = false
@@ -2541,9 +2526,11 @@ export default {
         // })
       }
     },
-    showImagePre: function (url) {
-      this.dialogFormVisible = true
-      this.showFileUrl = url
+    showImagePre: function (url, showName) {
+      if (this.isImage(showName)) {
+        this.dialogFormVisible = true
+        this.showFileUrl = url
+      }
     },
     showImagePreCom: function (url) {
       if (url) {
@@ -3403,6 +3390,12 @@ export default {
       }
       this.FileUploadArr = obj
       this.log('GetFileInfo:', obj)
+    },
+    // 预览
+    GetFilePreData (obj) {
+      if (obj.previewUrl && this.isImage(obj.fileName)) {
+        this.showBigImage1(obj.previewUrl)
+      }
     },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {

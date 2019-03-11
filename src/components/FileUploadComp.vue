@@ -11,7 +11,10 @@
       <span style="color: #f00" v-if="fileListComment.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
       <span v-if="fileListComment.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个附件:</span>
       <!--<span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>-->
-      <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>, </span>
+      <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index">
+        <span style="color: #333" @click="FilePreEmitFuc(file.previewUrl, file.fileName, file.attachmentId)">{{index+1}}、{{file.fileName}}</span>
+        <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>
+      </span>
     </div>
   </div>
 </template>
@@ -19,7 +22,7 @@
 <script>
 export default {
   name: 'FileUploadComp',
-  props: ['clearInfo', 'fileFormId'],
+  props: ['clearInfo', 'fileFormId', 'FileDataList'],
   data () {
     return {
       uploadFileName: '',
@@ -30,6 +33,12 @@ export default {
     }
   },
   watch: {
+    FileDataList (val, old) {
+      this.log('FileDataList:', val)
+      if (val) {
+        this.fileListComment = val
+      }
+    },
     clearInfo (val, old) {
       var that = this
       that.log('接收到父组件传值', val)
@@ -49,6 +58,9 @@ export default {
     }
   },
   methods: {
+    FilePreEmitFuc: function (previewUrl, fileName, attachmentId) {
+      this.$emit('FilePreEmit', {previewUrl, fileName, attachmentId})
+    },
     getFileName: function (filename) {
       // this.log('ddddd:', filename)
       var that = this
@@ -107,10 +119,12 @@ export default {
         }).then(function (data) {
           that.log('upload:', data)
           if (data.code === 200) {
+            that.log('uploadFileAjax:', data)
             // that.attachmentId2 = data.data.attachmentId
             var obj = {
               attachmentId: data.data.attachmentId,
-              fileName: data.data.showName
+              fileName: data.data.showName,
+              previewUrl: data.data.previewUrl
             }
             that.fileListComment.push(obj)
             // that.log('fileListComment:', that.fileListComment.length)
@@ -119,7 +133,6 @@ export default {
               type: 'success',
               message: '文件' + data.msg
             })
-            that.log('fileListComment:', that.fileListComment)
             that.$emit('FileDataEmit', that.fileListComment)
           } else if (data.code === 300) {
             that.$message({

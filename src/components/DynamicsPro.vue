@@ -46,7 +46,7 @@
       <!---->
       <div class="tabsCntItem" v-for="(taskItem, taskIndex) in taskList" :key="taskItem.uid + '-' + taskIndex">
         <div class="headPicBox">
-          <div class="headPic" v-bind:class="taskItem.proType">{{taskItem.projectType.substring(0,2)}}</div>
+          <div class="headPic" v-bind:class="taskItem.proType">{{taskItem.projectType}}</div>
         </div>
         <div class="tabsCntBox">
           <div class="tabsCntTitBox">
@@ -113,7 +113,10 @@
                 </div>
               </div>
               <div class="tabsTaskCntRight">
-                <div class="TaskManager"><span>{{taskItem.startDate.split(' ')[0] + '至' + taskItem.endDate.split(' ')[0]}}</span></div>
+                <!--<div class="TaskManager"><span>{{taskItem.startDate + '%' +  taskItem.endDate}}</span></div>-->
+                <div class="TaskManager">
+                  <span>{{taskItem.startDate ? taskItem.startDate.split(' ')[0] + '至' + taskItem.endDate.split(' ')[0] : ''}}</span>
+                </div>
                 <div class="TaskManager" v-if="taskItem.overDay>0?true:false">{{taskItem.statusInfo}}：<span>{{taskItem.overDay}}天</span></div>
               </div>
             </div>
@@ -419,6 +422,7 @@ export default {
               oTime: '',
               oTitle: ''
             }
+            // alert('oTime:' + res.data.list[i].logs[0].oTime)
             var thisYear = res.data.list[i].logs[0].oTime.substring(0, 4)
             tobj.logtype = res.data.list[i].logs[0].oTime.substring(0, 4)
             tobj.keyid = 'id_' + i + '_' + tobj.logtype + '_' + tobj.oContent
@@ -561,7 +565,6 @@ export default {
       var c = -1
       for (var i = 0; i < that.taskList.length; i++) {
         if (that.taskList[i].projectUID === id) {
-          this.log(123)
           c = i
           that.taskList[i].responseHeight = 0
           obj = that.taskList[i]

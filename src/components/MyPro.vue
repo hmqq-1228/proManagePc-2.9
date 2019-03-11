@@ -593,7 +593,9 @@ export default {
               res.data.list[i].uploads[j].downloadUrl = downurl
             }
           }
+          that.taskLogs = []
           that.taskLogs = that.taskLogs.concat(res.data.list)
+          that.log('taskLogs:', that.taskLogs)
           that.totalData = res.data.totalRow
           if (that.taskLogs.length === that.totalData) {
             that.log('ss', that.taskLogs)
