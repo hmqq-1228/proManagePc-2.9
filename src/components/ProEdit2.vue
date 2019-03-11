@@ -21,7 +21,10 @@
               <div class="dataMsg"><div><img src="../../static/img/data.png" alt=""></div><div style="margin-left: 10px;">{{startPlanDate}} 到 {{endPlanDate}}</div></div>
               <div class="myMsg">
                 <div style="color: #28558c; font-size: 20px; margin-top: -6px"><Icon type="md-download" /></div>
-                <div style="margin-left: 10px;">附件: <Icon v-bind:title="fileItem.showName" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl" style="font-size: 20px; " type="ios-document-outline" /></div>
+                <div style="margin-left: 10px;">附件:
+                  <span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0"><Icon v-bind:title="fileItem.showName" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl" style="font-size: 20px; " type="ios-document-outline" /></span>
+                  <span style="color: #888;" v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0">暂无附件</span>
+                </div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 15px;">
                 <!--<Button type="primary" size="small" style="margin-right: 15px;" v-on:click="proBaseEditClick()">编辑</Button>-->
@@ -37,7 +40,7 @@
           <div class="memName"><Icon size="30" type="ios-person-outline" /></div>
           <div class="memBox">
             <div v-if="memberList.length > 0" v-for="member in memberList" v-bind:key="member.userName">{{member.userName}}</div>
-            <div class="moreBtn" v-on:click="moreMemberClick()"><Button>更多 / 编辑</Button></div>
+            <div class="moreBtn" v-on:click="moreMemberClick()"><Button size="small" type="primary">更多 / 编辑</Button></div>
           </div>
         </div>
         <!-- 一级计划 start -->
@@ -46,7 +49,7 @@
           <div class="planBox" style="position: relative;">
             <!--v-on:click="addNode(firstPlanId)"-->
             <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
-            <Button style="margin-top: 16px; margin-left: 20px; position: absolute; right: 10px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">编辑</Button>
+            <Button style="margin-top: 16px; margin-left: 20px; position: absolute; right: 10px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">添加 / 编辑</Button>
           </div>
           <!--<div class="planBox2" v-if="planList.length === 0">暂无子计划</div>-->
         </div>
@@ -55,7 +58,7 @@
       <div class="devide">
         <div class="proTreeHeader">
           <div>项目详情</div>
-          <div v-if="planList.length > 0"><Button size="small" type="primary" v-on:click="addNode(activeId)">+ 计划 / 任务</Button></div>
+          <div v-if="planList.length > 0" style="margin-right: 14px;"><Button size="small" type="primary" v-on:click="addNode(activeId)">+ 计划 / 任务</Button></div>
         </div>
       </div>
       <el-dialog title="图片预览" :visible.sync="showBigImageVisible">
@@ -3210,7 +3213,7 @@ export default {
   }
   .memBox div.moreBtn{
     padding: 4px 8px;
-    float: left;
+    float: right;
     margin-left: 25px;
     _color: #777;
     _font-size: 14px;

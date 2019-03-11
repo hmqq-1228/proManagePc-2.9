@@ -456,7 +456,7 @@
             <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
             <div style="width: 80px;" v-if="childTask.dayNum >= 0">剩余 <span style="color:#13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
             <div style="width: 80px;" v-if="childTask.dayNum < 0">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
-            <div style="width: 150px;">{{childTask.userName}}</div>
+            <div style="width: 160px;">{{childTask.userName}}</div>
             <div style="width: 20px;margin-right: 0"><div class="taskDel" v-if="childTask.showDeleteFlag" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div></div>
           </div>
         </div>
@@ -3125,7 +3125,7 @@ export default {
     background-color: #f5f8fa;
   }
   .cannetProject21{
-    width: 90%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     line-height: 24px;
@@ -3164,7 +3164,7 @@ export default {
     margin-left: 10px;
   }
   .el-textarea__inner{
-    width: 90%;
+    width: 100%;
     min-height: 80px;
   }
   .file {
