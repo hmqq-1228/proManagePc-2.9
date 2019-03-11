@@ -179,7 +179,7 @@
             <div class="tblTitItem">姓名</div>
             <div class="tblTitItem">查看</div>
             <div class="tblTitItem">编辑</div>
-            <div class="tblTitItem">清空</div>
+            <div class="tblTitItem">清空 <span class="clearAll" title="清空全部" v-on:click="delMember(0)">全部</span></div>
           </div>
           <div class="memTblList">
             <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">
@@ -222,7 +222,7 @@
               <Input v-model="formValidate.proName" placeholder="请输入项目名称" />
             </FormItem>
             <FormItem label="项目类型" prop="proType">
-              <Select v-model="formValidate.proType" placeholder="请选择项目类型">
+              <Select v-model="formValidate.proType" placeholder="请选择项目类型" @on-change="getProjectType($event)">
                 <Option value="集团战略">集团战略</Option>
                 <Option value="公司项目">公司项目</Option>
                 <Option value="部门项目">部门项目</Option>
@@ -231,6 +231,7 @@
                 <Option value="产品研发">产品研发</Option>
               </Select>
             </FormItem>
+            <div v-if="projectPath" class="proTypePath">{{projectPath}}</div>
             <FormItem label="负责人" prop="proManager">
               <el-autocomplete style="width: 100%"
                                v-model="formValidate.proManager"
@@ -257,6 +258,24 @@
         </div>
       </Drawer>
       <!--新增 抽屉 编辑基本信息 修改基本信息 end-->
+      <!--对话框 项目分类 产品研发 start-->
+      <el-dialog title="产品研发" :visible.sync="ResDepTreeDialog" width="35%">
+        <div class="showImg">
+          <el-tree
+            :data="data2"
+            show-checkbox
+            @check="ResDepChangeState"
+            node-key="id"
+            ref="treeForm"
+            :check-strictly="true"
+            @check-change="ResDepHandleClick"
+            :props="ResDepDefaultProps">
+          </el-tree>
+        </div>
+        <div style="text-align: center;margin: 40px 0">
+          <el-button type="primary" @click="getPathProject()">确定选择</el-button>
+        </div>
+      </el-dialog>
       <!--新增 抽屉 查看历史记录 start-->
       <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
         <div class="el-textarea" v-loading="loadingRe">
@@ -1035,6 +1054,8 @@ export default {
   },
   data () {
     return {
+      // 产品研发 树形结构 单选
+      i: 0,
       pageN: 1,
       commentPreviewUrl1: '',
       dialogShowImg1: false,
@@ -1207,10 +1228,18 @@ export default {
       deId: [],
       // 成员管理 组织架构
       data2: [],
+      // 产品研发 显示具体类型
+      projectPath: '',
+      projectPathId: '',
       // 组织架构
       defaultProps: {
         children: 'children',
         label: 'Name'
+      },
+      // 新增
+      ResDepDefaultProps: {
+        children: 'children',
+        label: 'label'
       },
       // 组织架构
       organizationalShow: false,
@@ -1401,6 +1430,8 @@ export default {
       DrawerMemberShow: false,
       // 新增 编辑基本信息 抽屉
       DrawerBaseEdit: false,
+      // 新增 编辑基本信息 产品研发 树
+      ResDepTreeDialog: false,
       // 新加 ks
       memberList: [],
       // 新加 js
@@ -1485,9 +1516,11 @@ export default {
         proType: '',
         proManager: '',
         projectManagerID: '',
+        projectClassifyId: '',
         startDate: '',
         endDate: '',
-        desc: ''
+        desc: '',
+        classify: ''
       },
       // 任务开始
       CommunityTaskPayload2: {
@@ -1571,14 +1604,17 @@ export default {
     fileName: function (val, oval) {
     },
     proDetailMsg: function (newVal, oldVal) {
-      // this.log('KKKKKKKKKK:', newVal)
+      var that = this
       this.formValidate.proName = newVal.projectName
       this.formValidate.proManager = newVal.projectManager
       this.formValidate.projectManagerID = newVal.projectManagerID
       this.formValidate.desc = newVal.content
-      this.formValidate.proType = newVal.projectType
+      this.formValidate.proType = that.proTypeValueToLabel(newVal.projectType)
+      this.formValidate.projectPath = newVal.classify
       this.formValidate.startDate = newVal.startDate
       this.formValidate.endDate = newVal.endDate
+      this.formValidate.classify = newVal.classify
+      this.projectPath = newVal.classify
     },
     commitComentF: function (val, oVal) {
       if (val) {
@@ -1623,6 +1659,30 @@ export default {
     }
   },
   methods: {
+    // 项目类型 返回值 数字转文字描述格式
+    proTypeValueToLabel: function (ptype) {
+      // {label: '公司项目', value: '0'},
+      // {label: '部门项目', value: '1'},
+      // {label: '小组项目', value: '2'},
+      // {label: '个人项目', value: '3'},
+      // {label: '集团战略', value: '4'},
+      // {label: '产品研发', value: '5'}
+      if (ptype === '0') {
+        return '公司项目'
+      } else if (ptype === '1') {
+        return '部门项目'
+      } else if (ptype === '2') {
+        return '小组项目'
+      } else if (ptype === '3') {
+        return '个人项目'
+      } else if (ptype === '4') {
+        return '集团战略'
+      } else if (ptype === '5') {
+        return '产品研发'
+      } else {
+        return ptype
+      }
+    },
     planHandleClick (row, clickType) {
       var that = this
       that.currentNodeId = row.planId
@@ -1734,12 +1794,12 @@ export default {
     // 删除成员
     delMember (memId) {
       var that = this
-      if (memId) {
+      if (memId || memId === 0) {
         that.ajax('/myProject/delMembersById', {
           projectUID: that.proId,
           id: memId
         }).then(res => {
-          // that.log('删除成员:', res)
+          that.log('删除成员:', res)
           if (res.code === 200) {
             that.$message({
               type: 'success',
@@ -1858,6 +1918,51 @@ export default {
           })
         }
       })
+    },
+    // 新增 对话框 产品研发类型树形结构
+    getProjectType: function (e) {
+      var that = this
+      that.log('获取项目类型:', e)
+      if (e === '5' || e === '产品研发') {
+        // that.showProject = false
+        that.ResDepTreeDialog = true
+        that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
+          if (res.code === 200) {
+            that.data2 = res.data
+          }
+        })
+      } else {
+        that.showProject = true
+        that.projectPath = ''
+        that.projectPathId = ''
+        that.formValidate.projectClassifyId = ''
+      }
+    },
+    // 确定选择
+    getPathProject: function () {
+      this.ResDepTreeDialog = false
+    },
+    // 新增 产品研发
+    ResDepChangeState: function (data, checked, node) {
+      this.log('changeState:', data)
+      this.formValidate.projectClassifyId = data.id
+      this.projectPath = data.specificPath
+      this.projectPathId = data.id
+    },
+    // 新增 产品研发
+    ResDepHandleClick: function (data, checked, node) {
+      var that = this
+      // that.log('产品研发子级data：', data)
+      // that.log('产品研发子级checked：', checked)
+      that.i++
+      if (that.i % 2 === 0) {
+        if (checked) {
+          that.$refs.treeForm.setCheckedNodes([])
+          that.$refs.treeForm.setCheckedNodes([data])
+        } else {
+          that.$refs.treeForm.setCheckedNodes([])
+        }
+      }
     },
     // 新建
     rateChange: function (rateval) {
@@ -2157,6 +2262,7 @@ export default {
           that.editBaseInfoPayload.projectManager = that.formValidate.proManager
           that.editBaseInfoPayload.projectManagerID = that.Mid
           that.editBaseInfoPayload.introduction = that.formValidate.desc
+          that.editBaseInfoPayload.projectClassifyId = that.formValidate.projectClassifyId
           that.editBaseInfoPayload.startDate = that.DateFormat(that.formValidate.startDate)
           that.editBaseInfoPayload.endDate = that.DateFormat(that.formValidate.endDate)
           // that.editBaseInfoPayload.startDate = that.formValidate.startDate
@@ -2275,7 +2381,7 @@ export default {
     queryProDetail: function () {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
-        // that.log('新getProjectDetail:', res)
+        that.log('新getProjectDetail:', res)
         if (res.code === 200) {
           that.memberList = res.data.memberList
           that.proDetailMsg = res.data
@@ -2341,7 +2447,7 @@ export default {
         return
       }
       that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
-        // that.log('一级计划接口：', res)
+        that.log('一级计划接口：', res)
         if (res.code === 200) {
           that.proDetailMsg = res.data.projectDetail
           // that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID, type: that.currentType})
@@ -3560,6 +3666,14 @@ export default {
     display: flex;
     justify-content: space-between;
   }
+  /**/
+  .proTypePath{
+    font-size: 12px;
+    padding-left: 88px;
+    margin-top: -16px;
+    color: #777;
+    margin-bottom: 10px;
+  }
   .memBox .active{
     color: #fff;
     background-color: #409EFF;
@@ -3788,6 +3902,14 @@ export default {
   /*成员管理 组织架构*/
   .organizationalBox{
     display: flex;
+  }
+  .clearAll{
+    color: #aaa;
+    cursor: pointer;
+    margin-left: 6px;
+  }
+  .clearAll:hover{
+    color: #515a6e;
   }
   .organizationalBox>div:nth-child(1){
     width: 433px;

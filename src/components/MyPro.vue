@@ -517,7 +517,7 @@ export default {
     // 新增 对话框 产品研发类型树形结构
     getProjectType: function (e) {
       var that = this
-      if (e === '5') {
+      if (e === '5' || e === '产品研发') {
         // that.showProject = false
         that.dialogFormVisible = true
         that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
