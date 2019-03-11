@@ -1871,7 +1871,7 @@ export default {
           that.toDetail()
           that.selectProjectId()
           that.getHistoryList()
-          that.commitComentF = ''
+          that.commitComentF = '已完成'
           that.fileListFinish = []
           $('.showFileName2').html('')
           $('#myfileF').val('')
