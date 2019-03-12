@@ -1538,7 +1538,10 @@ export default {
     }
   },
   created: function () {
-    this.proId = this.$store.state.proId
+    if (this.$store.state.proId || this.$route.params.proId) {
+      this.proId = this.$store.state.proId || this.$route.params.proId
+      this.$store.state.proId = this.proId
+    }
     // console.log('this.proId:', this.proId)
     this.getProjectDetail()
     // 调用新接口 获取项目详情

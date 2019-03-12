@@ -144,7 +144,11 @@ export default {
           //     that.getProjectDetail(that.slideMenu[0].projectUID, '2', '', that.slideMenu[0].projectType)
           //   }
           // }
-          that.$store.commit('setRouterName', {name: res.data[0].projectList[0].projectName, id: res.data[0].projectList[0].projectUID, type: 1})
+          that.$store.commit('setRouterName', {
+            name: res.data[0].projectList[0] ? res.data[0].projectList[0].projectName : '',
+            id: res.data[0].projectList[0] ? res.data[0].projectList[0].projectUID : '',
+            type: 1
+          })
         }
       })
     },

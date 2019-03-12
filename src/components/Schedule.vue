@@ -810,7 +810,7 @@ export default {
             that.detailLeft = $(obj).position().left - 400
             that.detailArrowLeft = 395
           } else {
-            that.detailLeft = $(obj).offset().left + 0
+            that.detailLeft = $(obj).position().left + parseInt($(obj).width())
             that.detailArrowLeft = -5
           }
           if ($(obj).position().top > 400) {
