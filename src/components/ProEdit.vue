@@ -2006,6 +2006,49 @@ export default {
         that.formValidate.projectClassifyId = ''
       }
     },
+    // 删除子任务
+    childTaskDelete: function (id) {
+      var that = this
+      console.log('id', id)
+      that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
+          if (res.code === 200) {
+            that.log('delPlanOrTask:', res)
+            that.getTaskChildList(id)
+            that.selectProjectId()
+            that.getHistoryList()
+          }
+        }).catch(() => {
+          // that.loading = false
+        })
+      })
+    },
+    delTask: function (id) {
+      var that = this
+      console.log('id', id)
+      that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        showClose: false,
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
+          if (res.code === 200) {
+            that.log('delPlanOrTask:', res)
+            that.value4 = false
+            that.getTaskChildList(id)
+            that.selectProjectId()
+            that.getHistoryList()
+          }
+        }).catch(() => {
+          // that.loading = false
+        })
+      })
+    },
     // 确定选择
     getPathProject: function () {
       this.ResDepTreeDialog = false

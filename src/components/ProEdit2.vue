@@ -488,8 +488,8 @@
           <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
           <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
           <div style="display: flex;justify-content: space-between">
-            <!--<div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>-->
-            <!--<div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>-->
+            <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+            <div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
           </div>
         </div>
         <div class="taskMsg">
@@ -1548,6 +1548,27 @@ export default {
             that.log('delPlanOrTask:', res)
             that.getTaskChildList(id)
             that.selectProjectId()
+            that.getHistoryList()
+          }
+        }).catch(() => {
+          // that.loading = false
+        })
+      })
+    },
+    delTask: function (id) {
+      var that = this
+      console.log('id', id)
+      that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        showClose: false,
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
+          if (res.code === 200) {
+            that.log('delPlanOrTask:', res)
+            that.value4 = false
+            that.queryMyTaskView()
             that.getHistoryList()
           }
         }).catch(() => {
