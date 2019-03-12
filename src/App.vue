@@ -127,28 +127,41 @@ export default {
               that.slideMenu.push(res.data[i])
             }
           }
-          if (this.$route.params.proId) {
-            // this.log(123)
-            that.getProjectDetail(this.$route.params.proId)
-          } else {
-            if (that.slideMenuGroup.length > 0) {
-              that.getProjectDetail(that.slideMenuGroup[0].projectList[0].projectUID, '1', '集团战略')
-            } else {
-              that.getProjectDetail(that.slideMenu[0].projectUID, '2', '', that.slideMenu[0].projectType)
-            }
-          }
+          // that.log('that.slideMenu:', that.slideMenu)
+          // that.log('that.slideMenuGroup:', that.slideMenuGroup)
+          that.$store.state.slideMenuGroup = that.slideMenuGroup
+          that.$store.state.slideMenu = that.slideMenu
+          // if (this.$route.params.proId) {
+          //   this.log('url带参数')
+          //   that.getProjectDetail(this.$route.params.proId)
+          // } else {
+          //   that.log('url不带参数')
+          //   if (that.slideMenuGroup.length > 0) {
+          //     that.log('集团战略menu有值')
+          //     that.getProjectDetail(that.slideMenuGroup[0].projectList[0].projectUID, '1', '集团战略')
+          //   } else {
+          //     that.log('集团战略menu没有值')
+          //     that.getProjectDetail(that.slideMenu[0].projectUID, '2', '', that.slideMenu[0].projectType)
+          //   }
+          // }
           that.$store.commit('setRouterName', {name: res.data[0].projectList[0].projectName, id: res.data[0].projectList[0].projectUID, type: 1})
         }
       })
     },
     getProjectDetail: function (id, n, proType, proName) {
+      this.log('getProjectDetail:id:', id)
+      this.log('getProjectDetail:n:', n)
+      this.log('getProjectDetail:proType:', proType)
+      this.log('getProjectDetail:proName:', proName)
       if (proType === '集团战略') {
+        this.log('getProjectDetail：', '走了集团战略')
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
-          this.$router.push('/ProEdit')
+          // this.$router.push('/ProEdit')
         }
       } else {
+        this.log('getProjectDetail：', '没走集团战略')
         if (proName === '我的日程') {
           this.$router.push('/Schedule')
         } else if (proName === '我的动态') {

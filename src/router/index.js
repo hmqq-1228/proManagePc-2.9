@@ -9,12 +9,18 @@ import MyPro2 from '@/components/MyPro2'
 import ProEdit from '@/components/ProEdit'
 import ProEdit2 from '@/components/ProEdit2'
 import TestUpload from '@/components/TestUpload'
-// Schedule TestUpload
+import Wellcome from '@/components/Wellcome'
+// Schedule TestUpload Wellcome
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
+    {
+      path: '/',
+      name: 'Wellcome',
+      component: Wellcome
+    },
     {
       path: '/HelloWorld',
       name: 'HelloWorld',
@@ -32,6 +38,11 @@ export default new Router({
     },
     {
       path: '/MyTask',
+      name: 'MyTask',
+      component: MyTask
+    },
+    {
+      path: '/MyTask/:TaskId',
       name: 'MyTask',
       component: MyTask
     },

@@ -606,6 +606,7 @@ export default {
   name: 'MyTask',
   data () {
     return {
+      taskId: this.$route.params.TaskId,
       showDownMsg: false,
       endTimeFirst: '',
       startTimeFirst: '',
@@ -900,6 +901,10 @@ export default {
     }
   },
   watch: {
+    taskId: function (val, old) {
+      this.log('taskId:', val)
+      // this.toDetail(val)
+    },
     // 如果 `testData` 发生改变，这个函数就会运行
     testData: function (newQuestion, oldQuestion) {
     },
@@ -1056,6 +1061,12 @@ export default {
     }
   },
   created () {
+    var that = this
+    this.log('url参数:', this.$route.params.TaskId)
+    if (this.$route.params.TaskId) {
+      this.taskId = this.$route.params.TaskId
+      this.toDetail(that.$route.params.TaskId)
+    }
     this.getUserInfo()
     this.getProBelong()
     this.setDefaultTime()
