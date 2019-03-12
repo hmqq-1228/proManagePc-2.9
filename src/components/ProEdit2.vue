@@ -40,7 +40,7 @@
           <div class="memName"><Icon size="30" type="ios-person-outline" /></div>
           <div class="memBox">
             <div v-if="memberList.length > 0" v-for="member in memberList" v-bind:key="member.userName">{{member.userName}}</div>
-            <div class="moreBtn" v-on:click="moreMemberClick()"><Button size="small" type="primary">添加 / 编辑</Button></div>
+            <div class="moreBtn" v-on:click="moreMemberClick()"><Button size="small" type="primary">更 多</Button></div>
           </div>
         </div>
         <!-- 一级计划 start -->
@@ -49,7 +49,7 @@
           <div class="planBox" style="position: relative;">
             <!--v-on:click="addNode(firstPlanId)"-->
             <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
-            <Button style="margin-top: 16px; margin-left: 20px; position: absolute; right: 10px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">添加 / 编辑</Button>
+            <Button style="margin-top: 16px; margin-left: 20px; position: absolute; right: 10px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">更 多</Button>
           </div>
           <!--<div class="planBox2" v-if="planList.length === 0">暂无子计划</div>-->
         </div>
@@ -70,51 +70,6 @@
       <el-dialog title="图片预览" :visible.sync="dialogFileImg">
         <div class="showImg"><img v-bind:src="filePreviewUrl" alt=""></div>
       </el-dialog>
-      <!--项目计划树 start-->
-      <!--<div class="block">-->
-      <!--<el-tree-->
-      <!--:data="data5"-->
-      <!--:props="defaultTreeProps"-->
-      <!--node-key="id"-->
-      <!--@node-expand="getNodeMsg($event)"-->
-      <!--:expand-on-click-node="false">-->
-      <!--<span class="custom-tree-node" slot-scope="{ node, data }">-->
-      <!--<span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>-->
-      <!--<span class="proMsg">-->
-      <!--<span class="treeName">-->
-      <!--<span v-if="data.type === '2'">-->
-      <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>-->
-      <!--<span style="float: left;margin-left: 16px;">{{data.userName}}</span>-->
-      <!--</span>-->
-      <!--</span>-->
-      <!--<span class="treeState">-->
-      <!--<span v-if="data.type === '2'">-->
-      <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>-->
-      <!--<span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>-->
-      <!--<span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>-->
-      <!--<span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>-->
-      <!--</span>-->
-      <!--</span>-->
-      <!--<span class="treeTime">-->
-      <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>-->
-      <!--<span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>-->
-      <!--</span>-->
-      <!--<span class="treeTime">-->
-      <!--<Dropdown @on-click="moreSelectOptions($event, data.id)">-->
-      <!--<a href="javascript:void(0)">下拉菜单<Icon type="ios-arrow-down"></Icon></a>-->
-      <!--<DropdownMenu slot="list">-->
-      <!--<DropdownItem name="add">添加</DropdownItem>-->
-      <!--<DropdownItem name="del">删除</DropdownItem>-->
-      <!--<DropdownItem name="edit">编辑</DropdownItem>-->
-      <!--</DropdownMenu>-->
-      <!--</Dropdown>-->
-      <!--</span>-->
-      <!--</span>-->
-      <!--</span>-->
-      <!--</el-tree>-->
-      <!--</div>-->
-      <!--项目计划树 end-->
-      <!--项目计划树 老版本 start-->
       <div class="block">
         <el-tree
           :data="data5"
@@ -261,25 +216,6 @@
       <!--新增 抽屉 编辑基本信息 end-->
       <!--新增 抽屉 查看历史记录 start-->
       <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
-        <!--<div class="el-textarea" v-loading="historyLoading">-->
-          <!--&lt;!&ndash;enctype="multipart/form-data"&ndash;&gt;-->
-          <!--<form id="uploadFile">-->
-            <!--<textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>-->
-            <!--<div class="cannetProject2">-->
-              <!--<div style="display: inline-block">-->
-                <!--<img src="../../static/img/fujian.png" alt="">-->
-                <!--<a href="javascript:;" class="file" @change="getFileName">选择文件-->
-                  <!--<input type="file" name="myfile">-->
-                <!--</a>-->
-                <!--<input type="hidden" name="projectUID" v-bind:value="proId">-->
-                <!--<input type="hidden" name="rtype" v-bind:value="3">-->
-                <!--<span class="showFileName"></span>-->
-              <!--</div>-->
-              <!--<div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>-->
-            <!--</div>-->
-          <!--</form>-->
-        <!--</div>-->
-        <!--操作记录-->
         <div class="discription lis" style="margin-top: 15px;">
           <!--<h3>历史记录</h3>-->
           <!--<div class="add" @click="addRemark()"><img src="../../static/img/msg.png" alt="">添加评论</div>-->
@@ -327,22 +263,6 @@
             </template>
           </el-table-column>
         </el-table>
-        <!--<div class="proTitle">这个是项目名</div>-->
-        <!--<div class="planTable">-->
-        <!--<div class="Plantable">-->
-
-        <!--</div>-->
-        <!--<div class="planTableItem">-->
-        <!--<div class="planItemTitle">一级计划标题</div>-->
-        <!--<div class="planItemType">计划</div>-->
-        <!--<div class="planItemTime">2019-03-01 2019-03-20</div>-->
-        <!--<div class="planItemManager">张三</div>-->
-        <!--<div class="planItemUse">-->
-        <!--<div class="planItemUseEdit"><el-button style="margin-left: 10px" size="mini" type="primary">编辑</el-button></div>-->
-        <!--<div class="planItemUseDel"><el-button style="margin-left: 10px" size="mini" type="primary">删除</el-button></div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
       </Drawer>
       <!--新增 抽屉 一级计划详情 end -->
       <!--新增 添加计划或者任务 start-->
@@ -550,7 +470,7 @@
                   <el-input class="planNameIpt" type="textarea" style="resize:none;" :rows="2" v-model="detailTaskform.description"></el-input>
                 </el-form-item>
                 <el-form-item label="任务附件">
-                  <component v-bind:is="FileUploadComp" fileFormId="TaskModify" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+                  <component v-bind:is="FileUploadComp" v-bind:FileDataList="proFileList" fileFormId="TaskModify" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
                 </el-form-item>
                 <div style="text-align: center">
                   <el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>
@@ -943,6 +863,7 @@ export default {
   },
   data () {
     return {
+      proFileList: [],
       FileUploadArr: [],
       // 是否让子组件清空文件 新组件
       IsClear: false,
@@ -1650,6 +1571,8 @@ export default {
           that.detailform.date2 = row.planFinishDate
           that.detailform.description = row.description
           that.planEditShow = true
+        } else {
+          that.modifyTask(row.planId)
         }
       } else if (clickType === 'add') {
         that.addNode(row.planId, row.planType)
@@ -1778,9 +1701,17 @@ export default {
     moreSelectOptions: function (nodeName, nodeId, nodeType, nodeData) {
       this.log('nodeName:', nodeName)
       this.log('nodeId:', nodeId)
+      var that = this
       this.currentNodeId = nodeId
       if (nodeName === 'add') {
         this.addNode(nodeId, nodeType)
+        if (nodeType === '1' || nodeType === '计划') {
+          that.activeNameBgCover = 'first'
+          that.panshow = false
+        } else {
+          that.activeNameBgCover = 'second'
+          that.panshow = true
+        }
       } else if (nodeName === 'del') {
         this.modal2 = true
         // this.delNode(nodeId)
@@ -1802,15 +1733,28 @@ export default {
       that.taskIdEdit = id
       that.modifyTaskVisible = true
       that.ajax('/myTask/queryTaskDetailSingle', {taskId: id}).then(res => {
-        that.detailTaskform.jobName = res.data.jobName
-        that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
-        that.detailTaskform.taskStartDate = res.data.taskStartDate
-        that.detailTaskform.taskFinishDate = res.data.taskFinishDate
-        that.detailTaskform.description = res.data.description
-        for (var i = 0; i < res.data.attachment.length; i++) {
-          res.data.attachment[i].attachmentId = res.data.attachment[i].id
+        if (res.code === 200) {
+          that.detailTaskform.jobName = res.data.jobName
+          that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
+          that.detailTaskform.taskStartDate = res.data.taskStartDate
+          that.detailTaskform.taskFinishDate = res.data.taskFinishDate
+          that.detailTaskform.description = res.data.description
+          that.proFileList = []
+          var fileListArr = []
+          for (var i = 0; res.data.attachment && i < res.data.attachment.length; i++) {
+            var obj = {
+              attachmentId: res.data.attachment[i].id,
+              fileName: res.data.attachment[i].showName,
+              previewUrl: res.data.attachment[i].previewUrl
+            }
+            fileListArr.push(obj)
+          }
+          that.proFileList = that.proFileList.concat(fileListArr)
+          for (var j = 0; j < res.data.attachment.length; j++) {
+            res.data.attachment[j].attachmentId = res.data.attachment[j].id
+          }
+          that.fileListEdit = res.data.attachment
         }
-        that.fileListEdit = res.data.attachment
       })
     },
     // 新建 添加子节点
@@ -2540,10 +2484,10 @@ export default {
         }
       })
     },
-    // getCurrentPage: function (e) {
-    //   this.taskComment.pageNum = e
-    //   this.getCommicateCont()
-    // },
+    getCurrentPage: function (e) {
+      this.taskComment.pageNum = e
+      this.getCommicateCont()
+    },
     // getHistoryList: function () {
     //   var that = this
     //   that.ajax('/leader/getTaskLog', that.taskHistoryList).then(res => {
@@ -2561,10 +2505,10 @@ export default {
     //     }
     //   })
     // },
-    // getCurrentHistoryPage: function (e) {
-    //   this.taskHistoryList.pageNum = e
-    //   this.getHistoryList()
-    // },
+    getCurrentHistoryPage: function (e) {
+      this.taskHistoryList.pageNum = e
+      this.getHistoryList()
+    },
     // getFileName: function () {
     //   var filePath = $('#myfile').val()
     //   var arr = filePath.split('\\')

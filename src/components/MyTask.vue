@@ -116,7 +116,7 @@
         </el-input>
       </el-col>
     </div>
-    <div class="taskBox">
+    <div class="taskBox" style="margin: 0 20px;box-sizing: border-box;">
       <CheckboxGroup v-model="taskCheckedList">
         <div class="taskList" v-for="(myTask, index) in myTaskList" :key="index">
           <div class="taskItem">
@@ -277,7 +277,7 @@
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
         <div style="display: flex;justify-content: space-between">
-          <div style="width: 50px;cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+          <div title="删除任务" style="width: 50px;cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
           <div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
         </div>
       </div>
@@ -1294,40 +1294,47 @@ export default {
     },
     modifyTaskSub: function (formName) {
       var that = this
+      var fileStr = ''
+      for (var j = 0; j < this.fileListEdit.length; j++) {
+        if (j === that.fileListEdit.length - 1) {
+          fileStr = fileStr + that.fileListEdit[j].attachmentId
+        } else {
+          fileStr = fileStr + that.fileListEdit[j].attachmentId + ','
+        }
+      }
+      that.loadingEdit = true
+      that.editTaskPayload.id = that.taskIdEdit
+      that.editTaskPayload.jobLevel = that.detailTaskform.jobLevel
+      that.editTaskPayload.jobName = that.detailTaskform.jobName
+      that.editTaskPayload.taskStartDate = that.detailTaskform.taskStartDate
+      that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
+      that.editTaskPayload.description = that.detailTaskform.description
+      that.editTaskPayload.attachmentId = fileStr
+      var st = new Date(that.detailTaskform.taskStartDate).getTime()
+      var et = new Date(that.detailTaskform.taskFinishDate).getTime()
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          var fileStr = ''
-          for (var j = 0; j < this.fileListEdit.length; j++) {
-            if (j === that.fileListEdit.length - 1) {
-              fileStr = fileStr + that.fileListEdit[j].attachmentId
-            } else {
-              fileStr = fileStr + that.fileListEdit[j].attachmentId + ','
-            }
+          if (st <= et) {
+            that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+              that.log('editTask:', res)
+              if (res.code === 200) {
+                that.$message({
+                  message: '保存成功！',
+                  type: 'success'
+                })
+                that.modifyTaskVisible = false
+                that.loadingEdit = false
+                that.toDetail(that.taskIdEdit)
+                that.getHistoryList()
+                that.queryMyTaskView()
+              } else {
+                that.loadingEdit = false
+              }
+            })
+          } else {
+            that.$message.warning('时间选择不合理')
+            that.loadingEdit = false
           }
-          that.loadingEdit = true
-          that.editTaskPayload.id = that.taskIdEdit
-          that.editTaskPayload.jobLevel = that.detailTaskform.jobLevel
-          that.editTaskPayload.jobName = that.detailTaskform.jobName
-          that.editTaskPayload.taskStartDate = that.detailTaskform.taskStartDate
-          that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
-          that.editTaskPayload.description = that.detailTaskform.description
-          that.editTaskPayload.attachmentId = fileStr
-          that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
-            that.log('editTask:', res)
-            if (res.code === 200) {
-              that.$message({
-                message: '保存成功！',
-                type: 'success'
-              })
-              that.modifyTaskVisible = false
-              that.loadingEdit = false
-              that.toDetail(that.taskIdEdit)
-              that.getHistoryList()
-              that.queryMyTaskView()
-            } else {
-              that.loadingEdit = false
-            }
-          })
         }
       })
     },
@@ -1779,24 +1786,31 @@ export default {
         that.CommunityTaskPayload.endTime = that.selDateEnd
         that.CommunityTaskPayload.projectUID = that.projectBelong
         that.CommunityTaskPayload.description = that.taskIntro
-        that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
-          if (res.code === 200) {
-            that.isRecall = that.isRecall + 1
-            that.$message({
-              message: '任务创建成功',
-              type: 'success'
-            })
-            that.queryMyTaskView()
-            // 清空发动态的表单
-            that.clearDynamicsForm()
-          } else {
-            that.$message({
-              message: res.msg,
-              type: 'warning'
-            })
-          }
+        var st = new Date(that.selDateStart).getTime()
+        var et = new Date(that.selDateEnd).getTime()
+        if (st <= et) {
+          that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+            if (res.code === 200) {
+              that.isRecall = that.isRecall + 1
+              that.$message({
+                message: '任务创建成功',
+                type: 'success'
+              })
+              that.queryMyTaskView()
+              // 清空发动态的表单
+              that.clearDynamicsForm()
+            } else {
+              that.$message({
+                message: res.msg,
+                type: 'warning'
+              })
+            }
+            that.loading3 = false
+          })
+        } else {
+          that.$message.warning('时间选择不合理')
           that.loading3 = false
-        })
+        }
       } else {
         that.$message({
           message: '请填写任务名',
@@ -1839,27 +1853,37 @@ export default {
         that.CommunityTaskPayload2.endTime = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
-        that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
-          if (res.code === 200) {
-            that.isRecall2 = that.isRecall2 + 1
-            that.token = res._jfinal_token
-            that.$message({
-              message: '任务创建成功',
-              type: 'success'
-            })
-            that.queryMyTaskView()
-            that.getTaskChildList(that.taskId2)
-            // 清空发动态的表单
-            that.getHistoryList()
-            that.clearDynamicsForm2()
-          } else {
-            that.$message({
-              message: res.msg,
-              type: 'warning'
-            })
-          }
+        var st = new Date(that.selDateStart2).getTime()
+        var et = new Date(that.selDateEnd2).getTime()
+        if (st <= et) {
+          that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
+            if (res.code === 200) {
+              that.isRecall2 = that.isRecall2 + 1
+              that.token = res._jfinal_token
+              that.$message({
+                message: '任务创建成功',
+                type: 'success'
+              })
+              that.queryMyTaskView()
+              that.getTaskChildList(that.taskId2)
+              // 清空发动态的表单
+              that.getHistoryList()
+              that.clearDynamicsForm2()
+            } else {
+              that.$message({
+                message: res.msg,
+                type: 'warning'
+              })
+            }
+            that.loading32 = false
+          })
+        } else {
+          that.$message({
+            message: '时间选择不合理',
+            type: 'warning'
+          })
           that.loading32 = false
-        })
+        }
       } else {
         that.$message({
           message: '请填写任务名',
@@ -2977,6 +3001,13 @@ export default {
     background-color: #f5f8fa;
   }
   .taskItem{
+    height: 100%;
+    width: 50%;
+    border-left: 6px solid #ccc;
+    /*display: flex;*/
+    padding-left: 20px;
+  }
+  .taskList:hover .taskItem{
     height: 100%;
     width: 50%;
     border-left: 6px solid #409EFF;

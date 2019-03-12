@@ -1504,40 +1504,47 @@ export default {
     },
     modifyTaskSub: function (formName) {
       var that = this
+      var fileStr = ''
+      for (var j = 0; j < this.fileListEdit.length; j++) {
+        if (j === that.fileListEdit.length - 1) {
+          fileStr = fileStr + that.fileListEdit[j].attachmentId
+        } else {
+          fileStr = fileStr + that.fileListEdit[j].attachmentId + ','
+        }
+      }
+      that.loadingEdit = true
+      that.editTaskPayload.id = that.taskIdEdit
+      that.editTaskPayload.jobLevel = that.detailTaskform.jobLevel
+      that.editTaskPayload.jobName = that.detailTaskform.jobName
+      that.editTaskPayload.taskStartDate = that.detailTaskform.taskStartDate
+      that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
+      that.editTaskPayload.description = that.detailTaskform.description
+      that.editTaskPayload.attachmentId = fileStr
+      var st = new Date(that.detailTaskform.taskStartDate).getTime()
+      var et = new Date(that.detailTaskform.taskFinishDate).getTime()
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          var fileStr = ''
-          for (var j = 0; j < this.fileListEdit.length; j++) {
-            if (j === that.fileListEdit.length - 1) {
-              fileStr = fileStr + that.fileListEdit[j].attachmentId
-            } else {
-              fileStr = fileStr + that.fileListEdit[j].attachmentId + ','
-            }
+          if (st <= et) {
+            that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+              that.log('editTask:', res)
+              if (res.code === 200) {
+                that.$message({
+                  message: '保存成功！',
+                  type: 'success'
+                })
+                that.modifyTaskVisible = false
+                that.loadingEdit = false
+                that.toDetail(that.taskIdEdit)
+                that.getHistoryList()
+                that.getTaskList()
+              } else {
+                that.loadingEdit = false
+              }
+            })
+          } else {
+            that.$message.warning('选择时间不合理')
+            that.loadingEdit = false
           }
-          that.loadingEdit = true
-          that.editTaskPayload.id = that.taskIdEdit
-          that.editTaskPayload.jobLevel = that.detailTaskform.jobLevel
-          that.editTaskPayload.jobName = that.detailTaskform.jobName
-          that.editTaskPayload.taskStartDate = that.detailTaskform.taskStartDate
-          that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
-          that.editTaskPayload.description = that.detailTaskform.description
-          that.editTaskPayload.attachmentId = fileStr
-          that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
-            that.log('editTask:', res)
-            if (res.code === 200) {
-              that.$message({
-                message: '保存成功！',
-                type: 'success'
-              })
-              that.modifyTaskVisible = false
-              that.loadingEdit = false
-              that.toDetail(that.taskIdEdit)
-              that.getHistoryList()
-              that.getTaskList()
-            } else {
-              that.loadingEdit = false
-            }
-          })
         }
       })
     },

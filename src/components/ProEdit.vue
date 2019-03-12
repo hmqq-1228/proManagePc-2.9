@@ -886,7 +886,7 @@
                   <el-input class="planNameIpt" type="textarea" style="resize:none;" :rows="2" v-model="detailTaskform.description"></el-input>
                 </el-form-item>
                 <el-form-item label="任务附件">
-                  <component v-bind:is="FileUploadComp" fileFormId="TaskModify" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+                  <component v-bind:is="FileUploadComp" v-bind:FileDataList="taskFileList" fileFormId="TaskModify" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
                 </el-form-item>
                 <div style="text-align: center">
                   <el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>
@@ -1026,6 +1026,7 @@ export default {
       // 产品研发 树形结构 单选
       i: 0,
       proFileList: [],
+      taskFileList: [],
       pageN: 1,
       commentPreviewUrl1: '',
       dialogShowImg1: false,
@@ -1282,6 +1283,7 @@ export default {
         description: ''
       },
       // 新建
+      user: '',
       addTaskPayload: {
         parentId: '',
         attachmentId: '',
@@ -1901,6 +1903,13 @@ export default {
       this.currentNodeId = nodeId
       if (nodeName === 'add') {
         this.addNode(nodeId, nodeType)
+        if (nodeType === '1' || nodeType === '计划') {
+          that.activeNameBgCover = 'first'
+          that.panshow = false
+        } else {
+          that.activeNameBgCover = 'second'
+          that.panshow = true
+        }
       } else if (nodeName === 'del') {
         this.modal2 = true
         // this.delNode(nodeId)
@@ -2112,6 +2121,12 @@ export default {
       this.addTaskPayload.users = []
       this.options4 = []
       this.value9 = []
+      this.user = ''
+      this.addTaskForm.jobName = ''
+      this.addTaskForm.jobLevel = 1
+      this.addTaskForm.date1 = ''
+      this.addTaskForm.date2 = ''
+      this.addTaskForm.description = ''
     },
     // 新增
     onPlanTaskCancel () {
@@ -2127,17 +2142,16 @@ export default {
       // var fileV = $('#myfile').val()
       that.$refs[taskForm].validate((valid) => {
         if (valid) {
-          var user = ''
           for (var i = 0; i < that.value9.length; i++) {
             var lian = i === (that.value9.length - 1) ? '' : '_'
-            user = user + that.value9[i].split('_')[0] + '-' + that.value9[i].split('_')[1] + lian
+            that.user = that.user + that.value9[i].split('_')[0] + '-' + that.value9[i].split('_')[1] + lian
           }
           // this.log('user:', user)
           that.loading = true
           this.addTaskPayload.parentId = this.currentNodeId
           this.addTaskPayload.jobName = this.addTaskForm.jobName
           this.addTaskPayload.jobLevel = this.addTaskForm.jobLevel
-          this.addTaskPayload.users = user
+          this.addTaskPayload.users = that.user
           this.addTaskPayload.taskStartDate = this.addTaskForm.date1
           this.addTaskPayload.taskFinishDate = this.addTaskForm.date2
           this.addTaskPayload.description = this.addTaskForm.description
@@ -2160,6 +2174,7 @@ export default {
                 message: '创建任务成功！',
                 type: 'success'
               })
+              that.formDataClear()
             } else {
               that.$message({
                 message: res.msg
@@ -2653,6 +2668,37 @@ export default {
         }
       })
     },
+    getCurrentPage: function (e) {
+      this.taskComment.pageNum = e
+      this.getCommicateCont()
+    },
+    // getHistoryList: function () {
+    //   var that = this
+    //   that.ajax('/leader/getTaskLog', that.taskHistoryList).then(res => {
+    //     if (res.code === 200) {
+    //       that.historyList = res.data.list
+    //       that.totalHistoryNum = res.data.totalRow
+    //       for (var i = 0; i < that.historyList.length; i++) {
+    //         if (that.isImage(res.data.list[i].showName)) {
+    //           res.data.list[i].isImg = true
+    //         } else {
+    //           res.data.list[i].isImg = false
+    //         }
+    //         that.historyList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].realUrl + '&showName=' + res.data.list[i].showName
+    //       }
+    //     }
+    //   })
+    // },
+    getCurrentHistoryPage: function (e) {
+      this.taskHistoryList.pageNum = e
+      this.getHistoryList()
+    },
+    // getFileName: function () {
+    //   var filePath = $('#myfile').val()
+    //   var arr = filePath.split('\\')
+    //   var fileName = arr[arr.length - 1]
+    //   $('.showFileName').html(fileName)
+    // },
     // 新增 点击“回复”按钮
     addMarkInfo () {
       var that = this
@@ -3470,8 +3516,19 @@ export default {
         that.detailTaskform.taskStartDate = res.data.taskStartDate
         that.detailTaskform.taskFinishDate = res.data.taskFinishDate
         that.detailTaskform.description = res.data.description
-        for (var i = 0; i < res.data.attachment.length; i++) {
-          res.data.attachment[i].attachmentId = res.data.attachment[i].id
+        that.taskFileList = []
+        var fileListArr = []
+        for (var i = 0; res.data.attachment && i < res.data.attachment.length; i++) {
+          var obj = {
+            attachmentId: res.data.attachment[i].id,
+            fileName: res.data.attachment[i].showName,
+            previewUrl: res.data.attachment[i].previewUrl
+          }
+          fileListArr.push(obj)
+        }
+        that.taskFileList = that.taskFileList.concat(fileListArr)
+        for (var j = 0; j < res.data.attachment.length; j++) {
+          res.data.attachment[j].attachmentId = res.data.attachment[j].id
         }
         that.fileListEdit = res.data.attachment
       })

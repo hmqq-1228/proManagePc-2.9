@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div>{{getActiveNavIndex}}</div>
+    <div>{{getActiveNavIndex?'':''}}</div>
     <el-container>
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
