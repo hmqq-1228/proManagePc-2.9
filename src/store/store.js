@@ -4,6 +4,8 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  slideMenuGroup: [],
+  slideMenu: [],
   // 激活的导航索引
   activeNavIndex: 'group_0_0',
   count: 0,
