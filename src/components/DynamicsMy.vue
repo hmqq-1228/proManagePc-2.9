@@ -1002,6 +1002,7 @@ export default {
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        showClose: false,
         type: 'warning'
       }).then(() => {
         that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
@@ -1029,6 +1030,7 @@ export default {
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        showClose: false,
         type: 'warning'
       }).then(() => {
         that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
@@ -1055,6 +1057,7 @@ export default {
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        showClose: false,
         type: 'warning'
       }).then(() => {
         that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
@@ -1081,6 +1084,7 @@ export default {
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        showClose: false,
         type: 'warning'
       }).then(() => {
         that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
@@ -1383,6 +1387,7 @@ export default {
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        showClose: false,
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
@@ -1621,6 +1626,7 @@ export default {
       that.$confirm('确定后将开始此任务，确定开始？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        showClose: false,
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/startTask', {taskId: id}).then(res => {
@@ -1644,6 +1650,7 @@ export default {
       that.$confirm('是否确定重启此任务?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        showClose: false,
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/restartTask', {taskId: id}).then(res => {
@@ -1859,6 +1866,7 @@ export default {
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        showClose: false,
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
