@@ -1,6 +1,6 @@
 <template>
   <div class="ProEdit">
-    <div>{{getStoreProId?'':''}}</div>
+    <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!--面包屑-->
     <div style="padding: 5px;padding-top:0;border-bottom: 1px solid #eee; color: #999;">
       <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -1545,15 +1545,59 @@ export default {
       this.$store.state.proId = this.proId
     }
     // console.log('this.proId:', this.proId)
-    this.getProjectDetail()
+    // this.getProjectDetail()
     // 调用新接口 获取项目详情
-    this.queryProDetail()
     this.getUserInfo()
     // this.setRouterNameList = this.$store.state.routerList
     // console.log('setRouterNameList', this.setRouterNameList)
   },
   computed: {
+    slideMenuGroup: function () {
+      var that = this
+      if (!this.$route.params.proId && !that.$store.state.proId) {
+        if (that.$store.state.slideMenuGroup.length > 0 && that.$store.state.slideMenuGroup[0].projectList.length > 0) {
+          if (localStorage.getItem('proId')) {
+            that.log('slideMenu=slideMenu=slideMenu:', that.$store.state.slideMenu)
+            that.$store.state.proId = localStorage.getItem('proId')
+            that.proId = localStorage.getItem('proId')
+            // that.log(88888886)
+            // for (var t = 0; t < that.$store.state.slideMenuGroup[0].projectList.length; t++) {
+            //   if (that.$store.state.slideMenuGroup[0].projectList[t].projectUID === that.proId) {
+            //     that.log(666666666)
+            //     that.$store.state.activeNavIndex = 'group_0_' + t
+            //     // that.$store
+            //   }
+            // }
+          } else {
+            that.$store.state.proId = that.$store.state.slideMenuGroup[0].projectList[0].projectUID
+            that.proId = that.$store.state.slideMenuGroup[0].projectList[0].projectUID
+            localStorage.setItem('proId', that.proId)
+            that.$store.state.activeNavIndex = 'group_0_0'
+          }
+        }
+      }
+      return that.$store.state.slideMenuGroup
+    },
+    slideMenu: function () {
+      var that = this
+      this.log()
+      if (!this.$route.params.proId && !that.$store.state.proId) {
+        // that.$store.state.slideMenu[0].projectList.length  这个是有问题的 非集团战略 projectList 为 ''
+        if (that.$store.state.slideMenuGroup.length === 0 && that.$store.state.slideMenu.length > 0 && that.$store.state.slideMenu[0].projectList.length > 0) {
+          if (localStorage.getItem('proId')) {
+            that.$store.state.proId = localStorage.getItem('proId')
+            that.proId = localStorage.getItem('proId')
+          } else {
+            that.$store.state.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
+            that.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
+            localStorage.setItem('proId', that.proId)
+          }
+        }
+      }
+      return that.$store.state.slideMenu
+    },
     getStoreProId: function () {
+      this.log('computed:this.$store.state.proId', this.$store.state.proId)
       var that = this
       that.proId = this.$store.state.proId
       return this.$store.state.proId
@@ -1565,9 +1609,32 @@ export default {
       // this.log('this.taskForm.state2:', this.taskForm.state2)
     },
     proId: function (val, oVal) {
+      var that = this
       this.currentProId = val
       this.currentType = this.type
-      this.getProjectDetail()
+      localStorage.setItem('proId', val)
+      // this.getProjectDetail()
+      var findId = false
+      for (var t = 0; t < that.$store.state.slideMenuGroup[0].projectList.length; t++) {
+        if (that.$store.state.slideMenuGroup[0].projectList[t].projectUID === that.proId) {
+          that.log(666666666)
+          that.log(t)
+          findId = true
+          that.$store.state.activeNavIndex = 'group_0_' + t
+          // that.$store
+        }
+      }
+      if (!findId) {
+        this.log('nimanimanima------:', localStorage.getItem('generalMenuActive'))
+        // this.log('nimanimanima------:', that.$store.state.slideMenu[p].projectType)
+        for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
+          if (that.$store.state.slideMenu[p].projectType === localStorage.getItem('generalMenuActive')) {
+            that.log(99999999)
+            that.$store.state.activeNavIndex = 'general_' + p
+            // that.$store
+          }
+        }
+      }
       this.queryProDetail()
     },
     commitComent: function (val, oVal) {
@@ -1594,7 +1661,7 @@ export default {
         }
         that.proFileList = that.proFileList.concat(fileListArr)
       }
-      this.log('watch:proDetailMsg:', newVal)
+      // this.log('watch:proDetailMsg:', newVal)
       this.formValidate.proName = newVal.projectName
       this.formValidate.proManager = newVal.projectManager
       this.formValidate.projectManagerID = newVal.projectManagerID
@@ -1905,7 +1972,7 @@ export default {
         if (res.code === 200) {
           // that.getChildNode(that.currentNodeId)
           that.queryProDetail()
-          that.getProjectDetail()
+          // that.getProjectDetail()
           this.modal_loading = false
           this.modal2 = false
           that.$message({
@@ -1988,7 +2055,7 @@ export default {
               that.token = res._jfinal_token
               that.loading = false
               that.formDataClear()
-              that.getProjectDetail()
+              // that.getProjectDetail()
               // that.getChildNode(that.currentNodeId)
               that.queryProDetail()
               that.$message({
@@ -2100,7 +2167,8 @@ export default {
               that.loading = false
               that.formId = ''
               that.bgCoverShow = false
-              that.getProjectDetail()
+              // 标记
+              // that.getProjectDetail()
               that.queryProDetail()
               that.$message({
                 message: '创建任务成功！',
@@ -2430,7 +2498,14 @@ export default {
           that.proDetailMsg = res.data
           that.startPlanDate = res.data.startDate.split(' ')[0]
           that.endPlanDate = res.data.endDate.split(' ')[0]
+          that.planList = res.data.planOrJobList
           that.firstPlanId = res.data.firstPlanId
+          if (res.data.planOrJobList.length > 0) {
+            that.activeId = res.data.planOrJobList[0].id
+          } else {
+            that.activeId = ''
+          }
+          that.selectProjectId()
         }
       })
     },
@@ -2441,17 +2516,16 @@ export default {
         that.currentType = typeNum
       }
       if (!that.$store.state.proId) {
-        // that.log('store里项目id为空，跳转至首页')
         that.$router.push('/')
         return
       }
-      that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
+      that.ajax('/myProject/getPlanOrTaskById', {id: that.firstPlanId}).then(res => {
         that.log('一级计划接口：', res)
         if (res.code === 200) {
-          that.proDetailMsg = res.data.projectDetail
-          that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
-          that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
-          that.planList = res.data.planOrJobList
+          // that.proDetailMsg = res.data.projectDetail
+          // that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
+          // that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
+          // that.planList = res.data.planOrJobList
           if (res.data.planOrJobList.length > 0) {
             that.activeId = res.data.planOrJobList[0].id
           } else {
@@ -2461,6 +2535,31 @@ export default {
         }
       })
     },
+    // getProjectDetail: function (typeNum) {
+    //   var that = this
+    //   if (typeNum) {
+    //     that.currentType = typeNum
+    //   }
+    //   if (!that.$store.state.proId) {
+    //     that.$router.push('/')
+    //     return
+    //   }
+    //   that.ajax('/leader/getPlanOrTaskByProjectId', {projectUID: that.$store.state.proId}).then(res => {
+    //     that.log('一级计划接口：', res)
+    //     if (res.code === 200) {
+    //       that.proDetailMsg = res.data.projectDetail
+    //       that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
+    //       that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
+    //       that.planList = res.data.planOrJobList
+    //       if (res.data.planOrJobList.length > 0) {
+    //         that.activeId = res.data.planOrJobList[0].id
+    //       } else {
+    //         that.activeId = ''
+    //       }
+    //       that.selectProjectId()
+    //     }
+    //   })
+    // },
     // 根据计划或任务Id 获取子级结构
     selectProjectId: function () {
       var that = this
@@ -2516,20 +2615,6 @@ export default {
         that.getCommicateCont()
         that.getHistoryList()
         that.toDetail(data.id)
-        // that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
-        //   that.log('getTaskBasic:', res)
-        //   if (res.code === 200) {
-        //     that.taskBasicMsg = res.data
-        //     that.rid = res.data.uid
-        //     if (that.isImage(res.data.showName)) {
-        //       res.data.isImg = true
-        //     } else {
-        //       res.data.isImg = false
-        //     }
-        //     that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
-        //     that.resetScro()
-        //   }
-        // })
       }
     },
     showImagePre: function (url, showName) {
@@ -2647,24 +2732,6 @@ export default {
     // 新增 点击“回复”按钮
     taskDetailconnect () {
       var that = this
-      // that.addProjectCommentPayload.projectUID = that.proId
-      // that.addProjectCommentPayload.content = that.commitComent
-      // that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
-      // if (that.commitComent) {
-      //   that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
-      //     that.log('addProjectComment:', res)
-      //     if (res.code === 200) {
-      //       that.IsClear = true
-      //       that.$message({
-      //         type: 'success',
-      //         message: res.msg
-      //       })
-      //       that.getCommicateCont()
-      //       that.commitComent = ''
-      //     }
-      //   })
-      // }
-      //   k
       that.ajax('/comment/addComment', {
         content: that.commitComent,
         attachmentId: that.SetFileIdStr(),
@@ -3370,7 +3437,9 @@ export default {
               // planEditShow
               that.planEditShow = false
               that.loading = false
-              that.getProjectDetail()
+              // 标记
+              // that.getProjectDetail()
+              that.queryProDetail()
               that.formDataClear()
               // that.queryManagePlan5()
             } else {

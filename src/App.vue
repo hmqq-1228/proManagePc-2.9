@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div>{{getActiveNavIndex?'':''}}</div>
     <el-container>
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
@@ -73,6 +74,13 @@ export default {
       // this.log('activeNavIndex:', val)
     }
   },
+  computed: {
+    getActiveNavIndex: function () {
+      var that = this
+      that.activeNavIndex = this.$store.state.activeNavIndex
+      return this.$store.state.activeNavIndex
+    }
+  },
   methods: {
     generalSelect: function (menu) {
       // this.log('generalSelect:', menu)
@@ -96,18 +104,26 @@ export default {
       this.log('menuName:', menuName)
       switch (menuName) {
         case '商品管理':
+          // localStorage.setItem('navType', '商品管理')
+          localStorage.setItem('generalMenuActive', '商品管理')
+          // that.$store.state.generalMenuActive = '商品管理'
           that.$router.push('/MyPro2')
           break
         case '我的项目':
+          // localStorage.setItem('generalMenuActive', '我的项目')
+          localStorage.setItem('generalMenuActive', '我的项目')
           that.$router.push('/MyPro')
           break
         case '我的日程':
+          localStorage.setItem('generalMenuActive', '我的日程')
           that.$router.push('/Schedule')
           break
         case '我的动态':
+          localStorage.setItem('generalMenuActive', '我的动态')
           that.$router.push('/MyDep')
           break
         case '我的任务':
+          localStorage.setItem('generalMenuActive', '我的任务')
           that.$router.push('/MyTask')
           break
         default:
@@ -144,6 +160,17 @@ export default {
           //     that.getProjectDetail(that.slideMenu[0].projectUID, '2', '', that.slideMenu[0].projectType)
           //   }
           // }
+          if (localStorage.getItem('generalMenuActive') !== '集团战略') {
+            // this.log('nimanimanima------:', localStorage.getItem('generalMenuActive'))
+            // this.log('nimanimanima------:', that.$store.state.slideMenu[p].projectType)
+            for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
+              if (that.$store.state.slideMenu[p].projectType === localStorage.getItem('generalMenuActive')) {
+                // that.log(99999999)
+                that.$store.state.activeNavIndex = 'general_' + p
+                // that.$store
+              }
+            }
+          }
           that.$store.commit('setRouterName', {
             name: res.data[0].projectList[0] ? res.data[0].projectList[0].projectName : '',
             id: res.data[0].projectList[0] ? res.data[0].projectList[0].projectUID : '',
@@ -153,19 +180,20 @@ export default {
       })
     },
     getProjectDetail: function (id, n, proType, proName) {
-      this.log('getProjectDetail:id:', id)
-      this.log('getProjectDetail:n:', n)
-      this.log('getProjectDetail:proType:', proType)
-      this.log('getProjectDetail:proName:', proName)
+      // this.log('getProjectDetail:id:', id)
+      // this.log('getProjectDetail:n:', n)
+      // this.log('getProjectDetail:proType:', proType)
+      // this.log('getProjectDetail:proName:', proName)
       if (proType === '集团战略') {
-        this.log('getProjectDetail：', '走了集团战略')
+        localStorage.setItem('generalMenuActive', '集团战略')
+        // this.log('getProjectDetail：', '走了集团战略')
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
           this.$router.push('/ProEdit')
         }
       } else {
-        this.log('getProjectDetail：', '没走集团战略')
+        // this.log('getProjectDetail：', '没走集团战略')
         if (proName === '我的日程') {
           this.$router.push('/Schedule')
         } else if (proName === '我的动态') {
