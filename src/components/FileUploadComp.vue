@@ -35,16 +35,16 @@ export default {
   },
   watch: {
     FileDataList (val, old) {
-      this.log('FileDataList:', val)
+      // this.log('FileDataList:', val)
       if (val) {
         this.fileListComment = val
       }
     },
     clearInfo (val, old) {
       var that = this
-      that.log('接收到父组件传值', val)
+      // that.log('接收到父组件传值', val)
       if (val) {
-        that.log('父组件传过来的：', val)
+        // that.log('父组件传过来的：', val)
         that.fileListComment = []
         $('#' + that.fileFormId + '_myfile2').val('')
         that.uploadFileName = ''
