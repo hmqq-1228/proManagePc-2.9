@@ -25,7 +25,7 @@ const state = {
     {label: '产品研发', value: '5'}
   ],
   fileFormat: ['jpg', 'jpeg', 'png', 'gif'],
-  // baseServiceUrl: 'http://10.0.5.241:8089'
+  baseServiceUrl: 'http://10.0.5.241:8089'
   // baseServiceUrl: 'http://10.0.5.29:8088'
   // baseServiceUrl: 'https://ityp.baho.cn:8094/pms2'
   // baseServiceUrl: 'https://pms.baho.cn/pms'
