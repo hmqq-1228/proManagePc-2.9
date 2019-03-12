@@ -1,5 +1,6 @@
 <template>
   <div class="Schedule">
+    <div>{{slideMenu?'':''}}</div>
     <div class="scheduleHeader">
       <!-- 临时性 返回我的任务 c1e2fa -->
       <!--<div class="BackToTask" v-on:click="backTask()"><i class="el-icon-caret-left"></i>我的任务</div>-->
@@ -536,6 +537,7 @@ export default {
     }
   },
   created: function () {
+    // var that = this
     /** 设置面包屑 */
     this.$store.commit('setRouterName', {name: '我的日程', parentName: 'TaskPlan', url: '/'})
     // this.$router.push('/Schedule')
@@ -552,6 +554,34 @@ export default {
     this.dateMountInit(this.monDateOneFormart())
     // 浏览器类型
     // this.alert(this.testBrowser())
+    // if (!localStorage.getItem('generalMenuActive') && localStorage.getItem('generalMenuActive') !== '集团战略') {
+    //   // this.log('nimanimanima------:', localStorage.getItem('generalMenuActive'))
+    //   // this.log('nimanimanima------:', that.$store.state.slideMenu[p].projectType)
+    //   for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
+    //     if (that.$store.state.slideMenu[p].projectType === '我的日程') {
+    //       that.log(99999999)
+    //       that.$store.state.activeNavIndex = 'general_' + p
+    //       localStorage.setItem('generalMenuActive', '我的日程')
+    //       // that.$store
+    //     }
+    //   }
+    // }
+  },
+  computed: {
+    slideMenu: function () {
+      var that = this
+      // this.log()
+      // this.log('url地址：', window.location.href)
+      if (that.$store.state.slideMenu.length > 0) {
+        for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
+          if (that.$store.state.slideMenu[i].projectType === '我的日程') {
+            that.$store.state.activeNavIndex = 'general_' + i
+            localStorage.setItem('generalMenuActive', '我的日程')
+          }
+        }
+      }
+      return that.$store.state.slideMenu
+    }
   },
   methods: {
     GetFileInfo (obj) {

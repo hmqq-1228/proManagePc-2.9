@@ -1541,6 +1541,7 @@ export default {
   },
   created: function () {
     if (this.$store.state.proId || this.$route.params.proId) {
+      this.log('created:', this.$store.state.proId)
       this.proId = this.$store.state.proId || this.$route.params.proId
       this.$store.state.proId = this.proId
     }
@@ -1554,8 +1555,11 @@ export default {
   computed: {
     slideMenuGroup: function () {
       var that = this
+      that.log(111110000)
       if (!this.$route.params.proId && !that.$store.state.proId) {
+        that.log('201201201:', that.$store.state.slideMenuGroup)
         if (that.$store.state.slideMenuGroup.length > 0 && that.$store.state.slideMenuGroup[0].projectList.length > 0) {
+          that.log(1111111111)
           if (localStorage.getItem('proId')) {
             that.log('slideMenu=slideMenu=slideMenu:', that.$store.state.slideMenu)
             that.$store.state.proId = localStorage.getItem('proId')
@@ -1575,22 +1579,29 @@ export default {
             that.$store.state.activeNavIndex = 'group_0_0'
           }
         }
+      } else {
+        that.log(555555)
       }
       return that.$store.state.slideMenuGroup
     },
     slideMenu: function () {
       var that = this
-      this.log()
+      // this.log()
+      this.log(3333333)
+      this.log('params.proId:', this.$route.params.proId)
+      this.log('store.state.proId:', that.$store.state.proId)
       if (!this.$route.params.proId && !that.$store.state.proId) {
+        this.log(4444444)
         // that.$store.state.slideMenu[0].projectList.length  这个是有问题的 非集团战略 projectList 为 ''
-        if (that.$store.state.slideMenuGroup.length === 0 && that.$store.state.slideMenu.length > 0 && that.$store.state.slideMenu[0].projectList.length > 0) {
+        if (that.$store.state.slideMenuGroup.length === 0 && that.$store.state.slideMenu.length > 0) {
+          // this.alert('uuuuuuuu')
           if (localStorage.getItem('proId')) {
             that.$store.state.proId = localStorage.getItem('proId')
             that.proId = localStorage.getItem('proId')
           } else {
-            that.$store.state.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
-            that.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
-            localStorage.setItem('proId', that.proId)
+            // that.$store.state.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
+            // that.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
+            // localStorage.setItem('proId', that.proId)
           }
         }
       }
@@ -1615,21 +1626,20 @@ export default {
       localStorage.setItem('proId', val)
       // this.getProjectDetail()
       var findId = false
-      for (var t = 0; t < that.$store.state.slideMenuGroup[0].projectList.length; t++) {
+      // this.log('watch:slideMenuGroup:', that.$store.state.slideMenuGroup.length)
+      for (var t = 0; that.$store.state.slideMenuGroup.length > 0 && t < that.$store.state.slideMenuGroup[0].projectList.length; t++) {
         if (that.$store.state.slideMenuGroup[0].projectList[t].projectUID === that.proId) {
-          that.log(666666666)
-          that.log(t)
+          // that.log(t)
           findId = true
           that.$store.state.activeNavIndex = 'group_0_' + t
-          // that.$store
         }
       }
       if (!findId) {
-        this.log('nimanimanima------:', localStorage.getItem('generalMenuActive'))
+        // this.log('nimanimanima------:', localStorage.getItem('generalMenuActive'))
         // this.log('nimanimanima------:', that.$store.state.slideMenu[p].projectType)
         for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
           if (that.$store.state.slideMenu[p].projectType === localStorage.getItem('generalMenuActive')) {
-            that.log(99999999)
+            // that.log(99999999)
             that.$store.state.activeNavIndex = 'general_' + p
             // that.$store
           }

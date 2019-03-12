@@ -80,8 +80,35 @@ export default {
       that.activeNavIndex = this.$store.state.activeNavIndex
       return this.$store.state.activeNavIndex
     }
+    // slideMenuData: function () {
+    //   var that = this
+    //   // this.log()
+    //   if (that.$store.state.slideMenu.length > 0) {
+    //     if (window.location.href.indexOf('Schedule') > 0) {
+    //       that.setActiveNavIndex('我的日程')
+    //     } else if () {
+    //      // j
+    //     }
+    //     for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
+    //       if (that.$store.state.slideMenu[i].projectType === '我的日程') {
+    //         that.$store.state.activeNavIndex = 'general_' + i
+    //         localStorage.setItem('generalMenuActive', '我的日程')
+    //       }
+    //     }
+    //   }
+    //   return this.$store.state.slideMenu
+    // }
   },
   methods: {
+    setActiveNavIndex: function (typename) {
+      var that = this
+      for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
+        if (that.$store.state.slideMenu[i].projectType === typename) {
+          that.$store.state.activeNavIndex = 'general_' + i
+          localStorage.setItem('generalMenuActive', typename)
+        }
+      }
+    },
     generalSelect: function (menu) {
       // this.log('generalSelect:', menu)
     },
@@ -143,7 +170,7 @@ export default {
               that.slideMenu.push(res.data[i])
             }
           }
-          // that.log('that.slideMenu:', that.slideMenu)
+          that.log('that.slideMenu:', that.slideMenu)
           // that.log('that.slideMenuGroup:', that.slideMenuGroup)
           that.$store.state.slideMenuGroup = that.slideMenuGroup
           that.$store.state.slideMenu = that.slideMenu
