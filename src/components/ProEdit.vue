@@ -2028,7 +2028,7 @@ export default {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
-            that.getTaskChildList(id)
+            that.getTaskChildList(that.taskId)
             that.selectProjectId()
             that.getHistoryList()
           }
