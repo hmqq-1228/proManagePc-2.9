@@ -2810,8 +2810,8 @@ export default {
       if (id) {
         that.ajax('/myTask/myChildTask', {taskId: id}).then(res => {
           if (res.code === 200) {
-            that.log('myChildTask:', res)
             that.childTaskList = res.data
+            that.log('that.childTaskList:', that.childTaskList)
           }
         })
       } else {
