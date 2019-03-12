@@ -43,7 +43,7 @@ export default new Router({
     },
     {
       path: '/MyTask/:TaskId',
-      name: 'MyTask',
+      name: 'MyTaskArgs',
       component: MyTask
     },
     {
@@ -63,7 +63,7 @@ export default new Router({
     },
     {
       path: '/ProEdit/:proId',
-      name: 'ProEdit',
+      name: 'ProEditParam',
       component: ProEdit
     },
     {
