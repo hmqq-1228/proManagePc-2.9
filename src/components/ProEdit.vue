@@ -2371,30 +2371,6 @@ export default {
     // status: ""
     // type: "1"
     // userName: null
-    // 新增 获取项目详情
-    queryProDetail: function () {
-      var that = this
-      that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
-        that.log('新getProjectDetail:', res)
-        if (res.code === 200) {
-          that.memberList = res.data.memberList
-          that.proDetailMsg = res.data
-          that.startPlanDate = res.data.startDate.split(' ')[0]
-          that.endPlanDate = res.data.endDate.split(' ')[0]
-          // that.data5 = res.data.planOrJobList
-          that.firstPlanId = res.data.firstPlanId
-          // for (var i = 0; i < res.data.planOrJobList.length; i++) {
-          //   res.data.planOrJobList[i].start = res.data.planOrJobList[i].start.split(' ')[0]
-          //   res.data.planOrJobList[i].finish = res.data.planOrJobList[i].finish.split(' ')[0]
-          //   res.data.planOrJobList[i].children = [{
-          //     id: 1,
-          //     name: '测试'
-          //   }]
-          // }
-          // e.children = res.data.planOrJobList
-        }
-      })
-    },
     breadcrumbGetPlan: function (pid, index) {
       var that = this
       that.data5 = []
@@ -2429,6 +2405,20 @@ export default {
         }
       })
     },
+    // 新增 获取项目详情
+    queryProDetail: function () {
+      var that = this
+      that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
+        that.log('新getProjectDetail:', res)
+        if (res.code === 200) {
+          that.memberList = res.data.memberList
+          that.proDetailMsg = res.data
+          that.startPlanDate = res.data.startDate.split(' ')[0]
+          that.endPlanDate = res.data.endDate.split(' ')[0]
+          that.firstPlanId = res.data.firstPlanId
+        }
+      })
+    },
     // 页面初始化 获取一级计划 根据项目id获取项目下的一级计划
     getProjectDetail: function (typeNum) {
       var that = this
@@ -2444,8 +2434,6 @@ export default {
         that.log('一级计划接口：', res)
         if (res.code === 200) {
           that.proDetailMsg = res.data.projectDetail
-          // that.$store.commit('setRouterName', {name: res.data.projectDetail.projectName, id: res.data.projectDetail.projectUID, type: that.currentType})
-          // that.setRouterNameList = that.$store.state.routerList
           that.startPlanDate = res.data.projectDetail.startDate.split(' ')[0]
           that.endPlanDate = res.data.projectDetail.endDate.split(' ')[0]
           that.planList = res.data.planOrJobList
