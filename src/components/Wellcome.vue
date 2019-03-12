@@ -18,28 +18,32 @@ export default {
     querySlideMenuData: function () {
       var that = this
       that.slideMenuData = this.$store.state.slideMenu
-      return this.slideMenuData
+      return that.slideMenuData
     },
     querySlideMenuGroupData: function () {
       var that = this
       that.slideMenuGroupData = this.$store.state.slideMenuGroup
-      return this.$store.state.slideMenuGroup
+      return that.$store.state.slideMenuGroup
     }
   },
   watch: {
     slideMenuData (val, old) {
       var that = this
-      that.log('123val:', val)
-      if (val) {
+      if (val.length > 0) {
         if (that.slideMenuGroupData.length > 0) {
           that.getProjectDetail(that.slideMenuGroupData[0].projectList[0].projectUID, '1', '集团战略')
         } else {
           that.getProjectDetail(val[0].projectUID, '2', '', val[0].projectType)
         }
+      } else {
+        // that.log('数组为空')
       }
     }
   },
   methods: {
+    testVal: function () {
+      this.log('testVal:', this.test)
+    },
     getProjectDetail: function (id, n, proType, proName) {
       // this.log('getProjectDetail:id:', id)
       // this.log('getProjectDetail:n:', n)
