@@ -156,7 +156,7 @@ export default {
         // that.loading = false
         that.$message({
           type: 'error',
-          message: '评论内容不能为空'
+          message: '内容不能为空'
         })
         that.loading21 = false
       }
