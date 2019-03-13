@@ -1,7 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
-import dongtai from '@/components/dongtai'
+import Schedule from '@/components/Schedule'
+import MyDep from '@/components/MyDep'
+import MyTask from '@/components/MyTask'
+import MyPro from '@/components/MyPro'
+import MyPro2 from '@/components/MyPro2'
+import ProEdit from '@/components/ProEdit'
+import ProEdit2 from '@/components/ProEdit2'
+import TestUpload from '@/components/TestUpload'
+import Wellcome from '@/components/Wellcome'
+// Schedule TestUpload Wellcome
 
 Vue.use(Router)
 
@@ -9,13 +18,63 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'Wellcome',
+      component: Wellcome
+    },
+    {
+      path: '/HelloWorld',
       name: 'HelloWorld',
       component: HelloWorld
     },
     {
-      path: '/dongtai',
-      name: 'dongtai',
-      component: dongtai
+      path: '/Schedule',
+      name: 'Schedule',
+      component: Schedule
+    },
+    {
+      path: '/MyDep',
+      name: 'MyDep',
+      component: MyDep
+    },
+    {
+      path: '/MyTask',
+      name: 'MyTask',
+      component: MyTask
+    },
+    {
+      path: '/MyTask/:TaskId',
+      name: 'MyTaskArgs',
+      component: MyTask
+    },
+    {
+      path: '/MyPro',
+      name: 'MyPro',
+      component: MyPro
+    },
+    {
+      path: '/MyPro2',
+      name: 'MyPro2',
+      component: MyPro2
+    },
+    {
+      path: '/ProEdit',
+      name: 'ProEdit',
+      component: ProEdit
+    },
+    {
+      path: '/ProEdit/:proId',
+      name: 'ProEditParam',
+      component: ProEdit
+    },
+    {
+      path: '/ProEdit2',
+      name: 'ProEdit2',
+      component: ProEdit2
+    },
+    {
+      path: '/TestUpload',
+      name: 'TestUpload',
+      component: TestUpload
     }
   ]
 })

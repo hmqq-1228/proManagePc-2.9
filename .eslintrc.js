@@ -25,6 +25,8 @@ module.exports = {
     // allow async-await
     'generator-star-spacing': 'off',
     // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    // 解决iview <Icon> 组件报错
+    "vue/no-parsing-error": [2, { "x-invalid-end-tag": false }]
   }
 }
