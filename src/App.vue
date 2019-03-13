@@ -5,6 +5,7 @@
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
           <div @click="testUpload">贝豪实业项目管理中心</div>
+          <!--<div class="LoginInfo"><span class="LoginWellcome">欢迎你：</span><span class="LoginUserName">张三</span></div>-->
         </div>
       </el-header>
       <el-container>
@@ -303,6 +304,14 @@ padding: 8px 20px;
     background-color: #28558c;
     display: flex;
     justify-content: space-between;
+  }
+  .LoginInfo .LoginWellcome{
+    font-size: 14px;
+    font-weight: normal;
+  }
+  .LoginInfo .LoginUserName{
+    font-weight: normal;
+    font-size: 16px;
   }
 .HelloWorld .el-tree-node__content{
   height: 40px;
