@@ -34,14 +34,6 @@
                 <i class="el-icon-menu"></i>
                 <span slot="title">{{name.projectType}}</span>
               </el-menu-item>
-              <el-menu-item index="4" @click="toDongtai()">
-                <i class="el-icon-bell"></i>
-                <span slot="title">动态</span>
-              </el-menu-item>
-              <el-menu-item index="5">
-                <i class="el-icon-date"></i>
-                <span slot="title">日程管理</span>
-              </el-menu-item>
             </el-menu>
           </el-col>
           </el-row>
