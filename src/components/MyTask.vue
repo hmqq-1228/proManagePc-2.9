@@ -451,7 +451,7 @@
       <div class="cannetProject1">
         <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务<span style="color: #409EFF">({{childTaskList.length}})</span></span></div>
       </div>
-      <div class="taskListChild">
+      <div class="taskListChild" v-loading="childLoading">
         <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
           <div class="childTaskName" :title="childTask.jobName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
           <div class="childTaskMsg">
@@ -608,6 +608,7 @@ export default {
     return {
       taskId: this.$route.params.TaskId,
       showDownMsg: false,
+      childLoading: false,
       endTimeFirst: '',
       startTimeFirst: '',
       fileListEdit: [],
@@ -2271,9 +2272,9 @@ export default {
             that.queryMyTaskView()
             that.getHistoryList()
           }
-        }).catch(() => {
-          // that.loading = false
         })
+      }).catch(() => {
+        // that.loading = false
       })
     },
     childTaskDelete: function (id) {
@@ -2285,16 +2286,22 @@ export default {
         showClose: false,
         type: 'warning'
       }).then(() => {
+        that.childLoading = true
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
             that.getTaskChildList(that.taskId2)
             that.queryMyTaskView()
             that.getHistoryList()
+            that.childLoading = false
+            that.$message.success(res.msg)
+          } else {
+            that.$message.warning(res.msg)
+            that.childLoading = false
           }
-        }).catch(() => {
-          // that.loading = false
         })
+      }).catch(() => {
+        // that.loading = false
       })
     },
     // 任务开始

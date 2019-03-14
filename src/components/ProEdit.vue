@@ -145,7 +145,7 @@
             <div class="tblTitItem">编辑</div>
             <div class="tblTitItem">清空 <span class="clearAll" title="清空全部" v-on:click="delMember(0)">全部</span></div>
           </div>
-          <div class="memTblList">
+          <div class="memTblList" v-loading="loadingMan">
             <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">
               <div class="memListItem">{{mem.peopleRoleText}}</div>
               <div class="memListItem">{{mem.userName}}</div>
@@ -769,6 +769,82 @@
           </div>
         </div>
       </Drawer>
+      <!--计划详情-->
+      <!--计划详情-->
+      <!--计划详情-->
+      <!--计划详情-->
+      <!--计划详情-->
+      <!--计划详情-->
+      <Drawer class="drawerScroll" :closable="false" width="750" v-model="value444">
+        <div class="slidTop">
+          <div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>
+          <div></div>
+          <div style="display: flex;justify-content: space-between">
+            <div title="删除计划" style="width: 50px;cursor: pointer;"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+            <div style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF;cursor: pointer;"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          </div>
+        </div>
+        <div class="taskMsg2">
+          <div class="taskLf" style="width: 100%;">
+            <div class="taskName2" style="font-size: 14px;">计划详情: </div>
+            <div style="color: #999;margin-top: 0;" class="taskDetail" :title="planMsg.description">{{planMsg.description}}</div>
+          </div>
+          <!--<div class="taskRt">-->
+            <!--<div v-if="taskBasicMsg.status === '0'"><img src="../../static/img/unstart.png" alt=""></div>-->
+            <!--<div v-if="taskBasicMsg.status === '1'"><img src="../../static/img/doing.png" alt=""></div>-->
+            <!--<div v-if="taskBasicMsg.status === '2'"><img src="../../static/img/finish.png" alt=""></div>-->
+          <!--</div>-->
+        </div>
+        <div class="cannetProject">
+          <div style="display: inline-block"><img src="../../static/img/faqiren.png" alt=""><span>创 建 人:</span></div>
+          <div style="display: inline-block;color: #888;">{{planMsg.creator}}</div>
+        </div>
+        <div class="cannetProject">
+          <div style="display: inline-block"><img src="../../static/img/kaishi.png" alt=""><span>创建时间:</span></div>
+          <div style="display: inline-block;color: #888;">{{planMsg.createDate}}</div>
+        </div>
+        <div class="cannetProject">
+          <div style="display: inline-block"><img src="../../static/img/time.png" alt=""><span>计划周期:</span></div>
+          <div style="display: inline-block;color: #888;">{{planMsg.start}} 到 {{planMsg.finish}}</div>
+        </div>
+        <div class="cannetProject">
+          <div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
+          <div style="display: inline-block;color: #409eff;cursor: pointer;">{{planMsg.projectName}}</div>
+        </div>
+        <div class="cannetProject">
+          <div style="display: inline-block"><img src="../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
+          <div style="display: inline-block;color: #409EFF;cursor: pointer;">{{planMsg.parentPlanName}}</div>
+          <!--<div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级任务</div>-->
+        </div>
+        <div class="cannetProject">
+          <Button type="info">任务分解</Button>
+        </div>
+        <div class="cannetProject1">
+          <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务<span style="color: #409EFF">({{planMsgPlanList.length}})</span></span></div>
+        </div>
+        <div class="taskListChild">
+          <div class="taskItemChild" v-for="(child, index2) in planMsgPlanList" v-bind:key="index2">
+            <div class="childTaskName" :title="child.name"><Icon type="md-copy" size="16" color="#409EFF"/> {{child.name}} <span style="color: #888;" v-if="child.type === '2'">(任务)</span><span style="color: #888;" v-if="child.type === '1'">(计划)</span></div>
+            <div class="childTaskMsg">
+              <div v-if="child.status" style="width: 60px;" class="childTaskStyle0">未完成</div>
+              <div v-if="child.status" style="width: 80px;">剩余 <span style="color:#13ce66;font-size: 18px;">30</span> 天</div>
+              <!--<div style="width: 80px;" v-if="childTask.dayNum < 0">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>-->
+              <div v-if="child.userName" style="width: 160px;">{{child.userName}}</div>
+              <div v-if="!child.userName" style="width: 160px;">创建人: {{child.creator}}</div>
+              <div style="width: 20px;margin-right: 0"><div class="taskDel"><Icon type="md-close" size="18"/></div></div>
+            </div>
+          </div>
+          <!--<div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="childTaskList.length === 0">-->
+            <!--暂无子任务-->
+          <!--</div>-->
+        </div>
+      </Drawer>
+      <!--计划详情结束-->
+      <!--计划详情结束-->
+      <!--计划详情结束-->
+      <!--计划详情结束-->
+      <!--计划详情结束-->
+      <!--计划详情结束-->
       <el-dialog title="图片预览" :visible.sync="dialogShowImg">
         <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
       </el-dialog>
@@ -898,102 +974,6 @@
           </div>
         </div>
       </Drawer>
-      <!--<div class="bgCoverModifyTask" v-if="modifyTaskVisible">-->
-        <!--<div class="bgCoverCnt2" v-loading="loadingEdit">-->
-          <!--<h2>修改任务</h2>-->
-          <!--<div class="colose" @click="modifyTaskVisible = false"><i class="el-icon-close"></i></div>-->
-          <!--<div class="bgCoverTabs">-->
-            <!--&lt;!&ndash;修改任务form&ndash;&gt;-->
-            <!--<div class="planTaskBox">-->
-              <!--<el-form ref="modifyTask" :model="detailTaskform" :rules="modifyTaskRules" label-width="80px">-->
-                <!--<el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">-->
-                  <!--<el-input class="planNameIpt" v-model="detailTaskform.jobName"></el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">-->
-                  <!--<div class="ratestar" style="padding-top: 6px;">-->
-                    <!--<el-rate v-model="detailTaskform.jobLevel" v-on:change="levelChange($event)"></el-rate>-->
-                  <!--</div>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="开始时间" prop="taskStartDate">-->
-                  <!--<el-col :span="24">-->
-                    <!--<el-date-picker style="width: 100%" type="datetime"-->
-                                    <!--format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--placeholder="选择日期"-->
-                                    <!--v-model="detailTaskform.taskStartDate"-->
-                                    <!--:picker-options="pickerOptionsTaskSt"-->
-                    <!--&gt;</el-date-picker>-->
-                  <!--</el-col>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="结束时间" prop="taskFinishDate">-->
-                  <!--<el-col :span="24">-->
-                    <!--&lt;!&ndash;value-format="yyyy-MM-dd HH:mm:ss"&ndash;&gt;-->
-                    <!--&lt;!&ndash;format="yyyy-MM-dd HH:mm:ss"&ndash;&gt;-->
-                    <!--<el-date-picker type="datetime" style="width: 100%"-->
-                                    <!--format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--placeholder="选择日期"-->
-                                    <!--v-model="detailTaskform.taskFinishDate"-->
-                                    <!--:picker-options="pickerOptionsTaskSt"-->
-                    <!--&gt;</el-date-picker>-->
-                  <!--</el-col>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="任务描述" maxlength="100" width="100">-->
-                  <!--<el-input class="planNameIpt" type="textarea" style="resize:none;" :rows="2" v-model="detailTaskform.description"></el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="任务附件">-->
-                  <!--<form id="uploadFileEdit" enctype="multipart/form-data">-->
-                    <!--<input type="file" :disabled="fileListEditDis" style="height: 25px;line-height: 20px;font-size: 12px;" v-on:change="fileChangeEdit" id="myfileEdit" name="myfile" placeholder="请选择文件"/>-->
-                  <!--</form>-->
-                  <!--<div style="line-height: 20px;font-size: 12px;">-->
-                    <!--<span style="color: #F00;" v-if="fileListEdit.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListEdit.length}}</span> 个附件:</span>-->
-                    <!--<span v-if="fileListEdit.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListEdit.length}}</span> 个附件:</span>-->
-                    <!--<span style="color: #888;" v-if="fileListEdit.length === 0">暂无附件</span>-->
-                    <!--<span style="color: #409EFF" v-if="fileListEdit.length > 0" v-for="(file, index) in fileListEdit" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.showName}}  <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFile(file.attachmentId)"></div>, </span>-->
-                  <!--</div>-->
-                <!--</el-form-item>-->
-                <!--<div style="text-align: center">-->
-                  <!--<el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>-->
-                  <!--<el-button @click="modifyTaskVisible = false">关 闭</el-button>-->
-                <!--</div>-->
-              <!--</el-form>-->
-            <!--</div>-->
-            <!--&lt;!&ndash;&ndash;&gt;-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--任务详情 end-->
-      <!--<div class="block">-->
-        <!--<el-tree-->
-          <!--:data="data5"-->
-          <!--node-key="id"-->
-          <!--@node-expand="getNodeMsg($event)"-->
-          <!--:expand-on-click-node="false">-->
-          <!--<span class="custom-tree-node" slot-scope="{ node, data }">-->
-            <!--<span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>-->
-            <!--<span class="proMsg">-->
-              <!--<span class="treeName">-->
-                <!--<span v-if="data.type === '2'">-->
-                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>-->
-                  <!--<span style="float: left;margin-left: 16px;">{{data.userName}}</span>-->
-                <!--</span>-->
-              <!--</span>-->
-              <!--<span class="treeState">-->
-                 <!--<span v-if="data.type === '2'">-->
-                  <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>-->
-                  <!--<span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>-->
-                  <!--<span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>-->
-                  <!--<span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>-->
-                 <!--</span>-->
-              <!--</span>-->
-              <!--<span class="treeTime">-->
-                <!--<span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>-->
-                <!--<span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>-->
-              <!--</span>-->
-            <!--</span>-->
-          <!--</span>-->
-        <!--</el-tree>-->
-      <!--</div>-->
     </div>
     <!--删除确认-->
     <Modal v-model="modal2" width="360">
@@ -1023,11 +1003,16 @@ export default {
   },
   data () {
     return {
+      // 计划详情
+      planMsg: '',
+      planMsgPlanList: '',
       // 产品研发 树形结构 单选
       i: 0,
+      value444: false,
       proFileList: [],
       taskFileList: [],
       pageN: 1,
+      loadingMan: false,
       commentPreviewUrl1: '',
       dialogShowImg1: false,
       // 新建 修改任务
@@ -1861,6 +1846,7 @@ export default {
     // 删除成员
     delMember (memId) {
       var that = this
+      that.loadingMan = true
       if (memId || memId === 0) {
         that.ajax('/myProject/delMembersById', {
           projectUID: that.proId,
@@ -1875,10 +1861,11 @@ export default {
             that.queryProGroupMember()
             that.queryProDetail()
             // that.getProjectPeo()
-            that.loading = false
+            that.loadingMan = false
             // that.deId = []
           } else {
             that.$message(res.msg)
+            that.loadingMan = false
           }
         })
       }
@@ -2201,16 +2188,18 @@ export default {
           }
           // this.log('user:', user)
           that.loading = true
-          this.addTaskPayload.parentId = this.currentNodeId
-          this.addTaskPayload.jobName = this.addTaskForm.jobName
-          this.addTaskPayload.jobLevel = this.addTaskForm.jobLevel
+          this.addTaskPayload.parentId = that.currentNodeId
+          this.addTaskPayload.jobName = that.addTaskForm.jobName
+          this.addTaskPayload.jobLevel = that.addTaskForm.jobLevel
           this.addTaskPayload.users = that.user
-          this.addTaskPayload.taskStartDate = this.addTaskForm.date1
-          this.addTaskPayload.taskFinishDate = this.addTaskForm.date2
-          this.addTaskPayload.description = this.addTaskForm.description
+          this.addTaskPayload.taskStartDate = that.addTaskForm.date1
+          this.addTaskPayload.taskFinishDate = that.addTaskForm.date2
+          this.addTaskPayload.description = that.addTaskForm.description
           this.addTaskPayload.attachmentId = that.SetFileIdStr()
           // this.addTaskPayload._jfinal_token = this.token
           // this.addTaskPayload.formId = this.formId
+          console.log('that.addTaskForm.date1', that.addTaskForm.date1)
+          console.log('that.addTaskForm.date2', that.addTaskForm.date2)
           this.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
             if (res.code === 200) {
               // 告知附件子组件清空
@@ -2431,6 +2420,7 @@ export default {
           obj.Name = that.taskForm.value9[i].split('-')[0]
           obj.ID = that.taskForm.value9[i].split('-')[1]
           that.addMemPayload.hrocPeople.push(obj)
+          console.log('hrocPeople', that.addMemPayload.hrocPeople)
         }
         // console.log('value999999999:', that.addMemPayload.hrocPeople)
         that.addMemPayload.projectUID = this.proId
@@ -2668,7 +2658,30 @@ export default {
         that.getCommicateCont()
         that.getHistoryList()
         that.toDetail(data.id)
+      } else if (data.type === '1') {
+        that.value444 = true
+        that.toPlanDetail(data.id)
       }
+    },
+    toPlanDetail: function (id) {
+      var that = this
+      console.log('id', id)
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: id}).then(res => {
+        console.log('res', res)
+        if (res.code === 200) {
+          that.planMsg = res.data
+          that.getNextPlanTask(id)
+        } else {
+          that.$message.warning(res.msg)
+        }
+      })
+    },
+    getNextPlanTask: function (id) {
+      var that = this
+      that.ajax('/myProject/getPlanOrTaskById', {id: id}).then(res => {
+        console.log('resList', res)
+        that.planMsgPlanList = res.data
+      })
     },
     showImagePre: function (url, showName) {
       if (this.isImage(showName)) {
