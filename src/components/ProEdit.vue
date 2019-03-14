@@ -50,7 +50,7 @@
         <div class="memList">
           <div class="memName"><Icon size="30" type="ios-person-outline" /></div>
           <div class="memBox">
-            <div v-if="memberList.length > 0" v-for="member in memberList" v-bind:key="member.userName">{{member.userName}}</div>
+            <div v-if="memberList.length > 0" v-for="(member, memIndex) in memberList" v-bind:key="member.userName + '-' + memIndex">{{member.userName}}</div>
             <div class="moreBtn" v-on:click="moreMemberClick()">
               <Button size="small" style="width: 84px;" type="primary">更多 / 编辑</Button>
             </div>
@@ -252,42 +252,20 @@
             <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
             <div class="cannetProject2">
               <div style="display: inline-block">
-                <!--<img src="../../static/img/fujian.png" alt="">-->
-                <component v-bind:is="FileUploadComp" fileFormId="history" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
-                <!--<a href="javascript:;" class="file" @change="getFileName">选择文件-->
-                  <!--<input type="file" name="myfile">-->
-                <!--</a>-->
-                <!--<input type="hidden" name="projectUID" v-bind:value="proId">-->
-                <!--<input type="hidden" name="rtype" v-bind:value="3">-->
-                <!--<span class="showFileName"></span>-->
+                <!-- 引入 附件上传 组件 -->
+                <component v-bind:is="FileUploadComp" fileFormId="history" v-on:FilePreEmit="GetFilePreData" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
               </div>
               <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
             </div>
           </form>
         </div>
-        <!--操作记录-->
+        <!--操作记录 历史记录-->
         <div class="discription lis" style="margin-top: 15px;">
-          <!--<h3>历史记录</h3>-->
-          <!--<div class="add" @click="addRemark()"><img src="../../static/img/msg.png" alt="">添加评论</div>-->
-          <div class="logBox">
-            <div v-bind:key="logs.index" class="TimeLine" style="position: relative;" v-for="(logs, index) in taskLogs">
-              <div class="quan" v-if="index < 99">{{index+1}}</div>
-              <div class="quan" style="width: 24px;height: 24px;border-radius: 12px;line-height: 24px;margin-left: -3px;" v-if="index >= 99">{{index+1}}</div>
-              <div class="timeDate">{{logs.oTime}}</div>
-              <div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}
-                <div class="contBoxContentWrap">
-                  <div class="contBoxContent" v-if="logs.comment">评论：{{logs.comment}}</div>
-                  <div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0" v-for="(file, index2) in logs.uploads" v-bind:key="index2">
-                    <span v-if="file.isImage" @click="showBigImage1(file.previewUrl)" class="filepre">预览</span>
-                    <a v-bind:download="file.showName" v-bind:href="file.downloadUrl">下载：{{file.showName}}</a>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <!-- 历史记录 评论 引入组件-->
+          <component v-bind:is="compArr.CommentLogs" fileFormId="CommentLogs" v-on:FilePreEmit="GetFilePreData" :commentList="taskLogs"></component>
+          <div style="text-align: center">
+            <Page :total="commentTotalNum" size="small" :page-size="10" show-total @on-change="commentPageChange($event)"></Page>
           </div>
-          <el-row style="margin-top: 30px;" v-if="totalData > 10">
-            <el-button icon="el-icon-plus" @click="getPageNum()" v-bind:disabled="notMore">加载更多</el-button>
-          </el-row>
         </div>
       </Drawer>
       <!--新增 抽屉 查看历史记录 end-->
@@ -303,9 +281,6 @@
           <el-table-column prop="planName" label="计划/任务" width="280"></el-table-column>
           <el-table-column prop="planType" label="类型" width="70"></el-table-column>
           <el-table-column prop="planDateDur" label="时间" width="200"></el-table-column>
-          <!--<el-table-column prop="planManager" label="责任人" width="120"></el-table-column>-->
-          <!--<el-table-column prop="address" label="地址" width="300"></el-table-column>-->
-          <!--<el-table-column prop="zip" label="邮编" width="120"></el-table-column>-->
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
               <el-button @click="planHandleClick(scope.row, 'edit')" type="text" size="small">编辑</el-button>
@@ -314,150 +289,121 @@
             </template>
           </el-table-column>
         </el-table>
-        <!--<div class="proTitle">这个是项目名</div>-->
-        <!--<div class="planTable">-->
-          <!--<div class="Plantable">-->
-
-          <!--</div>-->
-          <!--<div class="planTableItem">-->
-            <!--<div class="planItemTitle">一级计划标题</div>-->
-            <!--<div class="planItemType">计划</div>-->
-            <!--<div class="planItemTime">2019-03-01 2019-03-20</div>-->
-            <!--<div class="planItemManager">张三</div>-->
-            <!--<div class="planItemUse">-->
-              <!--<div class="planItemUseEdit"><el-button style="margin-left: 10px" size="mini" type="primary">编辑</el-button></div>-->
-              <!--<div class="planItemUseDel"><el-button style="margin-left: 10px" size="mini" type="primary">删除</el-button></div>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
       </Drawer>
       <!--新增 抽屉 一级计划详情 end -->
       <!--新增 添加计划或者任务 start-->
       <!--bgcover开始 增加计划-->
-      <Drawer class="drawerScroll" title="计划表单" :closable="false" width="40%" style="z-index: 1005" v-model="bgCoverShow">
-        <!--<div class="bgCover" v-if="bgCoverShow">-->
+      <Drawer class="drawerScroll" title="计划表单2" :closable="false" width="40%" style="z-index: 1005" v-model="bgCoverShow">
         <div class="bgCoverCnt" v-loading="loading">
-          <div class="colose" @click="onPlanTaskCancel()">&#935;</div>
-          <div class="bgCoverTabs">
-            <el-tabs v-model="activeNameBgCover" @tab-click="handleClickPlanTask">
-              <el-tab-pane label="增加计划" name="first" v-bind:disabled="panshow">
-                <!--计划form-->
-                <div class="planTaskBox">
-                  <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-                    <el-form-item label="计划名称" prop="name" maxlength="100" width="100" style="margin-bottom: 30px;">
-                      <el-input class="planNameIpt" v-model="form.name" style="width: 300px;" maxlength="20"></el-input>
-                    </el-form-item>
-                    <el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">
-                      <el-col :span="20">
-                        <el-date-picker type="datetime"
-                        :picker-options="pickerOptionsPlan"
-                        format="yyyy-MM-dd HH:mm:ss"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        placeholder="选择日期"
-                        v-model="form.date1" style="width: 300px;"
-                        ></el-date-picker>
-                      </el-col>
-                    </el-form-item>
-                    <el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">
-                      <el-col :span="20">
-                        <el-date-picker type="datetime"
-                        :picker-options="pickerOptionsPlan"
-                        format="yyyy-MM-dd HH:mm:ss"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        placeholder="选择日期"
-                        v-model="form.date2" style="width: 300px;"
-                        ></el-date-picker>
-                      </el-col>
-                    </el-form-item>
-                    <el-form-item label="计划描述" prop="description" maxlength="100" width="100" style="margin-bottom: 30px;">
-                      <el-input class="planNameIpt" type="textarea" :rows="2" v-model="form.description" style="width: 300px;"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button type="primary" @click="onPlanSubmit('form')">立即创建</el-button>
-                      <el-button @click="onPlanTaskCancel()">取消</el-button>
-                    </el-form-item>
-                  </el-form>
-                </div>
-                <!---->
-              </el-tab-pane>
-              <el-tab-pane label="增加任务" name="second">
-                <!--任务form-->
-                <div class="planTaskBox" style="position: relative;padding-top: 0;">
-                  <el-form ref="addTaskForm" :rules="taskRules" :model="addTaskForm" label-width="80px">
-                    <el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">
-                      <el-input class="planNameIpt" v-model="addTaskForm.jobName" style="width: 300px;" v-bind:disabled="isDisabled" maxlength="20"></el-input>
-                    </el-form-item>
-                    <el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">
-                      <div class="ratestar" style="padding-top: 6px;">
-                        <el-rate v-model="addTaskForm.jobLevel" v-on:change="rateChange($event)" v-bind:disabled="isDisabled"></el-rate>
-                      </div>
-                    </el-form-item>
-                    <!--指派人员多选 多人指派-->
-                    <el-form-item label="任务指派" prop="userArr" maxlength="100">
-                      <el-col :span="24">
-                        <el-select v-model="value9" multiple filterable remote style="width: 300px"
-                        :reserve-keyword="false" placeholder="请输入关键词"
-                        :remote-method="addTaskRemoteMethod" :loading="loading2">
-                          <el-option v-for="item in addTaskOptions" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                          :value="item.Name + '(' + item.jName + ')' + '_' + item.ID">
-                          </el-option>
-                        </el-select>
-                      </el-col>
-                    </el-form-item>
-                    <!--开始时间-->
-                    <el-form-item label="开始时间" prop="date1">
-                      <el-col :span="20">
-                        <el-date-picker type="datetime"
-                        :picker-options="pickerOptionsPlan"
-                        format="yyyy-MM-dd HH:mm:ss"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        placeholder="选择日期"
-                        v-model="addTaskForm.date1" style="width: 300px;"
-                        >
-                        </el-date-picker>
-                      </el-col>
-                    </el-form-item>
-                    <el-form-item label="结束时间" prop="date2">
-                      <el-col :span="20">
-                      <el-date-picker type="datetime"
-                      :picker-options="pickerOptionsPlan"
-                      format="yyyy-MM-dd HH:mm:ss"
-                      value-format="yyyy-MM-dd HH:mm:ss"
-                      placeholder="选择日期"
-                      v-model="addTaskForm.date2" style="width: 300px;"
-                      ></el-date-picker>
-                      </el-col>
-                    </el-form-item>
-                    <el-form-item label="任务描述" prop="description" maxlength="100" width="100">
-                      <el-input class="planNameIpt" v-bind:disabled="isDisabled" type="textarea" :rows="2" v-model="addTaskForm.description" style="width: 300px;"></el-input>
-                    </el-form-item>
-                    <el-form-item label="添加附件" prop="description" maxlength="100" width="100">
-                      <!--新建任务 引入附件组件 上传文件-->
-                      <component v-bind:is="FileUploadComp" fileFormId="fileTest" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
-                    </el-form-item>
-                    <!--<component v-bind:is="fileUploadComp" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>-->
-                    <!--<el-form-item style="height: 40px;"></el-form-item>-->
-                    <el-form-item>
-                      <el-button type="primary" @click="onTaskSubmit('addTaskForm')">立即创建</el-button>
-                      <el-button @click="onPlanTaskCancel()">取消</el-button>
-                    </el-form-item>
-                  </el-form>
-                  <!---->
-                  <!--<el-form-item label="添加附件" prop="description" maxlength="100" width="100">-->
-                    <!--&lt;!&ndash;新建任务 引入附件组件 上传文件&ndash;&gt;-->
-                    <!--<component v-bind:is="fileUploadComp" v-bind:clearInfo="isClear" v-on:FileInfoEmit="getFileInfo"></component>-->
-                  <!--</el-form-item>-->
-                  <!--<form id="mytaskForm" enctype="multipart/form-data" style="position: absolute;bottom:40px;padding-left: 12px;">-->
-                    <!--<div style="font-size: 14px;color: #555;height: 30px;line-height: 30px;display: inline-block;">添加附件</div>&nbsp;&nbsp;-->
-                    <!--<input type="file" id="myfile" name="myfile" placeholder="请选择文件" style="width: 200px;" />-->
-                    <!--<input type="hidden" name="formId" v-bind:value="formId">-->
-                    <!--<div style="padding-left: 70px;font-size: 12px;height: 16px;color: #409eff">{{upLoadName}}</div>-->
-                  <!--</form>-->
-                </div>
-                <!---->
-              </el-tab-pane>
-            </el-tabs>
-          </div>
+          <component v-bind:is="compArr.CreatePlanOrTask" fileFormId="CreatePlanTask" v-on:CreatePlanTaskCallback="CreatePlanTaskCallbackFuc" :nodeId="currentNodeId"></component>
+          <!--<div class="colose" @click="onPlanTaskCancel()">&#935;</div>-->
+          <!--<div class="bgCoverTabs">-->
+            <!--<el-tabs v-model="activeNameBgCover" @tab-click="handleClickPlanTask">-->
+              <!--<el-tab-pane label="增加计划" name="first" v-bind:disabled="panshow">-->
+                <!--&lt;!&ndash;计划form&ndash;&gt;-->
+                <!--<div class="planTaskBox">-->
+                  <!--<el-form ref="form" :model="form" :rules="rules" label-width="80px">-->
+                    <!--<el-form-item label="计划名称" prop="name" maxlength="100" width="100" style="margin-bottom: 30px;">-->
+                      <!--<el-input class="planNameIpt" v-model="form.name" style="width: 300px;" maxlength="20"></el-input>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">-->
+                      <!--<el-col :span="20">-->
+                        <!--<el-date-picker type="datetime"-->
+                        <!--:picker-options="pickerOptionsPlan"-->
+                        <!--format="yyyy-MM-dd HH:mm:ss"-->
+                        <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                        <!--placeholder="选择日期"-->
+                        <!--v-model="form.date1" style="width: 300px;"-->
+                        <!--&gt;</el-date-picker>-->
+                      <!--</el-col>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">-->
+                      <!--<el-col :span="20">-->
+                        <!--<el-date-picker type="datetime"-->
+                        <!--:picker-options="pickerOptionsPlan"-->
+                        <!--format="yyyy-MM-dd HH:mm:ss"-->
+                        <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                        <!--placeholder="选择日期"-->
+                        <!--v-model="form.date2" style="width: 300px;"-->
+                        <!--&gt;</el-date-picker>-->
+                      <!--</el-col>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="计划描述" prop="description" maxlength="100" width="100" style="margin-bottom: 30px;">-->
+                      <!--<el-input class="planNameIpt" type="textarea" :rows="2" v-model="form.description" style="width: 300px;"></el-input>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item>-->
+                      <!--<el-button type="primary" @click="onPlanSubmit('form')">立即创建</el-button>-->
+                      <!--<el-button @click="onPlanTaskCancel()">取消</el-button>-->
+                    <!--</el-form-item>-->
+                  <!--</el-form>-->
+                <!--</div>-->
+                <!--&lt;!&ndash;&ndash;&gt;-->
+              <!--</el-tab-pane>-->
+              <!--<el-tab-pane label="增加任务" name="second">-->
+                <!--&lt;!&ndash;任务form&ndash;&gt;-->
+                <!--<div class="planTaskBox" style="position: relative;padding-top: 0;">-->
+                  <!--<el-form ref="addTaskForm" :rules="taskRules" :model="addTaskForm" label-width="80px">-->
+                    <!--<el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">-->
+                      <!--<el-input class="planNameIpt" v-model="addTaskForm.jobName" style="width: 300px;" v-bind:disabled="isDisabled" maxlength="20"></el-input>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">-->
+                      <!--<div class="ratestar" style="padding-top: 6px;">-->
+                        <!--<el-rate v-model="addTaskForm.jobLevel" v-on:change="rateChange($event)" v-bind:disabled="isDisabled"></el-rate>-->
+                      <!--</div>-->
+                    <!--</el-form-item>-->
+                    <!--&lt;!&ndash;指派人员多选 多人指派&ndash;&gt;-->
+                    <!--<el-form-item label="任务指派" prop="userArr" maxlength="100">-->
+                      <!--<el-col :span="24">-->
+                        <!--<el-select v-model="value9" multiple filterable remote style="width: 300px"-->
+                        <!--:reserve-keyword="false" placeholder="请输入关键词"-->
+                        <!--:remote-method="addTaskRemoteMethod" :loading="loading2">-->
+                          <!--<el-option v-for="item in addTaskOptions" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"-->
+                          <!--:value="item.Name + '(' + item.jName + ')' + '_' + item.ID">-->
+                          <!--</el-option>-->
+                        <!--</el-select>-->
+                      <!--</el-col>-->
+                    <!--</el-form-item>-->
+                    <!--&lt;!&ndash;开始时间&ndash;&gt;-->
+                    <!--<el-form-item label="开始时间" prop="date1">-->
+                      <!--<el-col :span="20">-->
+                        <!--<el-date-picker type="datetime"-->
+                        <!--:picker-options="pickerOptionsPlan"-->
+                        <!--format="yyyy-MM-dd HH:mm:ss"-->
+                        <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                        <!--placeholder="选择日期"-->
+                        <!--v-model="addTaskForm.date1" style="width: 300px;"-->
+                        <!--&gt;-->
+                        <!--</el-date-picker>-->
+                      <!--</el-col>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="结束时间" prop="date2">-->
+                      <!--<el-col :span="20">-->
+                      <!--<el-date-picker type="datetime"-->
+                      <!--:picker-options="pickerOptionsPlan"-->
+                      <!--format="yyyy-MM-dd HH:mm:ss"-->
+                      <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                      <!--placeholder="选择日期"-->
+                      <!--v-model="addTaskForm.date2" style="width: 300px;"-->
+                      <!--&gt;</el-date-picker>-->
+                      <!--</el-col>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="任务描述" prop="description" maxlength="100" width="100">-->
+                      <!--<el-input class="planNameIpt" v-bind:disabled="isDisabled" type="textarea" :rows="2" v-model="addTaskForm.description" style="width: 300px;"></el-input>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="添加附件" prop="description" maxlength="100" width="100">-->
+                      <!--&lt;!&ndash;新建任务 引入附件组件 上传文件&ndash;&gt;-->
+                      <!--<component v-bind:is="FileUploadComp" fileFormId="fileTest" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item>-->
+                      <!--<el-button type="primary" @click="onTaskSubmit('addTaskForm')">立即创建</el-button>-->
+                      <!--<el-button @click="onPlanTaskCancel()">取消</el-button>-->
+                    <!--</el-form-item>-->
+                  <!--</el-form>-->
+                <!--</div>-->
+                <!--&lt;!&ndash;&ndash;&gt;-->
+              <!--</el-tab-pane>-->
+            <!--</el-tabs>-->
+          <!--</div>-->
         </div>
         <!--</div>-->
       </Drawer>
@@ -1014,12 +960,14 @@
 
 <script>
 import FileUploadComp from './FileUploadComp.vue'
-// import FileUpload from './FileUpload.vue'
+import CommentLogs from './CustomComp/CommentLogs.vue'
+import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
 export default {
   name: 'ProEdit',
   components: {
-    // FileUpload,
-    FileUploadComp
+    CommentLogs,
+    FileUploadComp,
+    CreatePlanOrTask
   },
   data () {
     return {
@@ -1072,6 +1020,14 @@ export default {
       IsClear: false,
       // 引入附件上传组件 新组件
       FileUploadComp: 'FileUploadComp',
+      // 引入 评论 历史记录
+      // CommentLogs: 'CommentLogs',
+      // 引入组件
+      compArr: {
+        CommentLogs: 'CommentLogs',
+        FileUploadComp: 'FileUploadComp',
+        CreatePlanOrTask: 'CreatePlanOrTask'
+      },
       // 附件上传 附件ID拼接成字符串
       FileUploadIdStr: '',
       // 编辑计划
@@ -1249,7 +1205,7 @@ export default {
       // 新增 添加计划或者任务 表单弹窗
       bgCoverShow: false,
       // 新增
-      totalData: 0,
+      commentTotalNum: 0,
       // 新增
       taskLogs: [],
       // 新增
@@ -2089,6 +2045,23 @@ export default {
     rateChange: function (rateval) {
       this.addTaskPayload.jobLevel = rateval
     },
+    // 新建计划 新建任务 引入组件 返回
+    CreatePlanTaskCallbackFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.bgCoverShow = false
+        that.queryProDetail()
+        that.$message({
+          message: '创建成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
     // 新建 创建添加计划
     onPlanSubmit (formName) {
       var that = this
@@ -2107,7 +2080,7 @@ export default {
               that.bgCoverShow = false
               that.token = res._jfinal_token
               that.loading = false
-              that.formDataClear()
+              // that.formDataClear()
               // that.getProjectDetail()
               // that.getChildNode(that.currentNodeId)
               that.queryProDetail()
@@ -2191,6 +2164,7 @@ export default {
     // 新增 提交 添加任务
     // 创建添加任务
     onTaskSubmit: function (taskForm) {
+      this.log(18988889999)
       var that = this
       // var fileV = $('#myfile').val()
       that.$refs[taskForm].validate((valid) => {
@@ -2261,18 +2235,18 @@ export default {
       this.DrawerHistory = true
       this.getHistoryCont()
     },
-    getPageNum () {
-      this.pageN++
-      // this.log(this.pageN)
-      // this.pagenum = e
-      this.getHistoryCont()
-    },
+    // getPageNum () {
+    //   this.pageN++
+    //   // this.log(this.pageN)
+    //   // this.pagenum = e
+    //   this.getHistoryCont()
+    // },
     // 新增 获取历史记录
     getHistoryCont () {
       var that = this
       // var planid = this.$route.params.pid
       that.ajax('/myProject/getLogAndComment', {projectUID: that.proId, pageSize: 10, pageNum: that.pageN}).then(res => {
-        // that.log('getLogAndComment:', res)
+        that.log('getLogAndComment:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.list.length; i++) {
             for (var j = 0; j < res.data.list[i].uploads.length; j++) {
@@ -2285,12 +2259,13 @@ export default {
               res.data.list[i].uploads[j].downloadUrl = downurl
             }
           }
-          that.taskLogs = that.taskLogs.concat(res.data.list)
-          that.totalData = res.data.totalRow
-          if (that.taskLogs.length === that.totalData) {
-            // that.log('ss', that.taskLogs)
-            that.notMore = true
-          }
+          that.taskLogs = res.data.list
+          that.commentTotalNum = res.data.totalRow
+          // that.totalData = res.data.totalRow
+          // if (that.taskLogs.length === that.totalData) {
+          //   // that.log('ss', that.taskLogs)
+          //   that.notMore = true
+          // }
           // that.log('taskLogs:', res)
         }
       })
@@ -2724,6 +2699,10 @@ export default {
     getCurrentPage: function (e) {
       this.taskComment.pageNum = e
       this.getCommicateCont()
+    },
+    commentPageChange: function (e) {
+      this.pageN = e
+      this.getHistoryCont()
     },
     // getHistoryList: function () {
     //   var that = this
@@ -3531,6 +3510,7 @@ export default {
     },
     // 预览
     GetFilePreData (obj) {
+      this.log('obj::', obj)
       if (obj.previewUrl && this.isImage(obj.fileName)) {
         this.showBigImage1(obj.previewUrl)
       }

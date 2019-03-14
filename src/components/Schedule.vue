@@ -910,6 +910,7 @@ export default {
     mouseout: function (targetId) {
       var that = this
       if (that.kk) {
+        // 待检查
         this.ScheduleDetailShow = false
         for (var i = 0; i < that.monGrids.length; i++) {
           // var isInList = false

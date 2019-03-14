@@ -224,27 +224,35 @@
       </div>
       <!--操作记录-->
       <div class="discription lis" style="margin-top: 15px;">
-        <div class="logBox">
-          <div v-bind:key="logs.index" class="TimeLine" style="position: relative;" v-for="(logs, index) in taskLogs">
-            <div class="quan" v-if="index < 99">{{index+1}}</div>
-            <div class="quan" style="width: 24px;height: 24px;border-radius: 12px;line-height: 24px;margin-left: -3px;" v-if="index >= 99">{{index+1}}</div>
-            <div class="timeDate">{{logs.oTime}}</div>
-            <div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}
-              <div class="contBoxContentWrap">
-                <div class="contBoxContent" v-if="logs.comment">评论：{{logs.comment}}</div>
-                <div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0" v-for="(file, index2) in logs.uploads" v-bind:key="index2">
-                  <span v-if="file.isImage" @click="showBigImage(file.previewUrl)" class="filepre">预览</span>
-                  <a v-bind:download="file.showName" v-bind:href="file.downloadUrl">下载：{{file.showName}}</a>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- 历史记录 评论 引入组件-->
+        <component v-bind:is="compArr.CommentLogs" fileFormId="ProCommentLogs" v-on:FilePreEmit="GetFilePreData" :commentList="taskLogs"></component>
+        <div style="text-align: center">
+          <Page :total="commentTotalNum" size="small" :page-size="10" show-total @on-change="commentPageChange($event)"></Page>
         </div>
-        <el-row style="margin-top: 30px;" v-if="totalData > 10">
-          <el-button icon="el-icon-plus" @click="getPageNum()" v-bind:disabled="notMore">加载更多</el-button>
-        </el-row>
+        <!--<div class="logBox">-->
+          <!--<div v-bind:key="logs.index" class="TimeLine" style="position: relative;" v-for="(logs, index) in taskLogs">-->
+            <!--<div class="quan" v-if="index < 99">{{index+1}}</div>-->
+            <!--<div class="quan" style="width: 24px;height: 24px;border-radius: 12px;line-height: 24px;margin-left: -3px;" v-if="index >= 99">{{index+1}}</div>-->
+            <!--<div class="timeDate">{{logs.oTime}}</div>-->
+            <!--<div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}-->
+              <!--<div class="contBoxContentWrap">-->
+                <!--<div class="contBoxContent" v-if="logs.comment">评论：{{logs.comment}}</div>-->
+                <!--<div class="contBoxContent" v-if="logs.uploads && logs.uploads.length > 0" v-for="(file, index2) in logs.uploads" v-bind:key="index2">-->
+                  <!--<span v-if="file.isImage" @click="showBigImage(file.previewUrl)" class="filepre">预览</span>-->
+                  <!--<a v-bind:download="file.showName" v-bind:href="file.downloadUrl">下载：{{file.showName}}</a>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<el-row style="margin-top: 30px;" v-if="totalData > 10">-->
+          <!--<el-button icon="el-icon-plus" @click="getPageNum()" v-bind:disabled="notMore">加载更多</el-button>-->
+        <!--</el-row>-->
       </div>
     </Drawer>
+    <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
+      <div class="showImg"><img v-bind:src="commentPreviewUrl1" alt=""></div>
+    </el-dialog>
     <!--分页 start-->
     <div style="padding: 10px 0 30px 0; text-align: center;">
       <Page :total="pageTotalRow" :page-size="10" :current="myProjectViewPayload.pageNum" size="small" @on-change="pageNumChange" />
@@ -254,14 +262,19 @@
 </template>
 
 <script>
+import CommentLogs from './CustomComp/CommentLogs.vue'
 import FileUploadComp from './FileUploadComp.vue'
 export default {
   name: 'MyPro',
   components: {
-    FileUploadComp
+    FileUploadComp,
+    CommentLogs
   },
   data () {
     return {
+      commentTotalNum: 0,
+      commentPreviewUrl1: '',
+      dialogShowImg1: false,
       // 加载转圈
       createProLoading: false,
       // shi
@@ -274,6 +287,10 @@ export default {
       FileUploadArr: [],
       // 引入附件上传组件
       FileUploadComp: 'FileUploadComp',
+      compArr: {
+        CommentLogs: 'CommentLogs',
+        FileUploadComp: 'FileUploadComp'
+      },
       // 新建项目 表单
       spinShow: false,
       createProFormLoading: true,
@@ -488,6 +505,19 @@ export default {
     }
   },
   methods: {
+    // 预览
+    GetFilePreData (obj) {
+      this.log('obj::', obj)
+      if (obj.previewUrl && this.isImage(obj.fileName)) {
+        this.showBigImage1(obj.previewUrl)
+      }
+    },
+    showBigImage1: function (url) {
+      if (url) {
+        this.commentPreviewUrl1 = url
+        this.dialogShowImg1 = true
+      }
+    },
     // 确定选择
     getPathProject: function () {
       this.dialogFormVisible = false
@@ -593,15 +623,15 @@ export default {
               res.data.list[i].uploads[j].downloadUrl = downurl
             }
           }
-          that.taskLogs = []
-          that.taskLogs = that.taskLogs.concat(res.data.list)
-          that.log('taskLogs:', that.taskLogs)
-          that.totalData = res.data.totalRow
-          if (that.taskLogs.length === that.totalData) {
-            that.log('ss', that.taskLogs)
-            that.notMore = true
-          }
-          that.log('taskLogs:', res)
+          // that.taskLogs = []
+          that.taskLogs = res.data.list
+          // that.log('taskLogs:', that.taskLogs)
+          that.commentTotalNum = res.data.totalRow
+          // if (that.taskLogs.length === that.totalData) {
+          //   that.log('ss', that.taskLogs)
+          //   that.notMore = true
+          // }
+          // that.log('taskLogs:', res)
         }
       })
     },
@@ -962,10 +992,8 @@ export default {
       that.FileUploadArr = []
       return FileIdStr
     },
-    getPageNum () {
-      this.pageN++
-      this.log(this.pageN)
-      // this.pagenum = e
+    commentPageChange: function (e) {
+      this.pageN = e
       this.getHistoryCont()
     }
   }

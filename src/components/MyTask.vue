@@ -498,13 +498,13 @@
           <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
               <p class="time">{{comment.createDate}}</p>
               <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
-            <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
-              <p class="content" v-if="com.showName">附件:
-                <span style="display: inline-block"> {{com.showName}}</span>
-                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(com.previewUrl)">预览</span>
-                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
-              </p>
-            </span>
+              <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
+                <p class="content" v-if="com.showName">附件:
+                  <span style="display: inline-block"> {{com.showName}}</span>
+                  <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(com.previewUrl)">预览</span>
+                  <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+                </p>
+              </span>
           </Timeline-item>
         </Timeline>
         <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
