@@ -26,7 +26,7 @@
         </Tabs>
       </div>
       <div class="content">
-        <div class="cntItem" v-for="item in projectViewData.list" :key="item.projectUID">
+        <div class="cntItem" v-for="item in projectViewData" :key="item.projectUID">
           <div class="cntItemLeft" @click="toProDetail(item.projectUID)">
             <div class="proTit">项目名称: {{item.projectName}}</div>
             <div class="proPrincipals">负责人: {{item.projectManager}}</div>
@@ -52,6 +52,10 @@
             </div>
             <div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
           </div>
+        </div>
+        <div class="nodata" v-if="projectViewData.length === 0">
+          <div style="width:165px; margin: 0 auto; margin-top: 50px;"><img src="../../static/img/nodata.png" /></div>
+          <div style="text-align: center; color: #666; margin-top: 15px; font-size: 14px;">暂无数据</div>
         </div>
         <!--<div class="cntItem">-->
           <!--<div class="cntItemLeft">-->
@@ -706,7 +710,7 @@ export default {
               res.data.list[i].statusInfo = '已完成'
             }
           }
-          that.projectViewData = res.data
+          that.projectViewData = res.data.list
         }
       })
     },
@@ -1208,6 +1212,9 @@ export default {
     top: 0;
     opacity: 0;
   }
+.nodata div img{
+  width: 100%;
+}
   .file:hover {
     background: #AADFFD;
     border-color: #78C3F3;
