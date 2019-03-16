@@ -139,57 +139,58 @@
       <!--项目计划树 老版本 end-->
       <!--新增 抽屉 成员管理 ks-->
       <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember" v-loading="DrawerMemberShow">
+        <component v-bind:is="MenmberComp" v-bind:proId="proId" v-bind:DrawerMemberShow="DrawerMember" v-on:addMembersInfo="updataPageInfo" v-on:delMembersInfo="updataPageDelMember" v-on:addPeopleInfo="updataPageAddPeople"></component>
         <!--<Button v-on:click="test()">TEST</Button>-->
-        <div style="font-size: 16px; margin-bottom: 10px;">添加项目成员</div>
-        <div class="searchBox">
-          <div class="searchSelectIpt">
-            <el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"
-                       :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
-                       :remote-method="remoteMethod" :loading="loading2">
-              <el-option v-for="item in options4" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                         :value="item.Name + '-' + item.ID">
-              </el-option>
-            </el-select>
-          </div>
-          <div class="searchBtn"><Button type="primary" v-on:click="addMember()">添加</Button></div>
-          <div class="searchOpenTree" @click="organizationalClick"><Button>组织架构</Button></div>
-        </div>
-        <div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">成员列表</div>
-        <div class="memberTable">
-          <div class="memTblTitle">
-            <div class="tblTitItem">角色</div>
-            <div class="tblTitItem">姓名</div>
-            <div class="tblTitItem">查看</div>
-            <div class="tblTitItem">编辑</div>
-            <div class="tblTitItem" title="清空全部" style="color: #409EFF;cursor: pointer;" v-on:click="delMember(0)">清空</div>
-          </div>
-          <div class="memTblList" v-loading="loadingMan">
-            <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">
-              <div class="memListItem">{{mem.peopleRoleText}}</div>
-              <div class="memListItem">{{mem.userName}}</div>
-              <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
-              <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
-              <div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>
-            </div>
-          </div>
-        </div>
-        <!--组织架构 start-->
-        <div v-if="organizationalShow" style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">组织架构</div>
-        <!--organizationalShow-->
-        <div class="organizationalBox" v-if="organizationalShow">
-          <div>
-            <el-tree
-              :data="data2"
-              show-checkbox
-              @node-click="append($event)"
-              @check="changeState"
-              node-key="id"
-              :default-expanded-keys="[1,2]"
-              :props="defaultProps">
-            </el-tree>
-          </div>
-          <div class="organizationalBtn"><Button type="primary" @click="addMenber()">添加</Button></div>
-        </div>
+        <!--<div style="font-size: 16px; margin-bottom: 10px;">添加项目成员</div>-->
+        <!--<div class="searchBox">-->
+          <!--<div class="searchSelectIpt">-->
+            <!--<el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"-->
+                       <!--:reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"-->
+                       <!--:remote-method="remoteMethod" :loading="loading2">-->
+              <!--<el-option v-for="item in options4" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"-->
+                         <!--:value="item.Name + '-' + item.ID">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+          <!--</div>-->
+          <!--<div class="searchBtn"><Button type="primary" v-on:click="addMember()">添加</Button></div>-->
+          <!--<div class="searchOpenTree" @click="organizationalClick"><Button>组织架构</Button></div>-->
+        <!--</div>-->
+        <!--<div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">成员列表</div>-->
+        <!--<div class="memberTable">-->
+          <!--<div class="memTblTitle">-->
+            <!--<div class="tblTitItem">角色</div>-->
+            <!--<div class="tblTitItem">姓名</div>-->
+            <!--<div class="tblTitItem">查看</div>-->
+            <!--<div class="tblTitItem">编辑</div>-->
+            <!--<div class="tblTitItem" title="清空全部" style="color: #409EFF;cursor: pointer;" v-on:click="delMember(0)">清空</div>-->
+          <!--</div>-->
+          <!--<div class="memTblList" v-loading="loadingMan">-->
+            <!--<div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">-->
+              <!--<div class="memListItem">{{mem.peopleRoleText}}</div>-->
+              <!--<div class="memListItem">{{mem.userName}}</div>-->
+              <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
+              <!--<div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>-->
+              <!--<div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--&lt;!&ndash;组织架构 start&ndash;&gt;-->
+        <!--<div v-if="organizationalShow" style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">组织架构</div>-->
+        <!--&lt;!&ndash;organizationalShow&ndash;&gt;-->
+        <!--<div class="organizationalBox" v-if="organizationalShow">-->
+          <!--<div>-->
+            <!--<el-tree-->
+              <!--:data="data2"-->
+              <!--show-checkbox-->
+              <!--@node-click="append($event)"-->
+              <!--@check="changeState"-->
+              <!--node-key="id"-->
+              <!--:default-expanded-keys="[1,2]"-->
+              <!--:props="defaultProps">-->
+            <!--</el-tree>-->
+          <!--</div>-->
+          <!--<div class="organizationalBtn"><Button type="primary" @click="addMenber()">添加</Button></div>-->
+        <!--</div>-->
         <!--<div class="caozuo">-->
           <!--<div class="el-icon-d-arrow-right" @click="addMenber()"></div>-->
         <!--</div>-->
@@ -203,7 +204,7 @@
             <FormItem label="项目名称" prop="proName">
               <Input v-model="formValidate.proName" placeholder="请输入项目名称" />
             </FormItem>
-            <FormItem label="项目类型" prop="proType">
+            <FormItem label="项目类型" prop="proType" v-if="!showProjectType">
               <Select v-model="formValidate.proType" placeholder="请选择项目类型" @on-change="getProjectType($event)">
                 <Option value="集团战略">集团战略</Option>
                 <Option value="公司项目">公司项目</Option>
@@ -213,7 +214,24 @@
                 <Option value="产品研发">产品研发</Option>
               </Select>
             </FormItem>
-            <div v-if="projectPath" class="proTypePath">{{projectPath}}</div>
+            <div style="display: flex;justify-content: space-between" v-if="showProjectType">
+              <FormItem label="项目类型" prop="proType" style="width: 50%;">
+                <Select v-model="formValidate.proType" placeholder="请选择项目类型" @on-change="getProjectType($event)">
+                  <Option value="集团战略">集团战略</Option>
+                  <Option value="公司项目">公司项目</Option>
+                  <Option value="部门项目">部门项目</Option>
+                  <Option value="小组项目">小组项目</Option>
+                  <Option value="个人项目">个人项目</Option>
+                  <Option value="产品研发">产品研发</Option>
+                </Select>
+              </FormItem>
+              <div style="width: 50%" @click="showProType('5')">
+                <FormItem label="项目分类">
+                  <Input v-model="projectPath" readonly placeholder="请选择项目分类" />
+                </FormItem>
+              </div>
+            </div>
+            <!--<div v-if="projectPath" class="proTypePath">{{projectPath}}</div>-->
             <FormItem label="负责人" prop="proManager">
               <el-autocomplete style="width: 100%"
                                v-model="formValidate.proManager"
@@ -1118,11 +1136,12 @@
 
 <script>
 import FileUploadComp from './FileUploadComp.vue'
-// import FileUpload from './FileUpload.vue'
+import MenmberComp from './MenmberComp.vue'
 export default {
   name: 'ProEdit',
   components: {
     // FileUpload,
+    MenmberComp,
     FileUploadComp
   },
   data () {
@@ -1226,12 +1245,15 @@ export default {
       modifyTaskVisible: false,
       // 新建 修改任务
       taskIdEdit: '',
+      SuccessInfo: '',
       // 接收到的组件数组 新组件
       FileUploadArr: [],
       // 是否让子组件清空文件 新组件
       IsClear: false,
       // 引入附件上传组件 新组件
       FileUploadComp: 'FileUploadComp',
+      // 成员组件
+      MenmberComp: 'MenmberComp',
       // 附件上传 附件ID拼接成字符串
       FileUploadIdStr: '',
       // 编辑计划
@@ -1356,6 +1378,7 @@ export default {
       dataPeo: [],
       // 新增
       getNextPeople: [],
+      getNextPart: [],
       // 成员管理
       deId: [],
       // 成员管理 组织架构
@@ -1673,9 +1696,13 @@ export default {
         _jfinal_token: '',
         userName: ''
       },
+      showProjectType: false,
       ruleValidate: {
         proName: [
           { required: true, message: '请输入项目名字', trigger: 'blur' }
+        ],
+        proOwer: [
+          { required: true, message: '请选择项目类别', trigger: 'blur' }
         ],
         proType: [
           { required: true, message: '请选择项目类型', trigger: 'change' }
@@ -1778,6 +1805,9 @@ export default {
     }
   },
   watch: {
+    SuccessInfo: function (val, oV) {
+      console.log('9999988888', val)
+    },
     // 任务分解
     value444: function (val, oVal) {
       if (val === false) {
@@ -1914,6 +1944,19 @@ export default {
     }
   },
   methods: {
+    updataPageInfo: function (info) {
+      var that = this
+      console.log('info', info)
+      that.queryProDetail()
+    },
+    updataPageDelMember: function (info) {
+      var that = this
+      that.queryProDetail()
+    },
+    updataPageAddPeople: function (info) {
+      var that = this
+      that.queryProDetail()
+    },
     showFileModelClick: function () {
       this.showFileModel = true
     },
@@ -1976,13 +2019,20 @@ export default {
     },
     // 一级计划 详情 结束
     // 权限 编辑 查看
-    checkBoxChangeEdit (checked, id, role) {
-      var that = this
-      this.log('权限编辑查看：', checked + '-' + id + '-' + role)
-      this.ajax('/myProject/editRole', JSON.stringify({projectUID: that.proId, projectOrg: [{id: id, role: role}]})).then(res => {
-        // that.log('editRole:', res)
-      })
-    },
+    // checkBoxChangeEdit (checked, id, role) {
+    //   var that = this
+    //   this.log('权限编辑查看：', checked + '-' + id + '-' + role)
+    //   this.ajax('/myProject/editRole', JSON.stringify({projectUID: that.proId, projectOrg: [{id: id, role: role}]})).then(res => {
+    //     // that.log('editRole:', res)
+    //   })
+    // },
+    // checkChangeSee (checked, id, role) {
+    //   var that = this
+    //   this.log('权限编辑查看：', checked + '-' + id + '-' + role)
+    //   this.ajax('/myProject/editRole', JSON.stringify({projectUID: that.proId, projectOrg: [{id: id, role: role}]})).then(res => {
+    //     // that.log('editRole:', res)
+    //   })
+    // },
     // 点击组织架构下的部门节点 查询部门和人员
     append (data) {
       var that = this
@@ -2022,83 +2072,83 @@ export default {
       })
     },
     // 成员管理
-    addMenber () {
-      var that = this
-      if (that.deId.length > 0) {
-        that.DrawerMemberShow = true
-        that.ajax('/myProject/addMembers', JSON.stringify({
-          projectUID: that.proId,
-          hrocPeople: that.getPeople
-        })).then(res => {
-          that.DrawerMemberShow = false
-          if (res.code === 200) {
-            that.queryProGroupMember()
-            that.queryProDetail()
-            // that.getProjectPeo()
-            that.$message({
-              type: 'success',
-              message: res.msg
-            })
-            // that.deId = []
-            // that.taskForm.value9 = []
-          } else {
-            that.$message({
-              type: 'warning',
-              message: res.msg
-            })
-          }
-        })
-      } else if (this.deId.length === 0) {
-        $('.el-icon-d-arrow-right').removeClass('active')
-      }
-    },
+    // addMenber () {
+    //   var that = this
+    //   if (that.deId.length > 0) {
+    //     that.DrawerMemberShow = true
+    //     that.ajax('/myProject/addMembers', JSON.stringify({
+    //       projectUID: that.proId,
+    //       hrocPeople: that.getPeople
+    //     })).then(res => {
+    //       that.DrawerMemberShow = false
+    //       if (res.code === 200) {
+    //         that.queryProGroupMember()
+    //         that.queryProDetail()
+    //         // that.getProjectPeo()
+    //         that.$message({
+    //           type: 'success',
+    //           message: res.msg
+    //         })
+    //         // that.deId = []
+    //         // that.taskForm.value9 = []
+    //       } else {
+    //         that.$message({
+    //           type: 'warning',
+    //           message: res.msg
+    //         })
+    //       }
+    //     })
+    //   } else if (this.deId.length === 0) {
+    //     $('.el-icon-d-arrow-right').removeClass('active')
+    //   }
+    // },
     // 删除成员
-    delMember (memId) {
-      var that = this
-      that.loadingMan = true
-      if (memId || memId === 0) {
-        that.ajax('/myProject/delMembersById', {
-          projectUID: that.proId,
-          id: memId
-        }).then(res => {
-          that.log('删除成员:', res)
-          if (res.code === 200) {
-            that.$message({
-              type: 'success',
-              message: res.msg
-            })
-            that.queryProGroupMember()
-            that.queryProDetail()
-            // that.getProjectPeo()
-            that.loadingMan = false
-            // that.deId = []
-          } else {
-            that.$message(res.msg)
-            that.loadingMan = false
-          }
-        })
-      }
-    },
+    // delMember (memId) {
+    //   var that = this
+    //   that.loadingMan = true
+    //   if (memId || memId === 0) {
+    //     that.ajax('/myProject/delMembersById', {
+    //       projectUID: that.proId,
+    //       id: memId
+    //     }).then(res => {
+    //       that.log('删除成员:', res)
+    //       if (res.code === 200) {
+    //         that.$message({
+    //           type: 'success',
+    //           message: res.msg
+    //         })
+    //         that.queryProGroupMember()
+    //         that.queryProDetail()
+    //         // that.getProjectPeo()
+    //         that.loadingMan = false
+    //         // that.deId = []
+    //       } else {
+    //         that.$message(res.msg)
+    //         that.loadingMan = false
+    //       }
+    //     })
+    //   }
+    // },
     // 点击 组织架构
-    organizationalClick () {
-      this.organizationalShow = true
-      this.getDepartment()
-    },
-    // 查询部门
-    getDepartment () {
-      var that = this
-      this.ajax('/myProject/queryDepartment', {}).then(res => {
-        // this.log('queryDepartment:', res)
-        if (res.code === 200) {
-          that.data2 = res.data.department
-          for (var i = 0; i < res.data.member.length; i++) {
-            res.data.member[i].Name = res.data.member[i].Name + ' ( ' + res.data.member[i].jName + ' )'
-          }
-          that.dataPeo = res.data.member
-          that.data2 = this.dataPeo.concat(this.data2)
-        }
-      })
-    },
+    // organizationalClick () {
+    //   this.organizationalShow = true
+    //   this.getDepartment()
+    // },
+    // // 查询部门
+    // getDepartment () {
+    //   var that = this
+    //   this.ajax('/myProject/queryDepartment', {}).then(res => {
+    //     // this.log('queryDepartment:', res)
+    //     if (res.code === 200) {
+    //       that.data2 = res.data.department
+    //       for (var i = 0; i < res.data.member.length; i++) {
+    //         res.data.member[i].Name = res.data.member[i].Name + ' ( ' + res.data.member[i].jName + ' )'
+    //       }
+    //       that.dataPeo = res.data.member
+    //       that.data2 = this.dataPeo.concat(this.data2)
+    //     }
+    //   })
+    // },
     // 节点操作 展开更多 添加
     moreSelectOptions: function (nodeName, nodeId, nodeType, nodeData) {
       var that = this
@@ -2202,6 +2252,7 @@ export default {
       that.log('获取项目类型:', e)
       if (e === '5' || e === '产品研发') {
         // that.showProject = false
+        that.showProjectType = true
         that.ResDepTreeDialog = true
         that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
           if (res.code === 200) {
@@ -2210,10 +2261,14 @@ export default {
         })
       } else {
         that.showProject = true
+        that.showProjectType = false
         that.projectPath = ''
         that.projectPathId = ''
         that.formValidate.projectClassifyId = ''
       }
+    },
+    showProType: function (e) {
+      this.getProjectType(e)
     },
     // 删除子任务
     childTaskDelete: function (id) {
@@ -2626,33 +2681,33 @@ export default {
       this.log('value9:', this.taskForm.value9)
     },
     // 新增 增加项目组成员
-    addMember () {
-      var that = this
-      if (that.taskForm.value9.length > 0) {
-        for (var i = 0; i < that.taskForm.value9.length; i++) {
-          var obj = {Name: '', ID: ''}
-          obj.Name = that.taskForm.value9[i].split('-')[0]
-          obj.ID = that.taskForm.value9[i].split('-')[1]
-          that.addMemPayload.hrocPeople.push(obj)
-          console.log('hrocPeople', that.addMemPayload.hrocPeople)
-        }
-        // console.log('value999999999:', that.addMemPayload.hrocPeople)
-        that.addMemPayload.projectUID = this.proId
-        // that.log('that.addMemPayload:', that.addMemPayload)
-        this.ajax('/myProject/addMembers', JSON.stringify(that.addMemPayload)).then(res => {
-          // that.log('addMembers:', res)
-          if (res.code === 200) {
-            that.queryProGroupMember()
-            that.queryProDetail()
-            that.addMemPayload.hrocPeople = []
-            that.taskForm.value9 = []
-            // that.proGrpMemList = res.data
-            // that.options4 = res.data peopleRole
-            // this.loading2 = false
-          }
-        })
-      }
-    },
+    // addMember () {
+    //   var that = this
+    //   if (that.taskForm.value9.length > 0) {
+    //     for (var i = 0; i < that.taskForm.value9.length; i++) {
+    //       var obj = {Name: '', ID: ''}
+    //       obj.Name = that.taskForm.value9[i].split('-')[0]
+    //       obj.ID = that.taskForm.value9[i].split('-')[1]
+    //       that.addMemPayload.hrocPeople.push(obj)
+    //       console.log('hrocPeople', that.addMemPayload.hrocPeople)
+    //     }
+    //     // console.log('value999999999:', that.addMemPayload.hrocPeople)
+    //     that.addMemPayload.projectUID = this.proId
+    //     // that.log('that.addMemPayload:', that.addMemPayload)
+    //     this.ajax('/myProject/addMembers', JSON.stringify(that.addMemPayload)).then(res => {
+    //       // that.log('addMembers:', res)
+    //       if (res.code === 200) {
+    //         that.queryProGroupMember()
+    //         that.queryProDetail()
+    //         that.addMemPayload.hrocPeople = []
+    //         that.taskForm.value9 = []
+    //         // that.proGrpMemList = res.data
+    //         // that.options4 = res.data peopleRole
+    //         // this.loading2 = false
+    //       }
+    //     })
+    //   }
+    // },
     // 新增 查询项目组成员getMembersByProjectUID
     queryProGroupMember () {
       var that = this
@@ -2676,24 +2731,24 @@ export default {
         }
       })
     },
-    // 新增 成员搜索
-    remoteMethod (query) {
-      var that = this
-      // this.log('query:', query)
-      if (query !== '') {
-        this.loading2 = true
-        that.moreUserSelectPayload.projectManager = query
-        this.ajax('/myProject/autoCompleteNames', that.moreUserSelectPayload).then(res => {
-          // that.log('autoCompleteNames:', res)
-          if (res.code === 200) {
-            that.options4 = res.data
-            this.loading2 = false
-          }
-        })
-      } else {
-        this.options4 = []
-      }
-    },
+    // // 新增 成员搜索
+    // remoteMethod (query) {
+    //   var that = this
+    //   // this.log('query:', query)
+    //   if (query !== '') {
+    //     this.loading2 = true
+    //     that.moreUserSelectPayload.projectManager = query
+    //     this.ajax('/myProject/autoCompleteNames', that.moreUserSelectPayload).then(res => {
+    //       // that.log('autoCompleteNames:', res)
+    //       if (res.code === 200) {
+    //         that.options4 = res.data
+    //         this.loading2 = false
+    //       }
+    //     })
+    //   } else {
+    //     this.options4 = []
+    //   }
+    // },
     // 新增
     moreMemberClick: function () {
       this.DrawerMember = true
@@ -2757,6 +2812,11 @@ export default {
           that.endPlanDate = res.data.endDate.split(' ')[0]
           that.planList = res.data.planOrJobList
           that.firstPlanId = res.data.firstPlanId
+          if (res.data.projectClassify) {
+            that.showProjectType = true
+          } else {
+            that.showProjectType = false
+          }
           for (var i = 0; i < res.data.fileList.length; i++) {
             if (that.isImage(res.data.fileList[i].showName)) {
               res.data.fileList[i].isImg = true
@@ -4560,46 +4620,46 @@ export default {
     color: #aaa;
   }
   /*新增*/
-  .searchBox{
-    display: flex;
-  }
-  .searchSelectIpt{
-    width: 300px;
-  }
-  .searchBtn,.searchOpenTree{
-    margin-left: 15px;
-  }
-  .memberTable{
-    width: 500px;
-    text-align: center;
-    border: 1px solid #eee;
-  }
-  .memTblTitle{
-    display: flex;
-    background-color: #f8f8f9;
-    border-bottom: 1px solid #eee;
-  }
-  .tblTitItem{
-    width: 20%;
-    line-height: 32px;
-  }
-  .memTblList{
-    width: 500px;
-  }
-  .memTblListItem{
-    display: flex;
-    border-bottom: 1px solid #eee;
-  }
-  .memTblListItem:nth-last-child(1){
-    border-bottom: none;
-  }
-  .memTblListItem:hover{
-    background-color: #ebf7ff;
-  }
-  .memListItem{
-    width: 20%;
-    line-height: 32px;
-  }
+  /*.searchBox{*/
+    /*display: flex;*/
+  /*}*/
+  /*.searchSelectIpt{*/
+    /*width: 300px;*/
+  /*}*/
+  /*.searchBtn,.searchOpenTree{*/
+    /*margin-left: 15px;*/
+  /*}*/
+  /*.memberTable{*/
+    /*width: 500px;*/
+    /*text-align: center;*/
+    /*border: 1px solid #eee;*/
+  /*}*/
+  /*.memTblTitle{*/
+    /*display: flex;*/
+    /*background-color: #f8f8f9;*/
+    /*border-bottom: 1px solid #eee;*/
+  /*}*/
+  /*.tblTitItem{*/
+    /*width: 20%;*/
+    /*line-height: 32px;*/
+  /*}*/
+  /*.memTblList{*/
+    /*width: 500px;*/
+  /*}*/
+  /*.memTblListItem{*/
+    /*display: flex;*/
+    /*border-bottom: 1px solid #eee;*/
+  /*}*/
+  /*.memTblListItem:nth-last-child(1){*/
+    /*border-bottom: none;*/
+  /*}*/
+  /*.memTblListItem:hover{*/
+    /*background-color: #ebf7ff;*/
+  /*}*/
+  /*.memListItem{*/
+    /*width: 20%;*/
+    /*line-height: 32px;*/
+  /*}*/
   /*新增 操作记录*/
   .TimeLine:last-of-type .timeCont{
     border-left: none !important;

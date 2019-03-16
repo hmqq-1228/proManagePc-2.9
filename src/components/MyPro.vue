@@ -121,28 +121,36 @@
           <el-form-item label="项目名称" prop="projectName">
             <el-input v-model="ruleForm.projectName"></el-input>
           </el-form-item>
-          <el-form-item label="项目类型" prop="projectType">
-            <!--<el-input v-model="ruleForm.projectType"></el-input>-->
+          <el-form-item label="项目类型" prop="projectType" v-if="!showProjectType">
             <el-select style="width: 100%" v-model="ruleForm.projectType" placeholder="请选择项目类型" @change="getProjectType($event)">
               <el-option v-for="item in proTypeListPure" :value="item.label" :key="item.value" :label="item.label"></el-option>
-              <!--<el-option label="公司项目" value="公司项目"></el-option>-->
-              <!--<el-option label="部门项目" value="部门项目"></el-option>-->
-              <!--<el-option label="小组项目" value="小组项目"></el-option>-->
-              <!--<el-option label="个人项目" value="个人项目"></el-option>-->
             </el-select>
           </el-form-item>
-          <div v-if="projectPath" class="proTypePath">{{projectPath}}</div>
+          <div style="display: flex;justify-content: space-between" v-if="showProjectType">
+            <el-form-item label="项目类型" prop="projectType" style="width: 50%;">
+              <el-select style="width: 100%" v-model="ruleForm.projectType" placeholder="请选择项目类型" @change="getProjectType($event)">
+                <el-option v-for="item in proTypeListPure" :value="item.label" :key="item.value" :label="item.label"></el-option>
+              </el-select>
+            </el-form-item>
+            <div style="width: 50%" @click="showProType('5')">
+              <el-form-item label="项目分类" prop="projectPath">
+                <el-input v-model="ruleForm.projectPath" readonly></el-input>
+              </el-form-item>
+            </div>
+          </div>
+          <!--<div v-if="projectPath" class="proTypePath">{{projectPath}}</div>-->
           <!--<el-input v-model="projectPath" readonly placeholder="请选择项目类型" style="width: 52%;"></el-input>-->
           <el-form-item label="项目周期" prop="value2">
             <el-date-picker style="width: 100%"
-                            v-model="ruleForm.value2"
-                            type="daterange"
-                            range-separator="至"
-                            @change= 'ctime($event)'
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            value-format="yyyy-MM-dd"
-                            :picker-options="pickerOptions0"
+              v-model="ruleForm.value2"
+              type="daterange"
+              range-separator="至"
+              @change= 'ctime($event)'
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              :picker-options="pickerOptions0"
             >
             </el-date-picker>
           </el-form-item>
@@ -156,7 +164,7 @@
             ></el-autocomplete>
           </el-form-item>
           <el-form-item class="proIntroduce" label="项目简介" prop="introduction" style="clear: both;">
-            <el-input type="textarea" style="" rows = '10' v-model="ruleForm.introduction"></el-input>
+            <el-input type="textarea" style="" rows = '4' v-model="ruleForm.introduction"></el-input>
           </el-form-item>
           <el-form-item label="项目附件" v-if="!ruleForm.showName">
             <!--<div v-if="!ruleForm.showName" style="color: #999;font-size: 12px;">暂无附件</div>-->
@@ -299,6 +307,7 @@ export default {
       totalData: 0,
       // 新增
       taskLogs: [],
+      showProjectType: false,
       butnDisabled: true,
       proId: '',
       commitComent: '',
@@ -402,11 +411,15 @@ export default {
         position: '',
         introduction: '',
         value2: [],
+        projectPath: '',
         projectClassifyId: ''
       },
       rules: {
         projectName: [
           { required: true, message: '请输入项目名称', trigger: 'blur' }
+        ],
+        projectPath: [
+          { required: true, message: '请选择项目分类', trigger: 'blur' }
         ],
         projectType: [
           { required: true, message: '请输入项目类型', trigger: 'change' }
@@ -515,7 +528,7 @@ export default {
     changeState: function (data, checked, node) {
       this.log('changeState:', data)
       this.ruleForm.projectClassifyId = data.id
-      this.projectPath = data.specificPath
+      this.ruleForm.projectPath = data.specificPath
       this.projectPathId = data.id
     },
     // 新增 对话框 产品研发类型树形结构
@@ -523,27 +536,24 @@ export default {
       var that = this
       if (e === '5' || e === '产品研发') {
         // that.showProject = false
+        that.showProjectType = true
         that.dialogFormVisible = true
         that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
           // that.log('getUserInfo', res)
           if (res.code === 200) {
             that.data2 = res.data
-            // for (var i = 0; i <= res.data.length; i++) {
-            //   // if (res.data[i].sonFlag) {
-            //   //   res.data[i].children = [{
-            //   //     id: 1,
-            //   //     name: '测试'
-            //   //   }]
-            //   // }
-            // }
           }
         })
       } else {
         that.showProject = true
+        that.showProjectType = false
         that.projectPath = ''
         that.projectPathId = ''
         that.ruleForm.projectClassifyId = ''
       }
+    },
+    showProType: function (e) {
+      this.getProjectType(e)
     },
     // 新增
     getFileName: function () {
@@ -760,13 +770,17 @@ export default {
     },
     // 默认时间
     setDefuleTime: function () {
+      this.ruleForm.value2 = []
       var n = parseInt(this.duration)
       console.log('n', n)
       var nowData = new Date()
       var year = nowData.getFullYear()
       var month = (nowData.getMonth() + 1) < 10 ? '0' + (nowData.getMonth() + 1) : (nowData.getMonth() + 1)
       var day = nowData.getDate() < 10 ? '0' + nowData.getDate() : nowData.getDate()
-      var result = year + '-' + month + '-' + day
+      var hour = nowData.getHours() < 10 ? '0' + nowData.getHours() : nowData.getHours()
+      var minus = nowData.getMinutes() < 10 ? '0' + nowData.getMinutes() : nowData.getMinutes()
+      var second = nowData.getSeconds() < 10 ? '0' + nowData.getSeconds() : nowData.getSeconds()
+      var result = year + '-' + month + '-' + day + ' ' + hour + ':' + minus + ':' + second
       console.log('nowData', result)
       var getTime = new Date().getTime()
       var addTime = 24 * 60 * 60 * n * 1000
@@ -775,9 +789,13 @@ export default {
       var yearEnd = nowEndData.getFullYear()
       var monthEnd = (nowEndData.getMonth() + 1) < 10 ? '0' + (nowEndData.getMonth() + 1) : (nowEndData.getMonth() + 1)
       var dayEnd = nowEndData.getDate() < 10 ? '0' + nowEndData.getDate() : nowEndData.getDate()
-      var resultEnd = yearEnd + '-' + monthEnd + '-' + dayEnd
+      var hourEnd = nowEndData.getHours() < 10 ? '0' + nowEndData.getHours() : nowEndData.getHours()
+      var minusEnd = nowEndData.getMinutes() < 10 ? '0' + nowEndData.getMinutes() : nowEndData.getMinutes()
+      var secondEnd = nowEndData.getSeconds() < 10 ? '0' + nowEndData.getSeconds() : nowEndData.getSeconds()
+      var resultEnd = yearEnd + '-' + monthEnd + '-' + dayEnd + ' ' + hourEnd + ':' + minusEnd + ':' + secondEnd
       this.ruleForm.value2.push(result)
       this.ruleForm.value2.push(resultEnd)
+      console.log(this.ruleForm.value2)
     },
     // 新建 点击顶部新建项目按钮
     newAdd: function () {
@@ -799,8 +817,10 @@ export default {
         this.modId = modelId
         // 是否选择了 "项目模板"
         this.isModel = true
+        this.showProjectType = true
         this.getModelDetail()
       } else {
+        this.showProjectType = false
         this.setDefuleTime()
         this.isModel = false
       }
@@ -846,6 +866,8 @@ export default {
     // 新建项目 立即创建项目 (模板) 提交基本信息
     submitModelForm (formName) {
       var that = this
+      // console.log('startDate', this.ruleForm.value2[0])
+      // console.log('endDate', this.ruleForm.value2[1])
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {
