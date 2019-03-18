@@ -48,7 +48,7 @@
           <div class="planName">项<br />目<br />计<br />划</div>
           <div class="planBox" style="position: relative;">
             <!--v-on:click="addNode(firstPlanId)"-->
-            <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
+            <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id, plan.type, $event)">{{plan.name}}</div>
             <Button style="margin-top: 16px; margin-left: 20px; position: absolute; right: 10px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">更 多</Button>
           </div>
           <!--<div class="planBox2" v-if="planList.length === 0">暂无子计划</div>-->
@@ -221,7 +221,7 @@
           <!--<div class="add" @click="addRemark()"><img src="../../static/img/msg.png" alt="">添加评论</div>-->
           <div class="logBox">
             <div v-bind:key="logs.index" class="TimeLine" style="position: relative;" v-for="(logs, index) in taskLogs">
-              <div class="quan">{{index+1}}</div>
+              <div class="quan">{{(index + 1)}}</div>
               <div class="timeDate">{{logs.oTime}}</div>
               <div class="timeCont">{{logs.oTitle?logs.oTitle:''}}<span class="listColor" v-if="logs.oName">{{' 【' + logs.oName + '】, '}}</span>{{logs.oContent}}
                 <div class="contBoxContentWrap">
@@ -234,9 +234,16 @@
               </div>
             </div>
           </div>
-          <el-row style="margin-top: 30px;" v-if="totalData > 10">
-            <el-button icon="el-icon-plus" @click="getPageNum()" v-bind:disabled="notMore">加载更多</el-button>
-          </el-row>
+          <div style="margin-top: 20px;text-align: center">
+            <!--<el-button icon="el-icon-plus" @click="getPageNum()" v-bind:disabled="notMore">加载更多</el-button>-->
+            <el-pagination
+              background
+              @current-change="getPageNum($event)"
+              layout="prev, pager, next"
+              :page-size="historyPageSize"
+              :total="totalData">
+            </el-pagination>
+          </div>
         </div>
       </Drawer>
       <!--新增 抽屉 查看历史记录 end-->
@@ -265,6 +272,174 @@
         </el-table>
       </Drawer>
       <!--新增 抽屉 一级计划详情 end -->
+      <!--计划详情-->
+      <!--计划详情-->
+      <Drawer class="drawerScroll" :closable="false" width="750" v-model="value444">
+        <div class="slidTop">
+          <div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>
+          <div></div>
+          <div style="display: flex;justify-content: space-between">
+            <div @click="delCurrentPlan(planMsg.id)" title="删除计划" style="width: 50px;cursor: pointer;"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+          </div>
+        </div>
+        <div class="taskMsg2"  style="border-bottom: 1px solid #f1f1f1;">
+          <div class="taskLf" style="width: 100%;">
+            <div class="taskName2" style="font-size: 14px;"><Icon type="md-paper" size="18" color="#1296db"/><span style="margin-left: 10px;">计划详情: </span></div>
+            <div style="color: #999;margin-top: 0;" class="taskDetail" :title="planMsg.description">{{planMsg.description}}</div>
+          </div>
+        </div>
+        <div style="display: flex;justify-content: space-between">
+          <div class="cannetProject" style="width: 50%">
+            <div style="display: inline-block"><img src="../../static/img/faqiren.png" alt=""><span>创 建 人:</span></div>
+            <div style="display: inline-block;color: #888;">{{planMsg.creator}}</div>
+          </div>
+          <div class="cannetProject" style="width: 50%">
+            <div style="display: inline-block"><img src="../../static/img/kaishi.png" alt=""><span>创建时间:</span></div>
+            <div style="display: inline-block;color: #888;">{{planMsg.createDate}}</div>
+          </div>
+        </div>
+        <div style="display: flex;justify-content: space-between;">
+          <div class="cannetProject" style="width: 50%;display: flex;justify-content: start">
+            <div style="width: 32%;"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
+            <div class="cannetProjectItem1" :title="planMsg.projectName">{{planMsg.projectName}}</div>
+          </div>
+          <div class="cannetProject" style="width: 50%;display: flex;justify-content: start">
+            <div style="width: 32%;"><img src="../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
+            <div class="cannetProjectItem1" style="color: #409EFF;cursor: pointer;" :title="planMsg.parentPlanName" @click="toPlanDetail(planMsg.parentTaskID)">{{planMsg.parentPlanName}}</div>
+            <div class="cannetProjectItem1" v-if="!planMsg.parentPlanName">无父级计划</div>
+          </div>
+        </div>
+        <div class="cannetProject">
+          <div style="display: inline-block"><img src="../../static/img/time.png" alt=""><span>计划周期:</span></div>
+          <div style="display: inline-block;color: #888;" v-if="planMsg.start && planMsg.finish">{{planMsg.start.split(' ')[0]}} 到 {{planMsg.finish.split(' ')[0]}}</div>
+        </div>
+        <!--<div class="cannetProject">-->
+          <!--<Button type="info" @click="addChild(planMsg.id, 3)">添加子计划</Button>-->
+        <!--</div>-->
+        <!--新建任务开始-->
+        <div class="cannetProject1" style="display: flex;justify-content: space-between">
+          <div style="display: inline-block"><img src="../../static/img/delTask.png" alt=""><span>添加子任务</span></div>
+          <div @click="addChild(planMsg.id, 3)" style="font-size: 14px;color: #409EFF;cursor: pointer;font-weight: normal"><i class="el-icon-circle-plus-outline"></i> 添加子计划</div>
+        </div>
+        <div style="position: relative;width: 100%;">
+          <div v-loading="loading3">
+            <div class="paiTaskIptBox" style="position: relative;">
+              <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow">
+                <div class="selectUserIpt">
+                  <el-select v-model="taskForm23.value9" multiple filterable remote style="width: 100%;"
+                             :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
+                             :remote-method="remoteMethod223" :loading="loading2">
+                    <el-option v-for="item in options223" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
+                               :value="item.Name + '-' + item.ID">
+                    </el-option>
+                  </el-select>
+                </div>
+                <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm23.value9.length===0">* 如果此项不选，则默认自己</div>
+                <div class="selectUserBtn" v-on:click="selectUserClick()"><el-button>确定</el-button></div>
+              </div>
+              <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow">
+                <div class="selectDateBox">
+                  <div class="selectDateItem">
+                    <el-date-picker
+                      v-model="selDateStart"
+                      type="datetime"
+                      :picker-options="pickerOptions01"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="选择开始时间">
+                    </el-date-picker>
+                  </div>
+                  <!--<div style="margin-left: 10px; margin-right: 10px;">至</div>-->
+                  <div class="selectDateItem">
+                    <el-date-picker
+                      v-model="selDateEnd"
+                      type="datetime"
+                      :picker-options="pickerOptions01"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="选择结束时间">
+                    </el-date-picker>
+                  </div>
+                </div>
+                <div class="selectUserBtn">
+                  <el-button v-on:click="selectDateCancel()">取消</el-button>
+                  <el-button v-on:click="selectDateOk()">确定</el-button>
+                </div>
+              </div>
+              <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight + 'px', top: taskLevelTop + 'px', left: taskLevelLeft + 'px'}" v-on:mouseleave="rateMouseLeave()">
+                <div class="rateBox">
+                  <el-rate v-model="levelValue"></el-rate>
+                </div>
+              </div>
+              <div class="paiTaskIptLeft">
+                <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+                <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入任务名称" /></div>
+              </div>
+              <div class="paiTaskIptRight">
+                <div class="paiTaskIptRightIcon" v-on:click="selectUser($event)"><Icon type="ios-person-add" /></div>
+                <div class="paiTaskIptRightCnt" v-on:click="selectUser($event)">
+                  <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
+                  <span v-if="taskForm23.value9.length > 0" v-for="user in taskForm23.value9" :key="user"> {{user.split('-')[0]}}</span>
+                  <span v-if="taskForm23.value9.length === 0">{{defImplementer.name}}</span>
+                  <!--<span> {{defImplementer.name}}</span>-->
+                </div>
+                <div class="paiTaskIptRightIcon" v-on:click="selectDate($event)"><Icon type="ios-timer" /></div>
+                <div class="paiTaskIptRightCnt" v-on:click="selectDate($event)">时间</div>
+                <div class="paiTaskIptRightIcon" v-on:click="selectLevel($event)"><Icon type="ios-star" /></div>
+              </div>
+            </div>
+            <div class="taskRelation" v-if="taskRelationShow">
+              <div class="relationIntro">
+                <textarea class="relationIntroArea" v-model="taskIntro" placeholder="请输入任务简介"></textarea>
+              </div>
+            </div>
+            <div class="taskFileUpload">
+              <div class="fileUploadCao">
+                <div class="selectLeft" style="width: 440px;">
+                  <form id="uploadFileDel2" enctype="multipart/form-data">
+                    <input type="file" :disabled="fileListDis" v-on:change="fileChange" id="myfileDel2" name="myfile" placeholder="请选择文件"/><br>
+                    <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
+                  </form>
+                  <div style="margin-top: 8px;font-size: 12px">
+                    <span style="color: #f00" v-if="fileList.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
+                    <span v-if="fileList.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
+                    <span style="color: #888;" v-if="fileList.length === 0">暂无附件</span>
+                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileDel2(file.attachmentId)"></div>, </span>
+                  </div>
+                </div>
+                <div class="selectRight2">
+                  <div class="selectMoreInfo" v-on:click="moreClick()">
+                    <i v-bind:class="moreIcon"></i><span style="margin-left: 6px;">{{moreText}}</span>
+                  </div>
+                  <div class="submitBtn" v-on:click="depSub()"><i-button type="info">添加</i-button></div>
+                </div>
+              </div>
+              <div class="fileUploadPre"></div>
+            </div>
+          </div>
+        </div>
+        <!--// 新建任务-->
+        <div class="cannetProject1">
+          <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务/计划<span style="color: #409EFF">({{planMsgPlanList.length}})</span></span></div>
+        </div>
+        <div class="taskListChild" v-loading="delLoading">
+          <div class="taskItemChild" v-for="(child, index2) in planMsgPlanList" v-bind:key="index2">
+            <div class="childTaskName" @click="toPlanDetailMsg(child.id, child.type)" :title="child.name"><Icon type="md-copy" size="16" color="#409EFF"/> {{child.name}} <span style="color: #888;" v-if="child.type === '2'">(任务)</span><span style="color: #888;" v-if="child.type === '1'">(计划)</span></div>
+            <div class="childTaskMsg">
+              <div v-if="child.status" style="width: 60px;" :class="'childTaskStyle' + child.status">{{child.statusStr}}</div>
+              <div v-if="child.status && child.dayNum >= 0" style="width: 80px;">剩余 <span style="color:#13ce66;font-size: 18px;">{{child.dayNum}}</span> 天</div>
+              <div v-if="child.status && child.dayNum < 0" style="width: 80px;">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(child.dayNum)}}</span> 天</div>
+              <div v-if="child.userName" style="width: 160px;">{{child.userName}}</div>
+              <div v-if="!child.userName" style="width: 160px;">创建人: {{child.creator}}</div>
+              <div style="width: 20px;margin-right: 0" @click="delChildTask(child.id)"><div class="taskDel"><Icon type="md-close" size="18"/></div></div>
+            </div>
+          </div>
+          <div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="planMsgPlanList.length === 0">
+            暂无子级
+          </div>
+        </div>
+      </Drawer>
+      <!--计划详情结束-->
+      <!--计划详情结束-->
+      <!--计划详情结束-->
       <!--新增 添加计划或者任务 start-->
       <!--bgcover开始 增加计划-->
       <Drawer class="drawerScroll" title="计划表单" :closable="false" width="40%" style="z-index: 1005" v-model="bgCoverShow">
@@ -313,7 +488,7 @@
                 </div>
                 <!---->
               </el-tab-pane>
-              <el-tab-pane label="增加任务" name="second">
+              <el-tab-pane label="增加任务" name="second" v-bind:disabled="taskshow">
                 <!--任务form-->
                 <div class="planTaskBox" style="position: relative;padding-top: 0;">
                   <el-form ref="addTaskForm" :rules="taskRules" :model="addTaskForm" label-width="80px">
@@ -863,6 +1038,61 @@ export default {
   },
   data () {
     return {
+      // 任务分解
+      taskIntro: '',
+      moreText: '更多',
+      fileList: [],
+      fileListDis: false,
+      delLoading: false,
+      fileListLen: 0,
+      loading3: false,
+      loading21: false,
+      options223: [],
+      pickerOptions01: {},
+      selDateStart: '',
+      selDateEnd: '',
+      levelValue: 3,
+      taskNameText: '',
+      taskLevelTop: '',
+      taskLevelLeft: '',
+      taskLevelHeight: 0,
+      taskRelationShow: false,
+      selectUserDiaShow: false,
+      selectDateDiaShow: false,
+      moreIcon: 'el-icon-arrow-down',
+      tranManageArr: ['taskLevelHeight'],
+      diaManageArr: ['selectUserDiaShow', 'selectDateDiaShow'],
+      taskForm23: {
+        jobName: '',
+        userName: '',
+        jobLevel: 3,
+        date1: '',
+        date2: '',
+        state2: '',
+        value9: [],
+        value8: [],
+        description: '',
+        taskUserId: ''
+      },
+      moreUserSelectPayload1: {
+        projectManager: ''
+      },
+      CommunityTaskPayload: {
+        parentId: '',
+        attachmentId: '',
+        description: '',
+        jobName: '',
+        jobLevel: 3,
+        taskStartDate: '',
+        taskFinishDate: '',
+        users: '',
+        userId: ''
+      },
+      // 计划详情
+      value444: false,
+      planMsg: '',
+      taskshow: false,
+      planMsgPlanList: '',
       proFileList: [],
       FileUploadArr: [],
       // 是否让子组件清空文件 新组件
@@ -1068,6 +1298,7 @@ export default {
       bgCoverShow: false,
       // 新增
       totalData: 0,
+      historyPageSize: 8,
       // 新增
       taskLogs: [],
       // 新增
@@ -1365,6 +1596,31 @@ export default {
     }
   },
   watch: {
+    // 任务分解
+    value444: function (val, oVal) {
+      if (val === false) {
+        this.clearDynamicsForm23()
+      }
+    },
+    levelValue: function (newQuestion, oldQuestion) {
+      this.CommunityTaskPayload.jobLevel = newQuestion.toString()
+    },
+    selectUserDiaShow: function (newQuestion, oldQuestion) {
+      this.dialogManage('selectUserDiaShow')
+    },
+    selectDateDiaShow: function (newQuestion, oldQuestion) {
+      this.dialogManage('selectDateDiaShow')
+    },
+    taskLevelHeight: function (newQuestion, oldQuestion) {
+      this.transitionManage('taskLevelHeight')
+    },
+    fileListLen: function (val, oVal) {
+      if (val >= 5) {
+        this.fileListDis = true
+      } else if (val < 5) {
+        this.fileListDis = false
+      }
+    },
     value9: function (newValue, oldValue) {
       this.addTaskForm.userArr = newValue
       // this.log('this.taskForm.state2:', this.taskForm.state2)
@@ -1454,6 +1710,100 @@ export default {
     }
   },
   methods: {
+    toPlanDetail: function (id) {
+      var that = this
+      that.currentNodeId = id
+      console.log('id', id)
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: id}).then(res => {
+        console.log('res', res)
+        if (res.code === 200) {
+          that.planMsg = res.data
+          that.CommunityTaskPayload.parentId = res.data.id
+          that.selDateStart = res.data.start
+          that.selDateEnd = res.data.finish
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
+          var sT = new Date(st)
+          var eT = new Date(et)
+          that.disabledStarTime = sT.getTime()
+          that.disabledEndTime = eT.getTime()
+          that.pickerOptions01.disabledDate = function (time) {
+            return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
+          }
+          that.getNextPlanTask(id)
+        } else {
+          that.$message.warning(res.msg)
+        }
+      })
+    },
+    toPlanDetailMsg: function (id, type) {
+      var that = this
+      if (type === '1') {
+        that.toPlanDetail(id)
+      } else {
+        that.value444 = false
+        that.value4 = true
+        that.toDetail(id)
+      }
+    },
+    getNextPlanTask: function (id) {
+      var that = this
+      that.ajax('/myProject/getPlanOrTaskById', {id: id}).then(res => {
+        console.log('resList', res)
+        that.planMsgPlanList = res.data
+      })
+    },
+    addChild: function (id, type) {
+      console.log('id', id)
+      console.log('type', type)
+      this.addNode(id, type)
+    },
+    delChildTask: function (id) {
+      var that = this
+      console.log('id', id)
+      that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.delLoading = true
+        that.ajax('/myProject/delPlanOrTask', {id: id}).then(res => {
+          if (res.code === 200) {
+            that.log('delPlanOrTask:', res)
+            that.getNextPlanTask(that.currentNodeId)
+            that.selectProjectId()
+            that.delLoading = false
+          } else {
+            that.$message.warning(res.msg)
+            that.delLoading = false
+          }
+        })
+      }).catch(() => {
+        // that.loading = false
+      })
+    },
+    delCurrentPlan: function (id) {
+      var that = this
+      console.log('id', id)
+      that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/myProject/delPlanOrTask', {id: id}).then(res => {
+          if (res.code === 200) {
+            that.log('delPlanOrTask:', res)
+            that.$message.success(res.msg)
+            that.value444 = false
+            that.selectProjectId()
+          } else {
+            that.$message.warning(res.msg)
+          }
+        }).catch(() => {
+          // that.loading = false
+        })
+      })
+    },
     // 获取附件上传组件发来的附件信息 新组件
     GetFileInfo (obj) {
       this.log('GetFileInfo:', obj)
@@ -1784,6 +2134,9 @@ export default {
       if (nodeType) {
         if (nodeType === '1' || nodeType === '计划') {
           that.activeNameBgCover = 'first'
+        } else if (nodeType === 3) {
+          that.activeNameBgCover = 'first'
+          that.taskshow = true
         } else {
           that.activeNameBgCover = 'second'
         }
@@ -2019,7 +2372,7 @@ export default {
     getHistoryCont () {
       var that = this
       // var planid = this.$route.params.pid
-      that.ajax('/myProject/getLogAndComment', {projectUID: that.proId, pageSize: 10, pageNum: that.pagenum}).then(res => {
+      that.ajax('/myProject/getLogAndComment', {projectUID: that.proId, pageSize: 8, pageNum: that.pagenum}).then(res => {
         that.log('getLogAndComment:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.list.length; i++) {
@@ -2033,19 +2386,14 @@ export default {
               res.data.list[i].uploads[j].downloadUrl = downurl
             }
           }
-          that.taskLogs = that.taskLogs.concat(res.data.list)
+          that.taskLogs = res.data.list
           that.totalData = res.data.totalRow
-          if (that.taskLogs.length === that.totalData) {
-            that.log('ss')
-            that.notMore = true
-          }
           that.log('taskLogs:', res)
         }
       })
     },
-    getPageNum () {
-      this.pagenum++
-      this.log(this.pagenum)
+    getPageNum (e) {
+      this.pagenum = e
       // this.pagenum = e
       this.getHistoryCont()
     },
@@ -2422,7 +2770,7 @@ export default {
       })
     },
     // 点击一级计划 获取一级下的子计划和任务
-    selectProject: function (id, e) {
+    selectProject: function (id, type, e) {
       var that = this
       that.data5 = []
       this.log('点击一级计划')
@@ -2443,6 +2791,18 @@ export default {
               }]
             }
             that.data5 = res.data.planOrJobList
+            if (type === '1') {
+              that.value444 = true
+              that.toPlanDetail(id)
+            } else {
+              that.taskId = id
+              that.taskComment.uid = id
+              that.taskHistoryList.uid = id
+              that.value4 = true
+              that.getCommicateCont()
+              that.getHistoryList()
+              that.toDetail(id)
+            }
           }
         })
       }
@@ -2457,20 +2817,9 @@ export default {
         that.getCommicateCont()
         that.getHistoryList()
         that.toDetail(data.id)
-        // that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
-        //   that.log('getTaskBasic:', res)
-        //   if (res.code === 200) {
-        //     that.taskBasicMsg = res.data
-        //     that.rid = res.data.uid
-        //     if (that.isImage(res.data.showName)) {
-        //       res.data.isImg = true
-        //     } else {
-        //       res.data.isImg = false
-        //     }
-        //     that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
-        //     that.resetScro()
-        //   }
-        // })
+      } else if (data.type === '1') {
+        that.value444 = true
+        that.toPlanDetail(data.id)
       }
     },
     showImagePre: function (url) {
@@ -3149,6 +3498,7 @@ export default {
     // },
     toDetail: function (id) {
       var that = this
+      that.taskId = id
       if (id) {
         that.getTaskChildList(id)
         that.ajax('/myTask/queryTaskDetail', {taskId: id}).then(res => {
@@ -3177,6 +3527,10 @@ export default {
                 res.data.attachment[n].isImg = false
               }
             }
+            that.taskComment.uid = id
+            that.taskHistoryList.uid = id
+            that.getHistoryList()
+            that.getCommicateCont()
             that.resetScro()
           }
         })
@@ -3212,6 +3566,10 @@ export default {
                 res.data.attachment[n].isImg = false
               }
             }
+            that.taskComment.uid = that.taskId
+            that.taskHistoryList.uid = that.taskId
+            that.getHistoryList()
+            that.getCommicateCont()
             that.resetScro()
           }
         })
@@ -3289,8 +3647,305 @@ export default {
           })
         }
       })
-    }
+    },
     // 任务详情 end
+    // ----分解--
+    // 悬浮窗管理函数
+    dialogManage: function (target, allDiaHide) {
+      var that = this
+      // allDiaHide为false
+      if (!allDiaHide) {
+        if (that[target]) {
+          for (var i = 0; i < that.diaManageArr.length; i++) {
+            if (that.diaManageArr[i] !== target) {
+              that[that.diaManageArr[i]] = false
+            }
+          }
+        }
+      } else if (allDiaHide) {
+        // allDiaHide为true (即:所有悬浮窗隐藏)
+        for (var t = 0; t < that.diaManageArr.length; t++) {
+          that[that.diaManageArr[t]] = false
+        }
+      }
+    },
+    transitionManage: function (target, allTranHide) {
+      var that = this
+      if (!allTranHide) {
+        if (that[target]) {
+          for (var i = 0; i < that.tranManageArr.length; i++) {
+            if (that.tranManageArr[i] !== target) {
+              that[that.tranManageArr[i]] = 0
+            }
+          }
+        }
+      } else if (allTranHide) {
+        // allDiaHide为true (即:所有悬浮窗隐藏)
+        for (var t = 0; t < that.tranManageArr.length; t++) {
+          that[that.tranManageArr[t]] = 0
+        }
+      }
+    },
+    remoteMethod223 (query) {
+      var that = this
+      this.log('query:', query)
+      if (query !== '') {
+        this.loading2 = true
+        that.moreUserSelectPayload1.projectManager = query
+        this.ajax('/myProject/autoCompleteNames', that.moreUserSelectPayload1).then(res => {
+          that.log('autoCompleteNames:', res)
+          if (res.code === 200) {
+            that.options223 = res.data
+            this.loading2 = false
+          }
+        })
+      } else {
+        this.options223 = []
+      }
+    },
+    selectUserClick: function () {
+      this.selectUserDiaShow = false
+      this.log(this.taskForm23.value9)
+    },
+    selectDateCancel: function () {
+      this.selectDateDiaShow = false
+    },
+    selectDateOk: function () {
+      var that = this
+      var st = new Date(that.selDateStart).getTime()
+      var et = new Date(that.selDateEnd).getTime()
+      if (st > et) {
+        that.$message.warning('开始时间不能大于结束时间')
+      } else {
+        this.selectDateDiaShow = false
+      }
+    },
+    rateMouseLeave: function () {
+      // this.alert(1)
+      this.taskLevelHeight = 0
+    },
+    selectUser: function (e) {
+      // 时间弹窗 与 人员选择弹窗 不共存  selectUserDiaShow selectDateDiaShow
+      // this.selectDateDiaShow = false
+      var obj = e.currentTarget
+      this.selectUserDiaShow = true
+      this.selectUserLeft = $(obj).offset().left
+      this.selectUserTop = $(obj).offset().top
+      // 所有的伸缩窗 隐藏
+      this.transitionManage('', true)
+    },
+    selectDate: function (e) {
+      // 所有的伸缩窗 隐藏
+      this.transitionManage('', true)
+      if (e) {
+        var obj = e.currentTarget
+        this.selectDateDiaShow = true
+        this.selectDateLeft = $(obj).offset().left - 420
+        this.selectDateTop = $(obj).offset().top - 102
+      }
+      // this.log(123)
+    },
+    selectLevel: function (e) {
+      var obj = e.currentTarget
+      this.taskLevelLeft = $(obj).offset().left - 165
+      this.taskLevelTop = $(obj).offset().top + 32
+      this.taskLevelHeight = 46
+      // 其它悬浮窗为隐藏状态
+      this.dialogManage('', true)
+    },
+    fileChange: function (file) {
+      var that = this
+      var obj = file.currentTarget
+      var isfile = $(obj).val()
+      if (isfile) {
+        that.addMarkInfo33()
+      }
+      this.log('change了', file)
+    },
+    addMarkInfo33 () {
+      var that = this
+      that.loading3 = true
+      var url = that.$store.state.baseServiceUrl
+      var formData = new FormData($('#uploadFileDel2')[0])
+      that.formData2 = formData
+      if (formData) {
+        $.ajax({
+          type: 'post',
+          url: url + '/file/uploadFileAjax',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true
+          }
+        }).then(function (data) {
+          that.log('upload:', data)
+          if (data.code === 200) {
+            // that.attachmentId2 = data.data.attachmentId
+            var obj = {
+              attachmentId: data.data.attachmentId,
+              fileName: data.data.showName
+            }
+            that.fileList.push(obj)
+            that.fileListLen = that.fileList.length
+            that.log('attachmentId:', data.data.attachmentId2)
+            that.$message({
+              type: 'success',
+              message: '文件' + data.msg
+            })
+            that.loading3 = false
+          } else if (data.code === 300) {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+            that.loading3 = false
+          } else {
+            that.$message({
+              type: 'error',
+              message: data.msg
+            })
+            that.loading3 = false
+          }
+        })
+      } else {
+        // that.loading = false
+        that.$message({
+          type: 'error',
+          message: '内容不能为空'
+        })
+        that.loading3 = false
+      }
+    },
+    delUploadFileDel2: function (id) {
+      console.log('id', id)
+      var that = this
+      that.$confirm('确认删除此附件，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        showClose: false,
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
+          // this.log('选择所属项目:', res)
+          if (res.code === 200) {
+            that.$message.success('删除成功！')
+            for (var i = 0; i < that.fileList.length; i++) {
+              if (id === that.fileList[i].attachmentId) {
+                that.fileList.splice(i, 1)
+              }
+            }
+            that.fileListLen = that.fileList.length
+            console.log('edit', that.fileList)
+            $('#myfileDel2').val('')
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    moreClick: function () {
+      var that = this
+      if (that.moreText === '更多') {
+        that.moreText = '收起'
+        this.moreIcon = 'el-icon-arrow-up'
+        this.taskRelationShow = true
+      } else {
+        that.moreText = '更多'
+        this.moreIcon = 'el-icon-arrow-down'
+        this.taskRelationShow = false
+      }
+    },
+    inputFocus: function () {
+      var that = this
+      // this.taskRelationShow2 = true
+      if (that.moreText === '更多') {
+        that.moreText = '收起'
+        this.moreIcon = 'el-icon-arrow-up'
+        this.taskRelationShow = true
+      } else {
+        that.moreText = '更多'
+        this.moreIcon = 'el-icon-arrow-down'
+        this.taskRelationShow = false
+      }
+    },
+    depSub: function () {
+      var that = this
+      that.loading3 = true
+      var fileStr = ''
+      for (var j = 0; j < this.fileList.length; j++) {
+        if (j === that.fileList.length - 1) {
+          fileStr = fileStr + that.fileList[j].attachmentId
+        } else {
+          fileStr = fileStr + that.fileList[j].attachmentId + ','
+        }
+      }
+      // 如果有任务名
+      if (that.taskNameText) {
+        // value9有值
+        var selectUserStr = ''
+        if (that.taskForm23.value9.length > 0) {
+          for (var i = 0; i < that.taskForm23.value9.length; i++) {
+            if (i === 0) {
+              selectUserStr = that.taskForm23.value9[0]
+            } else {
+              selectUserStr = selectUserStr + '_' + that.taskForm23.value9[i]
+            }
+          }
+        } else {
+          // value9没有值，取默认
+          selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
+        }
+        that.CommunityTaskPayload.attachmentId = fileStr
+        that.CommunityTaskPayload.users = selectUserStr
+        that.CommunityTaskPayload.jobName = that.taskNameText
+        that.CommunityTaskPayload.taskStartDate = that.selDateStart
+        that.CommunityTaskPayload.taskFinishDate = that.selDateEnd
+        that.CommunityTaskPayload.description = that.taskIntro
+        that.CommunityTaskPayload._jfinal_token = that.token
+        that.ajax('/myProject/addTask', that.CommunityTaskPayload).then(res => {
+          if (res.code === 200) {
+            that.isRecall = that.isRecall + 1
+            that.token = res._jfinal_token
+            that.$message({
+              message: '任务创建成功',
+              type: 'success'
+            })
+            that.getNextPlanTask(that.currentNodeId)
+            that.selectProjectId()
+            // 清空发动态的表单
+            that.clearDynamicsForm23()
+          } else {
+            that.$message({
+              message: res.msg,
+              type: 'warning'
+            })
+          }
+          that.loading3 = false
+        })
+      } else {
+        that.$message({
+          message: '请填写任务名',
+          type: 'warning'
+        })
+        that.loading3 = false
+      }
+    },
+    clearDynamicsForm23: function () {
+      this.taskNameText = ''
+      this.fileList = []
+      this.CommunityTaskPayload.jobName = ''
+      this.taskIntro = ''
+      this.CommunityTaskPayload.description = ''
+      this.attachmentId = ''
+      this.CommunityTaskPayload.formId = ''
+      this.taskForm23.value9 = []
+      this.levelValue = 3
+      $('#myfileDel2').val('')
+      // this.moreClick()
+    }
     // getNextPlan: function (pId) {
     //   var that = this
     //   that.value4 = false
@@ -4028,7 +4683,7 @@ export default {
   .paiTaskIptRightCnt{
     cursor: pointer;
     margin-right: 10px;
-    line-height: 25px;
+    line-height: 28px;
   }
   .taskRelation{
     border: 1px solid #a9b8bf;
@@ -4173,5 +4828,14 @@ export default {
     color: #409EFF;
     cursor: pointer;
     margin-left: 6px;
+  }
+  .
+  {
+    display: inline-block;
+    color:#888;
+    width: 60%;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
 </style>
