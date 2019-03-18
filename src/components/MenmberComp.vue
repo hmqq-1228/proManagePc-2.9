@@ -37,7 +37,7 @@
   <div v-if="organizationalShow" style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">组织架构</div>
   <!--organizationalShow-->
   <div class="organizationalBox" v-if="organizationalShow">
-    <div>
+    <div v-loading="organizLoading">
       <el-tree
         :data="data2"
         show-checkbox
@@ -62,6 +62,7 @@ export default {
       loading2: false,
       loadingMan: false,
       organizationalShow: false,
+      organizLoading: false,
       deId: [],
       dataPeo: [],
       data2: [],
@@ -152,6 +153,7 @@ export default {
     // 新增 增加项目组成员
     addMember () {
       var that = this
+      that.loadingMan = true
       if (that.taskForm.value9.length > 0) {
         for (var i = 0; i < that.taskForm.value9.length; i++) {
           var obj = {Name: '', ID: ''}
@@ -168,8 +170,11 @@ export default {
             that.$emit('addMembersInfo', true)
             that.addMemPayload.hrocPeople = []
             that.taskForm.value9 = []
+            that.loadingMan = false
           } else {
             that.$emit('addMembersInfo', false)
+            that.$message.warning(res.msg)
+            that.loadingMan = false
           }
         })
       }
@@ -281,6 +286,7 @@ export default {
     // 成员管理
     addMenber () {
       var that = this
+      that.organizLoading = true
       if (that.deId.length > 0) {
         that.ajax('/myProject/addMembers', JSON.stringify({
           projectUID: that.proId,
@@ -289,6 +295,7 @@ export default {
           if (res.code === 200) {
             that.queryProGroupMember()
             that.$emit('addPeopleInfo', true)
+            that.organizLoading = false
             // that.queryProDetail()
             // that.getProjectPeo()
             that.$message({
@@ -301,6 +308,7 @@ export default {
               type: 'warning',
               message: res.msg
             })
+            that.organizLoading = false
           }
         })
       } else if (this.deId.length === 0) {
