@@ -10,6 +10,7 @@ import ProEdit from '@/components/ProEdit'
 import ProEdit2 from '@/components/ProEdit2'
 import TestUpload from '@/components/TestUpload'
 import Wellcome from '@/components/Wellcome'
+import ProDetail from '@/components/ProDetail'
 // Schedule TestUpload Wellcome
 
 Vue.use(Router)
@@ -75,6 +76,11 @@ export default new Router({
       path: '/TestUpload',
       name: 'TestUpload',
       component: TestUpload
+    },
+    {
+      path: '/ProDetail',
+      name: 'ProDetail',
+      component: ProDetail
     }
   ]
 })

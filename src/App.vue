@@ -171,7 +171,7 @@ export default {
               that.slideMenu.push(res.data[i])
             }
           }
-          that.log('that.slideMenu:', that.slideMenu)
+          // that.log('that.slideMenu:', that.slideMenu)
           // that.log('that.slideMenuGroup:', that.slideMenuGroup)
           that.$store.state.slideMenuGroup = that.slideMenuGroup
           that.$store.state.slideMenu = that.slideMenu

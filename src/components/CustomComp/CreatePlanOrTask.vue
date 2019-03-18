@@ -1,5 +1,6 @@
 <template>
   <div class="CreatePlanOrTask">
+    <!--<button v-on:click="testLimit">TEST</button>-->
     <div class="bgCoverTabs">
       <el-tabs v-model="activeNameBgCover" @tab-click="handleClickPlanTask">
         <el-tab-pane label="增加计划" name="first" v-bind:disabled="panshow">
@@ -115,7 +116,7 @@ import FileUploadComp from '../FileUploadComp.vue'
 // nodeId
 export default {
   name: 'CreatePlanOrTask',
-  props: ['nodeId'],
+  props: ['nodeId', 'DrawerOpen'],
   components: {
     FileUploadComp
   },
@@ -138,7 +139,11 @@ export default {
       panshow: false,
       // 新增 添加计划 切换
       activeNameBgCover: 'first',
-      pickerOptionsPlan: {},
+      pickerOptionsPlan: {
+        // disabledDate (time) {
+        //   return time.getTime() > Date.now()
+        // }
+      },
       // 新增 增加计划 表单
       form: {
         name: '',
@@ -214,7 +219,7 @@ export default {
         parentId: '',
         attachmentId: '',
         jobName: '',
-        taskStartDate: '',
+        taskStartDate: '2019-03-01 00:00:00',
         taskFinishDate: '',
         description: '',
         jobLevel: 1,
@@ -236,7 +241,6 @@ export default {
     nodeId: function (val, old) {
       if (val) {
         if (val.substring(0, 1) === 'J') {
-          this.log('lalalalal')
           this.activeNameBgCover = 'second'
           this.panshow = true
         } else {
@@ -244,9 +248,49 @@ export default {
           this.panshow = false
         }
       }
+    },
+    DrawerOpen: function (val, old) {
+      if (val) {
+        // this.pickerOptionsPlan.disabledDate = ''
+        // this.log(889889123)
+        // this.dateLimit()
+      }
     }
   },
   methods: {
+    testLimit: function () {
+      this.dateLimit()
+    },
+    // 时间限定
+    dateLimit: function () {
+      var that = this
+      this.log('dateLimit:', that.nodeId)
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+        that.log('dateLimit-res:', res)
+        if (res.code === 200) {
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
+          var sT = new Date(st)
+          var eT = new Date(et)
+          that.form.date1 = res.data.start
+          that.form.date2 = res.data.finish
+          that.addTaskForm.date1 = res.data.start
+          that.addTaskForm.date2 = res.data.finish
+          var disabledStarTime2 = sT.getTime()
+          var disabledEndTime2 = eT.getTime()
+          that.pickerOptionsPlan.disabledDate = function (time) {
+            return time.getTime() < disabledStarTime2 || time.getTime() > disabledEndTime2
+          }
+          that.pickerOptionsPlan.disabledDate()
+          // that.log('delPlanOrTask:', disabledStarTime)
+          // that.log('delPlanOrTask22:', disabledEndTime)
+        } else {
+          that.$message({
+            message: res.msg
+          })
+        }
+      })
+    },
     // 新增
     handleClickPlanTask: function (tab) {
     },
