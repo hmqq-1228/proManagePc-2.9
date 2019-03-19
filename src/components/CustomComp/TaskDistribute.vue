@@ -360,6 +360,7 @@ export default {
         that.CommunityTaskPayload2.endTime = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
+        that.log('attachmentId:', that.CommunityTaskPayload2.attachmentId)
         that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
           that.$emit('TaskDistributeCallback', res)
           if (res.code === 200) {
@@ -501,7 +502,6 @@ export default {
     text-align: center;
     position: fixed;
     overflow: hidden;
-    z-index: 300;
     margin-top: -1px;
     background-color: #fff;
     transition: height 0.3s;
@@ -547,7 +547,6 @@ export default {
     padding: 0px 20px 20px 20px;
     background-color: #fff;
     position: absolute;
-    z-index: 200;
     border-radius: 6px;
     box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
   }
@@ -556,7 +555,6 @@ export default {
     padding: 20px 10px;
     background-color: #fff;
     position: absolute;
-    z-index: 200;
     border-radius: 6px;
     box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
   }

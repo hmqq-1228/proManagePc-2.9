@@ -316,11 +316,6 @@
       </Drawer>
       <!--新增 抽屉 一级计划详情 end -->
       <!--计划详情-->
-      <!--计划详情-->
-      <!--计划详情-->
-      <!--计划详情-->
-      <!--计划详情-->
-      <!--计划详情-->
       <Drawer class="drawerScroll" :closable="false" width="750" v-model="value444">
         <div class="slidTop">
           <div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>
@@ -663,7 +658,7 @@
       <!--新增 抽屉 任务详情 start-->
       <!--新增 抽屉 任务详情 start-->
       <Drawer class="drawerScroll" :closable="false" width="750" v-model="value4">
-        <component v-bind:is="compArr.DrawerComp" v-bind:taskDrawerOpen="value4" v-bind:modifyTaskRes="modifyTaskRes" v-on:showEditForm="showEditFormFuc" :nodeId="currentNodeId"></component>
+        <component v-bind:is="compArr.TaskDetailComp" v-bind:taskDrawerOpen="value4" v-bind:modifyTaskRes="modifyTaskRes" v-on:showEditForm="showEditFormFuc" :nodeId="currentNodeId"></component>
         <!--<div class="slidTop">-->
           <!--<div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>-->
           <!--<div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>-->
@@ -890,7 +885,7 @@
 import FileUploadComp from './FileUploadComp.vue'
 import MenmberComp from './MenmberComp.vue'
 import CommentLogs from './CustomComp/CommentLogs.vue'
-import DrawerComp from './CustomComp/DrawerComp.vue'
+import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
 import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
 import ModifyPlan from './CustomComp/ModifyPlan.vue'
 import ModifyTask from './CustomComp/ModifyTask.vue'
@@ -904,7 +899,7 @@ export default {
     CommentLogs,
     ModifyPlan,
     ModifyTask,
-    DrawerComp,
+    TaskDetailComp,
     FileUploadComp,
     CreatePlanOrTask,
     TaskDistribute,
@@ -1025,7 +1020,7 @@ export default {
       // 引入组件
       compArr: {
         MenmberComp: 'MenmberComp',
-        DrawerComp: 'DrawerComp',
+        TaskDetailComp: 'TaskDetailComp',
         ModifyTask: 'ModifyTask',
         ModifyPlan: 'ModifyPlan',
         CommentLogs: 'CommentLogs',

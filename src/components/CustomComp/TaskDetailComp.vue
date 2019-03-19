@@ -122,7 +122,7 @@
             <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
               <p class="content" v-if="com.showName">附件:
                 <span style="display: inline-block"> {{com.showName}}</span>
-                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(com.previewUrl)">预览</span>
+                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePre(com.previewUrl, com.showName)">预览</span>
                 <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
               </p>
             </span>
@@ -144,7 +144,7 @@
             <span v-for="(his, index2) in history.attachment" v-bind:key="index2">
               <p class="content" v-if="his.showName"><span>附件:</span>
                 <span style="display: inline-block"> {{his.showName}}</span>
-                <span v-if="his.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(his.previewUrl)">预览</span>
+                <span v-if="his.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePre(his.previewUrl, his.showName)">预览</span>
                 <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="his.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
               </p>
             </span>
@@ -154,6 +154,39 @@
           <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
         </div>
       </div>
+    <!--任务移交-->
+    <!--<el-dialog title="任务移交" :visible.sync="taskTransferVisible" width="26%" style="z-index: 82222 !important;">-->
+    <div class="taskTransferBgcover" title="任务移交" v-if="taskTransferVisible">
+      <div class="taskTransferCnt" v-loading="taskTransferLoading">
+        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
+        <el-autocomplete style="width:90%"
+                         v-model="projectManager"
+                         :fetch-suggestions="querySearchAsync2"
+                         placeholder="请输入移交人姓名"
+                         :trigger-on-focus="false"
+                         @select="handleSelect2"
+        ></el-autocomplete>
+        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交备注：</div>
+        <textarea name="remark" class="el-textarea__inner" id="Transfer" type="text" v-model="commitComentT"></textarea>
+        <component v-bind:is="compArr.FileUploadComp" fileFormId="taskTransfer" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <i-button @click="concelTransfer()">取消</i-button>
+          <i-button type="info" v-bind:disabled="butnDisabledT" @click="taskTransfer()">确定</i-button>
+        </div>
+      </div>
+    </div>
+    <!--/ 任务完成/-->
+    <div class="taskFinishedBgcover" title="任务完成" v-if="taskFinishedVisible">
+      <div class="el-textarea taskFinishedCnt" v-loading="loading9">
+        <textarea name="remark" class="el-textarea__inner" id="textAreaF" type="text" v-model="commitComentF"></textarea>
+        <!--<div class="cannetProject2">-->
+        <component v-bind:is="compArr.FileUploadComp" fileFormId="taskFinished" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <i-button @click="concelFinished()">取消</i-button>
+          <i-button type="info" v-bind:disabled="butnDisabledF" @click="confirmFinished()">确定</i-button>
+        </div>
+      </div>
+    </div>
     <!--<Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">-->
       <!--&lt;!&ndash; 修改任务 编辑任务 引入组件 &ndash;&gt;-->
       <!--<component v-bind:is="compArr.ModifyTask" v-bind:DrawerOpen="modifyTaskVisible" fileFormId="ModifyTask" v-on:FilePreEmit="GetFilePreData" v-on:ModifyTaskCallback="ModifyTaskCallbackFuc" :nodeId="currentNodeId"></component>-->
@@ -166,7 +199,7 @@ import FileUploadComp from '././FileUploadComp.vue'
 import ModifyTask from './ModifyTask.vue'
 import TaskDistribute from './TaskDistribute.vue'
 export default {
-  name: 'DrawerComp',
+  name: 'TaskDetailComp',
   props: ['nodeId', 'taskDrawerOpen', 'modifyTaskRes'],
   components: {
     ModifyTask,
@@ -179,13 +212,9 @@ export default {
       taskIdEdit: '',
       IsClear: false,
       loading2: false,
-      loading9: false,
-      loading11: false,
       showDrawer: false,
       butnDisabled: true,
-      butnDisabledT: true,
-      transferUserId: '',
-      transferUserName: '',
+      butnDisabledF: true,
       selDateEnd2: '',
       selDateStart2: '',
       taskBasicMsg: '',
@@ -197,13 +226,11 @@ export default {
       toShowDevided: false,
       modifyTaskVisible: false,
       taskId: [],
-      fileListTrans: [],
       commentList: [],
       historyList: [],
       FileUploadArr: [],
       childTaskList: [],
       totalHistoryNum: 0,
-      pickerOptions3: {},
       disabledStarTime: '',
       disabledEndTime: '',
       taskComment: {
@@ -221,7 +248,19 @@ export default {
         ModifyTask: 'ModifyTask',
         FileUploadComp: 'FileUploadComp',
         TaskDistribute: 'TaskDistribute'
-      }
+      },
+      // 任务移交
+      taskTransferVisible: false,
+      taskTransferLoading: false,
+      projectManager: '',
+      transferUserId: '',
+      transferUserName: '',
+      commitComentT: '',
+      butnDisabledT: true,
+      // 任务完成
+      taskFinishedVisible: false,
+      commitComentF: '',
+      loading9: false
     }
   },
   watch: {
@@ -232,12 +271,13 @@ export default {
     },
     taskDrawerOpen: function (val, oV) {
       var that = this
-      console.log('taskDrawerOpen', val)
       if (val) {
         that.showDrawer = true
         that.toDetail(that.nodeId)
       } else {
+        that.concelTransfer()
         that.showDrawer = false
+        that.taskFinishedVisible = false
       }
     },
     commitComent: function (val, oVal) {
@@ -245,6 +285,20 @@ export default {
         this.butnDisabled = false
       } else {
         this.butnDisabled = true
+      }
+    },
+    commitComentF: function (val, oVal) {
+      if (val) {
+        this.butnDisabledF = false
+      } else {
+        this.butnDisabledF = true
+      }
+    },
+    projectManager: function (val, oVal) {
+      if (val) {
+        this.butnDisabledT = false
+      } else {
+        this.butnDisabledT = true
       }
     }
   },
@@ -258,19 +312,19 @@ export default {
         that.taskId = id
         that.getTaskChildList(id)
         that.ajax('/myTask/queryTaskDetail', {taskId: id}).then(res => {
-          // this.log('查看返回：', res)
+          this.log('queryTaskDetail：', res)
           if (res.code === 200) {
             that.taskBasicMsg = res.data
             that.rid = res.data.uid
-            var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
-            var et = res.data.taskFinishDate
-            var sT = new Date(st)
-            var eT = new Date(et)
-            that.disabledStarTime = sT.getTime()
-            that.disabledEndTime = eT.getTime()
-            that.pickerOptions3.disabledDate = function (time) {
-              return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
-            }
+            // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
+            // var et = res.data.taskFinishDate
+            // var sT = new Date(st)
+            // var eT = new Date(et)
+            // that.disabledStarTime = sT.getTime()
+            // that.disabledEndTime = eT.getTime()
+            // that.pickerOptions3.disabledDate = function (time) {
+            //   return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
+            // }
             for (var n = 0; n < res.data.attachment.length; n++) {
               res.data.attachment[n].downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.attachment[n].realUrl + '&showName=' + res.data.attachment[n].showName
               if (that.isImage(res.data.attachment[n].showName)) {
@@ -293,15 +347,15 @@ export default {
           if (res.code === 200) {
             that.taskBasicMsg = res.data
             that.rid = res.data.uid
-            var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
-            var et = res.data.taskFinishDate
-            var sT = new Date(st)
-            var eT = new Date(et)
-            that.disabledStarTime = sT.getTime()
-            that.disabledEndTime = eT.getTime()
-            that.pickerOptions0.disabledDate = function (time) {
-              return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
-            }
+            // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
+            // var et = res.data.taskFinishDate
+            // var sT = new Date(st)
+            // var eT = new Date(et)
+            // that.disabledStarTime = sT.getTime()
+            // that.disabledEndTime = eT.getTime()
+            // that.pickerOptions0.disabledDate = function (time) {
+            //   return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
+            // }
             for (var n = 0; n < res.data.attachment.length; n++) {
               res.data.attachment[n].downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.attachment[n].realUrl + '&showName=' + res.data.attachment[n].showName
               if (that.isImage(res.data.attachment[n].showName)) {
@@ -331,7 +385,6 @@ export default {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
           if (res.code === 200) {
             // that.log('delPlanOrTask:', res)
-            that.value4 = false
             that.getTaskChildList(id)
             // that.selectProjectId()
             that.getHistoryList()
@@ -405,7 +458,6 @@ export default {
     },
     modifyTask: function () {
       var that = this
-      alert('88888')
       that.$emit('showEditForm')
     },
     // // 编辑任务 修改任务 ModifyTaskCallbackFuc
@@ -429,12 +481,13 @@ export default {
     // 任务分解 返回结果处理
     TaskDistributeCallbackFuc: function (res) {
       var that = this
+      that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       if (res.code === 200) {
         that.toShowDevided = false
         // that.queryProDetail()
         // that.selectProjectId()
         // that.getHistoryList()
-        // that.getTaskChildList()
+        that.getTaskChildList(that.nodeId)
         that.$message({
           message: '创建成功！',
           type: 'success'
@@ -468,6 +521,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/startTask', {taskId: id}).then(res => {
+          that.$emit('ActionResThrow', {res: res, actionName: 'startTask'})
           if (res.code === 200) {
             that.log('dealTask:', res)
             that.toDetail(id)
@@ -498,6 +552,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/restartTask', {taskId: id}).then(res => {
+          that.$emit('ActionResThrow', {res: res, actionName: 'restartTask'})
           if (res.code === 200) {
             this.log('restartTask', res)
             that.toDetail(id)
@@ -571,6 +626,10 @@ export default {
         this.showBigImage1(obj.previewUrl)
       }
     },
+    showImagePre: function (previewUrl, showName) {
+      // this.log('showName:', showName)
+      this.$emit('FilePreEmit', {previewUrl: previewUrl, fileName: showName})
+    },
     // 任务分解
     DistributeFormVisibleFuc: function (res) {
       this.toShowDevided = false
@@ -588,6 +647,112 @@ export default {
       }
       that.FileUploadArr = []
       return FileIdStr
+    },
+    // 任务移交
+    transferTask: function () {
+      var that = this
+      that.taskTransferVisible = true
+    },
+    querySearchAsync2 (queryString, cb) {
+      var that = this
+      if (queryString) {
+        that.projectManager = queryString
+        this.ajax('/myProject/autoCompleteNames', {projectManager: that.projectManager}).then(res => {
+          if (res.code === 200) {
+            var dddarr = []
+            if (res.data.length > 0) {
+              for (var i = 0; i < res.data.length; i++) {
+                var obj = {}
+                obj.value = res.data[i].Name + ' (' + res.data[i].jName + ')'
+                obj.userId = res.data[i].ID
+                // obj.jName = res.msg[i].jName
+                dddarr.push(obj)
+              }
+              // 调用 callback 返回建议列表的数据
+              cb(dddarr)
+            } else {
+              var aaaddd = []
+              that.$message('未能搜索到该人员')
+              cb(aaaddd)
+            }
+          }
+        })
+      }
+    },
+    handleSelect2 (item) {
+      this.transferUserId = item.userId
+      this.transferUserName = item.value
+    },
+    concelTransfer: function () {
+      var that = this
+      that.taskTransferLoading = false
+      that.projectManager = ''
+      that.commitComentT = ''
+      that.taskTransferVisible = false
+    },
+    concelFinished: function () {
+      this.commitComentF = ''
+      this.taskFinishedVisible = false
+    },
+    // 任务移交 点击确定
+    taskTransfer () {
+      var that = this
+      that.taskTransferLoading = true
+      that.ajax('/myTask/transferTask', {remark: that.commitComentT, attachmentId: that.SetFileIdStr(), taskId: that.taskId, transferUserId: that.transferUserId, transferUserName: that.transferUserName}).then(res => {
+        that.$emit('ActionResThrow', {res: res, actionName: 'transferTask'})
+        that.taskTransferLoading = false
+        that.log('transferTask:', res)
+        if (res.code === 200) {
+          that.toDetail()
+          that.getHistoryList()
+          that.isClear = true
+          that.taskTransferVisible = false
+          that.projectManager = ''
+          that.commitComentT = ''
+          that.$message({
+            type: 'error',
+            message: res.msg
+          })
+        } else {
+          that.$message({
+            type: 'error',
+            message: res.msg
+          })
+        }
+      })
+    },
+    // 任务完成 完成任务
+    finishedTask: function () {
+      var that = this
+      that.taskFinishedVisible = true
+    },
+    // 任务完成 点击确定
+    confirmFinished () {
+      var that = this
+      that.loading9 = true
+      that.ajax('/myTask/finishTask', {remark: that.commitComentF, attachmentId: that.SetFileIdStr(), taskId: that.taskId}).then(res => {
+        that.$emit('ActionResThrow', {res: res, actionName: 'finishTask'})
+        that.taskFinishedVisible = false
+        if (res.code === 200) {
+          that.log('myTaskView:', res)
+          that.toDetail()
+          // that.selectProjectId()
+          that.getHistoryList()
+          that.isClear = true
+          that.commitComentF = ''
+          that.fileListFinish = []
+          that.loading9 = false
+          that.$message({
+            type: 'success',
+            message: res.msg
+          })
+        } else {
+          that.$message({
+            type: 'error',
+            message: res.msg
+          })
+        }
+      })
     }
   }
 }
@@ -820,5 +985,23 @@ export default {
     text-align: center;
     line-height: 50px;
     color: #aaa;
+  }
+  /*
+   *  ========================= 任务移交 任务完成
+   */
+  .taskTransferBgcover,.taskFinishedBgcover{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: rgba(0,0,0,0.4);
+  }
+  .taskTransferCnt,.taskFinishedCnt{
+    width: 60%;
+    margin-left: 20%;
+    margin-top: 200px;
+    padding: 30px;
+    background-color: #fff;
   }
 </style>

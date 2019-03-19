@@ -110,8 +110,15 @@
     </div>
     <!-- Part02 end -->
     <!-- Part05 start 抽屉 任务详情 -->
-    <Drawer class="drawerScroll" :closable="false" width="750" v-model="value4">
-      <component v-bind:is="compArr.DrawerComp" v-bind:taskDrawerOpen="value4" v-bind:modifyTaskRes="modifyTaskRes" v-on:showEditForm="showEditFormFuc" :nodeId="currentNodeId"></component>
+    <Drawer class="drawerScroll" :closable="false" width="750" v-model="TaskDetailCompShow">
+      <component v-bind:is="compArr.TaskDetailComp"
+                 v-bind:taskDrawerOpen="TaskDetailCompShow"
+                 v-bind:modifyTaskRes="modifyTaskRes"
+                 v-on:FilePreEmit="GetFilePreData"
+                 v-on:showEditForm="showEditFormFuc"
+                 v-on:ActionResThrow="ActionResThrowFuc"
+                 :nodeId="currentNodeId">
+      </component>
     </Drawer>
     <!-- Part03 start 抽屉 成员管理 -->
     <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember" v-loading="DrawerMemberShow">
@@ -175,7 +182,7 @@
       </div>
     </Drawer>
     <!--新增 添加计划或者任务 start-->
-    <Drawer class="drawerScroll" title="计划表单2" :closable="false" width="40%" style="z-index: 1005" v-model="bgCoverShow">
+    <Drawer class="drawerScroll" title="计划表单2" :closable="false" width="40%" v-model="bgCoverShow">
       <component v-bind:is="compArr.CreatePlanOrTask" v-bind:DrawerOpen="bgCoverShow" fileFormId="CreatePlanTask" v-on:CreatePlanTaskCallback="CreatePlanTaskCallbackFuc" :nodeId="currentNodeId"></component>
     </Drawer>
     <!--新增 抽屉 编辑计划 修改计划 start-->
@@ -224,7 +231,7 @@ import ModifyTask from './CustomComp/ModifyTask.vue'
 import TaskDistribute from './CustomComp/TaskDistribute.vue'
 import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 import MemberComp from './CustomComp/MemberComp.vue'
-import DrawerComp from './CustomComp/DrawerComp.vue'
+import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
 // DrawerComp
 export default {
   name: 'ProDetail',
@@ -237,7 +244,7 @@ export default {
     TaskDistribute,
     ProBaseInfo,
     MemberComp,
-    DrawerComp
+    TaskDetailComp
   },
   data () {
     return {
@@ -264,8 +271,8 @@ export default {
       proGrpMemList: [],
       // 详情
       modifyTaskRes: '',
-      // 详情
-      value4: false,
+      // 详情 抽屉显示
+      TaskDetailCompShow: false,
       DrawerMemberShow: false,
       loading2: false,
       loadingMan: false,
@@ -312,7 +319,7 @@ export default {
         TaskDistribute: 'TaskDistribute',
         ProBaseInfo: 'ProBaseInfo',
         MemberComp: 'MemberComp',
-        DrawerComp: 'DrawerComp'
+        TaskDetailComp: 'TaskDetailComp'
       },
       // 新增
       taskForm: {
@@ -544,11 +551,11 @@ export default {
       var that = this
       this.currentNodeId = data.id
       if (data.type === '2') {
-        that.value4 = true
+        that.TaskDetailCompShow = true
         // that.taskId = data.id
         // that.taskComment.uid = data.id
         // that.taskHistoryList.uid = data.id
-        // that.value4 = true
+        // that.TaskDetailCompShow = true
         // that.getCommicateCont()
         // that.getHistoryList()
         // that.toDetail(data.id)
@@ -834,8 +841,35 @@ export default {
     // 组件内点击了关闭 父组件执行关闭子组件操作
     ShutCompEmitFuc: function (res) {
       this[res] = false
+    },
+    ActionResThrowFuc: function (obj) {
+      var that = this
+      switch (obj.actionName) {
+        case 'transferTask':
+          // 任务移交
+          that.TaskDetailCompShow = false
+          that.selectProjectId()
+          break
+        case 'finishTask':
+          // 任务完成
+          that.selectProjectId()
+          break
+        case 'restartTask':
+          // 任务重启
+          that.selectProjectId()
+          break
+        case 'startTask':
+          // 任务开始
+          that.selectProjectId()
+          break
+        case 'decomposeTask':
+          // 任务分解
+          that.selectProjectId()
+          break
+        default:
+          this.log('')
+      }
     }
-    // j
   }
 }
 </script>
