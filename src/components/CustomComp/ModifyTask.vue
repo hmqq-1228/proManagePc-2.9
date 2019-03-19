@@ -40,7 +40,7 @@
         </el-form-item>
         <div style="text-align: center">
           <el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>
-          <el-button @click="modifyTaskVisible = false">关 闭</el-button>
+          <el-button @click="shutComp('modifyTaskVisible')">关 闭</el-button>
         </div>
       </el-form>
     </div>
@@ -89,11 +89,24 @@ export default {
         taskFinishDate: [
           { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
         ]
+      },
+      editTaskPayload: {
+        id: '1',
+        jobName: '',
+        jobLevel: 1,
+        taskStartDate: '',
+        taskFinishDate: '',
+        description: ''
       }
     }
   },
   watch: {
     nodeId (val, old) {
+      if (val) {
+        this.getPlanTaskDetail()
+      }
+    },
+    DrawerOpen (val, old) {
       if (val) {
         this.getPlanTaskDetail()
       }
@@ -118,10 +131,13 @@ export default {
       that.FileUploadArr = []
       return FileIdStr
     },
+    levelChange: function (rateval) {
+      this.detailTaskform.jobLevel = rateval
+    },
     getPlanTaskDetail () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        this.log('任务详情：', res)
+        this.log('任务详情333：', res)
         that.detailTaskform.jobName = res.data.jobName
         that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
         that.detailTaskform.taskStartDate = res.data.taskStartDate
@@ -158,16 +174,8 @@ export default {
       var that = this
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          var fileStr = ''
-          for (var j = 0; j < this.fileListEdit.length; j++) {
-            if (j === that.fileListEdit.length - 1) {
-              fileStr = fileStr + that.fileListEdit[j].attachmentId
-            } else {
-              fileStr = fileStr + that.fileListEdit[j].attachmentId + ','
-            }
-          }
           that.loadingEdit = true
-          that.editTaskPayload.id = that.taskIdEdit
+          that.editTaskPayload.id = that.nodeId
           that.editTaskPayload.jobLevel = that.detailTaskform.jobLevel
           that.editTaskPayload.jobName = that.detailTaskform.jobName
           that.editTaskPayload.taskStartDate = that.detailTaskform.taskStartDate
@@ -175,24 +183,29 @@ export default {
           that.editTaskPayload.description = that.detailTaskform.description
           that.editTaskPayload.attachmentId = that.SetFileIdStr()
           that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
-            that.log('editTask:', res)
+            // that.log('editTask:', res)
+            that.$emit('ModifyTaskCallback', res)
             if (res.code === 200) {
               that.$message({
                 message: '保存成功！',
                 type: 'success'
               })
               that.IsClear = true
-              that.modifyTaskVisible = false
-              that.loadingEdit = false
-              that.toDetail(that.taskIdEdit)
-              that.selectProjectId()
-              that.getHistoryList()
+              that.getPlanTaskDetail()
+              // that.modifyTaskVisible = false
+              // that.loadingEdit = false
+              // that.toDetail(that.taskIdEdit)
+              // that.selectProjectId()
+              // that.getHistoryList()
             } else {
               that.loadingEdit = false
             }
           })
         }
       })
+    },
+    shutComp: function (compModel) {
+      this.$emit('ShutCompEmit', compModel)
     }
   }
 }

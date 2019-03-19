@@ -39,7 +39,7 @@
           </el-row>
         </el-aside>
         <el-main style="padding: 0 20px;">
-          <router-view style="min-height: 800px;"/>
+          <router-view style="min-height: 800px; padding-top: 20px;"/>
           <div class="copyright">贝豪项目管理系统（PMS ©2019 Version-{{version}}）版权所有 翻版必究</div>
         </el-main>
       </el-container>

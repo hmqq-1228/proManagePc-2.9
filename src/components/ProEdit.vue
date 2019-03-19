@@ -990,56 +990,6 @@
       <Drawer class="drawerScroll" title="修改任务3" :closable="false" width="40%" v-model="modifyTaskVisible">
         <!-- 修改任务 编辑任务 引入组件 -->
         <component v-bind:is="compArr.ModifyTask" v-bind:DrawerOpen="modifyTaskVisible" fileFormId="ModifyTask" v-on:FilePreEmit="GetFilePreData" v-on:ModifyTaskCallback="ModifyTaskCallbackFuc" :nodeId="currentNodeId"></component>
-        <!--<div class="bgCoverCnt2" v-loading="loadingEdit">-->
-          <!--<div class="colose" @click="modifyTaskVisible = false"><i class="el-icon-close"></i></div>-->
-          <!--<div class="bgCoverTabs">-->
-            <!--<div class="planTaskBox">-->
-              <!--<el-form ref="modifyTask" :model="detailTaskform" :rules="modifyTaskRules" label-width="80px">-->
-                <!--<el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">-->
-                  <!--<el-input class="planNameIpt" v-model="detailTaskform.jobName"></el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">-->
-                  <!--<div class="ratestar" style="padding-top: 6px;">-->
-                    <!--<el-rate v-model="detailTaskform.jobLevel" v-on:change="levelChange($event)"></el-rate>-->
-                  <!--</div>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="开始时间" prop="taskStartDate">-->
-                  <!--<el-col :span="24">-->
-                    <!--<el-date-picker style="width: 100%" type="datetime"-->
-                                    <!--format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--placeholder="选择日期"-->
-                                    <!--v-model="detailTaskform.taskStartDate"-->
-                                    <!--:picker-options="pickerOptionsTaskSt"-->
-                    <!--&gt;</el-date-picker>-->
-                  <!--</el-col>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="结束时间" prop="taskFinishDate">-->
-                  <!--<el-col :span="24">-->
-                    <!--<el-date-picker type="datetime" style="width: 100%"-->
-                                    <!--format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--placeholder="选择日期"-->
-                                    <!--v-model="detailTaskform.taskFinishDate"-->
-                                    <!--:picker-options="pickerOptionsTaskSt"-->
-                    <!--&gt;</el-date-picker>-->
-                  <!--</el-col>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="任务描述" maxlength="100" width="100">-->
-                  <!--<el-input class="planNameIpt" type="textarea" style="resize:none;" :rows="2" v-model="detailTaskform.description"></el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="任务附件">-->
-                  <!--<component v-bind:is="FileUploadComp" v-bind:FileDataList="taskFileList" fileFormId="TaskModify" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
-                <!--</el-form-item>-->
-                <!--<div style="text-align: center">-->
-                  <!--<el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>-->
-                  <!--<el-button @click="modifyTaskVisible = false">关 闭</el-button>-->
-                <!--</div>-->
-              <!--</el-form>-->
-            <!--</div>-->
-            <!--&lt;!&ndash;&ndash;&gt;-->
-          <!--</div>-->
-        <!--</div>-->
       </Drawer>
     </div>
     <!--删除确认-->
@@ -2332,6 +2282,7 @@ export default {
       if (res.code === 200) {
         that.modifyTaskVisible = false
         that.queryProDetail()
+        that.selectProjectId()
         that.$message({
           message: '修改成功！',
           type: 'success'
@@ -4018,28 +3969,26 @@ export default {
       var that = this
       that.taskIdEdit = id
       that.modifyTaskVisible = true
-      that.ajax('/myTask/queryTaskDetailSingle', {taskId: id}).then(res => {
-        that.detailTaskform.jobName = res.data.jobName
-        that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
-        // that.detailTaskform.taskStartDate = res.data.taskStartDate
-        // that.detailTaskform.taskFinishDate = res.data.taskFinishDate
-        that.detailTaskform.description = res.data.description
-        that.taskFileList = []
-        var fileListArr = []
-        for (var i = 0; res.data.attachment && i < res.data.attachment.length; i++) {
-          var obj = {
-            attachmentId: res.data.attachment[i].id,
-            fileName: res.data.attachment[i].showName,
-            previewUrl: res.data.attachment[i].previewUrl
-          }
-          fileListArr.push(obj)
-        }
-        that.taskFileList = that.taskFileList.concat(fileListArr)
-        for (var j = 0; j < res.data.attachment.length; j++) {
-          res.data.attachment[j].attachmentId = res.data.attachment[j].id
-        }
-        that.fileListEdit = res.data.attachment
-      })
+      // that.ajax('/myTask/queryTaskDetailSingle', {taskId: id}).then(res => {
+      //   that.detailTaskform.jobName = res.data.jobName
+      //   that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
+      //   that.detailTaskform.description = res.data.description
+      //   that.taskFileList = []
+      //   var fileListArr = []
+      //   for (var i = 0; res.data.attachment && i < res.data.attachment.length; i++) {
+      //     var obj = {
+      //       attachmentId: res.data.attachment[i].id,
+      //       fileName: res.data.attachment[i].showName,
+      //       previewUrl: res.data.attachment[i].previewUrl
+      //     }
+      //     fileListArr.push(obj)
+      //   }
+      //   that.taskFileList = that.taskFileList.concat(fileListArr)
+      //   for (var j = 0; j < res.data.attachment.length; j++) {
+      //     res.data.attachment[j].attachmentId = res.data.attachment[j].id
+      //   }
+      //   that.fileListEdit = res.data.attachment
+      // })
     },
     levelChange: function (rateval) {
       this.detailTaskform.jobLevel = rateval
