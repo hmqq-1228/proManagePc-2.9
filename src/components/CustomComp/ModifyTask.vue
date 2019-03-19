@@ -40,7 +40,7 @@
         </el-form-item>
         <div style="text-align: center">
           <el-button type="primary" @click="modifyTaskSub('modifyTask')">保存</el-button>
-          <el-button @click="modifyTaskVisible = false">关 闭</el-button>
+          <el-button @click="shutComp('modifyTaskVisible')">关 闭</el-button>
         </div>
       </el-form>
     </div>
@@ -106,6 +106,11 @@ export default {
       if (val) {
         this.getPlanTaskDetail()
       }
+    },
+    DrawerOpen (val, old) {
+      if (val) {
+        this.getPlanTaskDetail()
+      }
     }
   },
   methods: {
@@ -133,7 +138,7 @@ export default {
     getPlanTaskDetail () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        this.log('任务详情999999：', res)
+        this.log('任务详情333：', res)
         that.detailTaskform.jobName = res.data.jobName
         that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
         that.detailTaskform.taskStartDate = res.data.taskStartDate
@@ -179,7 +184,8 @@ export default {
           that.editTaskPayload.description = that.detailTaskform.description
           that.editTaskPayload.attachmentId = that.SetFileIdStr()
           that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
-            that.log('editTask:', res)
+            // that.log('editTask:', res)
+            that.$emit('ModifyTaskCallback', res)
             that.$emit('ModifyTaskCallback', res)
             if (res.code === 200) {
               that.$message({
@@ -187,6 +193,7 @@ export default {
                 type: 'success'
               })
               that.IsClear = true
+              that.getPlanTaskDetail()
               // that.modifyTaskVisible = false
               // that.loadingEdit = false
               // that.toDetail(that.taskIdEdit)
@@ -198,6 +205,9 @@ export default {
           })
         }
       })
+    },
+    shutComp: function (compModel) {
+      this.$emit('ShutCompEmit', compModel)
     }
   }
 }

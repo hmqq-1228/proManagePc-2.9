@@ -2169,6 +2169,7 @@ export default {
         that.modifyTaskVisible = false
         that.modifyTaskRes = true
         that.queryProDetail()
+        that.selectProjectId()
         that.toDetail(that.currentNodeId)
         that.$message({
           message: '修改成功！',
@@ -3855,8 +3856,6 @@ export default {
       // that.ajax('/myTask/queryTaskDetailSingle', {taskId: id}).then(res => {
       //   that.detailTaskform.jobName = res.data.jobName
       //   that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
-      //   // that.detailTaskform.taskStartDate = res.data.taskStartDate
-      //   // that.detailTaskform.taskFinishDate = res.data.taskFinishDate
       //   that.detailTaskform.description = res.data.description
       //   that.taskFileList = []
       //   var fileListArr = []

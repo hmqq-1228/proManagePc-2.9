@@ -51,7 +51,7 @@
       <div class="planList">
         <div class="planName">项<br />目<br />计<br />划</div>
         <div class="planBox" style="position: relative;">
-          <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProject(plan.id,$event)">{{plan.name}}</div>
+          <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProjectId(plan.id, 'QueryFirstLevelChild', $event,)">{{plan.name}}</div>
           <Button style="width: 84px; margin-top: 16px; margin-left: 20px; position: absolute; right: 1px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">添加 / 编辑</Button>
         </div>
       </div>
@@ -66,7 +66,7 @@
         </div>
       </div>
     </div>
-    <!--项目计划树 老版本 start-->
+    <!--项目计划树 树形结构 老版本 start-->
     <div class="block">
       <el-tree
         :data="data5"
@@ -109,58 +109,13 @@
       </el-tree>
     </div>
     <!-- Part02 end -->
+    <!-- Part05 start 抽屉 任务详情 -->
+    <Drawer class="drawerScroll" :closable="false" width="750" v-model="value4">
+      <component v-bind:is="compArr.DrawerComp" v-bind:taskDrawerOpen="value4" v-bind:modifyTaskRes="modifyTaskRes" v-on:showEditForm="showEditFormFuc" :nodeId="currentNodeId"></component>
+    </Drawer>
     <!-- Part03 start 抽屉 成员管理 -->
     <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember" v-loading="DrawerMemberShow">
-      <div style="font-size: 16px; margin-bottom: 10px;">添加项目成员</div>
-      <div class="searchBox">
-        <div class="searchSelectIpt">
-          <el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"
-                     :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
-                     :remote-method="remoteMethod" :loading="loading2">
-            <el-option v-for="item in options4" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                       :value="item.Name + '-' + item.ID">
-            </el-option>
-          </el-select>
-        </div>
-        <div class="searchBtn"><Button type="primary" v-on:click="addMember()">添加</Button></div>
-        <div class="searchOpenTree" @click="organizationalClick"><Button>组织架构</Button></div>
-      </div>
-      <div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">成员列表</div>
-      <div class="memberTable">
-        <div class="memTblTitle">
-          <div class="tblTitItem">角色</div>
-          <div class="tblTitItem">姓名</div>
-          <div class="tblTitItem">查看</div>
-          <div class="tblTitItem">编辑</div>
-          <div class="tblTitItem">清空 <span class="clearAll" title="清空全部" v-on:click="delMember(0)">全部</span></div>
-        </div>
-        <div class="memTblList" v-loading="loadingMan">
-          <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">
-            <div class="memListItem">{{mem.peopleRoleText}}</div>
-            <div class="memListItem">{{mem.userName}}</div>
-            <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
-            <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
-            <div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>
-          </div>
-        </div>
-      </div>
-      <!--组织架构 start-->
-      <div v-if="organizationalShow" style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">组织架构</div>
-      <div class="organizationalBox" v-if="organizationalShow">
-        <div>
-          <el-tree
-            :data="data2"
-            show-checkbox
-            @node-click="append($event)"
-            @check="changeState"
-            node-key="id"
-            :default-expanded-keys="[1,2]"
-            :props="defaultProps">
-          </el-tree>
-        </div>
-        <div class="organizationalBtn"><Button type="primary" @click="addMenber()">添加</Button></div>
-      </div>
-      <!--组织架构 end-->
+      <component v-bind:is="compArr.MemberComp" v-bind:proId="proId" v-bind:DrawerMemberShow="DrawerMember" v-on:addMembersInfo="updataPageInfo" v-on:delMembersInfo="updataPageDelMember" v-on:addPeopleInfo="updataPageAddPeople"></component>
     </Drawer>
     <!-- Part03 end -->
     <!--新增 抽屉 编辑基本信息 修改基本信息 start-->
@@ -223,6 +178,36 @@
     <Drawer class="drawerScroll" title="计划表单2" :closable="false" width="40%" style="z-index: 1005" v-model="bgCoverShow">
       <component v-bind:is="compArr.CreatePlanOrTask" v-bind:DrawerOpen="bgCoverShow" fileFormId="CreatePlanTask" v-on:CreatePlanTaskCallback="CreatePlanTaskCallbackFuc" :nodeId="currentNodeId"></component>
     </Drawer>
+    <!--新增 抽屉 编辑计划 修改计划 start-->
+    <Drawer class="drawerScroll" title="编辑计划4" :closable="false" width="40%" v-model="planEditShow">
+      <component v-bind:is="compArr.ModifyPlan" v-bind:DrawerOpen="planEditShow" fileFormId="ModifyPlan" v-on:ModifyPlanCallback="ModifyPlanCallbackFuc" :nodeId="currentNodeId"></component>
+    </Drawer>
+    <!--修改任务 编辑任务 任务 修改-->
+    <Drawer class="drawerScroll" title="修改任务3" :closable="false" width="40%" v-model="modifyTaskVisible">
+      <!-- 修改任务 编辑任务 引入组件 -->
+      <component v-bind:is="compArr.ModifyTask"
+                 v-bind:DrawerOpen="modifyTaskVisible"
+                 fileFormId="ModifyTask"
+                 v-on:FilePreEmit="GetFilePreData"
+                 v-on:ModifyTaskCallback="ModifyTaskCallbackFuc"
+                 v-on:ShutCompEmit="ShutCompEmitFuc"
+                 :nodeId="currentNodeId">
+      </component>
+    </Drawer>
+    <!--删除确认-->
+    <Modal v-model="modal2" width="360">
+      <p slot="header" style="color:#f60;text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>删除确认</span>
+      </p>
+      <div style="text-align:center">
+        <p>将删除此项及其下的所有子项.</p>
+        <p>确定要删除?</p>
+      </div>
+      <div slot="footer">
+        <Button type="error" size="large" long :loading="modal_loading" @click="delNode">确认删除</Button>
+      </div>
+    </Modal>
     <!-- 图片预览 -->
     <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
       <div class="showImg"><img v-bind:src="commentPreviewUrl1" alt=""></div>
@@ -238,6 +223,9 @@ import ModifyPlan from './CustomComp/ModifyPlan.vue'
 import ModifyTask from './CustomComp/ModifyTask.vue'
 import TaskDistribute from './CustomComp/TaskDistribute.vue'
 import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
+import MemberComp from './CustomComp/MemberComp.vue'
+import DrawerComp from './CustomComp/DrawerComp.vue'
+// DrawerComp
 export default {
   name: 'ProDetail',
   components: {
@@ -247,7 +235,9 @@ export default {
     FileUploadComp,
     CreatePlanOrTask,
     TaskDistribute,
-    ProBaseInfo
+    ProBaseInfo,
+    MemberComp,
+    DrawerComp
   },
   data () {
     return {
@@ -272,12 +262,24 @@ export default {
       options4: [],
       // 新增 项目组成员列表
       proGrpMemList: [],
+      // 详情
+      modifyTaskRes: '',
+      // 详情
+      value4: false,
       DrawerMemberShow: false,
       loading2: false,
       loadingMan: false,
       dialogShowImg1: false,
       // 组织架构
       organizationalShow: false,
+      // 编辑计划 修改计划
+      planEditShow: false,
+      // 编辑任务 修改任务
+      modifyTaskVisible: false,
+      // 确认
+      modal_loading: false,
+      // 确认
+      modal2: false,
       // 历史记录 抽屉
       DrawerHistory: false,
       // 历史记录
@@ -308,7 +310,9 @@ export default {
         FileUploadComp: 'FileUploadComp',
         CreatePlanOrTask: 'CreatePlanOrTask',
         TaskDistribute: 'TaskDistribute',
-        ProBaseInfo: 'ProBaseInfo'
+        ProBaseInfo: 'ProBaseInfo',
+        MemberComp: 'MemberComp',
+        DrawerComp: 'DrawerComp'
       },
       // 新增
       taskForm: {
@@ -326,6 +330,12 @@ export default {
       // 新增
       moreUserSelectPayload: {
         projectManager: ''
+      },
+      // 新增 添加评论
+      addProjectCommentPayload: {
+        projectUID: '',
+        content: '',
+        attachmentId: ''
       }
     }
   },
@@ -427,6 +437,10 @@ export default {
     }
   },
   methods: {
+    showEditFormFuc: function () {
+      var that = this
+      that.modifyTaskVisible = true
+    },
     proBaseEditClick () {
       this.DrawerBaseEdit = true
     },
@@ -459,6 +473,21 @@ export default {
       }
       this.FileUploadArr = obj
     },
+    // 附件上传
+    // 拼接附件上传的id为字符串
+    SetFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.FileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.FileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
+      }
+      that.FileUploadArr = []
+      return FileIdStr
+    },
     showBigImage1: function (url) {
       if (url) {
         this.commentPreviewUrl1 = url
@@ -482,14 +511,21 @@ export default {
           } else {
             that.activeId = ''
           }
-          that.selectProjectId()
+          that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
         }
       })
     },
     // 根据计划或任务Id 获取子级结构
-    selectProjectId: function () {
+    selectProjectId: function (id, type, e) {
       var that = this
       that.data5 = []
+      if (type === 'QueryFirstLevelChild') {
+        that.activeId = id
+        if (e) {
+          var obj = e.currentTarget
+          $(obj).addClass('active').siblings().removeClass('active')
+        }
+      }
       that.ajax('/myProject/getPlanOrTaskById', {id: that.activeId}).then(res => {
         if (res.code === 200) {
           for (var i = 0; i < res.data.length; i++) {
@@ -501,6 +537,47 @@ export default {
             }]
           }
           that.data5 = res.data
+        }
+      })
+    },
+    showDetailPage: function (data) {
+      var that = this
+      this.currentNodeId = data.id
+      if (data.type === '2') {
+        that.value4 = true
+        // that.taskId = data.id
+        // that.taskComment.uid = data.id
+        // that.taskHistoryList.uid = data.id
+        // that.value4 = true
+        // that.getCommicateCont()
+        // that.getHistoryList()
+        // that.toDetail(data.id)
+      } else if (data.type === '1') {
+        that.value444 = true
+        that.toPlanDetail(data.id)
+      }
+    },
+    toDetail: function (id) {
+      var that = this
+      if (id) {
+        that.taskId = id
+      }
+    },
+    // 点击 项目详情 下的树结构节点 获取子计划或任务
+    getNodeMsg: function (e) {
+      var that = this
+      this.$set(e, 'children', [])
+      that.ajax('/myProject/getPlanOrTaskById', {id: e.id}).then(res => {
+        if (res.code === 200) {
+          for (var i = 0; i < res.data.length; i++) {
+            res.data[i].start = res.data[i].start.split(' ')[0]
+            res.data[i].finish = res.data[i].finish.split(' ')[0]
+            res.data[i].children = [{
+              id: 1,
+              name: '测试'
+            }]
+          }
+          e.children = res.data
         }
       })
     },
@@ -563,6 +640,26 @@ export default {
         })
       }
     },
+    // 成员管理
+    updataPageInfo: function (info) {
+      var that = this
+      that.queryProDetail()
+    },
+    // 成员管理
+    updataPageDelMember: function (info) {
+      var that = this
+      that.queryProDetail()
+    },
+    // 成员管理
+    updataPageAddPeople: function (info) {
+      var that = this
+      that.queryProDetail()
+    },
+    // 成员管理
+    moreMemberClick: function () {
+      this.DrawerMember = true
+      // this.queryProGroupMember()
+    },
     // 新增 成员搜索
     remoteMethod (query) {
       var that = this
@@ -623,6 +720,37 @@ export default {
         }
       })
     },
+    planHandleClick (row, clickType) {
+      var that = this
+      that.currentNodeId = row.planId
+      if (clickType === 'edit') {
+        if (row.planType === '计划') {
+          that.planEditShow = true
+        } else if (row.planType === '任务') {
+          // 编辑任务
+          that.modifyTask(that.currentNodeId)
+        }
+      } else if (clickType === 'add') {
+        that.addNode(row.planId, row.planType)
+      } else if (clickType === 'del') {
+        that.modal2 = true
+      }
+    },
+    moreSelectOptions: function (nodeName, nodeId, nodeType, nodeData) {
+      var that = this
+      this.currentNodeId = nodeId
+      if (nodeName === 'add') {
+        this.addNode(nodeId, nodeType)
+      } else if (nodeName === 'del') {
+        this.modal2 = true
+      } else if (nodeName === 'edit') {
+        if (nodeType === '2') {
+          that.modifyTask(nodeId)
+        } else if (nodeType === '1') {
+          that.planEditShow = true
+        }
+      }
+    },
     // 新建计划 新建任务 引入组件 返回
     CreatePlanTaskCallbackFuc: function (res) {
       var that = this
@@ -639,6 +767,73 @@ export default {
           type: 'warning'
         })
       }
+    },
+    // 编辑任务 修改任务
+    modifyTask: function (id) {
+      var that = this
+      that.taskIdEdit = id
+      that.modifyTaskVisible = true
+    },
+    // 新建 展开更多 删除子节点
+    delNode: function () {
+      var that = this
+      this.modal_loading = true
+      that.ajax('/myProject/delPlanOrTask', {id: that.currentNodeId}).then(res => {
+        if (res.code === 200) {
+          that.queryProDetail()
+          this.modal_loading = false
+          this.modal2 = false
+          that.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+        } else {
+          that.loading = false
+          that.$message({
+            message: res.msg
+          })
+        }
+      })
+    },
+    // 修改计划 编辑计划
+    // 编辑计划 修改计划
+    ModifyPlanCallbackFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.planEditShow = false
+        that.queryProDetail()
+        that.$message({
+          message: '修改成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    // 编辑任务 修改任务
+    ModifyTaskCallbackFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.modifyTaskVisible = false
+        that.queryProDetail()
+        that.selectProjectId()
+        that.$message({
+          message: '修改成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    // 组件内点击了关闭 父组件执行关闭子组件操作
+    ShutCompEmitFuc: function (res) {
+      this[res] = false
     }
     // j
   }
@@ -671,6 +866,7 @@ export default {
     font-size: 14px;
     color: #666;
     text-indent: 2em;
+    padding-top: 20px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
