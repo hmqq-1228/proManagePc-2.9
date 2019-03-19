@@ -941,13 +941,13 @@ export default {
     },
     toProject: function (id) {
       this.$store.state.proId = id
-      this.$router.push('/ProEdit')
+      this.$router.push('/ProDetail')
     },
     getUserInfo: function () {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          that.log('getUserInfo', res)
+          // that.log('getUserInfo', res)
           that.defImplementer.name = res.data.Name
           that.defImplementer.id = res.data.ID
         }
@@ -1110,7 +1110,7 @@ export default {
       var that = this
       that.loading = true
       this.ajax('/community/getTaskCommunityList', that.TaskCommunityListPayload).then(res => {
-        that.log('getTaskCommunityList:', res)
+        // that.log('getTaskCommunityList:', res)
         if (res.code === 200) {
           this.taskTotalRow = res.data.totalRow
           for (var i = 0; i < res.data.list.length; i++) {
@@ -1631,7 +1631,7 @@ export default {
       }).then(() => {
         that.ajax('/myTask/startTask', {taskId: id}).then(res => {
           if (res.code === 200) {
-            that.log('dealTask:', res)
+            // that.log('dealTask:', res)
             that.toDetail(id)
             that.getTaskList()
             that.getHistoryList()

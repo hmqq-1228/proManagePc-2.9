@@ -3424,7 +3424,7 @@ export default {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          that.log('getUserInfo', res)
+          // that.log('getUserInfo', res)
           that.defImplementer.name = res.data.Name
           that.defImplementer.id = res.data.ID
         }

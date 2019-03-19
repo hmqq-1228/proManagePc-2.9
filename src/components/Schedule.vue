@@ -731,7 +731,7 @@ export default {
       that.scheduleListPayload.sEndTime = that.year + '-' + that.month + '-' + that.monthMax + ' 00:00:00'
       // 日程接口调用
       this.ajax('/schedule/getScheduleList', that.scheduleListPayload).then(res => {
-        this.log('actionName:getScheduleList:', res)
+        // this.log('actionName:getScheduleList:', res)
         if (res.code === 200) {
           // this.log(0)
           // that.scheduleList = res.data.schedule

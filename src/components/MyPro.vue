@@ -926,7 +926,7 @@ export default {
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
                 that.createProFormLoading = false
-                that.$router.push('/ProEdit')
+                that.$router.push('/ProDetail')
               } else {
                 this.$message({
                   type: 'error',
@@ -974,7 +974,7 @@ export default {
                 that.IsClear = true
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
-                this.$router.push('/ProEdit')
+                this.$router.push('/ProDetail')
               } else {
                 this.$message({
                   type: 'error',

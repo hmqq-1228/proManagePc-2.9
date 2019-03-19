@@ -69,6 +69,7 @@ export default {
     // this.$store.state.proId = this.$route.params.proId
     this.queryMenu()
     this.getPmsVersion()
+    this.getUserInfo()
   },
   watch: {
     activeNavIndex (val, old) {
@@ -101,6 +102,18 @@ export default {
     // }
   },
   methods: {
+    getUserInfo: function () {
+      var that = this
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
+        if (res.code === 200) {
+          that.$store.state.userId = res.data.ID
+          that.$store.state.userName = res.data.Name
+          that.$store.state.userLoginInfo = res.data
+          that.defImplementer.name = res.data.Name
+          that.defImplementer.id = res.data.ID
+        }
+      })
+    },
     setActiveNavIndex: function (typename) {
       var that = this
       for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
@@ -218,7 +231,7 @@ export default {
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
-          this.$router.push('/ProEdit')
+          this.$router.push('/ProDetail')
         }
       } else {
         // this.log('getProjectDetail：', '没走集团战略')

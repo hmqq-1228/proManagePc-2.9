@@ -766,13 +766,13 @@ export default {
     // j
     toProject: function (id) {
       this.$store.state.proId = id
-      this.$router.push('/ProEdit')
+      this.$router.push('/ProDetail')
     },
     getUserInfo: function () {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          that.log('getUserInfo', res)
+          // that.log('getUserInfo', res)
           that.defImplementer.name = res.data.Name
           that.defImplementer.id = res.data.ID
         }

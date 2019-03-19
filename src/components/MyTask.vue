@@ -1098,7 +1098,7 @@ export default {
     // },
     toProject: function (id) {
       this.$store.state.proId = id
-      this.$router.push('/ProEdit')
+      this.$router.push('/ProDetail')
     },
     delUploadFile: function (id) {
       // console.log('id', id)

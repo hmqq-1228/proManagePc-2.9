@@ -144,6 +144,8 @@ export default {
         //   return time.getTime() > Date.now()
         // }
       },
+      // 防止双击
+      submitKK: true,
       // 新增 增加计划 表单
       form: {
         name: '',
@@ -300,10 +302,10 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           that.addPlanPayload.parentPlanId = this.nodeId
-          that.addPlanPayload.name = this.form.name
-          that.addPlanPayload.start = this.form.date1
-          that.addPlanPayload.finish = this.form.date2
-          that.addPlanPayload.description = this.form.description
+          that.addPlanPayload.name = that.form.name
+          that.addPlanPayload.start = that.form.date1
+          that.addPlanPayload.finish = that.form.date2
+          that.addPlanPayload.description = that.form.description
           that.ajax('/myProject/addPlan', that.addPlanPayload).then(res => {
             that.$emit('CreatePlanTaskCallback', res)
             if (res.code === 200) {
@@ -348,35 +350,39 @@ export default {
     // 创建添加任务
     onTaskSubmit: function (taskForm) {
       var that = this
-      that.$refs[taskForm].validate((valid) => {
-        if (valid) {
-          for (var i = 0; i < that.value9.length; i++) {
-            var lian = i === (that.value9.length - 1) ? '' : '_'
-            that.user = that.user + that.value9[i].split('_')[0] + '-' + that.value9[i].split('_')[1] + lian
-          }
-          // this.log('user:', user)
-          this.addTaskPayload.parentId = this.nodeId
-          this.addTaskPayload.jobName = this.addTaskForm.jobName
-          this.addTaskPayload.jobLevel = this.addTaskForm.jobLevel
-          this.addTaskPayload.users = that.user
-          this.addTaskPayload.taskStartDate = this.addTaskForm.date1
-          this.addTaskPayload.taskFinishDate = this.addTaskForm.date2
-          this.addTaskPayload.description = this.addTaskForm.description
-          this.addTaskPayload.attachmentId = that.SetFileIdStr()
-          this.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
-            that.$emit('CreatePlanTaskCallback', res)
-            if (res.code === 200) {
-              // 告知附件子组件清空
-              that.IsClear = true
-              that.formClear()
-            } else {
-              // that.$message({
-              //   message: res.msg
-              // })
+      if (that.submitKK) {
+        that.submitKK = false
+        that.$refs[taskForm].validate((valid) => {
+          if (valid) {
+            for (var i = 0; i < that.value9.length; i++) {
+              var lian = i === (that.value9.length - 1) ? '' : '_'
+              that.user = that.user + that.value9[i].split('_')[0] + '-' + that.value9[i].split('_')[1] + lian
             }
-          })
-        }
-      })
+            // this.log('user:', user)
+            that.addTaskPayload.parentId = that.nodeId
+            that.addTaskPayload.jobName = that.addTaskForm.jobName
+            that.addTaskPayload.jobLevel = that.addTaskForm.jobLevel
+            that.addTaskPayload.users = that.user
+            that.addTaskPayload.taskStartDate = that.addTaskForm.date1
+            that.addTaskPayload.taskFinishDate = that.addTaskForm.date2
+            that.addTaskPayload.description = that.addTaskForm.description
+            that.addTaskPayload.attachmentId = that.SetFileIdStr()
+            that.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
+              that.$emit('CreatePlanTaskCallback', res)
+              that.submitKK = true
+              if (res.code === 200) {
+                // 告知附件子组件清空
+                that.IsClear = true
+                that.formClear()
+              } else {
+                // that.$message({
+                //   message: res.msg
+                // })
+              }
+            })
+          }
+        })
+      }
     },
     // j
     GetFileInfo (obj) {

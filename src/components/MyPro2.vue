@@ -532,7 +532,7 @@ export default {
       var that = this
       that.dialogFormVisible2 = true
       that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
-        that.log('getUserInfo', res)
+        // that.log('getUserInfo', res)
         if (res.code === 200) {
           that.data22 = res.data
         }
@@ -576,13 +576,13 @@ export default {
     },
     // 新增 对话框 产品研发类型树形结构
     getProjectType: function (e) {
-      console.log('eeee', e)
+      // this.log('eeee', e)
       var that = this
       if (e === '5') {
         // that.showProject = false
         that.dialogFormVisible = true
         that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
-          that.log('getUserInfo', res)
+          // that.log('getUserInfo', res)
           if (res.code === 200) {
             that.data2 = res.data
             // for (var i = 0; i <= res.data.length; i++) {
@@ -834,7 +834,7 @@ export default {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          console.log('getUserInfo', res)
+          // this.log('getUserInfo', res)
           that.$store.state.userId = res.data.ID
           that.ruleForm.projectManager = res.data.Name + ' (' + res.data.jName + ')'
           that.Mid = res.data.ID

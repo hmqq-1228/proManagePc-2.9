@@ -629,7 +629,7 @@ export default {
     },
     toDetail: function (id) {
       console.log('id', id)
-      this.$router.push('/ProEdit')
+      this.$router.push('/ProDetail')
       this.$store.state.proId = id
     },
     currentChange: function (pageNum) {

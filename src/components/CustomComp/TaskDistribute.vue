@@ -56,7 +56,7 @@
             <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
-              <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
+              <span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>
             </div>
             <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
@@ -136,8 +136,8 @@ export default {
       selDateEnd2: '',
       levelValue2: 3,
       defImplementer: {
-        name: '张三',
-        id: ''
+        name: this.$store.state.userName,
+        id: this.$store.state.userId
       },
       taskRelationShow2: false,
       taskIntro2: '',
@@ -185,17 +185,25 @@ export default {
       }
     }
   },
-  methods: {
-    getUserInfo: function () {
+  computed: {
+    getUserName: function () {
       var that = this
-      this.ajax('/myProject/getUserInfo', {}).then(res => {
-        if (res.code === 200) {
-          // that.log('getUserInfo', res)
-          that.defImplementer.name = res.data.Name
-          that.defImplementer.id = res.data.ID
-        }
-      })
-    },
+      that.defImplementer.name = this.$store.state.userName
+      that.defImplementer.id = this.$store.state.userId
+      return this.$store.state.userName
+    }
+  },
+  methods: {
+    // getUserInfo: function () {
+    //   var that = this
+    //   this.ajax('/myProject/getUserInfo', {}).then(res => {
+    //     if (res.code === 200) {
+    //       // that.log('getUserInfo', res)
+    //       that.defImplementer.name = res.data.Name
+    //       that.defImplementer.id = res.data.ID
+    //     }
+    //   })
+    // },
     getPlanTaskDetail () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {

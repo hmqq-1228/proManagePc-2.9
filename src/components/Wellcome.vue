@@ -54,7 +54,7 @@ export default {
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
-          this.$router.push('/ProEdit')
+          this.$router.push('/ProDetail')
         }
       } else {
         // this.log('getProjectDetail：', '没走集团战略')
