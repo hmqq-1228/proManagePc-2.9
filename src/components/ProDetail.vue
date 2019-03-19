@@ -224,7 +224,7 @@ import ModifyTask from './CustomComp/ModifyTask.vue'
 import TaskDistribute from './CustomComp/TaskDistribute.vue'
 import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 import MemberComp from './CustomComp/MemberComp.vue'
-import DrawerComp from './CustomComp/DrawerComp.vue'
+import DrawerComp from './CustomComp/TaskDetailComp.vue'
 // DrawerComp
 export default {
   name: 'ProDetail',

@@ -74,13 +74,15 @@
         <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
       </div>
       <!-- 任务分解 引入组件-->
-      <component v-bind:is="compArr.TaskDistribute"
-                 fileFormId="TaskDistribute"
-                 v-bind:TaskDistributeShow="toShowDevided"
-                 v-on:DistributeFormVisible="DistributeFormVisibleFuc"
-                 v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
-                 :nodeId="currentNodeId">
-      </component>
+    <!--v-bind:TaskDistributeShow="toShowDevided"-->
+      <div  v-if="toShowDevided">
+        <component v-bind:is="compArr.TaskDistribute"
+                   fileFormId="TaskDistribute"
+                   v-on:DistributeFormVisible="DistributeFormVisibleFuc"
+                   v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
+                   :nodeId="currentNodeId">
+        </component>
+      </div>
       <!-- 任务分解 end -->
       <div class="cannetProject1">
         <div style="display: inline-block"><img src="../../../static/img/taskList.png" alt=""><span>子任务<span style="color: #409EFF">({{childTaskList.length}})</span></span></div>
@@ -166,7 +168,7 @@ import FileUploadComp from '././FileUploadComp.vue'
 import ModifyTask from './ModifyTask.vue'
 import TaskDistribute from './TaskDistribute.vue'
 export default {
-  name: 'DrawerComp',
+  name: 'TaskDetailComp',
   props: ['nodeId', 'taskDrawerOpen', 'modifyTaskRes'],
   components: {
     ModifyTask,

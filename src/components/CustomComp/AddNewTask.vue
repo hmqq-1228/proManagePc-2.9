@@ -10,7 +10,7 @@
                          :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
                          :remote-method="remoteMethod2" :loading="loading22">
                 <el-option v-for="item in options42" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                           :value="item.Name + '-' + item.ID">
+                           :value="item.Name + '(' + item.jName + ')' + '-' + item.ID">
                 </el-option>
               </el-select>
             </div>
@@ -79,7 +79,6 @@
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
               <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">分解</i-button></div>
-              <div class="submitBtn" v-on:click="cancelDevide()"><i-button :disabled="cancelBtn">取消</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>
@@ -92,8 +91,8 @@
 <script>
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 export default {
-  name: 'TaskDistribute',
-  props: ['nodeId', 'TaskDistributeShow', 'cancelBtnShow'],
+  name: 'AddNewTask',
+  props: ['nodeId'],
   components: {
     FileUploadComp
   },
@@ -151,18 +150,15 @@ export default {
       fileList2: [],
       // 任务开始
       CommunityTaskPayload2: {
-        projectUID: '1',
-        uid: '1',
-        pStr: '',
+        parentId: '',
         attachmentId: '',
         description: '',
         jobName: '',
         jobLevel: 3,
-        startTime: '',
-        endTime: '',
-        userId: '',
-        _jfinal_token: '',
-        userName: ''
+        taskStartDate: '',
+        taskFinishDate: '',
+        users: '',
+        userId: ''
       }
     }
   },
@@ -178,7 +174,12 @@ export default {
         this.cancelBtn = true
       }
     },
+    levelValue2: function (newQuestion, oldQuestion) {
+      console.log('newQuestion', newQuestion)
+      this.CommunityTaskPayload2.jobLevel = newQuestion.toString()
+    },
     nodeId: function (val, oV) {
+      console.log('nodeId3333', val)
       if (val) {
         this.getPlanTaskDetail()
         this.getUserInfo()
@@ -190,8 +191,8 @@ export default {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          // that.log('getUserInfo', res)
-          that.defImplementer.name = res.data.Name
+          that.log('getUserInfo', res)
+          that.defImplementer.name = res.data.Name + '(' + res.data.jName + ')'
           that.defImplementer.id = res.data.ID
         }
       })
@@ -200,10 +201,10 @@ export default {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
         if (res.code === 200) {
-          that.selDateStart2 = res.data.taskStartDate
-          that.selDateEnd2 = res.data.taskFinishDate
-          var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
-          var et = res.data.taskFinishDate
+          that.selDateStart2 = res.data.start
+          that.selDateEnd2 = res.data.finish
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
           var sT = new Date(st)
           var eT = new Date(et)
           var disabledStarTime = sT.getTime()
@@ -359,16 +360,15 @@ export default {
           // value9没有值，取默认
           selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
-        that.CommunityTaskPayload2.projectUID = that.$store.state.proId
-        that.CommunityTaskPayload2.uid = that.nodeId
+        that.CommunityTaskPayload2.parentId = that.nodeId
         that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
-        that.CommunityTaskPayload2.pStr = selectUserStr
+        that.CommunityTaskPayload2.users = selectUserStr
         that.CommunityTaskPayload2.jobName = that.taskNameText2
-        that.CommunityTaskPayload2.startTime = that.selDateStart2
-        that.CommunityTaskPayload2.endTime = that.selDateEnd2
+        that.CommunityTaskPayload2.taskStartDate = that.selDateStart2
+        that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
-        that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
+        that.ajax('/myProject/addTask', that.CommunityTaskPayload2).then(res => {
           that.$emit('TaskDistributeCallback', res)
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1
