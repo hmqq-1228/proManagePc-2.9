@@ -1,7 +1,23 @@
 <template>
-  <div class="ProDetail">
+  <div class="ProDetail" style="position: relative;margin-top: 15px;">
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
+    <div class="fileModel" v-if="showFileModel">
+      <div style="text-align: center;height: 30px;line-height: 30px;color: #999;border-bottom: 1px solid #f1f1f1">共 <span style="color: chocolate;font-size: 16px;font-weight: bold;">{{proDetailMsg.fileList.length}}</span> 个附件</div>
+      <div class="fileItem" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl">
+        <div style="width: 60%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" :title="fileItem.showName">{{fileItem.showName}}</div>
+        <div class="fileDone">
+          <div style="width: 50%;cursor: pointer" v-if="fileItem.isImg" @click="showImagePre(fileItem.previewUrl, fileItem.showName)">预览</div>
+          <div style="width: 50%;"><a v-bind:download="fileItem.showName" v-bind:href="fileItem.downloadUrl">下载</a></div>
+        </div>
+      </div>
+      <div class="fileItem" style="position: relative;margin-top: 20px;border-bottom: none">
+        <div class="fileClose" @click="fileClose()">关闭</div>
+      </div>
+    </div>
+    <el-dialog title="图片预览" :visible.sync="dialogFormVisible">
+      <div class="showImg"><img v-bind:src="showFileUrl" alt=""></div>
+    </el-dialog>
     <div class="topperTitle">
       <div class="topCon">
         <div class="topConLf">
@@ -18,9 +34,7 @@
               <div style="color: #28558c; font-size: 20px; margin-top: -6px"><Icon type="ios-image" /></div>
               <div style="margin-left: 10px; color: #28558c;">附件:
                 <span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0">
-                    <span v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl">
-                      <Icon v-bind:title="fileItem.showName" @click="showImagePre(fileItem.previewUrl, fileItem.showName)" style="font-size: 20px; " type="ios-document-outline" />
-                    </span>
+                    <span style="cursor: pointer;color: #409EFF;font-size: 14px;" @click="showFileModelClick()">查看附件</span>
                   </span>
                 <span style="color: #aaa;font-size: 14px" v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0">暂无附件</span>
               </div>
@@ -283,6 +297,10 @@ export default {
       // 新增 成员管理 抽屉
       DrawerMember: false,
       proId: '',
+      // 项目附件
+      showFileModel: false,
+      dialogFormVisible: false,
+      showFileUrl: '',
       proDetailMsg: '',
       memberList: [],
       startPlanDate: '',
@@ -460,6 +478,19 @@ export default {
     }
   },
   methods: {
+    // 项目附件model
+    showFileModelClick: function () {
+      this.showFileModel = true
+    },
+    fileClose: function () {
+      this.showFileModel = false
+    },
+    showImagePre: function (url, showName) {
+      if (this.isImage(showName)) {
+        this.dialogFormVisible = true
+        this.showFileUrl = url
+      }
+    },
     showEditFormFuc: function () {
       var that = this
       that.modifyTaskVisible = true
@@ -529,6 +560,14 @@ export default {
           that.endPlanDate = res.data.endDate.split(' ')[0]
           that.planList = res.data.planOrJobList
           that.firstPlanId = res.data.firstPlanId
+          for (var i = 0; i < res.data.fileList.length; i++) {
+            if (that.isImage(res.data.fileList[i].showName)) {
+              res.data.fileList[i].isImg = true
+            } else {
+              res.data.fileList[i].isImg = false
+            }
+            res.data.fileList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.fileList[i].realUrl + '&showName=' + res.data.fileList[i].showName
+          }
           if (res.data.planOrJobList.length > 0) {
             that.activeId = res.data.planOrJobList[0].id
           } else {
@@ -1160,5 +1199,42 @@ export default {
    }
   .tableProTitle{
     font-size: 16px;
+  }
+  .fileModel{
+    min-height: 110px;
+    width: 260px;
+    position: absolute;
+    box-shadow: 1px 1px 4px #999;
+    top: 0;
+    right: 0;
+    z-index: 999;
+    background-color: #fff;
+  }
+  .fileItem{
+    height: 30px;
+    padding: 0 10px;
+    line-height: 30px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .fileClose{
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    cursor: pointer;
+    color: #fff;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 8px;
+    background-color: #409EFF;
+  }
+  .fileDone{
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    width: 40%;
+    font-size: 12px;
+    color: #409EFF
   }
 </style>

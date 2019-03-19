@@ -3,7 +3,7 @@
     <Timeline v-if="commentList && commentList.length > 0">
       <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
         <p class="time">{{comment.oTime}}</p>
-        <p class="content" v-bind:title="comment.content">{{comment.comment}}, {{comment.oContent}}</p>
+        <p class="content" v-bind:title="comment.content">{{comment.oName}}, {{comment.oContent}}</p>
         <span v-for="(com, index2) in comment.uploads" v-bind:key="index2">
           <p class="content" v-if="com.showName">附件:
             <span style="display: inline-block"> {{com.showName}}</span>
