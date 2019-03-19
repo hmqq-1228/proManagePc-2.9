@@ -17,7 +17,7 @@
             <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
             <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
           </div>
-          <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">
+          <div class="selectDateDialog2"  style="right: 0;top: 0;z-index: 999;" v-if="selectDateDiaShow2">
             <div class="selectDateBox">
               <div class="selectDateItem">
                 <el-date-picker

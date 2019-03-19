@@ -65,7 +65,7 @@
       <div class="planList">
         <div class="planName">项<br />目<br />计<br />划</div>
         <div class="planBox" style="position: relative;">
-          <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="selectProjectId(plan.id, 'QueryFirstLevelChild', $event,)">{{plan.name}}</div>
+          <div v-if="planList.length > 0" v-bind:class="activeId === plan.id ? 'active' : ''" v-for="plan in planList" v-bind:key="plan.id" @click="FirstLevelNodeClick(plan.id, 'QueryFirstLevelChild', $event,)">{{plan.name}}</div>
           <Button style="width: 84px; margin-top: 16px; margin-left: 20px; position: absolute; right: 1px;" size="small" type="primary" v-on:click="FistLevelPlanDetail()">添加 / 编辑</Button>
         </div>
       </div>
@@ -124,7 +124,7 @@
     </div>
     <!-- Part02 end -->
     <!-- Part05 start 抽屉 任务详情 -->
-    <Drawer class="drawerScroll" :closable="false" width="750" v-model="TaskDetailCompShow">
+    <Drawer title="任务详情" class="drawerScroll" :closable="false" width="750" v-model="TaskDetailCompShow">
       <component v-bind:is="compArr.TaskDetailComp"
                  v-bind:taskDrawerOpen="TaskDetailCompShow"
                  v-bind:modifyTaskRes="modifyTaskRes"
@@ -135,7 +135,7 @@
       </component>
     </Drawer>
     <!-- Part06 start 抽屉 计划详情 -->
-    <Drawer class="drawerScroll" :closable="false" width="750" v-model="value444">
+    <Drawer title="计划详情" class="drawerScroll" :closable="false" width="750" v-model="value444">
       <component v-bind:is="compArr.PlanDetailComp"
                  v-bind:taskDrawerOpen="value444"
                  :nodeId="currentNodeId"
@@ -577,10 +577,26 @@ export default {
         }
       })
     },
+    FirstLevelNodeClick: function (nodeId, flag, e) {
+      var that = this
+      this.selectProjectId(nodeId, flag, e)
+      this.currentNodeId = nodeId
+      if (nodeId.substring(0, 1) === 'J') {
+        that.TaskDetailCompShow = true
+      } else {
+        that.value444 = true
+      }
+    },
     // 根据计划或任务Id 获取子级结构
     selectProjectId: function (id, type, e) {
       var that = this
       that.data5 = []
+      this.currentNodeId = id
+      if (id.substring(0, 1) === 'J') {
+        // that.TaskDetailCompShow = true
+      } else {
+        // that.value444 = true
+      }
       if (type === 'QueryFirstLevelChild') {
         that.activeId = id
         if (e) {
