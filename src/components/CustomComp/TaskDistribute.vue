@@ -166,10 +166,47 @@ export default {
   },
   watch: {
     TaskDistributeShow (val, old) {
-      this.toShowDevided = val
+      if (val) {
+        this.toShowDevided = val
+      }
+    },
+    nodeId: function (val, oV) {
+      if (val) {
+        this.getPlanTaskDetail()
+        this.getUserInfo()
+      }
     }
   },
   methods: {
+    getUserInfo: function () {
+      var that = this
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
+        if (res.code === 200) {
+          // that.log('getUserInfo', res)
+          that.defImplementer.name = res.data.Name
+          that.defImplementer.id = res.data.ID
+        }
+      })
+    },
+    getPlanTaskDetail () {
+      var that = this
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+        if (res.code === 200) {
+          that.selDateStart2 = res.data.taskStartDate
+          that.selDateEnd2 = res.data.taskFinishDate
+          var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
+          var et = res.data.taskFinishDate
+          var sT = new Date(st)
+          var eT = new Date(et)
+          var disabledStarTime = sT.getTime()
+          var disabledEndTime = eT.getTime()
+          that.pickerOptions3.disabledDate = function (time) {
+            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+          }
+        }
+        this.log('任务详情999999：', res)
+      })
+    },
     // 附件上传 组件 拼接附件上传的id为字符串
     SetFileIdStr () {
       var that = this
@@ -213,8 +250,8 @@ export default {
       this.log(this.taskForm2.value9)
     },
     selectDateCancel2: function () {
-      // this.selectDateDiaShow2 = false
-      this.TaskDistributeShow = false
+      this.selectDateDiaShow2 = false
+      // this.TaskDistributeShow = false
     },
     selectDateOk2: function () {
       var that = this
@@ -356,7 +393,7 @@ export default {
     cancelDevide: function () {
       var that = this
       that.taskRelationShow2 = false
-      // that.toShowDevided = false
+      that.toShowDevided = false
       that.$emit('DistributeFormVisible', false)
       that.clearDynamicsForm2()
     },

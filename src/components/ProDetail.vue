@@ -66,7 +66,7 @@
         </div>
       </div>
     </div>
-    <!--项目计划树 老版本 start-->
+    <!--项目计划树 树形结构 老版本 start-->
     <div class="block">
       <el-tree
         :data="data5"
@@ -109,6 +109,10 @@
       </el-tree>
     </div>
     <!-- Part02 end -->
+    <!-- Part05 start 抽屉 任务详情 -->
+    <Drawer class="drawerScroll" :closable="false" width="750" v-model="value4">
+      <component v-bind:is="compArr.DrawerComp" v-bind:taskDrawerOpen="value4" v-bind:modifyTaskRes="modifyTaskRes" v-on:showEditForm="showEditFormFuc" :nodeId="currentNodeId"></component>
+    </Drawer>
     <!-- Part03 start 抽屉 成员管理 -->
     <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember" v-loading="DrawerMemberShow">
       <component v-bind:is="compArr.MemberComp" v-bind:proId="proId" v-bind:DrawerMemberShow="DrawerMember" v-on:addMembersInfo="updataPageInfo" v-on:delMembersInfo="updataPageDelMember" v-on:addPeopleInfo="updataPageAddPeople"></component>
@@ -220,6 +224,8 @@ import ModifyTask from './CustomComp/ModifyTask.vue'
 import TaskDistribute from './CustomComp/TaskDistribute.vue'
 import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 import MemberComp from './CustomComp/MemberComp.vue'
+import DrawerComp from './CustomComp/DrawerComp.vue'
+// DrawerComp
 export default {
   name: 'ProDetail',
   components: {
@@ -230,7 +236,8 @@ export default {
     CreatePlanOrTask,
     TaskDistribute,
     ProBaseInfo,
-    MemberComp
+    MemberComp,
+    DrawerComp
   },
   data () {
     return {
@@ -255,6 +262,10 @@ export default {
       options4: [],
       // 新增 项目组成员列表
       proGrpMemList: [],
+      // 详情
+      modifyTaskRes: '',
+      // 详情
+      value4: false,
       DrawerMemberShow: false,
       loading2: false,
       loadingMan: false,
@@ -300,7 +311,8 @@ export default {
         CreatePlanOrTask: 'CreatePlanOrTask',
         TaskDistribute: 'TaskDistribute',
         ProBaseInfo: 'ProBaseInfo',
-        MemberComp: 'MemberComp'
+        MemberComp: 'MemberComp',
+        DrawerComp: 'DrawerComp'
       },
       // 新增
       taskForm: {
@@ -425,6 +437,10 @@ export default {
     }
   },
   methods: {
+    showEditFormFuc: function () {
+      var that = this
+      that.modifyTaskVisible = true
+    },
     proBaseEditClick () {
       this.DrawerBaseEdit = true
     },
@@ -528,13 +544,14 @@ export default {
       var that = this
       this.currentNodeId = data.id
       if (data.type === '2') {
-        that.taskId = data.id
-        that.taskComment.uid = data.id
-        that.taskHistoryList.uid = data.id
         that.value4 = true
-        that.getCommicateCont()
-        that.getHistoryList()
-        that.toDetail(data.id)
+        // that.taskId = data.id
+        // that.taskComment.uid = data.id
+        // that.taskHistoryList.uid = data.id
+        // that.value4 = true
+        // that.getCommicateCont()
+        // that.getHistoryList()
+        // that.toDetail(data.id)
       } else if (data.type === '1') {
         that.value444 = true
         that.toPlanDetail(data.id)
@@ -545,39 +562,6 @@ export default {
       if (id) {
         that.taskId = id
       }
-      // that.getTaskChildList(id || that.taskId)
-      // that.ajax('/myTask/queryTaskDetail', {taskId: that.taskId}).then(res => {
-      //   if (res.code === 200) {
-      //     that.taskBasicMsg = res.data
-      //     that.rid = res.data.uid
-      //     that.selDateStart2 = res.data.taskStartDate
-      //     that.selDateEnd2 = res.data.taskFinishDate
-      //     that.CommunityTaskPayload2.projectUID = res.data.projectUID
-      //     that.CommunityTaskPayload2.uid = res.data.uid
-      //     var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
-      //     var et = res.data.taskFinishDate
-      //     var sT = new Date(st)
-      //     var eT = new Date(et)
-      //     that.disabledStarTime = sT.getTime()
-      //     that.disabledEndTime = eT.getTime()
-      //     that.pickerOptions3.disabledDate = function (time) {
-      //       return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
-      //     }
-      //     for (var n = 0; n < res.data.attachment.length; n++) {
-      //       res.data.attachment[n].downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.attachment[n].realUrl + '&showName=' + res.data.attachment[n].showName
-      //       if (that.isImage(res.data.attachment[n].showName)) {
-      //         res.data.attachment[n].isImg = true
-      //       } else {
-      //         res.data.attachment[n].isImg = false
-      //       }
-      //     }
-      //     that.resetScro()
-      //     that.taskComment.uid = id
-      //     that.taskHistoryList.uid = id
-      //     that.getHistoryList()
-      //     that.getCommicateCont()
-      //   }
-      // })
     },
     // 点击 项目详情 下的树结构节点 获取子计划或任务
     getNodeMsg: function (e) {

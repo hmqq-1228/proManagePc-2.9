@@ -75,6 +75,14 @@ export default {
         taskFinishDate: '2018-10-10 00:00:00',
         description: ''
       },
+      editTaskPayload: {
+        id: '1',
+        jobName: '',
+        jobLevel: 1,
+        taskStartDate: '',
+        taskFinishDate: '',
+        description: ''
+      },
       // 新建 修改任务
       modifyTaskRules: {
         jobName: [
@@ -89,19 +97,12 @@ export default {
         taskFinishDate: [
           { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
         ]
-      },
-      editTaskPayload: {
-        id: '1',
-        jobName: '',
-        jobLevel: 1,
-        taskStartDate: '',
-        taskFinishDate: '',
-        description: ''
       }
     }
   },
   watch: {
     nodeId (val, old) {
+      console.log('nodeId:', val)
       if (val) {
         this.getPlanTaskDetail()
       }
@@ -117,6 +118,9 @@ export default {
       this.log(123)
       this.$emit('FilePreEmit', obj)
     },
+    levelChange: function (rateval) {
+      this.detailTaskform.jobLevel = rateval
+    },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {
       var that = this
@@ -130,9 +134,6 @@ export default {
       }
       that.FileUploadArr = []
       return FileIdStr
-    },
-    levelChange: function (rateval) {
-      this.detailTaskform.jobLevel = rateval
     },
     getPlanTaskDetail () {
       var that = this
@@ -184,6 +185,7 @@ export default {
           that.editTaskPayload.attachmentId = that.SetFileIdStr()
           that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
             // that.log('editTask:', res)
+            that.$emit('ModifyTaskCallback', res)
             that.$emit('ModifyTaskCallback', res)
             if (res.code === 200) {
               that.$message({
