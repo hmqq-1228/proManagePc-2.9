@@ -78,7 +78,7 @@
               <div class="selectMoreInfo" v-on:click="moreClick2()">
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
-              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">分解</i-button></div>
+              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">创建</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>

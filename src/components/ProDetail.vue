@@ -120,6 +120,17 @@
                  :nodeId="currentNodeId">
       </component>
     </Drawer>
+    <!-- Part06 start 抽屉 计划详情 -->
+    <Drawer class="drawerScroll" :closable="false" width="750" v-model="value444">
+      <component v-bind:is="compArr.PlanDetailComp"
+                 v-bind:taskDrawerOpen="value444"
+                 :nodeId="currentNodeId"
+                 v-on:ActionResThrow="ActionResThrowFuc"
+                 v-on:addChildMsg="addChildMsgFuc"
+                 v-on:toChildMsg="toChildMsgFuc"
+                 v-on:PlanDelCallback="PlanDelCallbackFuc">
+      </component>
+    </Drawer>
     <!-- Part03 start 抽屉 成员管理 -->
     <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember" v-loading="DrawerMemberShow">
       <component v-bind:is="compArr.MemberComp" v-bind:proId="proId" v-bind:DrawerMemberShow="DrawerMember" v-on:addMembersInfo="updataPageInfo" v-on:delMembersInfo="updataPageDelMember" v-on:addPeopleInfo="updataPageAddPeople"></component>
@@ -232,6 +243,7 @@ import TaskDistribute from './CustomComp/TaskDistribute.vue'
 import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 import MemberComp from './CustomComp/MemberComp.vue'
 import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
+import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 // DrawerComp
 export default {
   name: 'ProDetail',
@@ -244,10 +256,24 @@ export default {
     TaskDistribute,
     ProBaseInfo,
     MemberComp,
-    TaskDetailComp
+    TaskDetailComp,
+    PlanDetailComp
   },
   data () {
     return {
+      // 引入组件
+      compArr: {
+        ModifyTask: 'ModifyTask',
+        ModifyPlan: 'ModifyPlan',
+        CommentLogs: 'CommentLogs',
+        FileUploadComp: 'FileUploadComp',
+        CreatePlanOrTask: 'CreatePlanOrTask',
+        TaskDistribute: 'TaskDistribute',
+        ProBaseInfo: 'ProBaseInfo',
+        MemberComp: 'MemberComp',
+        TaskDetailComp: 'TaskDetailComp',
+        PlanDetailComp: 'PlanDetailComp'
+      },
       // 接收到的组件数组 新组件
       FileUploadArr: [],
       // 是否让子组件清空文件 新组件
@@ -273,6 +299,8 @@ export default {
       modifyTaskRes: '',
       // 详情 抽屉显示
       TaskDetailCompShow: false,
+      // 详情 计划详情
+      value444: false,
       DrawerMemberShow: false,
       loading2: false,
       loadingMan: false,
@@ -309,18 +337,6 @@ export default {
       // 添加计划 添加任务 切换
       activeNameBgCover: 'first',
       bgCoverShow: false,
-      // 引入组件
-      compArr: {
-        ModifyTask: 'ModifyTask',
-        ModifyPlan: 'ModifyPlan',
-        CommentLogs: 'CommentLogs',
-        FileUploadComp: 'FileUploadComp',
-        CreatePlanOrTask: 'CreatePlanOrTask',
-        TaskDistribute: 'TaskDistribute',
-        ProBaseInfo: 'ProBaseInfo',
-        MemberComp: 'MemberComp',
-        TaskDetailComp: 'TaskDetailComp'
-      },
       // 新增
       taskForm: {
         jobName: '',
@@ -561,7 +577,7 @@ export default {
         // that.toDetail(data.id)
       } else if (data.type === '1') {
         that.value444 = true
-        that.toPlanDetail(data.id)
+        // that.toPlanDetail(data.id)
       }
     },
     toDetail: function (id) {
@@ -692,6 +708,32 @@ export default {
     // 一级计划 详情
     FistLevelPlanDetail () {
       this.FirstLevelTask = true
+    },
+    addChildMsgFuc: function (data) {
+      this.addNode(data.id, data.type)
+    },
+    toChildMsgFuc: function (id) {
+      var that = this
+      that.currentNodeId = id
+      that.value444 = false
+      that.TaskDetailCompShow = true
+    },
+    // 任务分解 返回结果处理
+    PlanDelCallbackFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.selectProjectId()
+        that.value444 = false
+        that.$message({
+          message: '删除成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
     },
     // 新建 添加子节点
     addNode: function (nodeId, nodeType) {

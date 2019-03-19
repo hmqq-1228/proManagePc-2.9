@@ -209,6 +209,7 @@ export default {
       // console.log('id', id)
       // console.log('type', type)
       // this.addNode(id, type)
+      // that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       this.$emit('addChildMsg', {'id': id, 'type': type})
     }
   }
