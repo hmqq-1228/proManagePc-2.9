@@ -124,7 +124,7 @@
     </div>
     <!-- Part02 end -->
     <!-- Part05 start 抽屉 任务详情 -->
-    <Drawer class="drawerScroll" :closable="false" width="750" v-model="TaskDetailCompShow">
+    <Drawer title="任务详情" class="drawerScroll" :closable="false" width="750" v-model="TaskDetailCompShow">
       <component v-bind:is="compArr.TaskDetailComp"
                  v-bind:taskDrawerOpen="TaskDetailCompShow"
                  v-bind:modifyTaskRes="modifyTaskRes"
@@ -135,7 +135,7 @@
       </component>
     </Drawer>
     <!-- Part06 start 抽屉 计划详情 -->
-    <Drawer class="drawerScroll" :closable="false" width="750" v-model="value444">
+    <Drawer title="计划详情" class="drawerScroll" :closable="false" width="750" v-model="value444">
       <component v-bind:is="compArr.PlanDetailComp"
                  v-bind:taskDrawerOpen="value444"
                  :nodeId="currentNodeId"
@@ -581,6 +581,12 @@ export default {
     selectProjectId: function (id, type, e) {
       var that = this
       that.data5 = []
+      this.currentNodeId = id
+      if (id.substring(0, 1) === 'J') {
+        that.TaskDetailCompShow = true
+      } else {
+        that.value444 = true
+      }
       if (type === 'QueryFirstLevelChild') {
         that.activeId = id
         if (e) {

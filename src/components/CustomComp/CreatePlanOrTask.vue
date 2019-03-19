@@ -355,13 +355,13 @@ export default {
             that.user = that.user + that.value9[i].split('_')[0] + '-' + that.value9[i].split('_')[1] + lian
           }
           // this.log('user:', user)
-          this.addTaskPayload.parentId = this.nodeId
-          this.addTaskPayload.jobName = this.addTaskForm.jobName
-          this.addTaskPayload.jobLevel = this.addTaskForm.jobLevel
+          this.addTaskPayload.parentId = that.nodeId
+          this.addTaskPayload.jobName = that.addTaskForm.jobName
+          this.addTaskPayload.jobLevel = that.addTaskForm.jobLevel
           this.addTaskPayload.users = that.user
-          this.addTaskPayload.taskStartDate = this.addTaskForm.date1
-          this.addTaskPayload.taskFinishDate = this.addTaskForm.date2
-          this.addTaskPayload.description = this.addTaskForm.description
+          this.addTaskPayload.taskStartDate = that.addTaskForm.date1
+          this.addTaskPayload.taskFinishDate = that.addTaskForm.date2
+          this.addTaskPayload.description = that.addTaskForm.description
           this.addTaskPayload.attachmentId = that.SetFileIdStr()
           this.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
             that.$emit('CreatePlanTaskCallback', res)

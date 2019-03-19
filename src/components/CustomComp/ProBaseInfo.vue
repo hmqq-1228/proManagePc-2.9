@@ -32,7 +32,7 @@
         <DatePicker type="date" v-bind:value="formValidate.endDate" format="yyyy-MM-dd HH:mm:ss" @on-change="endDateChange" placeholder="请输入结束时间" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="项目简介" prop="desc">
-        <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入项目简介" />
+        <Input v-model="formValidate.desc" type="textarea" placeholder="请输入项目简介" />
       </FormItem>
       <!--基本信息 项目附件-->
       <FormItem label="项目附件" prop="desc2">
