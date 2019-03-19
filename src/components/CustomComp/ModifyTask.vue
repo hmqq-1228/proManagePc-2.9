@@ -75,6 +75,14 @@ export default {
         taskFinishDate: '2018-10-10 00:00:00',
         description: ''
       },
+      editTaskPayload: {
+        id: '1',
+        jobName: '',
+        jobLevel: 1,
+        taskStartDate: '',
+        taskFinishDate: '',
+        description: ''
+      },
       // 新建 修改任务
       modifyTaskRules: {
         jobName: [
@@ -94,6 +102,7 @@ export default {
   },
   watch: {
     nodeId (val, old) {
+      console.log('nodeId:', val)
       if (val) {
         this.getPlanTaskDetail()
       }
@@ -103,6 +112,9 @@ export default {
     GetFilePreData (obj) {
       this.log(123)
       this.$emit('FilePreEmit', obj)
+    },
+    levelChange: function (rateval) {
+      this.detailTaskform.jobLevel = rateval
     },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {
@@ -121,7 +133,7 @@ export default {
     getPlanTaskDetail () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        this.log('任务详情：', res)
+        this.log('任务详情999999：', res)
         that.detailTaskform.jobName = res.data.jobName
         that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
         that.detailTaskform.taskStartDate = res.data.taskStartDate
@@ -158,16 +170,8 @@ export default {
       var that = this
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          var fileStr = ''
-          for (var j = 0; j < this.fileListEdit.length; j++) {
-            if (j === that.fileListEdit.length - 1) {
-              fileStr = fileStr + that.fileListEdit[j].attachmentId
-            } else {
-              fileStr = fileStr + that.fileListEdit[j].attachmentId + ','
-            }
-          }
           that.loadingEdit = true
-          that.editTaskPayload.id = that.taskIdEdit
+          that.editTaskPayload.id = that.nodeId
           that.editTaskPayload.jobLevel = that.detailTaskform.jobLevel
           that.editTaskPayload.jobName = that.detailTaskform.jobName
           that.editTaskPayload.taskStartDate = that.detailTaskform.taskStartDate
@@ -176,17 +180,18 @@ export default {
           that.editTaskPayload.attachmentId = that.SetFileIdStr()
           that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
             that.log('editTask:', res)
+            that.$emit('ModifyTaskCallback', res)
             if (res.code === 200) {
               that.$message({
                 message: '保存成功！',
                 type: 'success'
               })
               that.IsClear = true
-              that.modifyTaskVisible = false
-              that.loadingEdit = false
-              that.toDetail(that.taskIdEdit)
-              that.selectProjectId()
-              that.getHistoryList()
+              // that.modifyTaskVisible = false
+              // that.loadingEdit = false
+              // that.toDetail(that.taskIdEdit)
+              // that.selectProjectId()
+              // that.getHistoryList()
             } else {
               that.loadingEdit = false
             }
