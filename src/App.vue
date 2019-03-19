@@ -129,7 +129,7 @@ export default {
     },
     toMenu: function (menuName) {
       var that = this
-      this.log('menuName:', menuName)
+      // this.log('menuName:', menuName)
       switch (menuName) {
         case '商品管理':
           // localStorage.setItem('navType', '商品管理')
