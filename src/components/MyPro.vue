@@ -757,7 +757,7 @@ export default {
     // 新建 点击项目列表项 前往项目详请
     toProDetail: function (id) {
       this.$store.state.proId = id
-      this.$router.push('/ProDetail')
+      this.$router.push('/ProEdit')
     },
     /**
      *

@@ -18,10 +18,6 @@
             <div style="width: 50%;"><a v-bind:download="fileItem.showName" v-bind:href="fileItem.downloadUrl">下载</a></div>
           </div>
         </div>
-        <!--<div class="fileItem">1</div>-->
-        <!--<div class="fileItem">2</div>-->
-        <!--<div class="fileItem">3</div>-->
-        <!--<div class="fileItem">4</div>-->
         <div class="fileItem" style="position: relative;margin-top: 20px;border-bottom: none">
           <div class="fileClose" @click="fileClose()">关闭</div>
         </div>
@@ -44,10 +40,6 @@
                 <div style="margin-left: 10px; color: #28558c;">附件:
                   <span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0">
                     <span style="cursor: pointer;color: #409EFF;font-size: 14px;" @click="showFileModelClick()">查看附件</span>
-                    <!--<span v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl">-->
-                      <!--<Icon v-bind:title="fileItem.showName" @click="showImagePre(fileItem.previewUrl, fileItem.showName)" style="font-size: 20px; " type="ios-document-outline" />-->
-                      <!--&lt;!&ndash;<Icon type="ios-arrow-round-down" />&ndash;&gt;-->
-                    <!--</span>-->
                   </span>
                   <span style="color: #aaa;font-size: 14px" v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0">暂无附件</span>
                 </div>
@@ -57,8 +49,6 @@
                 <span style="margin-right: 10px; margin-left: 5px;" v-on:click="proBaseEditClick()">基本信息</span>
                 <Icon size="20" style="margin-top: -3px;" type="ios-time-outline" />
                 <span style="margin-left: 5px;" v-on:click="openHisDrawer">历史记录</span>
-                <!--<Button type="primary" size="small" style="margin-right: 15px;" v-on:click="proBaseEditClick()">基本信息</Button>-->
-                <!--<Button type="primary" size="small" v-on:click="openHisDrawer">历史记录</Button>-->
               </div>
             </div>
             <div class="imgBox" v-if="proDetailMsg.state === '0'"><img src="../../static/img/unstart.png" alt=""></div>
@@ -141,57 +131,6 @@
       <!--新增 抽屉 成员管理 ks-->
       <Drawer title="成员管理" width="740" :closable="false" v-model="DrawerMember" v-loading="DrawerMemberShow">
         <component v-bind:is="compArr.MenmberComp" v-bind:proId="proId" v-bind:DrawerMemberShow="DrawerMember" v-on:addMembersInfo="updataPageInfo" v-on:delMembersInfo="updataPageDelMember" v-on:addPeopleInfo="updataPageAddPeople"></component>
-        <!--<Button v-on:click="test()">TEST</Button>-->
-        <!--<div style="font-size: 16px; margin-bottom: 10px;">添加项目成员</div>-->
-        <!--<div class="searchBox">-->
-          <!--<div class="searchSelectIpt">-->
-            <!--<el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"-->
-                       <!--:reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"-->
-                       <!--:remote-method="remoteMethod" :loading="loading2">-->
-              <!--<el-option v-for="item in options4" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"-->
-                         <!--:value="item.Name + '-' + item.ID">-->
-              <!--</el-option>-->
-            <!--</el-select>-->
-          <!--</div>-->
-          <!--<div class="searchBtn"><Button type="primary" v-on:click="addMember()">添加</Button></div>-->
-          <!--<div class="searchOpenTree" @click="organizationalClick"><Button>组织架构</Button></div>-->
-        <!--</div>-->
-        <!--<div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">成员列表</div>-->
-        <!--<div class="memberTable">-->
-          <!--<div class="memTblTitle">-->
-            <!--<div class="tblTitItem">角色</div>-->
-            <!--<div class="tblTitItem">姓名</div>-->
-            <!--<div class="tblTitItem">查看</div>-->
-            <!--<div class="tblTitItem">编辑</div>-->
-            <!--<div class="tblTitItem" title="清空全部" style="color: #409EFF;cursor: pointer;" v-on:click="delMember(0)">清空</div>-->
-          <!--</div>-->
-          <!--<div class="memTblList" v-loading="loadingMan">-->
-            <!--<div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">-->
-              <!--<div class="memListItem">{{mem.peopleRoleText}}</div>-->
-              <!--<div class="memListItem">{{mem.userName}}</div>-->
-              <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
-              <!--<div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>-->
-              <!--<div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--&lt;!&ndash;组织架构 start&ndash;&gt;-->
-        <!--<div v-if="organizationalShow" style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">组织架构</div>-->
-        <!--&lt;!&ndash;organizationalShow&ndash;&gt;-->
-        <!--<div class="organizationalBox" v-if="organizationalShow">-->
-          <!--<div>-->
-            <!--<el-tree-->
-              <!--:data="data2"-->
-              <!--show-checkbox-->
-              <!--@node-click="append($event)"-->
-              <!--@check="changeState"-->
-              <!--node-key="id"-->
-              <!--:default-expanded-keys="[1,2]"-->
-              <!--:props="defaultProps">-->
-            <!--</el-tree>-->
-          <!--</div>-->
-          <!--<div class="organizationalBtn"><Button type="primary" @click="addMenber()">添加</Button></div>-->
-        <!--</div>-->
         <!--组织架构 end-->
       </Drawer>
       <!--新增 抽屉 成员管理 js-->
@@ -204,50 +143,6 @@
                    v-on:ProBaseInfoCallback="ProBaseInfoCallbackFuc"
                    :proId="proId">
         </component>
-        <!--<div>-->
-          <!--<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">-->
-            <!--<FormItem label="项目名称" prop="proName">-->
-              <!--<Input v-model="formValidate.proName" placeholder="请输入项目名称" />-->
-            <!--</FormItem>-->
-            <!--<FormItem label="项目类型" prop="proType">-->
-              <!--<Select v-model="formValidate.proType" placeholder="请选择项目类型" @on-change="getProjectType($event)">-->
-                <!--<Option value="集团战略">集团战略</Option>-->
-                <!--<Option value="公司项目">公司项目</Option>-->
-                <!--<Option value="部门项目">部门项目</Option>-->
-                <!--<Option value="小组项目">小组项目</Option>-->
-                <!--<Option value="个人项目">个人项目</Option>-->
-                <!--<Option value="产品研发">产品研发</Option>-->
-              <!--</Select>-->
-            <!--</FormItem>-->
-            <!--<div v-if="projectPath" class="proTypePath">{{projectPath}}</div>-->
-            <!--<FormItem label="负责人" prop="proManager">-->
-              <!--<el-autocomplete style="width: 100%"-->
-                               <!--v-model="formValidate.proManager"-->
-                               <!--:fetch-suggestions="querySearchAsync"-->
-                               <!--placeholder="请输入项目负责人姓名"-->
-                               <!--:trigger-on-focus="false"-->
-                               <!--@select="handleSelect"-->
-              <!--&gt;</el-autocomplete>-->
-            <!--</FormItem>-->
-            <!--<FormItem label="开始时间" prop="startDate">-->
-              <!--<DatePicker type="date" v-bind:value="formValidate.startDate" format="yyyy-MM-dd HH:mm:ss" @on-change="startDateChange" placeholder="请输入开始时间" style="width: 100%"></DatePicker>-->
-            <!--</FormItem>-->
-            <!--<FormItem label="结束时间" prop="endDate">-->
-              <!--<DatePicker type="date" v-bind:value="formValidate.endDate" format="yyyy-MM-dd HH:mm:ss" @on-change="endDateChange" placeholder="请输入结束时间" style="width: 100%"></DatePicker>-->
-            <!--</FormItem>-->
-            <!--<FormItem label="项目简介" prop="desc">-->
-              <!--<Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入项目简介" />-->
-            <!--</FormItem>-->
-            <!--&lt;!&ndash;基本信息 项目附件&ndash;&gt;-->
-            <!--<FormItem label="项目附件" prop="desc2">-->
-              <!--<component v-bind:is="FileUploadComp" v-on:FilePreEmit="GetFilePreData" v-bind:FileDataList="proFileList" fileFormId="BaseInfo" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
-            <!--</FormItem>-->
-            <!--<FormItem>-->
-              <!--<Button type="primary" @click="handleSubmit('formValidate')">保存</Button>-->
-              <!--<Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>-->
-            <!--</FormItem>-->
-          <!--</Form>-->
-        <!--</div>-->
       </Drawer>
       <!--新增 抽屉 编辑基本信息 修改基本信息 end-->
       <!--对话框 项目分类 产品研发 start-->
@@ -317,287 +212,81 @@
       <!--新增 抽屉 一级计划详情 end -->
       <!--计划详情-->
       <Drawer class="drawerScroll" :closable="false" width="750" v-model="value444">
-        <div class="slidTop">
-          <div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>
-          <div></div>
-          <div style="display: flex;justify-content: space-between">
-            <div @click="delCurrentPlan(planMsg.id)" title="删除计划" style="width: 50px;cursor: pointer;"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-          </div>
-        </div>
-        <div class="taskMsg2" style="border-bottom: 1px solid #f1f1f1;background-color: #f5f8fa">
-          <div class="taskLf" style="width: 100%;">
-            <div class="taskName2" style="font-size: 14px;"><Icon type="md-paper" size="18" color="#1296db"/><span style="margin-left: 10px;">计划详情: </span></div>
-            <div style="color: #999;margin-top: 0;" class="taskDetail" :title="planMsg.description">{{planMsg.description}}</div>
-          </div>
-        </div>
-        <div style="display: flex;justify-content: space-between">
-          <div class="cannetProject" style="width: 50%;">
-            <div style="display: inline-block"><img src="../../static/img/faqiren.png" alt=""><span>创 建 人:</span></div>
-            <div style="display: inline-block;color: #888;">{{planMsg.creator}}</div>
-          </div>
-          <div class="cannetProject" style="width: 50%">
-            <div style="display: inline-block;"><img src="../../static/img/kaishi.png" alt=""><span>创建时间:</span></div>
-            <div style="display: inline-block;color: #888;">{{planMsg.createDate}}</div>
-          </div>
-        </div>
-        <div style="display: flex;justify-content: space-between">
-          <div class="cannetProject" style="width: 50%;display: flex;justify-content: start">
-            <div style="width: 32%"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
-            <div class="cannetProjectItem1" :title="planMsg.projectName">{{planMsg.projectName}}</div>
-          </div>
-          <div class="cannetProject" style="width: 50%;display: flex;justify-content: start">
-            <div style="width: 32%;"><img src="../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
-            <div class="cannetProjectItem1" v-if="planMsg.parentPlanName" style="color: #409EFF;cursor: pointer;" :title="planMsg.parentPlanName" @click="toPlanDetail(planMsg.parentTaskID)">{{planMsg.parentPlanName}}</div>
-            <div class="cannetProjectItem1" v-if="!planMsg.parentPlanName">无父级计划</div>
-          </div>
-        </div>
-        <div class="cannetProject">
-          <div style="display: inline-block"><img src="../../static/img/time.png" alt=""><span>计划周期:</span></div>
-          <div style="display: inline-block;color: #888;" v-if="planMsg.start && planMsg.finish">{{planMsg.start.split(' ')[0]}} 到 {{planMsg.finish.split(' ')[0]}}</div>
-        </div>
-        <!--<div class="cannetProject">-->
-          <!--<Button type="info" @click="addChild(planMsg.id, 3)">添加子计划</Button>-->
+        <component v-bind:is="compArr.PlanDetailComp" v-bind:taskDrawerOpen="value444" :nodeId="currentNodeId" v-on:addChildMsg="addChildMsgFuc" v-on:toChildMsg="toChildMsgFuc" v-on:PlanDelCallback="PlanDelCallbackFuc"></component>
+        <!--<div class="slidTop">-->
+          <!--<div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>-->
+          <!--<div></div>-->
+          <!--<div style="display: flex;justify-content: space-between">-->
+            <!--<div @click="delCurrentPlan(planMsg.id)" title="删除计划" style="width: 50px;cursor: pointer;"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>-->
+          <!--</div>-->
         <!--</div>-->
-        <!--新建任务开始-->
-        <div class="cannetProject1" style="display:flex;justify-content: space-between">
-          <div style="display: inline-block"><img src="../../static/img/delTask.png" alt=""><span>添加子任务</span></div>
-          <div @click="addChild(planMsg.id, 3)" style="font-size: 14px;color: #409EFF;cursor: pointer;font-weight: normal"><i class="el-icon-circle-plus-outline"></i> 添加子计划</div>
-        </div>
-        <div style="position: relative;width: 100%;">
-          <div v-loading="loading3">
-            <div class="paiTaskIptBox" style="position: relative;">
-              <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow">
-                <div class="selectUserIpt">
-                  <el-select v-model="taskForm23.value9" multiple filterable remote style="width: 100%;"
-                             :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
-                             :remote-method="remoteMethod223" :loading="loading2">
-                    <el-option v-for="item in options4" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                               :value="item.Name + '-' + item.ID">
-                    </el-option>
-                  </el-select>
-                </div>
-                <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm23.value9.length===0">* 如果此项不选，则默认自己</div>
-                <div class="selectUserBtn" v-on:click="selectUserClick()"><el-button>确定</el-button></div>
-              </div>
-              <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow">
-                <div class="selectDateBox">
-                  <div class="selectDateItem">
-                    <el-date-picker
-                      v-model="selDateStart"
-                      type="datetime"
-                      :picker-options="pickerOptions01"
-                      value-format="yyyy-MM-dd HH:mm:ss"
-                      placeholder="选择开始时间">
-                    </el-date-picker>
-                  </div>
-                  <!--<div style="margin-left: 10px; margin-right: 10px;">至</div>-->
-                  <div class="selectDateItem">
-                    <el-date-picker
-                      v-model="selDateEnd"
-                      type="datetime"
-                      :picker-options="pickerOptions01"
-                      value-format="yyyy-MM-dd HH:mm:ss"
-                      placeholder="选择结束时间">
-                    </el-date-picker>
-                  </div>
-                </div>
-                <div class="selectUserBtn">
-                  <el-button v-on:click="selectDateCancel()">取消</el-button>
-                  <el-button v-on:click="selectDateOk()">确定</el-button>
-                </div>
-              </div>
-              <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight + 'px', top: taskLevelTop + 'px', left: taskLevelLeft + 'px'}" v-on:mouseleave="rateMouseLeave()">
-                <div class="rateBox">
-                  <el-rate v-model="levelValue"></el-rate>
-                </div>
-              </div>
-              <div class="paiTaskIptLeft">
-                <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-                <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入任务名称" /></div>
-              </div>
-              <div class="paiTaskIptRight">
-                <div class="paiTaskIptRightIcon" v-on:click="selectUser($event)"><Icon type="ios-person-add" /></div>
-                <div class="paiTaskIptRightCnt" v-on:click="selectUser($event)">
-                  <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
-                  <span v-if="taskForm23.value9.length > 0" v-for="user in taskForm23.value9" :key="user"> {{user.split('-')[0]}}</span>
-                  <span v-if="taskForm23.value9.length === 0">{{defImplementer.name}}</span>
-                  <!--<span> {{defImplementer.name}}</span>-->
-                </div>
-                <div class="paiTaskIptRightIcon" v-on:click="selectDate($event)"><Icon type="ios-timer" /></div>
-                <div class="paiTaskIptRightCnt" v-on:click="selectDate($event)">时间</div>
-                <div class="paiTaskIptRightIcon" v-on:click="selectLevel($event)"><Icon type="ios-star" /></div>
-              </div>
-            </div>
-            <div class="taskRelation"  v-if="taskRelationShow">
-              <div class="relationIntro">
-                <textarea class="relationIntroArea" v-model="taskIntro" placeholder="请输入任务简介"></textarea>
-              </div>
-            </div>
-            <div class="taskFileUpload">
-              <div class="fileUploadCao">
-                <div class="selectLeft" style="width: 440px;">
-                  <form id="uploadFileDel" enctype="multipart/form-data">
-                    <input type="file" :disabled="fileListDis2" v-on:change="fileChange" id="myfileDel" name="myfile" placeholder="请选择文件"/><br>
-                    <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
-                  </form>
-                  <div style="margin-top: 8px;font-size: 12px">
-                    <span style="color: #f00" v-if="fileList.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
-                    <span v-if="fileList.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
-                    <span style="color: #888;" v-if="fileList.length === 0">暂无附件</span>
-                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileDel(file.attachmentId)"></div>, </span>
-                  </div>
-                </div>
-                <div class="selectRight2">
-                  <div class="selectMoreInfo" v-on:click="moreClick()">
-                    <i v-bind:class="moreIcon"></i><span style="margin-left: 6px;">{{moreText}}</span>
-                  </div>
-                  <div class="submitBtn" v-on:click="depSub()"><i-button type="info">添加</i-button></div>
-                </div>
-              </div>
-              <div class="fileUploadPre"></div>
-            </div>
-          </div>
-        </div>
-        <!--// 新建任务-->
-        <div class="cannetProject1">
-          <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务/计划<span style="color: #409EFF">({{planMsgPlanList.length}})</span></span></div>
-        </div>
-        <div class="taskListChild" v-loading="delLoading">
-          <div class="taskItemChild" v-for="(child, index2) in planMsgPlanList" v-bind:key="index2">
-            <div class="childTaskName" @click="toPlanDetailMsg(child.id, child.type)" :title="child.name"><Icon type="md-copy" size="16" color="#409EFF"/> {{child.name}} <span style="color: #888;" v-if="child.type === '2'">(任务)</span><span style="color: #888;" v-if="child.type === '1'">(计划)</span></div>
-            <div class="childTaskMsg">
-              <div v-if="child.status" style="width: 60px;" :class="'childTaskStyle' + child.status">{{child.statusStr}}</div>
-              <div v-if="child.status && child.dayNum >= 0" style="width: 100px;">剩余 <span style="color:#13ce66;font-size: 18px;">{{child.dayNum}}</span> 天</div>
-              <div v-if="child.status && child.dayNum < 0" style="width: 100px;">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(child.dayNum)}}</span> 天</div>
-              <div v-if="child.userName" style="width: 160px;">{{child.userName}}</div>
-              <div v-if="!child.userName" style="width: 160px;">创建人: {{child.creator}}</div>
-              <div style="width: 20px;margin-right: 0" @click="delChildTask(child.id)"><div class="taskDel"><Icon type="md-close" size="18"/></div></div>
-            </div>
-          </div>
-          <div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="planMsgPlanList.length === 0">
-          暂无子级
-          </div>
-        </div>
+        <!--<div class="taskMsg2" style="border-bottom: 1px solid #f1f1f1;background-color: #f5f8fa">-->
+          <!--<div class="taskLf" style="width: 100%;">-->
+            <!--<div class="taskName2" style="font-size: 14px;"><Icon type="md-paper" size="18" color="#1296db"/><span style="margin-left: 10px;">计划详情: </span></div>-->
+            <!--<div style="color: #999;margin-top: 0;" class="taskDetail" :title="planMsg.description">{{planMsg.description}}</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div style="display: flex;justify-content: space-between">-->
+          <!--<div class="cannetProject" style="width: 50%;">-->
+            <!--<div style="display: inline-block"><img src="../../static/img/faqiren.png" alt=""><span>创 建 人:</span></div>-->
+            <!--<div style="display: inline-block;color: #888;">{{planMsg.creator}}</div>-->
+          <!--</div>-->
+          <!--<div class="cannetProject" style="width: 50%">-->
+            <!--<div style="display: inline-block;"><img src="../../static/img/kaishi.png" alt=""><span>创建时间:</span></div>-->
+            <!--<div style="display: inline-block;color: #888;">{{planMsg.createDate}}</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div style="display: flex;justify-content: space-between">-->
+          <!--<div class="cannetProject" style="width: 50%;display: flex;justify-content: start">-->
+            <!--<div style="width: 32%"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>-->
+            <!--<div class="cannetProjectItem1" :title="planMsg.projectName">{{planMsg.projectName}}</div>-->
+          <!--</div>-->
+          <!--<div class="cannetProject" style="width: 50%;display: flex;justify-content: start">-->
+            <!--<div style="width: 32%;"><img src="../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>-->
+            <!--<div class="cannetProjectItem1" v-if="planMsg.parentPlanName" style="color: #409EFF;cursor: pointer;" :title="planMsg.parentPlanName" @click="toPlanDetail(planMsg.parentTaskID)">{{planMsg.parentPlanName}}</div>-->
+            <!--<div class="cannetProjectItem1" v-if="!planMsg.parentPlanName">无父级计划</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="cannetProject">-->
+          <!--<div style="display: inline-block"><img src="../../static/img/time.png" alt=""><span>计划周期:</span></div>-->
+          <!--<div style="display: inline-block;color: #888;" v-if="planMsg.start && planMsg.finish">{{planMsg.start.split(' ')[0]}} 到 {{planMsg.finish.split(' ')[0]}}</div>-->
+        <!--</div>-->
+        <!--&lt;!&ndash;新建任务开始&ndash;&gt;-->
+        <!--<div class="cannetProject1" style="display:flex;justify-content: space-between">-->
+          <!--<div style="display: inline-block"><img src="../../static/img/delTask.png" alt=""><span>添加子任务</span></div>-->
+          <!--<div @click="addChild(planMsg.id, 3)" style="font-size: 14px;color: #409EFF;cursor: pointer;font-weight: normal"><i class="el-icon-circle-plus-outline"></i> 添加子计划</div>-->
+        <!--</div>-->
+        <!--<component v-bind:is="compArr.AddNewTask"-->
+                   <!--fileFormId="AddNewTask"-->
+                   <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
+                   <!--:nodeId="currentNodeId">-->
+        <!--</component>-->
+        <!--<div class="cannetProject1">-->
+          <!--<div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务/计划<span style="color: #409EFF">({{planMsgPlanList.length}})</span></span></div>-->
+        <!--</div>-->
+        <!--<div class="taskListChild" v-loading="delLoading">-->
+          <!--<div class="taskItemChild" v-for="(child, index2) in planMsgPlanList" v-bind:key="index2">-->
+            <!--<div class="childTaskName" @click="toPlanDetailMsg(child.id, child.type)" :title="child.name"><Icon type="md-copy" size="16" color="#409EFF"/> {{child.name}} <span style="color: #888;" v-if="child.type === '2'">(任务)</span><span style="color: #888;" v-if="child.type === '1'">(计划)</span></div>-->
+            <!--<div class="childTaskMsg">-->
+              <!--<div v-if="child.status" style="width: 60px;" :class="'childTaskStyle' + child.status">{{child.statusStr}}</div>-->
+              <!--<div v-if="child.status && child.dayNum >= 0" style="width: 100px;">剩余 <span style="color:#13ce66;font-size: 18px;">{{child.dayNum}}</span> 天</div>-->
+              <!--<div v-if="child.status && child.dayNum < 0" style="width: 100px;">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(child.dayNum)}}</span> 天</div>-->
+              <!--<div v-if="child.userName" style="width: 160px;">{{child.userName}}</div>-->
+              <!--<div v-if="!child.userName" style="width: 160px;">创建人: {{child.creator}}</div>-->
+              <!--<div style="width: 20px;margin-right: 0" @click="delChildTask(child.id)"><div class="taskDel"><Icon type="md-close" size="18"/></div></div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="planMsgPlanList.length === 0">-->
+          <!--暂无子级-->
+          <!--</div>-->
+        <!--</div>-->
       </Drawer>
-      <!--计划详情结束-->
-      <!--计划详情结束-->
-      <!--计划详情结束-->
-      <!--计划详情结束-->
-      <!--计划详情结束-->
       <!--计划详情结束-->
       <!--新增 添加计划或者任务 start-->
       <!--bgcover开始 增加计划-->
       <Drawer class="drawerScroll" title="计划表单2" :closable="false" width="40%" style="z-index: 1005" v-model="bgCoverShow">
         <div class="bgCoverCnt" v-loading="loading">
           <component v-bind:is="compArr.CreatePlanOrTask" v-bind:DrawerOpen="bgCoverShow" fileFormId="CreatePlanTask" v-on:CreatePlanTaskCallback="CreatePlanTaskCallbackFuc" :nodeId="currentNodeId"></component>
-          <!--<div class="colose" @click="onPlanTaskCancel()">&#935;</div>-->
-          <!--<div class="bgCoverTabs">-->
-            <!--<el-tabs v-model="activeNameBgCover" @tab-click="handleClickPlanTask">-->
-              <!--<el-tab-pane label="增加计划" name="first" v-bind:disabled="panshow">-->
-                <!--&lt;!&ndash;计划form&ndash;&gt;-->
-                <!--<div class="planTaskBox">-->
-                  <!--<el-form ref="form" :model="form" :rules="rules" label-width="80px">-->
-                    <!--<el-form-item label="计划名称" prop="name" maxlength="100" width="100" style="margin-bottom: 30px;">-->
-                      <!--<el-input class="planNameIpt" v-model="form.name" style="width: 300px;" maxlength="20"></el-input>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">-->
-                      <!--<el-col :span="20">-->
-                        <!--<el-date-picker type="datetime"-->
-                        <!--:picker-options="pickerOptionsPlan"-->
-                        <!--format="yyyy-MM-dd HH:mm:ss"-->
-                        <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                        <!--placeholder="选择日期"-->
-                        <!--v-model="form.date1" style="width: 300px;"-->
-                        <!--&gt;</el-date-picker>-->
-                      <!--</el-col>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">-->
-                      <!--<el-col :span="20">-->
-                        <!--<el-date-picker type="datetime"-->
-                        <!--:picker-options="pickerOptionsPlan"-->
-                        <!--format="yyyy-MM-dd HH:mm:ss"-->
-                        <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                        <!--placeholder="选择日期"-->
-                        <!--v-model="form.date2" style="width: 300px;"-->
-                        <!--&gt;</el-date-picker>-->
-                      <!--</el-col>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item label="计划描述" prop="description" maxlength="100" width="100" style="margin-bottom: 30px;">-->
-                      <!--<el-input class="planNameIpt" type="textarea" :rows="2" v-model="form.description" style="width: 300px;"></el-input>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item>-->
-                      <!--<el-button type="primary" @click="onPlanSubmit('form')">立即创建</el-button>-->
-                      <!--<el-button @click="onPlanTaskCancel()">取消</el-button>-->
-                    <!--</el-form-item>-->
-                  <!--</el-form>-->
-                <!--</div>-->
-                <!--&lt;!&ndash;&ndash;&gt;-->
-              <!--</el-tab-pane>-->
-              <!--<el-tab-pane label="增加任务" name="second">-->
-                <!--&lt;!&ndash;任务form&ndash;&gt;-->
-                <!--<div class="planTaskBox" style="position: relative;padding-top: 0;">-->
-                  <!--<el-form ref="addTaskForm" :rules="taskRules" :model="addTaskForm" label-width="80px">-->
-                    <!--<el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">-->
-                      <!--<el-input class="planNameIpt" v-model="addTaskForm.jobName" style="width: 300px;" v-bind:disabled="isDisabled" maxlength="20"></el-input>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">-->
-                      <!--<div class="ratestar" style="padding-top: 6px;">-->
-                        <!--<el-rate v-model="addTaskForm.jobLevel" v-on:change="rateChange($event)" v-bind:disabled="isDisabled"></el-rate>-->
-                      <!--</div>-->
-                    <!--</el-form-item>-->
-                    <!--&lt;!&ndash;指派人员多选 多人指派&ndash;&gt;-->
-                    <!--<el-form-item label="任务指派" prop="userArr" maxlength="100">-->
-                      <!--<el-col :span="24">-->
-                        <!--<el-select v-model="value9" multiple filterable remote style="width: 300px"-->
-                        <!--:reserve-keyword="false" placeholder="请输入关键词"-->
-                        <!--:remote-method="addTaskRemoteMethod" :loading="loading2">-->
-                          <!--<el-option v-for="item in addTaskOptions" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"-->
-                          <!--:value="item.Name + '(' + item.jName + ')' + '_' + item.ID">-->
-                          <!--</el-option>-->
-                        <!--</el-select>-->
-                      <!--</el-col>-->
-                    <!--</el-form-item>-->
-                    <!--&lt;!&ndash;开始时间&ndash;&gt;-->
-                    <!--<el-form-item label="开始时间" prop="date1">-->
-                      <!--<el-col :span="20">-->
-                        <!--<el-date-picker type="datetime"-->
-                        <!--:picker-options="pickerOptionsPlan"-->
-                        <!--format="yyyy-MM-dd HH:mm:ss"-->
-                        <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                        <!--placeholder="选择日期"-->
-                        <!--v-model="addTaskForm.date1" style="width: 300px;"-->
-                        <!--&gt;-->
-                        <!--</el-date-picker>-->
-                      <!--</el-col>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item label="结束时间" prop="date2">-->
-                      <!--<el-col :span="20">-->
-                      <!--<el-date-picker type="datetime"-->
-                      <!--:picker-options="pickerOptionsPlan"-->
-                      <!--format="yyyy-MM-dd HH:mm:ss"-->
-                      <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                      <!--placeholder="选择日期"-->
-                      <!--v-model="addTaskForm.date2" style="width: 300px;"-->
-                      <!--&gt;</el-date-picker>-->
-                      <!--</el-col>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item label="任务描述" prop="description" maxlength="100" width="100">-->
-                      <!--<el-input class="planNameIpt" v-bind:disabled="isDisabled" type="textarea" :rows="2" v-model="addTaskForm.description" style="width: 300px;"></el-input>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item label="添加附件" prop="description" maxlength="100" width="100">-->
-                      <!--&lt;!&ndash;新建任务 引入附件组件 上传文件&ndash;&gt;-->
-                      <!--<component v-bind:is="FileUploadComp" fileFormId="fileTest" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item>-->
-                      <!--<el-button type="primary" @click="onTaskSubmit('addTaskForm')">立即创建</el-button>-->
-                      <!--<el-button @click="onPlanTaskCancel()">取消</el-button>-->
-                    <!--</el-form-item>-->
-                  <!--</el-form>-->
-                <!--</div>-->
-                <!--&lt;!&ndash;&ndash;&gt;-->
-              <!--</el-tab-pane>-->
-            <!--</el-tabs>-->
-          <!--</div>-->
         </div>
         <!--</div>-->
       </Drawer>
@@ -606,213 +295,10 @@
       <Drawer class="drawerScroll" title="编辑计划4" :closable="false" width="40%" v-model="planEditShow">
         <!-- 编辑计划 修改计划 引入组件 -->
         <component v-bind:is="compArr.ModifyPlan" v-bind:DrawerOpen="planEditShow" fileFormId="ModifyPlan" v-on:ModifyPlanCallback="ModifyPlanCallbackFuc" :nodeId="currentNodeId"></component>
-        <!--<div class="bgCoverTabs">-->
-          <!--&lt;!&ndash;计划form&ndash;&gt;-->
-          <!--<div class="planTaskBox">-->
-            <!--<el-form ref="modify" :model="detailform" :rules="planRules" label-width="80px">-->
-              <!--<el-form-item label="计划名称" prop="name" maxlength="100" width="100">-->
-                <!--<el-input class="planNameIpt" v-model="detailform.name" maxlength="20"></el-input>-->
-              <!--</el-form-item>-->
-              <!--<el-form-item label="开始时间" prop="date1">-->
-                <!--<el-col :span="11">-->
-                  <!--<el-date-picker type="date"-->
-                                  <!--format="yyyy-MM-dd"-->
-                                  <!--value-format="yyyy-MM-dd"-->
-                                  <!--placeholder="选择日期"-->
-                                  <!--v-model="detailform.date1"-->
-                                  <!--:picker-options="pickerOptionsPlanSt"-->
-                  <!--&gt;</el-date-picker>-->
-                <!--</el-col>-->
-              <!--</el-form-item>-->
-              <!--<el-form-item label="结束时间" prop="date2">-->
-                <!--<el-col :span="11">-->
-                  <!--<el-date-picker type="date"-->
-                                  <!--format="yyyy-MM-dd"-->
-                                  <!--value-format="yyyy-MM-dd"-->
-                                  <!--placeholder="选择日期"-->
-                                  <!--v-model="detailform.date2"-->
-                                  <!--:picker-options="pickerOptionsPlanEt"-->
-                  <!--&gt;</el-date-picker>-->
-                <!--</el-col>-->
-              <!--</el-form-item>-->
-              <!--<el-form-item label="计划描述" maxlength="100" width="100">-->
-                <!--<el-input class="planNameIpt" type="textarea" :rows="2" v-model="detailform.description"></el-input>-->
-              <!--</el-form-item>-->
-              <!--<el-form-item>-->
-                <!--<el-button type="primary" @click="modifySub('modify')">保存</el-button>-->
-                <!--<el-button @click="planEditShow = false">关 闭</el-button>-->
-              <!--</el-form-item>-->
-            <!--</el-form>-->
-          <!--</div>-->
-          <!--&lt;!&ndash;&ndash;&gt;-->
-        <!--</div>-->
       </Drawer>
       <!--新增 抽屉 编辑计划 end-->
-      <!--新增 抽屉 编辑计划 end-->
-      <!--新增 抽屉 编辑计划 end-->
-      <!--新增 抽屉 编辑计划 end-->
-      <!--新增 抽屉 编辑计划 end-->
-      <!--新增 抽屉 任务详情 start-->
-      <!--新增 抽屉 任务详情 start-->
-      <!--新增 抽屉 任务详情 start-->
-      <!--新增 抽屉 任务详情 start-->
-      <!--新增 抽屉 任务详情 start-->
       <Drawer class="drawerScroll" :closable="false" width="750" v-model="value4">
         <component v-bind:is="compArr.TaskDetailComp" v-bind:taskDrawerOpen="value4" v-bind:modifyTaskRes="modifyTaskRes" v-on:showEditForm="showEditFormFuc" :nodeId="currentNodeId"></component>
-        <!--<div class="slidTop">-->
-          <!--<div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>-->
-          <!--<div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>-->
-          <!--<div style="display: flex;justify-content: space-between">-->
-            <!--<div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>-->
-            <!--<div @click="modifyTask(taskBasicMsg.uid)" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="taskMsg">-->
-          <!--<div class="taskLf">-->
-            <!--<div class="taskName">{{taskBasicMsg.jobName}}</div>-->
-            <!--<div class="taskDetail" v-bind:title="taskBasicMsg.description">{{taskBasicMsg.description}}</div>-->
-          <!--</div>-->
-          <!--<div class="taskRt">-->
-            <!--<div v-if="taskBasicMsg.status === '0'"><img src="../../static/img/unstart.png" alt=""></div>-->
-            <!--<div v-if="taskBasicMsg.status === '1'"><img src="../../static/img/doing.png" alt=""></div>-->
-            <!--<div v-if="taskBasicMsg.status === '2'"><img src="../../static/img/finish.png" alt=""></div>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="taskTime">-->
-          <!--<el-collapse>-->
-            <!--<el-collapse-item style="padding: 0 10px;">-->
-              <!--<template slot="title">-->
-                <!--<img src="../../static/img/time.png" alt=""><span style="margin-left: 10px;">起止时间: {{taskBasicMsg.taskStartDate}} 到 {{taskBasicMsg.taskFinishDate}}</span>-->
-                <!--<div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum >= 0">剩余 <span style="color: #53b5ff;font-size: 16px;font-weight: bold">{{taskBasicMsg.dayNum}}</span> 天</div>-->
-                <!--<div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum < 0"><span style="color:red;font-size: 16px;">已逾期</span></div>-->
-                <!--<div style="margin-left: 10%;" v-if="!taskBasicMsg.dayNum"><span v-bind:class="'topState' + taskBasicMsg.status">{{taskBasicMsg.statusStr}}</span></div>-->
-              <!--</template>-->
-              <!--<div class="managePro">-->
-                <!--<div><img src="../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span>{{taskBasicMsg.userName}}</span></div>-->
-                <!--<div><img src="../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>-->
-              <!--</div>-->
-              <!--<div class="managePro" style="margin-top: 10px;">-->
-                <!--<div><img src="../../static/img/kaishi.png" alt=""><span class="proLabel">实际开始:</span><span v-if="taskBasicMsg.dealWithDate">{{taskBasicMsg.dealWithDate}}</span><span style="color: #888;" v-if="!taskBasicMsg.dealWithDate">暂未开始</span></div>-->
-                <!--<div><img src="../../static/img/jiesu.png" alt=""><span class="proLabel">实际结束:</span><span v-if="taskBasicMsg.realFinishDate">{{taskBasicMsg.realFinishDate}}</span><span style="color: #888;" v-if="!taskBasicMsg.realFinishDate">暂未完成</span></div>-->
-              <!--</div>-->
-            <!--</el-collapse-item>-->
-          <!--</el-collapse>-->
-        <!--</div>-->
-        <!--<div class="cannetProject">-->
-          <!--<div style="display: inline-block"><img src="../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>-->
-          <!--<span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>-->
-          <!--<span style="font-size: 14px;color: #888;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>-->
-        <!--</div>-->
-        <!--<div class="cannetProject">-->
-          <!--<div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>-->
-          <!--<div style="display: inline-block">{{taskBasicMsg.projectName}}</div>-->
-        <!--</div>-->
-        <!--<div class="cannetProject">-->
-          <!--<div style="display: inline-block"><img src="../../static/img/taskFa.png" alt=""><span>父级任务:</span></div>-->
-          <!--<div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.parentTaskName" @click="toDetail(taskBasicMsg.parentTaskID)">{{taskBasicMsg.parentTaskName}}</div>-->
-          <!--<div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级任务</div>-->
-        <!--</div>-->
-        <!--<div class="cannetProjectFile">-->
-          <!--<div style="display: inline-block"><img src="../../static/img/fujian.png" alt=""><span>任务附件:</span></div>-->
-          <!--<div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">-->
-          <!--<span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">-->
-            <!--<span style="display: inline-block;">{{file.showName}}</span>-->
-            <!--<span v-if="file.isImg" @click="showImagePre(file.previewUrl, file.showName)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>-->
-            <!--<span style="display: inline-block;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>-->
-          <!--</span>-->
-          <!--</div>-->
-          <!--<div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>-->
-        <!--</div>-->
-        <!--<div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">-->
-          <!--<Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>-->
-          <!--<Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>-->
-          <!--<Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>-->
-          <!--<Button type="info" @click="taskToDevided(taskBasicMsg.uid)">任务分解</Button>-->
-        <!--</div>-->
-        <!--<div class="cannetProject" v-if="taskBasicMsg.isRestart">-->
-          <!--<Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>-->
-        <!--</div>-->
-        <!--&lt;!&ndash; 任务分解 引入组件&ndash;&gt;-->
-        <!--<component v-bind:is="compArr.TaskDistribute"-->
-                   <!--fileFormId="TaskDistribute"-->
-                   <!--v-bind:TaskDistributeShow="toShowDevided"-->
-                   <!--v-on:DistributeFormVisible="DistributeFormVisibleFuc"-->
-                   <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
-                   <!--:nodeId="currentNodeId">-->
-        <!--</component>-->
-        <!--&lt;!&ndash; 任务分解 end &ndash;&gt;-->
-        <!--<div class="cannetProject1">-->
-          <!--<div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务<span style="color: #409EFF">({{childTaskList.length}})</span></span></div>-->
-        <!--</div>-->
-        <!--<div class="taskListChild">-->
-          <!--<div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">-->
-            <!--<div class="childTaskName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>-->
-            <!--<div class="childTaskMsg">-->
-              <!--<div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>-->
-              <!--<div style="width: 100px;" v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>-->
-              <!--<div style="width: 100px;" v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>-->
-              <!--<div style="width: 160px;">{{childTask.userName}}</div>-->
-              <!--<div style="margin-right: 0" class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="childTaskList.length === 0">-->
-            <!--暂无子任务-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="cannetProject1">-->
-          <!--<div style="display: inline-block"><img src="../../static/img/goutong.png" alt=""><span>沟 通</span></div>-->
-        <!--</div>-->
-        <!--<div class="el-textarea" v-loading="loading2">-->
-          <!--<textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent"></textarea>-->
-          <!--<div class="cannetProject21">-->
-            <!--&lt;!&ndash;引入组件 详情 沟通&ndash;&gt;-->
-            <!--<component v-bind:is="FileUploadComp" fileFormId="taskDetailConnect" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
-            <!--<div><i-button type="info" style="margin-top: 6px;" v-bind:disabled="butnDisabled" @click="taskDetailconnect()">回复</i-button></div>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="cannetProject1-1">-->
-          <!--<div style="display: inline-block"><img src="../../static/img/jilu.png" alt=""><span>沟通记录</span></div>-->
-        <!--</div>-->
-        <!--<div class="timeLine">-->
-          <!--<Timeline v-if="commentList && commentList.length > 0">-->
-            <!--<Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">-->
-              <!--<p class="time">{{comment.createDate}}</p>-->
-              <!--<p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>-->
-              <!--<span v-for="(com, index2) in comment.attachment" v-bind:key="index2">-->
-              <!--<p class="content" v-if="com.showName">附件:-->
-                <!--<span style="display: inline-block"> {{com.showName}}</span>-->
-                <!--<span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(com.previewUrl)">预览</span>-->
-                <!--<span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>-->
-              <!--</p>-->
-            <!--</span>-->
-            <!--</Timeline-item>-->
-          <!--</Timeline>-->
-          <!--<div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>-->
-          <!--<div style="text-align: center">-->
-            <!--<Page :total="totalNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentPage($event)"></Page>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="cannetProject1-1" style="margin-top: 0">-->
-          <!--<div style="display: inline-block"><img src="../../static/img/history.png" alt=""><span>操作记录</span></div>-->
-        <!--</div>-->
-        <!--<div class="timeLine">-->
-          <!--<Timeline>-->
-            <!--<Timeline-item v-for="(history, index) in historyList" v-bind:key="index">-->
-              <!--<p class="time">{{history.oTime}}</p>-->
-              <!--<p class="content">{{history.oName}}{{history.oContent}}</p>-->
-              <!--<span v-for="(his, index2) in history.attachment" v-bind:key="index2">-->
-              <!--<p class="content" v-if="his.showName"><span>附件:</span>-->
-                <!--<span style="display: inline-block"> {{his.showName}}</span>-->
-                <!--<span v-if="his.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(his.previewUrl)">预览</span>-->
-                <!--<span style="margin-left: 10px;display: inline-block;"><a v-bind:href="his.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>-->
-              <!--</p>-->
-            <!--</span>-->
-            <!--</Timeline-item>-->
-          <!--</Timeline>-->
-          <!--<div style="text-align: center">-->
-            <!--<Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>-->
-          <!--</div>-->
-        <!--</div>-->
       </Drawer>
       <el-dialog title="图片预览" :visible.sync="dialogShowImg">
         <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
@@ -886,10 +372,12 @@ import FileUploadComp from './FileUploadComp.vue'
 import MenmberComp from './MenmberComp.vue'
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
+import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
 import ModifyPlan from './CustomComp/ModifyPlan.vue'
 import ModifyTask from './CustomComp/ModifyTask.vue'
 import TaskDistribute from './CustomComp/TaskDistribute.vue'
+import AddNewTask from './CustomComp/AddNewTask.vue'
 import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 // TaskDistribute ProBaseInfo
 export default {
@@ -899,7 +387,9 @@ export default {
     CommentLogs,
     ModifyPlan,
     ModifyTask,
+    AddNewTask,
     TaskDetailComp,
+    PlanDetailComp,
     FileUploadComp,
     CreatePlanOrTask,
     TaskDistribute,
@@ -979,31 +469,7 @@ export default {
       // 新建 修改任务
       fileListEditDis: false,
       // 新建 修改任务
-      // modifyTaskRules: {
-      //   jobName: [
-      //     { required: true, message: '请输入任务名称', trigger: 'blur' }
-      //   ],
-      //   jobLevel: [
-      //     { required: true, message: '请选择任务等级', trigger: 'change' }
-      //   ],
-      //   taskStartDate: [
-      //     { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
-      //   ],
-      //   taskFinishDate: [
-      //     { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
-      //   ]
-      // },
-      // 新建 修改任务
       loadingEdit: false,
-      // 新建 修改任务
-      // detailTaskform: {
-      //   id: '',
-      //   jobName: '',
-      //   jobLevel: 2,
-      //   taskStartDate: '2018-10-10 00:00:00',
-      //   taskFinishDate: '2018-10-10 00:00:00',
-      //   description: ''
-      // },
       // 新建 修改任务
       modifyTaskVisible: false,
       // 新建 修改任务
@@ -1021,8 +487,10 @@ export default {
       compArr: {
         MenmberComp: 'MenmberComp',
         TaskDetailComp: 'TaskDetailComp',
+        PlanDetailComp: 'PlanDetailComp',
         ModifyTask: 'ModifyTask',
         ModifyPlan: 'ModifyPlan',
+        AddNewTask: 'AddNewTask',
         CommentLogs: 'CommentLogs',
         FileUploadComp: 'FileUploadComp',
         CreatePlanOrTask: 'CreatePlanOrTask',
@@ -1058,12 +526,6 @@ export default {
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' }
         ]
-        // date1: [
-        //   { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
-        // ],
-        // date2: [
-        //   { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
-        // ]
       },
       // 编辑计划
       detailform: {
@@ -1720,6 +1182,16 @@ export default {
       var that = this
       that.modifyTaskVisible = true
     },
+    toChildMsgFuc: function (id) {
+      var that = this
+      that.currentNodeId = id
+      that.value444 = false
+      that.value4 = true
+    },
+    addChildMsgFuc: function (data) {
+      console.log('data999999999:', data)
+      this.addNode(data.id, data.type)
+    },
     toProDetail: function () {
       this.$router.push('/ProDetail')
     },
@@ -1741,6 +1213,21 @@ export default {
     },
     fileClose: function () {
       this.showFileModel = false
+    },
+    TaskDistributeCallbackFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.getNextPlanTask(that.currentNodeId)
+        that.$message({
+          message: '创建成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
     },
     // 项目类型 返回值 数字转文字描述格式
     proTypeValueToLabel: function (ptype) {
@@ -2178,16 +1665,13 @@ export default {
       }
     },
     // 任务分解 返回结果处理
-    TaskDistributeCallbackFuc: function (res) {
+    PlanDelCallbackFuc: function (res) {
       var that = this
       if (res.code === 200) {
-        that.toShowDevided = false
-        that.queryProDetail()
         that.selectProjectId()
-        that.getHistoryList()
-        that.getTaskChildList()
+        that.value444 = false
         that.$message({
-          message: '创建成功！',
+          message: '删除成功！',
           type: 'success'
         })
       } else {
