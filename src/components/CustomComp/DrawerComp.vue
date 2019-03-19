@@ -405,7 +405,6 @@ export default {
     },
     modifyTask: function () {
       var that = this
-      alert('88888')
       that.$emit('showEditForm')
     },
     // // 编辑任务 修改任务 ModifyTaskCallbackFuc
