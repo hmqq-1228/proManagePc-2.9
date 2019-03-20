@@ -26,10 +26,10 @@
         ></el-autocomplete>
       </FormItem>
       <FormItem label="开始时间" prop="startDate">
-        <DatePicker type="date" v-bind:value="formValidate.startDate" format="yyyy-MM-dd HH:mm:ss" @on-change="startDateChange" placeholder="请输入开始时间" style="width: 100%"></DatePicker>
+        <DatePicker type="date" v-bind:value="formValidate.startDate" :options="startTimeOption" format="yyyy-MM-dd HH:mm:ss" @on-change="startDateChange" @on-open-change="startTimeChange" placeholder="请输入开始时间" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="结束时间" prop="endDate">
-        <DatePicker type="date" v-bind:value="formValidate.endDate" format="yyyy-MM-dd HH:mm:ss" @on-change="endDateChange" placeholder="请输入结束时间" style="width: 100%"></DatePicker>
+        <DatePicker type="date" v-bind:value="formValidate.endDate" :options="endTimeOption" format="yyyy-MM-dd HH:mm:ss" @on-change="endDateChange" @on-open-change="endTimeChange" placeholder="请输入结束时间" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="项目简介" prop="desc">
         <Input v-model="formValidate.desc" type="textarea" placeholder="请输入项目简介" />
@@ -74,6 +74,10 @@ export default {
   },
   data () {
     return {
+      startTime: '',
+      endTime: '',
+      startTimeOption: {},
+      endTimeOption: {},
       // 引入组件
       compArr: {
         FileUploadComp: 'FileUploadComp'
@@ -188,6 +192,8 @@ export default {
       this.formValidate.endDate = newVal.endDate
       this.formValidate.classify = newVal.classify
       this.projectPath = newVal.classify
+      this.startTime = newVal.startDate
+      this.endTime = newVal.endDate
     }
   },
   methods: {
@@ -284,8 +290,24 @@ export default {
     startDateChange (date) {
       this.formValidate.startDate = date
     },
+    startTimeChange () {
+      this.startTimeOption = {
+        disabledDate: date => {
+          let startTime = this.startTime ? new Date(this.startTime).valueOf() : ''
+          return date && (date.valueOf() > startTime)
+        }
+      }
+    },
     endDateChange (date) {
       this.formValidate.endDate = date
+    },
+    endTimeChange () {
+      let endTime = this.endTime ? new Date(this.endTime).valueOf() : ''
+      this.endTimeOption = {
+        disabledDate (date) {
+          return date && date.valueOf() < endTime
+        }
+      }
     },
     handleSubmit (name) {
       var that = this

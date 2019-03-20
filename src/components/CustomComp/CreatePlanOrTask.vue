@@ -17,6 +17,7 @@
                                   format="yyyy-MM-dd HH:mm:ss"
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
+                                  @focus="dateLimit()"
                                   v-model="form.date1" style="width: 300px;"
                   ></el-date-picker>
                 </el-col>
@@ -28,6 +29,7 @@
                                   format="yyyy-MM-dd HH:mm:ss"
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
+                                  @focus="dateLimit()"
                                   v-model="form.date2" style="width: 300px;"
                   ></el-date-picker>
                 </el-col>
@@ -75,6 +77,7 @@
                                   format="yyyy-MM-dd HH:mm:ss"
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
+                                  @focus="dateLimit()"
                                   v-model="addTaskForm.date1" style="width: 300px;"
                   >
                   </el-date-picker>
@@ -87,6 +90,7 @@
                                   format="yyyy-MM-dd HH:mm:ss"
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
+                                  @focus="dateLimit()"
                                   v-model="addTaskForm.date2" style="width: 300px;"
                   ></el-date-picker>
                 </el-col>
@@ -255,20 +259,16 @@ export default {
       if (val) {
         // this.pickerOptionsPlan.disabledDate = ''
         // this.log(889889123)
-        // this.dateLimit()
+        this.dateLimit()
       }
     }
   },
   methods: {
-    testLimit: function () {
-      this.dateLimit()
-    },
     // 时间限定
     dateLimit: function () {
       var that = this
-      this.log('dateLimit:', that.nodeId)
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        that.log('dateLimit-res:', res)
+        console.log('dateLimit-res:', res)
         if (res.code === 200) {
           var st = res.data.start.split(' ')[0] + ' 00:00:00'
           var et = res.data.finish
@@ -283,7 +283,7 @@ export default {
           that.pickerOptionsPlan.disabledDate = function (time) {
             return time.getTime() < disabledStarTime2 || time.getTime() > disabledEndTime2
           }
-          that.pickerOptionsPlan.disabledDate()
+          // that.pickerOptionsPlan.disabledDate()
           // that.log('delPlanOrTask:', disabledStarTime)
           // that.log('delPlanOrTask22:', disabledEndTime)
         } else {
