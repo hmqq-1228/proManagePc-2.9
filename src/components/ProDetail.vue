@@ -129,6 +129,7 @@
                  v-bind:taskDrawerOpen="TaskDetailCompShow"
                  v-bind:modifyTaskRes="modifyTaskRes"
                  v-on:FilePreEmit="GetFilePreData"
+                 v-on:toPlanDetail="toPlanDetailFuc"
                  v-on:showEditForm="showEditFormFuc"
                  v-on:ActionResThrow="ActionResThrowFuc"
                  :nodeId="currentNodeId">
@@ -774,6 +775,12 @@ export default {
       that.currentNodeId = id
       that.value444 = false
       that.TaskDetailCompShow = true
+    },
+    toPlanDetailFuc: function (id) {
+      var that = this
+      that.currentNodeId = id
+      that.value444 = true
+      that.TaskDetailCompShow = false
     },
     // 任务分解 返回结果处理
     PlanDelCallbackFuc: function (res) {

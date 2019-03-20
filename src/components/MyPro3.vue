@@ -411,9 +411,7 @@ export default {
         status: '',
         pageNum: 1,
         // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
-        type: '',
         // 项目类型 公司项目:'0' 部门项目:'1' 小组项目:'2' 个人项目:'3' 集团战略:'4' 产品研发:'5'  全部: ''
-        projectType: '4',
         // 项目分类记录id
         projectClassifyId: '',
         pageSize: 10
@@ -787,7 +785,7 @@ export default {
     // 查询个人项目列表 (项目卡片)
     queryMyProjectView () {
       var that = this
-      this.ajax('/myProject/myProjectView', that.myProjectViewPayload).then(res => {
+      this.ajax('/myProject/projectView', that.myProjectViewPayload).then(res => {
         // console.log('项目卡片', res)
         if (res.code === 200) {
           // res.data.list

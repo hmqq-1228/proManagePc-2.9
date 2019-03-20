@@ -73,9 +73,10 @@
       </div>
       <!-- 任务分解 引入组件-->
     <!--v-bind:TaskDistributeShow="toShowDevided"-->
-      <div  v-if="toShowDevided">
+      <div v-show="toShowDevided">
         <component v-bind:is="compArr.TaskDistribute"
                    fileFormId="TaskDistribute"
+                   v-bind:TaskDistributeShow="testtest"
                    v-on:DistributeFormVisible="DistributeFormVisibleFuc"
                    v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
                    :nodeId="currentNodeId">
@@ -225,6 +226,7 @@ export default {
       totalNum: 0,
       showFileUrl: '',
       toShowDevided: false,
+      testtest: 1,
       modifyTaskVisible: false,
       taskId: [],
       commentList: [],
@@ -545,6 +547,7 @@ export default {
       var that = this
       that.toShowDevided = true
       that.currentNodeId = id
+      that.testtest = 2
       // that.taskRelationShow2 = false
     },
     // 重启
