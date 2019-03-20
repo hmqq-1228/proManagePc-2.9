@@ -32,7 +32,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="modifySub('modify')">保存</el-button>
-        <el-button @click="planEditShow = false">关 闭</el-button>
+        <el-button @click="ModifyPlanCancel('modify')">关 闭</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -83,6 +83,10 @@ export default {
     }
   },
   methods: {
+    // 取消
+    ModifyPlanCancel: function (form) {
+      this.$emit('ModifyPlanCallback', 'shut')
+    },
     // 编辑计划 保存
     // 修改点击了保存
     modifySub: function (formName) {

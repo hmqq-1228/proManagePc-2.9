@@ -208,15 +208,15 @@
       </div>
     </Drawer>
     <!--新增 添加计划或者任务 start-->
-    <Drawer class="drawerScroll" title="计划表单2" :closable="false" width="40%" v-model="bgCoverShow">
+    <Drawer class="drawerScroll" title="计划表单" :closable="false" width="40%" v-model="bgCoverShow">
       <component v-bind:is="compArr.CreatePlanOrTask" v-bind:DrawerOpen="bgCoverShow" fileFormId="CreatePlanTask" v-on:CreatePlanTaskCallback="CreatePlanTaskCallbackFuc" :nodeId="currentNodeId"></component>
     </Drawer>
     <!--新增 抽屉 编辑计划 修改计划 start-->
-    <Drawer class="drawerScroll" title="编辑计划4" :closable="false" width="40%" v-model="planEditShow">
+    <Drawer class="drawerScroll" title="编辑计划" :closable="false" width="40%" v-model="planEditShow">
       <component v-bind:is="compArr.ModifyPlan" v-bind:DrawerOpen="planEditShow" fileFormId="ModifyPlan" v-on:ModifyPlanCallback="ModifyPlanCallbackFuc" :nodeId="currentNodeId"></component>
     </Drawer>
     <!--修改任务 编辑任务 任务 修改-->
-    <Drawer class="drawerScroll" title="修改任务3" :closable="false" width="40%" v-model="modifyTaskVisible">
+    <Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">
       <!-- 修改任务 编辑任务 引入组件 -->
       <component v-bind:is="compArr.ModifyTask"
                  v-bind:DrawerOpen="modifyTaskVisible"
@@ -867,18 +867,22 @@ export default {
     // 新建计划 新建任务 引入组件 返回
     CreatePlanTaskCallbackFuc: function (res) {
       var that = this
-      if (res.code === 200) {
+      if (res === 'shut') {
         that.bgCoverShow = false
-        that.queryProDetail()
-        that.$message({
-          message: '创建成功！',
-          type: 'success'
-        })
       } else {
-        that.$message({
-          message: res.msg,
-          type: 'warning'
-        })
+        if (res.code === 200) {
+          that.bgCoverShow = false
+          that.queryProDetail()
+          that.$message({
+            message: '创建成功！',
+            type: 'success'
+          })
+        } else {
+          that.$message({
+            message: res.msg,
+            type: 'warning'
+          })
+        }
       }
     },
     // 编辑任务 修改任务
@@ -912,18 +916,22 @@ export default {
     // 编辑计划 修改计划
     ModifyPlanCallbackFuc: function (res) {
       var that = this
-      if (res.code === 200) {
+      if (res === 'shut') {
         that.planEditShow = false
-        that.queryProDetail()
-        that.$message({
-          message: '修改成功！',
-          type: 'success'
-        })
       } else {
-        that.$message({
-          message: res.msg,
-          type: 'warning'
-        })
+        if (res.code === 200) {
+          that.planEditShow = false
+          that.queryProDetail()
+          that.$message({
+            message: '修改成功！',
+            type: 'success'
+          })
+        } else {
+          that.$message({
+            message: res.msg,
+            type: 'warning'
+          })
+        }
       }
     },
     // 编辑任务 修改任务

@@ -1,6 +1,6 @@
 <template>
   <div>
-      <button @click="testData">TEST</button>
+      <!--<button @click="testData">TEST</button>-->
       <div class="slidTop">
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>

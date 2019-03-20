@@ -317,12 +317,16 @@ export default {
         }
       })
     },
-    // 新增
+    // 新增 取消
     onPlanTaskCancel () {
       var that = this
       that.isDisabled = false
       that.bgCoverShow = false
-      that.formDataClear()
+      that.$emit('CreatePlanTaskCallback', 'shut')
+      that.formDataClear('form')
+    },
+    formDataClear: function (formName) {
+      this.$refs[formName].resetFields()
     },
     // 新建
     rateChange: function (rateval) {
