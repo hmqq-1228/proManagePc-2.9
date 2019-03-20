@@ -412,9 +412,9 @@ export default {
             // that.selectProjectId()
             that.getHistoryList()
           }
-        }).catch(() => {
-          // that.loading = false
         })
+      }).catch(() => {
+        // that.loading = false
       })
     },
     getTaskChildList: function (id) {
@@ -607,9 +607,9 @@ export default {
             // that.selectProjectId()
             that.getHistoryList()
           }
-        }).catch(() => {
-          // that.loading = false
         })
+      }).catch(() => {
+        // that.loading = false
       })
     },
     // 新增 点击“回复”按钮

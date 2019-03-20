@@ -173,6 +173,7 @@ export default {
       this.log(55555555)
       if (val) {
         // this.toShowDevided = val
+        this.getPlanTaskDetail()
       }
     },
     cancelBtnShow: function (val, oV) {
@@ -183,7 +184,6 @@ export default {
     },
     nodeId: function (val, oV) {
       if (val) {
-        this.getPlanTaskDetail()
         // this.getUserInfo()
       }
     }
@@ -210,7 +210,6 @@ export default {
     getPlanTaskDetail () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        this.log('任务详情999999：', res)
         if (res.code === 200) {
           that.selDateStart2 = res.data.taskStartDate
           that.selDateEnd2 = res.data.taskFinishDate
