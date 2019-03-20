@@ -571,7 +571,9 @@ export default {
             res.data.fileList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.fileList[i].realUrl + '&showName=' + res.data.fileList[i].showName
           }
           if (res.data.planOrJobList.length > 0) {
-            that.activeId = res.data.planOrJobList[0].id
+            if (!that.activeId) {
+              that.activeId = res.data.planOrJobList[0].id
+            }
           } else {
             that.activeId = ''
           }
