@@ -109,8 +109,8 @@ export default {
           that.$store.state.userId = res.data.ID
           that.$store.state.userName = res.data.Name
           that.$store.state.userLoginInfo = res.data
-          that.defImplementer.name = res.data.Name
-          that.defImplementer.id = res.data.ID
+          // that.defImplementer.name = res.data.Name
+          // that.defImplementer.id = res.data.ID
         }
       })
     },

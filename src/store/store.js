@@ -12,7 +12,7 @@ const state = {
   userId: '',
   userName: '',
   userLoginInfo: '',
-  debug: false,
+  debug: true,
   proId: '',
   navType: '',
   routerList: [],

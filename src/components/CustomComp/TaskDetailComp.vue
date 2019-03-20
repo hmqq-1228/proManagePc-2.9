@@ -20,8 +20,8 @@
         </div>
       </div>
       <div class="taskTime">
-        <el-collapse>
-          <el-collapse-item style="padding: 0 10px;">
+        <el-collapse v-model="activeNames">
+          <el-collapse-item style="padding: 0 10px;" name="1">
             <template slot="title">
               <img src="../../../static/img/time.png" alt=""><span style="margin-left: 10px;">起止时间: {{taskBasicMsg.taskStartDate}} 到 {{taskBasicMsg.taskFinishDate}}</span>
               <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum >= 0">剩余 <span style="color: #53b5ff;font-size: 16px;font-weight: bold">{{taskBasicMsg.dayNum}}</span> 天</div>
@@ -220,6 +220,7 @@ export default {
       selDateEnd2: '',
       selDateStart2: '',
       taskBasicMsg: '',
+      activeNames: '1',
       currentNodeId: '',
       commitComent: '',
       pageSize: 5,
@@ -712,7 +713,7 @@ export default {
           that.projectManager = ''
           that.commitComentT = ''
           that.$message({
-            type: 'error',
+            type: 'success',
             message: res.msg
           })
         } else {
