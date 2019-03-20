@@ -114,7 +114,7 @@ export default {
     getPlanTaskDetail () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        that.log('计划详情:', res)
+        console.log('计划详情:', res)
         if (res.code === 200) {
           that.detailform.name = res.data.name
           that.detailform.date1 = res.data.start

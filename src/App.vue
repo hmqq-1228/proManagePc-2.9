@@ -148,7 +148,7 @@ export default {
           // localStorage.setItem('navType', '商品管理')
           localStorage.setItem('generalMenuActive', '商品管理')
           // that.$store.state.generalMenuActive = '商品管理'
-          that.$router.push('/MyPro2')
+          that.$router.push('/MyPro3')
           break
         case '我的项目':
           // localStorage.setItem('generalMenuActive', '我的项目')

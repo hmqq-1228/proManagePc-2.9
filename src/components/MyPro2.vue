@@ -388,7 +388,7 @@ export default {
         // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
         type: '',
         // 项目类型 公司项目:'0' 部门项目:'1' 小组项目:'2' 个人项目:'3' 集团战略:'4' 产品研发:'5'  全部: ''
-        projectType: '',
+        projectType: '4',
         // 项目分类记录id
         projectClassifyId: '',
         pageSize: 10

@@ -1,21 +1,37 @@
 <template>
   <div class="MyPro">
     <div class="MyProCnt">
-      <div class="MyProHeader">
-        <div class="MyProHeaItem search">
+      <!--条件选择-->
+      <!--<button @click="toPro2()">pro2</button>-->
+      <div class="selectBox">
+        <!--<Select v-model="model1" style="width:200px" class="select1">-->
+        <!--<Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+        <!--</Select>-->
+        <Input v-model="value22" placeholder="default size" readonly style="width: 120px;"/>
+        <div style="display: inline-block">
+          <div @click="chooseProStyle()" style="display: inline-block"><Input v-model="getStyleVal" placeholder="请选择项目类型" readonly style="width: 200px;"/></div><Button icon="md-close" @click="clearStyle()"></Button>
+        </div>
+        <div class="MyProHeaItem search" style="display: inline-block;vertical-align: middle;margin-left: 10px;">
           <Input search enter-button @on-search="searchPro" v-model="searchProVal" placeholder="请输入要查找的项目" />
         </div>
-        <div class="MyProHeaItem addBtn"><Button type="primary" v-on:click="newAdd()">新增项目</Button></div>
       </div>
-      <!--条件选择-->
-      <div class="selectBox">
-        <Select v-model="model1" style="width:200px" class="select1">
-          <Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-        <Select v-model="model2" style="width:200px">
-          <Option v-for="item in proTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-      </div>
+      <el-dialog title="产品研发" :visible.sync="dialogFormVisible2" width="35%">
+        <div class="showImg">
+          <el-tree
+            :data="data22"
+            show-checkbox
+            @check="changeState2"
+            node-key="id"
+            ref="treeForm"
+            :check-strictly="true"
+            @check-change="handleClick2"
+            :props="defaultProps2">
+          </el-tree>
+        </div>
+        <div style="text-align: center;margin: 40px 0">
+          <el-button type="primary" :disabled="disabledStyle" @click="getPathProject2()">确定选择</el-button>
+        </div>
+      </el-dialog>
       <!--tabs 切换-->
       <div class="tabsTit">
         <Tabs v-model="statusVal">
@@ -46,9 +62,8 @@
                 <span class="demo-Circle-inner" v-if="item.proportion >= 80" style="font-size:18px;color: #13ce66;">{{item.proportion}}%</span>
               </i-circle>
             </div>
-            <div style="text-align: right; padding-right: 30px;">
+            <div style="text-align: right; padding-right: 50px;">
               <Button size="small" style="margin-left: 15px;" @click="responsePro(item.projectUID)">回复</Button>
-              <Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID)">删除</Button>
             </div>
             <div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
           </div>
@@ -251,13 +266,23 @@
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import FileUploadComp from './FileUploadComp.vue'
 export default {
-  name: 'MyPro',
+  name: 'MyPro3',
   components: {
     FileUploadComp,
     CommentLogs
   },
   data () {
     return {
+      num: 1,
+      value22: '产品研发',
+      getStyleVal: '',
+      specificPath2: '',
+      specificPathId2: '',
+      disabledStyle: true,
+      defaultProps2: {
+        children: 'children',
+        label: 'label'
+      },
       commentTotalNum: 0,
       commentPreviewUrl1: '',
       dialogShowImg1: false,
@@ -294,6 +319,10 @@ export default {
       projectPathId: '',
       // 新增 对话框 产品研发
       dialogFormVisible: false,
+      data22: [],
+      // 产品研发 显示具体类型
+      // 新增 对话框 产品研发
+      dialogFormVisible2: false,
       // 新增
       totalData: 0,
       // 新增
@@ -384,7 +413,7 @@ export default {
         // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
         type: '',
         // 项目类型 公司项目:'0' 部门项目:'1' 小组项目:'2' 个人项目:'3' 集团战略:'4' 产品研发:'5'  全部: ''
-        projectType: '',
+        projectType: '4',
         // 项目分类记录id
         projectClassifyId: '',
         pageSize: 10
@@ -454,8 +483,19 @@ export default {
         this.butnDisabled = true
       }
     },
+    specificPathId2: function (val, Oval) {
+      if (val) {
+        this.disabledStyle = false
+      }
+    },
     pageNum: function (val, old) {
       this.myProjectViewPayload.pageNum = val
+      this.queryMyProjectView()
+    },
+    // 新增搜索项目
+    searchPro: function (iptName) {
+      this.log('iptName:', iptName)
+      this.myProjectViewPayload.projectName = iptName
       this.queryMyProjectView()
     },
     searchProVal: function (val, old) {
@@ -496,6 +536,49 @@ export default {
     }
   },
   methods: {
+    toPro2: function () {
+      this.$router.push('/MyPro2')
+    },
+    chooseProStyle: function () {
+      var that = this
+      that.dialogFormVisible2 = true
+      that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
+        // that.log('getUserInfo', res)
+        if (res.code === 200) {
+          that.data22 = res.data
+        }
+      })
+    },
+    handleClick2: function (data, checked, node) {
+      var that = this
+      that.num++
+      if (that.num % 2 === 0) {
+        if (checked) {
+          that.$refs.treeForm.setCheckedNodes([])
+          that.$refs.treeForm.setCheckedNodes([data])
+        } else {
+          that.$refs.treeForm.setCheckedNodes([])
+        }
+      }
+    },
+    changeState2: function (data, checked, node) {
+      console.log('data', data)
+      this.specificPath2 = data.specificPath
+      this.specificPathId2 = data.id
+    },
+    getPathProject2: function () {
+      console.log(this.specificPathId2, this.specificPath2)
+      this.dialogFormVisible2 = false
+      this.getStyleVal = this.specificPath2
+      this.myProjectViewPayload.projectClassifyId = this.specificPathId2
+      this.queryMyProjectView()
+      this.disabledStyle = true
+    },
+    clearStyle: function () {
+      this.getStyleVal = ''
+      this.myProjectViewPayload.projectClassifyId = this.getStyleVal
+      this.queryMyProjectView()
+    },
     // 预览
     GetFilePreData (obj) {
       this.log('obj::', obj)
@@ -731,7 +814,7 @@ export default {
     // 新建 点击项目列表项 前往项目详请
     toProDetail: function (id) {
       this.$store.state.proId = id
-      this.$router.push('/ProDetail')
+      this.$router.push('/ProDetail2')
     },
     /**
      *
