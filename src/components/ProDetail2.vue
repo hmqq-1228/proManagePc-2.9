@@ -210,15 +210,15 @@
       </div>
     </Drawer>
     <!--新增 添加计划或者任务 start-->
-    <Drawer class="drawerScroll" title="计划表单2" :closable="false" width="40%" v-model="bgCoverShow">
+    <Drawer class="drawerScroll" title="计划表单" :closable="false" width="40%" v-model="bgCoverShow">
       <component v-bind:is="compArr.CreatePlanOrTask" v-bind:DrawerOpen="bgCoverShow" fileFormId="CreatePlanTask" v-on:CreatePlanTaskCallback="CreatePlanTaskCallbackFuc" :nodeId="currentNodeId"></component>
     </Drawer>
     <!--新增 抽屉 编辑计划 修改计划 start-->
-    <Drawer class="drawerScroll" title="编辑计划4" :closable="false" width="40%" v-model="planEditShow">
+    <Drawer class="drawerScroll" title="编辑计划" :closable="false" width="40%" v-model="planEditShow">
       <component v-bind:is="compArr.ModifyPlan" v-bind:DrawerOpen="planEditShow" fileFormId="ModifyPlan" v-on:ModifyPlanCallback="ModifyPlanCallbackFuc" :nodeId="currentNodeId"></component>
     </Drawer>
     <!--修改任务 编辑任务 任务 修改-->
-    <Drawer class="drawerScroll" title="修改任务3" :closable="false" width="40%" v-model="modifyTaskVisible">
+    <Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">
       <!-- 修改任务 编辑任务 引入组件 -->
       <component v-bind:is="compArr.ModifyTask"
                  v-bind:DrawerOpen="modifyTaskVisible"
@@ -573,7 +573,9 @@ export default {
             res.data.fileList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.fileList[i].realUrl + '&showName=' + res.data.fileList[i].showName
           }
           if (res.data.planOrJobList.length > 0) {
-            that.activeId = res.data.planOrJobList[0].id
+            if (!that.activeId) {
+              that.activeId = res.data.planOrJobList[0].id
+            }
           } else {
             that.activeId = ''
           }
@@ -595,9 +597,6 @@ export default {
     selectProjectId: function (id, type, e) {
       var that = this
       that.data5 = []
-      if (id) {
-        this.currentNodeId = id
-      }
       // if (id.substring(0, 1) === 'J') {
       //   // that.TaskDetailCompShow = true
       // } else {
@@ -608,6 +607,10 @@ export default {
         if (e) {
           var obj = e.currentTarget
           $(obj).addClass('active').siblings().removeClass('active')
+        }
+      } else {
+        if (id) {
+          this.currentNodeId = id
         }
       }
       that.ajax('/myProject/getPlanOrTaskById', {id: that.activeId}).then(res => {
@@ -627,6 +630,7 @@ export default {
     showDetailPage: function (data) {
       var that = this
       this.currentNodeId = data.id
+      console.log('currentId888:', this.currentNodeId)
       if (data.type === '2') {
         that.TaskDetailCompShow = true
         // that.taskId = data.id

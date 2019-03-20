@@ -98,14 +98,17 @@ export default {
       }
     },
     addPlanOrTaskSuc: function (val, oV) {
+      console.log('nodeId888:', this.nodeId)
       if (val) {
         this.getNextPlanTask(this.nodeId)
+        this.toPlanDetail(this.nodeId)
       }
     }
   },
   methods: {
     toPlanDetail: function (id) {
       var that = this
+      console.log('9999999999999999999999:', id)
       that.ajax('/myProject/getPlanOrTaskDetail', {id: id}).then(res => {
         // console.log('res', res)
         if (res.code === 200) {
