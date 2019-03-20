@@ -125,12 +125,14 @@
     <!-- Part02 end -->
     <!-- Part05 start 抽屉 任务详情 -->
     <Drawer title="任务详情" class="drawerScroll" :closable="false" width="750" v-model="TaskDetailCompShow">
-      <component v-bind:is="compArr.TaskDetailComp"
+      <component v-bind:is="compArr.TaskDetailComp2"
                  v-bind:taskDrawerOpen="TaskDetailCompShow"
                  v-bind:modifyTaskRes="modifyTaskRes"
                  v-on:FilePreEmit="GetFilePreData"
                  v-on:showEditForm="showEditFormFuc"
+                 v-on:toPlanDetail="toPlanDetailFuc"
                  v-on:ActionResThrow="ActionResThrowFuc"
+                 v-on:TaskDelCallback="TaskDelCallbackFuc"
                  :nodeId="currentNodeId">
       </component>
     </Drawer>
@@ -256,7 +258,7 @@ import ModifyTask from './CustomComp/ModifyTask.vue'
 import TaskDistribute from './CustomComp/TaskDistribute.vue'
 import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 import MemberComp from './CustomComp/MemberComp.vue'
-import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
+import TaskDetailComp2 from './CustomComp/TaskDetailComp2.vue'
 import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 // DrawerComp
 export default {
@@ -270,7 +272,7 @@ export default {
     TaskDistribute,
     ProBaseInfo,
     MemberComp,
-    TaskDetailComp,
+    TaskDetailComp2,
     PlanDetailComp
   },
   data () {
@@ -285,7 +287,7 @@ export default {
         TaskDistribute: 'TaskDistribute',
         ProBaseInfo: 'ProBaseInfo',
         MemberComp: 'MemberComp',
-        TaskDetailComp: 'TaskDetailComp',
+        TaskDetailComp2: 'TaskDetailComp2',
         PlanDetailComp: 'PlanDetailComp'
       },
       // 接收到的组件数组 新组件
@@ -591,12 +593,14 @@ export default {
     selectProjectId: function (id, type, e) {
       var that = this
       that.data5 = []
-      this.currentNodeId = id
-      if (id.substring(0, 1) === 'J') {
-        // that.TaskDetailCompShow = true
-      } else {
-        // that.value444 = true
+      if (id) {
+        this.currentNodeId = id
       }
+      // if (id.substring(0, 1) === 'J') {
+      //   // that.TaskDetailCompShow = true
+      // } else {
+      //   // that.value444 = true
+      // }
       if (type === 'QueryFirstLevelChild') {
         that.activeId = id
         if (e) {
@@ -773,12 +777,34 @@ export default {
       that.value444 = false
       that.TaskDetailCompShow = true
     },
+    toPlanDetailFuc: function (id) {
+      var that = this
+      that.currentNodeId = id
+      that.value444 = true
+      that.TaskDetailCompShow = false
+    },
     // 任务分解 返回结果处理
     PlanDelCallbackFuc: function (res) {
       var that = this
       if (res.code === 200) {
         that.selectProjectId()
         that.value444 = false
+        that.$message({
+          message: '删除成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    TaskDelCallbackFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.selectProjectId()
+        that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
           type: 'success'

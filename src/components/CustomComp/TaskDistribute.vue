@@ -207,6 +207,7 @@ export default {
     getPlanTaskDetail () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+        this.log('任务详情999999：', res)
         if (res.code === 200) {
           that.selDateStart2 = res.data.taskStartDate
           that.selDateEnd2 = res.data.taskFinishDate
@@ -220,7 +221,6 @@ export default {
             return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
           }
         }
-        this.log('任务详情999999：', res)
       })
     },
     // 附件上传 组件 拼接附件上传的id为字符串
