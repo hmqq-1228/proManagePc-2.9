@@ -591,6 +591,7 @@ export default {
     selectProjectId: function (id, type, e) {
       var that = this
       that.data5 = []
+     
       this.currentNodeId = id
       // if (id.substring(0, 1) === 'J') {
       //   // that.TaskDetailCompShow = true
@@ -920,6 +921,7 @@ export default {
     // 编辑任务 修改任务
     ModifyTaskCallbackFuc: function (res) {
       var that = this
+      this.log('ModifyTaskCallbackFuc:', res)
       if (res.code === 200) {
         that.modifyTaskVisible = false
         that.queryProDetail()
@@ -945,7 +947,7 @@ export default {
         case 'transferTask':
           // 任务移交
           that.TaskDetailCompShow = false
-          that.selectProjectId()
+          that.selectProjectId(that.activeId)
           break
         case 'finishTask':
           // 任务完成
