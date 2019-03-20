@@ -592,11 +592,11 @@ export default {
       var that = this
       that.data5 = []
       this.currentNodeId = id
-      if (id.substring(0, 1) === 'J') {
-        // that.TaskDetailCompShow = true
-      } else {
-        // that.value444 = true
-      }
+      // if (id.substring(0, 1) === 'J') {
+      //   // that.TaskDetailCompShow = true
+      // } else {
+      //   // that.value444 = true
+      // }
       if (type === 'QueryFirstLevelChild') {
         that.activeId = id
         if (e) {

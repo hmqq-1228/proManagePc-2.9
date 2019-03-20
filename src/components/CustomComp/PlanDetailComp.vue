@@ -126,6 +126,8 @@ export default {
     // 任务分解 返回结果处理
     TaskDistributeCallbackFuc: function (res) {
       var that = this
+      //在计划详情添加子任务后刷新树状结构
+      that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       if (res.code === 200) {
         that.getNextPlanTask(that.currentNodeId)
         that.$message({
