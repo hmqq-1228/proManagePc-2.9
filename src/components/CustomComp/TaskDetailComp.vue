@@ -80,7 +80,7 @@
       </div>
       <!-- 任务分解 引入组件-->
     <!--v-bind:TaskDistributeShow="toShowDevided"-->
-      <div  v-if="toShowDevided">
+      <div v-if="toShowDevided">
         <component v-bind:is="compArr.TaskDistribute"
                    fileFormId="TaskDistribute"
                    v-on:DistributeFormVisible="DistributeFormVisibleFuc"
@@ -401,9 +401,9 @@ export default {
             // that.selectProjectId()
             that.getHistoryList()
           }
-        }).catch(() => {
-          // that.loading = false
         })
+      }).catch(() => {
+        // that.loading = false
       })
     },
     getTaskChildList: function (id) {
@@ -595,9 +595,9 @@ export default {
             // that.selectProjectId()
             that.getHistoryList()
           }
-        }).catch(() => {
-          // that.loading = false
         })
+      }).catch(() => {
+        // that.loading = false
       })
     },
     // 新增 点击“回复”按钮
