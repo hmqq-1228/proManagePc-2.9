@@ -54,7 +54,7 @@
           </div>
           <div class="paiTaskIptRight">
             <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
-            <div class="paiTaskIptRightCnt" v-on:click="selectUser2($event)">
+            <div class="paiTaskIptRightCnt" style="max-width: 140px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
               <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
             </div>
