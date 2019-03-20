@@ -521,6 +521,7 @@ export default {
     margin-top: -1px;
     background-color: #fff;
     transition: height 0.3s;
+    z-index:2;
   }
   .rateBox{
     padding: 12px;
@@ -573,6 +574,7 @@ export default {
     position: absolute;
     border-radius: 6px;
     box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+    z-index:2
   }
   .selectUserBtn{
     text-align: center;
