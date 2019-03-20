@@ -1,5 +1,6 @@
 <template>
   <div>
+      <button @click="testData">TEST</button>
       <div class="slidTop">
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
@@ -80,8 +81,10 @@
       </div>
       <!-- 任务分解 引入组件-->
     <!--v-bind:TaskDistributeShow="toShowDevided"-->
-      <div  v-if="toShowDevided">
+    <!--v-bind:TaskDistributeShow="rilegou" tetstt -->
+      <div v-show="toShowDevided2">
         <component v-bind:is="compArr.TaskDistribute"
+                   v-bind:TaskDistributeShow="testtest"
                    fileFormId="TaskDistribute"
                    v-on:DistributeFormVisible="DistributeFormVisibleFuc"
                    v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
@@ -232,6 +235,9 @@ export default {
       totalNum: 0,
       showFileUrl: '',
       toShowDevided: false,
+      toShowDevided2: false,
+      rilegou: false,
+      testtest: 1,
       modifyTaskVisible: false,
       taskId: [],
       commentList: [],
@@ -311,6 +317,11 @@ export default {
     }
   },
   methods: {
+    testData: function () {
+      // var that = this
+      this.log('testtest:', this.testtest)
+      this.log('rilegou:', this.rilegou)
+    },
     toPlanDetail: function (id) {
       this.$emit('toPlanDetail', id)
     },
@@ -550,7 +561,8 @@ export default {
     },
     taskToDevided: function (id) {
       var that = this
-      that.toShowDevided = true
+      that.toShowDevided2 = true
+      that.testtest = 2
       that.currentNodeId = id
       // that.taskRelationShow2 = false
     },

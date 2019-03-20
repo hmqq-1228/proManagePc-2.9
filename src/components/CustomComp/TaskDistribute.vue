@@ -109,7 +109,7 @@ export default {
       IsClear: false,
       // 附件上传 组件 接收到的组件数组 新组件
       FileUploadArr: [],
-      toShowDevided: false,
+      // toShowDevided: false,
       loading32: false,
       selectUserDiaShow2: false,
       // 任务分解
@@ -167,9 +167,12 @@ export default {
     }
   },
   watch: {
-    TaskDistributeShow (val, old) {
+    TaskDistributeShow: function (val, old) {
+      this.log('val:', val)
+      this.log('old:', old)
+      this.log(55555555)
       if (val) {
-        this.toShowDevided = val
+        // this.toShowDevided = val
       }
     },
     cancelBtnShow: function (val, oV) {
@@ -181,7 +184,7 @@ export default {
     nodeId: function (val, oV) {
       if (val) {
         this.getPlanTaskDetail()
-        this.getUserInfo()
+        // this.getUserInfo()
       }
     }
   },
@@ -410,7 +413,7 @@ export default {
     cancelDevide: function () {
       var that = this
       that.taskRelationShow2 = false
-      that.toShowDevided = false
+      // that.toShowDevided = false
       that.$emit('DistributeFormVisible', false)
       that.clearDynamicsForm2()
     },
