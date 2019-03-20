@@ -134,7 +134,7 @@
           </div>
           <!---->
           <div class="tabsCntResponse">
-            <div class="responseItem" v-for="(commonItem, index9) in taskItem.commentPage.list" :key="commonItem.id + '-' + index9">
+            <div class="responseItem" v-for="(commonItem, index9) in taskItem.commentPage?taskItem.commentPage.list:[]" :key="commonItem.id + '-' + index9">
               <div class="responseHeadPicBox">
                 <div class="responseHeadPic">{{commonItem.customer_name?commonItem.customer_name.substring(0,1):'某'}}</div>
               </div>
@@ -1110,9 +1110,10 @@ export default {
       var that = this
       that.loading = true
       this.ajax('/community/getTaskCommunityList', that.TaskCommunityListPayload).then(res => {
-        // that.log('getTaskCommunityList:', res)
+        that.log('getTaskCommunityList:', res)
         if (res.code === 200) {
           this.taskTotalRow = res.data.totalRow
+          this.log('334455:', res.data.list)
           for (var i = 0; i < res.data.list.length; i++) {
             if (res.data.list[i].status === '0') {
               res.data.list[i].tagStyle = 'noStart'
