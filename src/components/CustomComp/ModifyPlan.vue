@@ -95,16 +95,24 @@ export default {
           that.editPlanPayload.name = this.detailform.name
           that.editPlanPayload.start = this.detailform.date1
           that.editPlanPayload.finish = this.detailform.date2
+          var st = new Date(this.detailform.date1).getTime()
+          var et = new Date(this.detailform.date2).getTime()
           that.editPlanPayload.description = this.detailform.description
-          that.ajax('/myProject/editPlan', that.editPlanPayload).then(res => {
-            that.log('editPlan:', res)
-            that.$emit('ModifyPlanCallback', res)
-            if (res.code === 200) {
-              that.formClear()
-            } else {
-              that.loading = false
-            }
-          })
+          if (st < et) {
+            that.ajax('/myProject/editPlan', that.editPlanPayload).then(res => {
+              that.log('editPlan:', res)
+              that.$emit('ModifyPlanCallback', res)
+              if (res.code === 200) {
+                that.$message.success(res.msg)
+                that.formClear()
+              } else {
+                that.loading = false
+                that.$message.error(res.msg)
+              }
+            })
+          } else {
+            that.$message.warning('开始时间不能大于结束时间')
+          }
         }
       })
     },

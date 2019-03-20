@@ -4,6 +4,7 @@
       <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
         <p class="time">{{comment.oTime}}</p>
         <p class="content" v-bind:title="comment.oContent">{{comment.oTitle?comment.oTitle:''}}<span class="listColor" v-if="comment.oName">{{'【' + comment.oName + '】, '}}</span>{{comment.oContent}}</p>
+        <p class="content" style="background-color: #f5f8fa;" v-if="comment.comment" v-bind:title="comment.comment">评论: {{comment.comment}}</p>
         <span v-for="(com, index2) in comment.uploads" v-bind:key="index2">
           <p class="content" v-if="com.showName">附件:
             <span style="display: inline-block"> {{com.showName}}</span>

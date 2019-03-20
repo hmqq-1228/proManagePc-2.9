@@ -17,7 +17,6 @@
                                   format="yyyy-MM-dd HH:mm:ss"
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
-                                  @focus="dateLimit()"
                                   v-model="form.date1" style="width: 300px;"
                   ></el-date-picker>
                 </el-col>
@@ -29,7 +28,6 @@
                                   format="yyyy-MM-dd HH:mm:ss"
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
-                                  @focus="dateLimit()"
                                   v-model="form.date2" style="width: 300px;"
                   ></el-date-picker>
                 </el-col>
@@ -77,7 +75,6 @@
                                   format="yyyy-MM-dd HH:mm:ss"
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
-                                  @focus="dateLimit()"
                                   v-model="addTaskForm.date1" style="width: 300px;"
                   >
                   </el-date-picker>
@@ -90,7 +87,6 @@
                                   format="yyyy-MM-dd HH:mm:ss"
                                   value-format="yyyy-MM-dd HH:mm:ss"
                                   placeholder="选择日期"
-                                  @focus="dateLimit()"
                                   v-model="addTaskForm.date2" style="width: 300px;"
                   ></el-date-picker>
                 </el-col>
@@ -305,15 +301,22 @@ export default {
           that.addPlanPayload.name = that.form.name
           that.addPlanPayload.start = that.form.date1
           that.addPlanPayload.finish = that.form.date2
+          var st = new Date(that.form.date1).getTime()
+          var et = new Date(that.form.date2).getTime()
           that.addPlanPayload.description = that.form.description
-          that.ajax('/myProject/addPlan', that.addPlanPayload).then(res => {
-            that.$emit('CreatePlanTaskCallback', res)
-            if (res.code === 200) {
-              that.formClear()
-            } else {
-              // j
-            }
-          })
+          if (st < et) {
+            that.ajax('/myProject/addPlan', that.addPlanPayload).then(res => {
+              that.$emit('CreatePlanTaskCallback', res)
+              if (res.code === 200) {
+                that.formClear()
+                that.$message.success(res.msg)
+              } else {
+                that.$message.warning(res.msg)
+              }
+            })
+          } else {
+            that.$message.warning('开始时间不能大于结束时间')
+          }
         }
       })
     },
@@ -367,19 +370,24 @@ export default {
             that.addTaskPayload.taskFinishDate = that.addTaskForm.date2
             that.addTaskPayload.description = that.addTaskForm.description
             that.addTaskPayload.attachmentId = that.SetFileIdStr()
-            that.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
-              that.$emit('CreatePlanTaskCallback', res)
-              that.submitKK = true
-              if (res.code === 200) {
-                // 告知附件子组件清空
-                that.IsClear = true
-                that.formClear()
-              } else {
-                // that.$message({
-                //   message: res.msg
-                // })
-              }
-            })
+            var st = new Date(that.addTaskForm.date1).getTime()
+            var et = new Date(that.addTaskForm.date2).getTime()
+            if (st < et) {
+              that.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
+                that.$emit('CreatePlanTaskCallback', res)
+                that.submitKK = true
+                if (res.code === 200) {
+                  // 告知附件子组件清空
+                  that.$message.success(res.msg)
+                  that.IsClear = true
+                  that.formClear()
+                } else {
+                  that.$message.error(res.msg)
+                }
+              })
+            } else {
+              that.$message.warning('开始时间不能大于结束时间')
+            }
           }
         })
       }
