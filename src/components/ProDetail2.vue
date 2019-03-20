@@ -890,19 +890,23 @@ export default {
     // 新建计划 新建任务 引入组件 返回
     CreatePlanTaskCallbackFuc: function (res) {
       var that = this
-      if (res.code === 200) {
+      if (res === 'shut') {
         that.bgCoverShow = false
-        that.addPlanOrTaskFlag = true
-        that.queryProDetail()
-        that.$message({
-          message: '创建成功！',
-          type: 'success'
-        })
       } else {
-        that.$message({
-          message: res.msg,
-          type: 'warning'
-        })
+        if (res.code === 200) {
+          that.bgCoverShow = false
+          that.addPlanOrTaskFlag = true
+          that.queryProDetail()
+          that.$message({
+            message: '创建成功！',
+            type: 'success'
+          })
+        } else {
+          that.$message({
+            message: res.msg,
+            type: 'warning'
+          })
+        }
       }
     },
     // 编辑任务 修改任务
@@ -936,18 +940,22 @@ export default {
     // 编辑计划 修改计划
     ModifyPlanCallbackFuc: function (res) {
       var that = this
-      if (res.code === 200) {
+      if (res === 'shut') {
         that.planEditShow = false
-        that.queryProDetail()
-        that.$message({
-          message: '修改成功！',
-          type: 'success'
-        })
       } else {
-        that.$message({
-          message: res.msg,
-          type: 'warning'
-        })
+        if (res.code === 200) {
+          that.planEditShow = false
+          that.queryProDetail()
+          that.$message({
+            message: '修改成功！',
+            type: 'success'
+          })
+        } else {
+          that.$message({
+            message: res.msg,
+            type: 'warning'
+          })
+        }
       }
     },
     // 编辑任务 修改任务
