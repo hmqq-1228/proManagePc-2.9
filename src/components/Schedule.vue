@@ -817,12 +817,16 @@ export default {
             that.testTop = $(obj).offset().top
             that.testLeft = $(obj).offset().left
             that.detailLeft = $(obj).parents('.taskItemMoreList').position().left - 380
+            that.log('top:', typeof $(obj).position().top)
+            that.detailTop = $(obj).position().top + 2000
+            that.log('that.detailTop:', that.detailTop)
             that.detailArrowLeft = 395
           } else {
             that.detailLeft = $(obj).offset().left + 0
             that.detailArrowLeft = -5
           }
           if ($(obj).offset().top > 400) {
+            that.log(222)
             // that.testTop = $(obj).parents('.taskItemMoreList').position().top
             that.detailTop = $(obj).offset().top - 400
             that.detailArrowTop = 165

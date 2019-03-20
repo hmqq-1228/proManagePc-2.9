@@ -71,8 +71,8 @@ export default {
         id: '',
         jobName: '',
         jobLevel: 2,
-        taskStartDate: '2018-10-10 00:00:00',
-        taskFinishDate: '2018-10-10 00:00:00',
+        taskStartDate: '2019-03-10 00:00:00',
+        taskFinishDate: '2019-05-10 00:00:00',
         description: ''
       },
       editTaskPayload: {
@@ -186,7 +186,7 @@ export default {
           that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
             // that.log('editTask:', res)
             that.$emit('ModifyTaskCallback', res)
-            that.$emit('ModifyTaskCallback', res)
+            // that.$emit('ModifyTaskCallback', res)
             if (res.code === 200) {
               that.$message({
                 message: '保存成功！',
