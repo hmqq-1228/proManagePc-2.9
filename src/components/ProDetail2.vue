@@ -141,6 +141,7 @@
       <component v-bind:is="compArr.PlanDetailComp"
                  v-bind:taskDrawerOpen="value444"
                  :nodeId="currentNodeId"
+                 v-bind:addPlanOrTaskSuc="addPlanOrTaskFlag"
                  v-on:ActionResThrow="ActionResThrowFuc"
                  v-on:addChildMsg="addChildMsgFuc"
                  v-on:toChildMsg="toChildMsgFuc"
@@ -290,6 +291,7 @@ export default {
         TaskDetailComp2: 'TaskDetailComp2',
         PlanDetailComp: 'PlanDetailComp'
       },
+      addPlanOrTaskFlag: false,
       // 接收到的组件数组 新组件
       FileUploadArr: [],
       // 是否让子组件清空文件 新组件
@@ -886,6 +888,7 @@ export default {
       var that = this
       if (res.code === 200) {
         that.bgCoverShow = false
+        that.addPlanOrTaskFlag = true
         that.queryProDetail()
         that.$message({
           message: '创建成功！',

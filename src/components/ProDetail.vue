@@ -132,6 +132,7 @@
                  v-on:toPlanDetail="toPlanDetailFuc"
                  v-on:showEditForm="showEditFormFuc"
                  v-on:ActionResThrow="ActionResThrowFuc"
+                 v-on:TaskDelCallback="TaskDelCallbackFuc"
                  :nodeId="currentNodeId">
       </component>
     </Drawer>
@@ -782,12 +783,28 @@ export default {
       that.value444 = true
       that.TaskDetailCompShow = false
     },
-    // 任务分解 返回结果处理
+    // 计划删除 返回结果处理
     PlanDelCallbackFuc: function (res) {
       var that = this
       if (res.code === 200) {
         that.selectProjectId()
         that.value444 = false
+        that.$message({
+          message: '删除成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    TaskDelCallbackFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.selectProjectId()
+        that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
           type: 'success'

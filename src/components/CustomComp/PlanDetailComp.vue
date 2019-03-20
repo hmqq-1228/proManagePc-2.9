@@ -74,7 +74,7 @@
 import AddNewTask from './AddNewTask.vue'
 export default {
   name: 'PlanDetailComp',
-  props: ['nodeId'],
+  props: ['nodeId', 'addPlanOrTaskSuc'],
   components: {
     AddNewTask
   },
@@ -95,6 +95,11 @@ export default {
       if (val) {
         this.currentNodeId = val
         this.toPlanDetail(this.nodeId)
+      }
+    },
+    addPlanOrTaskSuc: function (val, oV) {
+      if (val) {
+        this.getNextPlanTask(this.nodeId)
       }
     }
   },
