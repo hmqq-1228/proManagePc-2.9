@@ -594,12 +594,11 @@ export default {
       if (id) {
         this.currentNodeId = id
       }
-      that.log('移交测试：', this.currentNodeId)
-      if (this.currentNodeId.substring(0, 1) === 'J') {
-        // that.TaskDetailCompShow = true
-      } else {
-        // that.value444 = true
-      }
+      // if (id.substring(0, 1) === 'J') {
+      //   // that.TaskDetailCompShow = true
+      // } else {
+      //   // that.value444 = true
+      // }
       if (type === 'QueryFirstLevelChild') {
         that.activeId = id
         if (e) {
