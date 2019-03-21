@@ -291,7 +291,7 @@ export default {
       }
     },
     projectBelong: function (newQuestion, oldQuestion) {
-      this.log('projectBelong:', newQuestion)
+      // this.log('projectBelong:', newQuestion)
       this.getProjectTime(newQuestion)
     },
     formData: function (newQuestion, oldQuestion) {
@@ -370,7 +370,7 @@ export default {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          that.log('getUserInfo', res)
+          // that.log('getUserInfo', res)
           // var defaultUser = res.data.Name + '(' + res.data.jName + ')'
           // var defaultUser1 = res.data.Name + '-' + res.data.ID
           // this.taskForm.value8.push(defaultUser)
@@ -447,7 +447,7 @@ export default {
       var that = this
       that.ajax('/community/getAllProject', {}).then(res => {
         if (res.code === 200) {
-          this.log('getAllProject:', res)
+          // this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID
           this.options = res.data
           this.getProjectTime(this.projectBelong)
@@ -458,7 +458,7 @@ export default {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: id}).then(res => {
         if (res.code === 200) {
-          console.log('projectBelong', res)
+          // that.log('projectBelong', res)
           var st = res.data.startDate.split(' ')[0] + ' 00:00:00'
           var et = res.data.endDate
           var sT = new Date(st)
@@ -578,7 +578,7 @@ export default {
       // this.taskRelationShow = false
     },
     handleClick (tab, event) {
-      console.log(tab, event)
+      // this.log(tab, event)
     },
     // 创建任务 提交
     depSub: function () {
@@ -660,8 +660,8 @@ export default {
     },
     // 派任务（发动态）清空表单
     clearDynamicsForm: function () {
-      console.log('time', this.startTimeFirst)
-      console.log('time2', this.endTimeFirst)
+      // this.log('time', this.startTimeFirst)
+      // this.log('time2', this.endTimeFirst)
       this.taskNameText = ''
       this.CommunityTaskPayload.jobName = ''
       this.selDateStart = this.startTimeFirst
@@ -680,7 +680,7 @@ export default {
     },
     remoteMethod (query) {
       var that = this
-      this.log('query:', query)
+      // this.log('query:', query)
       if (query !== '') {
         this.loading2 = true
         that.moreUserSelectPayload.projectManager = query
@@ -698,7 +698,7 @@ export default {
     // 点击确定
     selectUserClick: function () {
       this.selectUserDiaShow = false
-      this.log(this.taskForm.value9)
+      // this.log(this.taskForm.value9)
     },
     // 监听文件选择
     fileChange: function (file) {
@@ -708,7 +708,7 @@ export default {
       if (isfile) {
         that.addMarkInfo()
       }
-      this.log('change了', file)
+      // this.log('change了', file)
     },
     // 文件上传
     addMarkInfo () {
@@ -730,7 +730,7 @@ export default {
             withCredentials: true
           }
         }).then(function (data) {
-          that.log('upload:', data)
+          // that.log('upload:', data)
           if (data.code === 200) {
             var obj = {
               attachmentId: data.data.attachmentId,

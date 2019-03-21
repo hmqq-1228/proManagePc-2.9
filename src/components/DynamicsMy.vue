@@ -134,7 +134,7 @@
           </div>
           <!---->
           <div class="tabsCntResponse">
-            <div class="responseItem" v-for="(commonItem, index9) in taskItem.commentPage.list" :key="commonItem.id + '-' + index9">
+            <div class="responseItem" v-for="(commonItem, index9) in taskItem.commentPage?taskItem.commentPage.list:[]" :key="commonItem.id + '-' + index9">
               <div class="responseHeadPicBox">
                 <div class="responseHeadPic">{{commonItem.customer_name?commonItem.customer_name.substring(0,1):'某'}}</div>
               </div>
@@ -941,13 +941,13 @@ export default {
     },
     toProject: function (id) {
       this.$store.state.proId = id
-      this.$router.push('/ProEdit')
+      this.$router.push('/ProDetail')
     },
     getUserInfo: function () {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          that.log('getUserInfo', res)
+          // that.log('getUserInfo', res)
           that.defImplementer.name = res.data.Name
           that.defImplementer.id = res.data.ID
         }
@@ -1113,6 +1113,7 @@ export default {
         that.log('getTaskCommunityList:', res)
         if (res.code === 200) {
           this.taskTotalRow = res.data.totalRow
+          this.log('334455:', res.data.list)
           for (var i = 0; i < res.data.list.length; i++) {
             if (res.data.list[i].status === '0') {
               res.data.list[i].tagStyle = 'noStart'
@@ -1631,7 +1632,7 @@ export default {
       }).then(() => {
         that.ajax('/myTask/startTask', {taskId: id}).then(res => {
           if (res.code === 200) {
-            that.log('dealTask:', res)
+            // that.log('dealTask:', res)
             that.toDetail(id)
             that.getTaskList()
             that.getHistoryList()

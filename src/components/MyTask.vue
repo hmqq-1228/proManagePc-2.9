@@ -451,7 +451,7 @@
       <div class="cannetProject1">
         <div style="display: inline-block"><img src="../../static/img/taskList.png" alt=""><span>子任务<span style="color: #409EFF">({{childTaskList.length}})</span></span></div>
       </div>
-      <div class="taskListChild">
+      <div class="taskListChild" v-loading="childLoading">
         <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
           <div class="childTaskName" :title="childTask.jobName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
           <div class="childTaskMsg">
@@ -498,13 +498,13 @@
           <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
               <p class="time">{{comment.createDate}}</p>
               <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
-            <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
-              <p class="content" v-if="com.showName">附件:
-                <span style="display: inline-block"> {{com.showName}}</span>
-                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(com.previewUrl)">预览</span>
-                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
-              </p>
-            </span>
+              <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
+                <p class="content" v-if="com.showName">附件:
+                  <span style="display: inline-block"> {{com.showName}}</span>
+                  <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(com.previewUrl)">预览</span>
+                  <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+                </p>
+              </span>
           </Timeline-item>
         </Timeline>
         <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
@@ -608,6 +608,7 @@ export default {
     return {
       taskId: this.$route.params.TaskId,
       showDownMsg: false,
+      childLoading: false,
       endTimeFirst: '',
       startTimeFirst: '',
       fileListEdit: [],
@@ -975,20 +976,20 @@ export default {
     //   this.$store.state.DevelopmentTab = newQuestion
     // },
     selDateStart: function (newQuestion, oldQuestion) {
-      this.log('newQuestion:', newQuestion)
+      // this.log('newQuestion:', newQuestion)
     },
     selDateStart2: function (newQuestion, oldQuestion) {
-      this.log('newQuestion:', newQuestion)
+      // this.log('newQuestion:', newQuestion)
     },
     projectBelong: function (newQuestion, oldQuestion) {
-      this.log('projectBelong:', newQuestion)
+      // this.log('projectBelong:', newQuestion)
       this.getProjectTime(newQuestion)
     },
     formData: function (newQuestion, oldQuestion) {
-      this.log('新的newQuestion:', newQuestion)
+      // this.log('新的newQuestion:', newQuestion)
     },
     formData2: function (newQuestion, oldQuestion) {
-      this.log('新的newQuestion:', newQuestion)
+      // this.log('新的newQuestion:', newQuestion)
     },
     levelValue: function (newQuestion, oldQuestion) {
       this.CommunityTaskPayload.jobLevel = newQuestion.toString()
@@ -1062,7 +1063,7 @@ export default {
   },
   created () {
     var that = this
-    this.log('url参数:', this.$route.params.TaskId)
+    // this.log('url参数:', this.$route.params.TaskId)
     if (this.$route.params.TaskId) {
       this.taskId = this.$route.params.TaskId
       this.toDetail(that.$route.params.TaskId)
@@ -1097,10 +1098,10 @@ export default {
     // },
     toProject: function (id) {
       this.$store.state.proId = id
-      this.$router.push('/ProEdit')
+      this.$router.push('/ProDetail')
     },
     delUploadFile: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       // that.$confirm('确认删除此附件，确定删除？', '', {
       //   confirmButtonText: '确定',
@@ -1118,7 +1119,7 @@ export default {
         }
       }
       that.fileListEditLen = that.fileListEdit.length
-      console.log('edit', that.fileListEdit)
+      // console.log('edit', that.fileListEdit)
       $('#myfileEdit').val('')
     // }
       //   })
@@ -1127,7 +1128,7 @@ export default {
       // })
     },
     delUploadFileComment: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -1146,7 +1147,7 @@ export default {
               }
             }
             that.fileListCommentLen = that.fileListComment.length
-            console.log('edit', that.fileListComment)
+            // console.log('edit', that.fileListComment)
             $('#myfile2').val('')
           }
         })
@@ -1155,7 +1156,7 @@ export default {
       })
     },
     delUploadFileFinish: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -1173,7 +1174,7 @@ export default {
               }
             }
             that.fileListFinishLen = that.fileListFinish.length
-            console.log('edit', that.fileListFinish)
+            // console.log('edit', that.fileListFinish)
             $('#myfileF').val('')
           }
         })
@@ -1182,7 +1183,7 @@ export default {
       })
     },
     delUploadFileTran: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -1200,7 +1201,7 @@ export default {
               }
             }
             that.fileListTransLen = that.fileListTrans.length
-            console.log('edit', that.fileListTrans)
+            // console.log('edit', that.fileListTrans)
             $('#myfileTransfer').val('')
           }
         })
@@ -1209,7 +1210,7 @@ export default {
       })
     },
     delUploadFileDel: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -1227,7 +1228,7 @@ export default {
               }
             }
             that.fileListLen2 = that.fileList2.length
-            console.log('edit', that.fileList2)
+            // console.log('edit', that.fileList2)
             $('#myfileDel').val('')
           }
         })
@@ -1236,7 +1237,7 @@ export default {
       })
     },
     delUploadFileNew: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -1254,7 +1255,7 @@ export default {
               }
             }
             that.fileListLen = that.fileList.length
-            console.log('edit', that.fileList)
+            // console.log('edit', that.fileList)
             $('#myfile').val('')
           }
         })
@@ -1269,7 +1270,7 @@ export default {
       that.ajax('/myTask/queryTaskDetailSingle', {taskId: id}).then(res => {
         // this.token = res._jfinal_token
         if (res.code === 200) {
-          console.log('queryTaskDetailSingle', res)
+          // console.log('queryTaskDetailSingle', res)
           that.detailTaskform.jobName = res.data.jobName
           that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
           that.detailTaskform.taskStartDate = res.data.taskStartDate
@@ -1503,7 +1504,7 @@ export default {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
-          that.log('getUserInfo', res)
+          // that.log('getUserInfo', res)
           that.defImplementer.name = res.data.Name
           that.defImplementer.id = res.data.ID
         }
@@ -1562,7 +1563,7 @@ export default {
       var that = this
       that.ajax('/community/getAllProject', {}).then(res => {
         if (res.code === 200) {
-          this.log('getAllProject:', res)
+          // this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID
           this.options = res.data
           that.getProjectTime(that.projectBelong)
@@ -1573,7 +1574,7 @@ export default {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: id}).then(res => {
         if (res.code === 200) {
-          console.log('projectBelong', res)
+          // console.log('projectBelong', res)
           var st = res.data.startDate.split(' ')[0] + ' 00:00:00'
           var et = res.data.endDate
           var sT = new Date(st)
@@ -1754,7 +1755,7 @@ export default {
       // this.taskRelationShow = false
     },
     handleClick (tab, event) {
-      console.log(tab, event)
+      // console.log(tab, event)
     },
     // 创建任务 提交
     depSub: function () {
@@ -2114,7 +2115,7 @@ export default {
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
       $('.showFileName').html(fileName)
-      console.log('change')
+      // console.log('change')
       if (filePath) {
         that.addMarkInfo4()
       }
@@ -2257,7 +2258,7 @@ export default {
     },
     delTask: function (id) {
       var that = this
-      console.log('id', id)
+      // console.log('id', id)
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -2271,36 +2272,42 @@ export default {
             that.queryMyTaskView()
             that.getHistoryList()
           }
-        }).catch(() => {
-          // that.loading = false
         })
+      }).catch(() => {
+        // that.loading = false
       })
     },
     childTaskDelete: function (id) {
       var that = this
-      console.log('id', id)
+      // console.log('id', id)
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         showClose: false,
         type: 'warning'
       }).then(() => {
+        that.childLoading = true
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
             that.getTaskChildList(that.taskId2)
             that.queryMyTaskView()
             that.getHistoryList()
+            that.childLoading = false
+            that.$message.success(res.msg)
+          } else {
+            that.$message.warning(res.msg)
+            that.childLoading = false
           }
-        }).catch(() => {
-          // that.loading = false
         })
+      }).catch(() => {
+        // that.loading = false
       })
     },
     // 任务开始
     startTask: function (id) {
       var that = this
-      console.log('id', id)
+      // console.log('id', id)
       that.$confirm('确定后将开始此任务，确定开始？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -2406,7 +2413,7 @@ export default {
       }
       that.ajax('/myTask/finishTask', {remark: that.commitComentF, attachmentId: fileStr, taskId: that.taskId2}).then(res => {
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           that.toDetail(that.taskId2)
           that.queryMyTaskView()
           that.getHistoryList()
@@ -2634,7 +2641,7 @@ export default {
     addMarkInfo2 () {
       var that = this
       that.loading8 = true
-      console.log('comment', that.fileListComment)
+      // console.log('comment', that.fileListComment)
       var fileStr = ''
       for (var j = 0; j < this.fileListComment.length; j++) {
         if (j === that.fileListComment.length - 1) {
@@ -2645,7 +2652,7 @@ export default {
       }
       that.ajax('/comment/addComment', {content: that.commitComent, attachmentId: fileStr, contentId: that.taskId2, parentCommentId: '11'}).then(res => {
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           that.getCommicateCont()
           that.fileListComment = []
           that.commitComent = ''
@@ -2659,19 +2666,19 @@ export default {
       var that = this
       this.ajax('/myTask/myTaskView', that.myTaskViewPayload).then(res => {
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           that.myTaskList = res.data.list
           that.totalRowNum = res.data.totalRow
         }
       })
     },
     pageNumChenge (e) {
-      console.log('eeeeeeee', e)
+      // console.log('eeeeeeee', e)
       this.myTaskViewPayload.pageNum = e
       this.queryMyTaskView()
     },
     myTaskStyleChange: function (e) {
-      console.log('eeeee', e)
+      // console.log('eeeee', e)
       var that = this
       that.myTaskViewPayload.pageNum = 1
       that.myTaskViewPayload.taskSource = e

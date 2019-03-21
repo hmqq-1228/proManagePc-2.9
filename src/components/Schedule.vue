@@ -116,7 +116,7 @@
       <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
     </el-dialog>
     <!--抽屉-->
-    <Drawer class="drawerScroll" :closable="false" width="40%" v-model="value4">
+    <Drawer class="drawerScroll" :closable="false" width="740" v-model="value4">
       <div class="slidTop">
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
@@ -731,7 +731,7 @@ export default {
       that.scheduleListPayload.sEndTime = that.year + '-' + that.month + '-' + that.monthMax + ' 00:00:00'
       // 日程接口调用
       this.ajax('/schedule/getScheduleList', that.scheduleListPayload).then(res => {
-        this.log('actionName:getScheduleList:', res)
+        // this.log('actionName:getScheduleList:', res)
         if (res.code === 200) {
           // this.log(0)
           // that.scheduleList = res.data.schedule
@@ -817,24 +817,30 @@ export default {
             that.testTop = $(obj).offset().top
             that.testLeft = $(obj).offset().left
             that.detailLeft = $(obj).parents('.taskItemMoreList').position().left - 380
+            // that.log('top:', typeof $(obj).position().top)
+            // that.detailTop = $(obj).position().top + 2000
+            // that.log('that.detailTop:', that.detailTop)
             that.detailArrowLeft = 395
           } else {
-            that.detailLeft = $(obj).offset().left + 0
+            that.detailLeft = $(obj).offset().left - 40
             that.detailArrowLeft = -5
           }
           if ($(obj).offset().top > 400) {
+            // that.log(222)
             // that.testTop = $(obj).parents('.taskItemMoreList').position().top
-            that.detailTop = $(obj).offset().top - 400
+            that.detailTop = $(obj).offset().top - 340
             that.detailArrowTop = 165
           } else {
+            // that.log(333)
             // that.testTop = $(obj).parents('.taskItemMoreList').position().top
             // that.testTop = $(obj).position().top
             // this.log('小于700')
             // that.alert('小于400')
-            that.detailTop = $(obj).offset().top - 400
+            that.detailTop = $(obj).offset().top - 200
             that.detailArrowTop = 20
           }
         } else {
+          // that.log(444)
           // that.alert(1)
           if ($(obj).position().left > 500) {
             that.detailLeft = $(obj).position().left - 400
@@ -910,6 +916,7 @@ export default {
     mouseout: function (targetId) {
       var that = this
       if (that.kk) {
+        // 待检查
         this.ScheduleDetailShow = false
         for (var i = 0; i < that.monGrids.length; i++) {
           // var isInList = false

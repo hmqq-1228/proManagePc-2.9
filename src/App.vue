@@ -39,7 +39,7 @@
           </el-row>
         </el-aside>
         <el-main style="padding: 0 20px;">
-          <router-view style="min-height: 800px;"/>
+          <router-view style="min-height: 800px; padding-top: 20px;"/>
           <div class="copyright">贝豪项目管理系统（PMS ©2019 Version-{{version}}）版权所有 翻版必究</div>
         </el-main>
       </el-container>
@@ -69,6 +69,7 @@ export default {
     // this.$store.state.proId = this.$route.params.proId
     this.queryMenu()
     this.getPmsVersion()
+    this.getUserInfo()
   },
   watch: {
     activeNavIndex (val, old) {
@@ -101,6 +102,18 @@ export default {
     // }
   },
   methods: {
+    getUserInfo: function () {
+      var that = this
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
+        if (res.code === 200) {
+          that.$store.state.userId = res.data.ID
+          that.$store.state.userName = res.data.Name
+          that.$store.state.userLoginInfo = res.data
+          // that.defImplementer.name = res.data.Name
+          // that.defImplementer.id = res.data.ID
+        }
+      })
+    },
     setActiveNavIndex: function (typename) {
       var that = this
       for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
@@ -129,13 +142,13 @@ export default {
     },
     toMenu: function (menuName) {
       var that = this
-      this.log('menuName:', menuName)
+      // this.log('menuName:', menuName)
       switch (menuName) {
         case '商品管理':
           // localStorage.setItem('navType', '商品管理')
           localStorage.setItem('generalMenuActive', '商品管理')
           // that.$store.state.generalMenuActive = '商品管理'
-          that.$router.push('/MyPro2')
+          that.$router.push('/MyPro3')
           break
         case '我的项目':
           // localStorage.setItem('generalMenuActive', '我的项目')
@@ -171,7 +184,7 @@ export default {
               that.slideMenu.push(res.data[i])
             }
           }
-          that.log('that.slideMenu:', that.slideMenu)
+          // that.log('that.slideMenu:', that.slideMenu)
           // that.log('that.slideMenuGroup:', that.slideMenuGroup)
           that.$store.state.slideMenuGroup = that.slideMenuGroup
           that.$store.state.slideMenu = that.slideMenu
@@ -218,7 +231,7 @@ export default {
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
-          this.$router.push('/ProEdit')
+          this.$router.push('/ProDetail')
         }
       } else {
         // this.log('getProjectDetail：', '没走集团战略')

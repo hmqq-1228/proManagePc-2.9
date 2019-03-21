@@ -5,11 +5,12 @@ import Schedule from '@/components/Schedule'
 import MyDep from '@/components/MyDep'
 import MyTask from '@/components/MyTask'
 import MyPro from '@/components/MyPro'
-import MyPro2 from '@/components/MyPro2'
+import MyPro3 from '@/components/MyPro3'
 import ProEdit from '@/components/ProEdit'
-import ProEdit2 from '@/components/ProEdit2'
 import TestUpload from '@/components/TestUpload'
 import Wellcome from '@/components/Wellcome'
+import ProDetail from '@/components/ProDetail'
+import ProDetail2 from '@/components/ProDetail2'
 // Schedule TestUpload Wellcome
 
 Vue.use(Router)
@@ -52,9 +53,9 @@ export default new Router({
       component: MyPro
     },
     {
-      path: '/MyPro2',
-      name: 'MyPro2',
-      component: MyPro2
+      path: '/MyPro3',
+      name: 'MyPro3',
+      component: MyPro3
     },
     {
       path: '/ProEdit',
@@ -67,14 +68,19 @@ export default new Router({
       component: ProEdit
     },
     {
-      path: '/ProEdit2',
-      name: 'ProEdit2',
-      component: ProEdit2
-    },
-    {
       path: '/TestUpload',
       name: 'TestUpload',
       component: TestUpload
+    },
+    {
+      path: '/ProDetail',
+      name: 'ProDetail',
+      component: ProDetail
+    },
+    {
+      path: '/ProDetail2',
+      name: 'ProDetail2',
+      component: ProDetail2
     }
   ]
 })
