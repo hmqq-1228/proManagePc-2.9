@@ -251,6 +251,9 @@ export default {
           this.$store.state.proId = id
         }
       }
+    },
+    toDongtai: function () {
+      this.$router.push('/dongtai')
     }
   }
 }
