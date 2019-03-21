@@ -180,6 +180,7 @@ export default {
       }).then(() => {
         that.delLoading = true
         that.ajax('/myProject/delPlanOrTask', {id: id}).then(res => {
+          that.$emit('PlanDelCallback', res)
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
             that.getNextPlanTask(that.currentNodeId)

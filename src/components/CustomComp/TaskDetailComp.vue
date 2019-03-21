@@ -601,6 +601,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
+          that.$emit('TaskDelCallback', res)
           if (res.code === 200) {
             // that.log('delPlanOrTask:', res)
             that.getTaskChildList(that.taskId)
