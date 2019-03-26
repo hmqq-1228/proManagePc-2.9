@@ -4,7 +4,7 @@
     <div style="position: relative;width: 100%;">
       <div v-loading="loading32">
         <div class="paiTaskIptBox" style="position: relative;">
-          <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+     <!--      <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
             <div class="selectUserIpt">
               <el-select v-model="taskForm2.value9" multiple filterable remote style="width: 100%;"
                          :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
@@ -16,7 +16,7 @@
             </div>
             <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
             <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
-          </div>
+          </div> -->
           <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">
             <div class="selectDateBox">
               <div class="selectDateItem">
@@ -43,24 +43,24 @@
               <el-button v-on:click="selectDateOk2()">确定</el-button>
             </div>
           </div>
-          <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight2 + 'px', top: taskLevelTop2 + 'px', left: taskLevelLeft2 + 'px'}" v-on:mouseleave="rateMouseLeave2()">
+         <!--  <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight2 + 'px', top: taskLevelTop2 + 'px', left: taskLevelLeft2 + 'px'}" v-on:mouseleave="rateMouseLeave2()">
             <div class="rateBox">
               <el-rate v-model="levelValue2"></el-rate>
             </div>
-          </div>
+          </div> -->
           <div class="paiTaskIptLeft">
             <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
             <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" :placeholder="defaultText" /></div>
           </div>
           <div class="paiTaskIptRight">
-            <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
-            <div class="paiTaskIptRightCnt" style="max-width: 140px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" v-on:click="selectUser2($event)">
+            <!-- <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div> -->
+            <!-- <div class="paiTaskIptRightCnt" style="max-width: 140px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
               <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
-            </div>
+            </div> -->
             <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
-            <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div>
+            <!-- <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div> -->
           </div>
         </div>
         <div class="taskRelation" v-if="taskRelationShow2">
@@ -71,8 +71,7 @@
         <div class="taskFileUpload">
           <div class="fileUploadCao">
             <div class="selectLeft">
-              <!-- 任务分解 -->
-              <component v-bind:is="compArr.FileUploadComp" fileFormId="TaskDistribute" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+             <!--  <component v-bind:is="compArr.FileUploadComp" fileFormId="TaskDistribute" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component> -->
             </div>
             <div class="selectRight2">
               <div class="selectMoreInfo" v-on:click="moreClick2()">
@@ -91,7 +90,7 @@
 <script>
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 export default {
-  name: 'AddNewTask',
+  name: 'addNewPlan',
   // props: ['nodeId','defaultText','defaultDetail'],
   props: {
       nodeId: {
@@ -172,6 +171,14 @@ export default {
         taskStartDate: '',
         taskFinishDate: '',
         users: '',
+        userId: ''
+      },
+      planData: {
+        parentId: '',
+        name:'',
+        start:'',
+        finish:'',
+        description:'',
         userId: ''
       }
     }
@@ -374,15 +381,15 @@ export default {
           // value9没有值，取默认
           selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
-        that.CommunityTaskPayload2.parentId = that.nodeId
-        that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
-        that.CommunityTaskPayload2.users = selectUserStr
-        that.CommunityTaskPayload2.jobName = that.taskNameText2
-        that.CommunityTaskPayload2.taskStartDate = that.selDateStart2
-        that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
-        that.CommunityTaskPayload2.description = that.taskIntro2
-        that.CommunityTaskPayload2._jfinal_token = that.token
-        that.ajax('/myProject/addTask', that.CommunityTaskPayload2).then(res => {
+        that.planData.parentId = that.nodeId
+        // that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
+        // that.CommunityTaskPayload2.users = selectUserStr
+        that.planData.name = that.taskNameText2
+        that.planData.start = that.selDateStart2
+        that.planData.finish = that.selDateEnd2
+        that.planData.description = that.taskIntro2
+        // that.CommunityTaskPayload2._jfinal_token = that.token
+        that.ajax('/myProject/addPlan', that.planData).then(res => {
           that.$emit('TaskDistributeCallback', res)
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1
