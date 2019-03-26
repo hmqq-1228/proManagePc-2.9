@@ -1,6 +1,6 @@
 <template>
-	<div class="tree" v-if="list.length>0">
-		<div class="tree-first" v-for="(item,index) in list" :key="index">
+  <div class="tree" v-if="list.length>0">
+    <div class="tree-first" v-for="(item,index) in list" :key="index">
         <div :class="item.type==='task'?'menuTree':'planTree'">
             <div class="children-content" :class="item.type==='task'?'havBorder':''">
                   <div class="children-checked">
@@ -12,8 +12,8 @@
                     </span>
                     <div class="taskDesc" v-if="item.type==='task'">
                          <div class="top">
-                          <span class="residue" v-if="item.status!=='2'&&item.dayNum" :class="{'number':item.dayNum>1}">剩余{{item.dayNum}}天</span> 
-                          <div class="createPeople" v-if="item.userName" :class="{'leftDay':item.status==='2'}">{{item.userName.substr(0, 1)}}</div>
+                            <span class="residue" v-if="item.status!=='2'&&item.dayNum" :class="{'number':item.dayNum>1}">剩余{{item.dayNum}}天</span>
+                            <div class="createPeople" v-if="item.userName" :class="{'leftDay':item.status==='2'}">{{item.userName.substr(0, 1)}}</div>
                          </div>
                        <div class="down">
                         <img src="../../../static/img/time.png">
@@ -29,80 +29,75 @@
           <div :class="'tree-all-'+index" v-show="item.show">
             <div class="tree-second">
               <ul style="margin-left:-30px;">
-                 <treeItem v-for="item in item.children" :menuData="item" @showDetailPage="showDetailPage"></treeItem>
+                 <treeItem v-for="(item,index) in item.children" :menuData="item" @showDetailPage="showDetailPage" :key="index"></treeItem>
               </ul>
             </div>
           </div>
         </div>
-		</div>
-	</div>
+        </div>
+    </div>
   </div>
 </template>
 
 <script>
-  import treeItem from './treeItem.vue'
-	export default {
-     props:['list'],
-		 data() {
-		 	return {
-          show:false
-		 	}
-		 },
-     components:{
-        treeItem
-     },
-		 created() {
-        this.getShow()
-		 },
-		 methods:{
-		 	getShow() {
-         this.list.forEach((item,index)=>{
-         	   item['show'] = true
-         })
-		 	},
-      // show(item,index) {
-      // 	let h = document.querySelector(".tree-second")
-      // 	item.show = !item.show
-      // 	this.$set(this.list, index ,item)
-      // }
-      showTree(item,index) {
-         if (item.children) {
-              item.show = !item.show;
-              this.$set(this.list, index ,item)
-          }
-      },
-      //树状详情
-      showDetailPage(item) {
-         this.$emit('showDetailPage',item)
-      },
-		 }
-	}
+import treeItem from './treeItem.vue'
+export default {
+  props: ['list'],
+  data () {
+    return {
+      show: false
+    }
+  },
+  components: {
+    treeItem
+  },
+  created () {
+    this.getShow()
+  },
+  methods: {
+    getShow () {
+      this.list.forEach((item, index) => {
+        item['show'] = true
+      })
+    },
+    showTree (item, index) {
+      if (item.children) {
+        item.show = !item.show
+        this.$set(this.list, index, item)
+      }
+    },
+    // 树状详情
+    showDetailPage (item) {
+      this.$emit('showDetailPage', item)
+    }
+  }
+}
 </script>
 <style>
-	.tree {
-       background: #fff;
-       padding: 5px;
-       font-size: 14px;
-	}
-	.tree-first {
-       border-bottom:1px dashed #ccc;
-       /*padding-bottom: 10px;
-       padding-top: 10px;*/
-	}
-	.tree-first i {
-	    color:#ccc;
-	    cursor: pointer;
-	}
-	.tree-first .active {
-	    transform:rotate(90deg);
-	}
-	.tree-second {
-		margin-left: 0px;
-		border-left:5px solid #f2f2f2;
-		list-style: none;
-		transition: all 1s;
-    overflow: hidden
-	}
+.tree {
+     background: #fff;
+     padding: 5px;
+     font-size: 14px;
+}
+.tree-first {
+     border-bottom:1px dashed #ccc;
+     /*padding-bottom: 10px;
+     padding-top: 10px;*/
+}
+.tree-first i {
+    color:#ccc;
+    cursor: pointer;
+}
+.tree-first .active {
+    transform:rotate(90deg);
+}
+.tree-second {
+  margin-left: 0px;
+  border-left:5px solid #f2f2f2;
+  list-style: none;
+  transition: all 1s;
+  overflow: hidden
+}
   .tree-first .menuTree:last-child {
      /*border-bottom: none;*/
   }
