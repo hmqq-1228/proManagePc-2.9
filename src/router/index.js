@@ -12,6 +12,7 @@ import Wellcome from '@/components/Wellcome'
 import ProDetail from '@/components/ProDetail'
 import ProDetail2 from '@/components/ProDetail2'
 import GoodsManage from '@/components/GoodsManage'
+import goodsDetail from '@/components/goodsDetail'
 // Schedule TestUpload Wellcome
 
 Vue.use(Router)
@@ -87,6 +88,11 @@ export default new Router({
       path: '/GoodsManage',
       name: 'GoodsManage',
       component: GoodsManage
+    },
+    {
+      path: '/goodsDetail',
+      name: 'goodsDetail',
+      component: goodsDetail
     }
   ]
 })

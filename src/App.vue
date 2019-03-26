@@ -271,6 +271,9 @@ html,body{
 #app{
   height: 100%;
 }
+.el-tabs__content {
+  overflow: visible;
+}
 .copyright{
   padding: 15px;
   padding-top: 20px;
