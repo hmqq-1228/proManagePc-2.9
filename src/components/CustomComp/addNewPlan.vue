@@ -93,18 +93,18 @@ export default {
   name: 'addNewPlan',
   // props: ['nodeId','defaultText','defaultDetail'],
   props: {
-      nodeId: {
-          type: String,
-          default: ""
-      },
-      defaultText: {
-          type: String,
-          default: "请输入任务名称"
-      },
-      defaultDetail: {
-          type: String,
-          default: "请输入任务简介"
-      }
+    nodeId: {
+      type: String,
+      default: ''
+    },
+    defaultText: {
+      type: String,
+      default: '请输入任务名称'
+    },
+    defaultDetail: {
+      type: String,
+      default: '请输入任务简介'
+    }
   },
   components: {
     FileUploadComp
@@ -163,7 +163,7 @@ export default {
       fileList2: [],
       // 任务开始
       CommunityTaskPayload2: {
-        parentId: '',
+        parentPlanId: '',
         attachmentId: '',
         description: '',
         jobName: '',
@@ -175,10 +175,10 @@ export default {
       },
       planData: {
         parentId: '',
-        name:'',
-        start:'',
-        finish:'',
-        description:'',
+        name: '',
+        start: '',
+        finish: '',
+        description: '',
         userId: ''
       }
     }
@@ -381,7 +381,7 @@ export default {
           // value9没有值，取默认
           selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
-        that.planData.parentId = that.nodeId
+        that.planData.parentPlanId = that.nodeId
         // that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
         // that.CommunityTaskPayload2.users = selectUserStr
         that.planData.name = that.taskNameText2
