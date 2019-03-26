@@ -253,10 +253,6 @@
             </a>
             <span class="showFileNameTran"></span>
           </form>
-          <!--<input type="hidden" name="taskId" v-bind:value="taskId2">-->
-          <!--<input type="hidden" name="transferUserId" v-bind:value="transferUserId">-->
-          <!--<input type="hidden" name="transferUserName" v-bind:value="transferUserName">-->
-          <!--<input type="hidden" name="rtype" v-bind:value="3">-->
           <div style="font-size: 12px;">
             <span style="color: #f00;" v-if="fileListTrans.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListTrans.length}}</span> 个附件:</span>
             <span v-if="fileListTrans.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListTrans.length}}</span> 个附件:</span>

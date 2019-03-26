@@ -357,4 +357,24 @@ padding: 8px 20px;
 .searchItem .el-input__icon{
   line-height: 30px;
 }
+.goodSer .el-input__inner{
+  height: 34px;
+  line-height: 34px;
+}
+.goodSer .el-input__icon{
+  line-height: 34px;
+}
+.line .el-radio-button--mini .el-radio-button__inner{
+  padding: 5px 10px;
+}
+  .goods .el-pagination.is-background .el-pager li:not(.disabled).active{
+    background-color: #34c5be;
+  }
+  .goods .el-radio-button__orig-radio:checked+.el-radio-button__inner{
+    background-color: #34c5be;
+    border-color: #34c5be;
+  }
+  .goods .el-input.is-active .el-input__inner, .el-input__inner:focus{
+    border-color: #34c5be;
+  }
 </style>
