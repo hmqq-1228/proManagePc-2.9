@@ -11,6 +11,7 @@ import TestUpload from '@/components/TestUpload'
 import Wellcome from '@/components/Wellcome'
 import ProDetail from '@/components/ProDetail'
 import ProDetail2 from '@/components/ProDetail2'
+import GoodsManage from '@/components/GoodsManage'
 // Schedule TestUpload Wellcome
 
 Vue.use(Router)
@@ -81,6 +82,11 @@ export default new Router({
       path: '/ProDetail2',
       name: 'ProDetail2',
       component: ProDetail2
+    },
+    {
+      path: '/GoodsManage',
+      name: 'GoodsManage',
+      component: GoodsManage
     }
   ]
 })

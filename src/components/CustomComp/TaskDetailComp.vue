@@ -224,7 +224,7 @@ export default {
       loading2: false,
       showDrawer: false,
       butnDisabled: true,
-      butnDisabledF: true,
+      butnDisabledF: false,
       selDateEnd2: '',
       selDateStart2: '',
       taskBasicMsg: '',
@@ -273,7 +273,7 @@ export default {
       butnDisabledT: true,
       // 任务完成
       taskFinishedVisible: false,
-      commitComentF: '',
+      commitComentF: '已完成',
       loading9: false
     }
   },
@@ -302,10 +302,10 @@ export default {
       }
     },
     commitComentF: function (val, oVal) {
-      if (val) {
-        this.butnDisabledF = false
-      } else {
+      if (val === '') {
         this.butnDisabledF = true
+      } else {
+        this.butnDisabledF = false
       }
     },
     projectManager: function (val, oVal) {
@@ -716,7 +716,7 @@ export default {
       that.taskTransferVisible = false
     },
     concelFinished: function () {
-      this.commitComentF = ''
+      this.commitComentF = '已完成'
       this.taskFinishedVisible = false
     },
     // 任务移交 点击确定
@@ -764,7 +764,7 @@ export default {
           // that.selectProjectId()
           that.getHistoryList()
           that.isClear = true
-          that.commitComentF = ''
+          that.commitComentF = '已完成'
           that.fileListFinish = []
           that.loading9 = false
           that.$message({
