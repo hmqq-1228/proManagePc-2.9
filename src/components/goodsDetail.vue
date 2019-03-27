@@ -1272,6 +1272,7 @@ export default {
       var that = this
       if (res.code === 200) {
         that.selectProjectId()
+        that.queryProDetail()
         that.value444 = false
         that.$message({
           message: '删除成功！',
@@ -1565,6 +1566,7 @@ div img {
   /*border:1px solid #999;*/
   text-align:center;
   line-height: 30px;
+  cursor: pointer;
 }
 .memName {
   width: 34px;
