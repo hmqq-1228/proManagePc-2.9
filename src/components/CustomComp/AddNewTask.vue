@@ -17,7 +17,7 @@
             <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
             <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
           </div>
-          <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">
+          <div class="selectDateDialog2"  style="right: 0;top: 0;" v-show="selectDateDiaShow2">
             <div class="selectDateBox">
               <div class="selectDateItem">
                 <el-date-picker
@@ -195,7 +195,6 @@ export default {
     nodeId: function (val, oV) {
       console.log('nodeId3333', val)
       if (val) {
-        this.getPlanTaskDetail()
         this.getUserInfo()
       }
     }
@@ -215,6 +214,7 @@ export default {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
         if (res.code === 200) {
+          this.log('getPlanOrTaskDetail:', res)
           that.selDateStart2 = res.data.start
           that.selDateEnd2 = res.data.finish
           var st = res.data.start.split(' ')[0] + ' 00:00:00'
