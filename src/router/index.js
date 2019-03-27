@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Schedule from '@/components/Schedule'
 import MyDep from '@/components/MyDep'
+import MyDepNew from '@/components/MyDepNew'
 import MyTask from '@/components/MyTask'
 import MyPro from '@/components/MyPro'
 import MyPro3 from '@/components/MyPro3'
@@ -13,7 +14,10 @@ import ProDetail from '@/components/ProDetail'
 import ProDetail2 from '@/components/ProDetail2'
 import GoodsManage from '@/components/GoodsManage'
 import goodsDetail from '@/components/goodsDetail'
-// Schedule TestUpload Wellcome
+import CompUse from '@/components/CompUse'
+import MyTaskNew from '@/components/MyTaskNew'
+// import QuickCreateTaskComp from '@/components/QuickCreateTaskComp'
+// Schedule TestUpload Wellcome QuickCreateTaskComp
 
 Vue.use(Router)
 
@@ -38,6 +42,11 @@ export default new Router({
       path: '/MyDep',
       name: 'MyDep',
       component: MyDep
+    },
+    {
+      path: '/MyDepNew',
+      name: 'MyDepNew',
+      component: MyDepNew
     },
     {
       path: '/MyTask',
@@ -85,6 +94,16 @@ export default new Router({
       component: ProDetail2
     },
     {
+      path: '/CompUse',
+      name: 'CompUse',
+      component: CompUse
+    },
+    {
+      path: '/MyTaskNew',
+      name: 'MyTaskNew',
+      component: MyTaskNew
+    },
+    {
       path: '/GoodsManage',
       name: 'GoodsManage',
       component: GoodsManage
@@ -94,5 +113,10 @@ export default new Router({
       name: 'goodsDetail',
       component: goodsDetail
     }
+    // {
+    //   path: '/QuickCreateTaskComp',
+    //   name: 'QuickCreateTaskComp',
+    //   component: QuickCreateTaskComp
+    // }
   ]
 })

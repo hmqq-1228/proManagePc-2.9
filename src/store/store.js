@@ -17,7 +17,7 @@ const state = {
   navType: '',
   goodType: '',
   routerList: [],
-  DevelopmentTab: 'DynamicsMy',
+  DevelopmentTab: 'DynamicsTask',
   // 项目类型
   projectType: [
     {label: '公司项目', value: '0'},

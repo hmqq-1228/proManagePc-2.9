@@ -3,10 +3,9 @@
     <el-main style="padding-bottom: 0;">
       <div class="el-main-box">
         <div class="el-main-left">
-          <div class="contentTop"  v-loading="loading3">
+          <div class="contentTop" v-loading="loading3">
             <div class="paiTaskTitTab">
               <div class="paiTask pai active" v-on:click="testValue9()">新建任务</div>
-              <!--<div class="paiTask share">发分享(@Ta)</div>-->
             </div>
             <div class="paiTaskIptBox">
               <div class="paiTaskIptLeft">
@@ -19,14 +18,12 @@
                   <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
                   <span v-if="taskForm.value9.length > 0" v-for="user in taskForm.value9" :key="user"> {{user.split('-')[0]}}</span>
                   <span v-if="taskForm.value9.length === 0">{{defImplementer.name}}</span>
-                  <!--<span> {{defImplementer.name}}</span>-->
                 </div>
                 <div class="paiTaskIptRightIcon" v-on:click="selectDate($event)"><i class="el-icon-date"></i></div>
                 <div class="paiTaskIptRightCnt" v-on:click="selectDate($event)">时间</div>
                 <div class="paiTaskIptRightIcon" v-on:click="selectLevel($event)"><i class="el-icon-bell"></i></div>
               </div>
             </div>
-            <!--任务关联 项目组成员 简介-->
             <div class="taskRelation" v-if="taskRelationShow">
               <div class="relationHeader">
                 <div class="proBelong">
@@ -40,21 +37,16 @@
                     </el-option>
                   </el-select>
                 </div>
-                <!--<div class="taskExecutor">-->
-                  <!--参与人 <i class="el-icon-date"></i>-->
-                <!--</div>-->
               </div>
               <div class="relationIntro">
                 <textarea class="relationIntroArea" v-model="taskIntro" placeholder="请输入任务简介"></textarea>
               </div>
             </div>
-            <!--附件选择-->
             <div class="taskFileUpload">
               <div class="fileUploadCao">
                 <div class="selectLeft">
                   <form id="uploadFile" enctype="multipart/form-data">
                     <input type="file" :disabled="fileListDis" v-on:change="fileChange" id="myfile" name="myfile" placeholder="请选择文件"/><br>
-                      <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
                   </form>
                   <div style="margin-top: 8px;font-size: 12px;">
                     <span style="color: #f00;" v-if="fileList.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
@@ -73,7 +65,6 @@
               <div class="fileUploadPre"></div>
             </div>
           </div>
-          <!--上传的图片在此预览-->
           <div class="uploadFilePre"></div>
         </div>
       </div>
@@ -1064,6 +1055,7 @@ export default {
       this.taskId = this.$route.params.TaskId
       this.toDetail(that.$route.params.TaskId)
     }
+    // debugger
     this.getUserInfo()
     this.getProBelong()
     this.setDefaultTime()
