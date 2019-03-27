@@ -148,7 +148,7 @@ export default {
           // localStorage.setItem('navType', '商品管理')
           localStorage.setItem('generalMenuActive', '商品管理')
           // that.$store.state.generalMenuActive = '商品管理'
-          that.$router.push('/MyPro3')
+          that.$router.push('/GoodsManage')
           break
         case '我的项目':
           // localStorage.setItem('generalMenuActive', '我的项目')
@@ -161,11 +161,11 @@ export default {
           break
         case '我的动态':
           localStorage.setItem('generalMenuActive', '我的动态')
-          that.$router.push('/MyDep')
+          that.$router.push('/MyDepNew')
           break
         case '我的任务':
           localStorage.setItem('generalMenuActive', '我的任务')
-          that.$router.push('/MyTask')
+          that.$router.push('/MyTaskNew')
           break
         default:
           this.log('未找到')

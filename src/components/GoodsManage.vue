@@ -11,33 +11,33 @@
       <div class="goodType">
         <div class="goodName">商品品牌:</div>
         <div class="goodBox">
-          <div class="active" @click="firstType($event, ' ', '0')">全部</div>
-          <div @click="firstType($event, 'KUB', '0')">可优比</div>
-          <div @click="firstType($event, 'DI', '0')">蒂爱</div>
+          <div v-bind:class="tag.styleFlag === true ? 'active': ''" v-for="(tag, index) in level_0" @click="secondType($event, tag.categoryName, tag.categoryType, tag.code)" v-bind:key="index">{{tag.categoryName}}</div>
+          <!--<div @click="secondType($event, '可优比', 'KUB', '0')">可优比</div>-->
+          <!--<div @click="secondType($event, '蒂爱', 'DI', '0')">蒂爱</div>-->
         </div>
       </div>
-      <div class="goodType" v-if="goodTags.length > 0">
+      <div class="goodType" v-if="level_1.length > 0">
         <div class="goodName">一级类目:</div>
         <div class="goodBox">
-          <div v-for="(tag, index) in goodTags" v-bind:key="index" v-bind:class="tag.categoryName === '全部'? 'active': ''" @click="secondType($event, tag.categoryName, tag.categoryType, tag.code)">{{tag.categoryName}}</div>
+          <div v-for="(tag, index) in level_1" v-bind:key="index" v-bind:class="tag.styleFlag === true ? 'active': ''" @click="secondType($event, tag.categoryName, tag.categoryType, tag.code)">{{tag.categoryName}}</div>
         </div>
       </div>
       <div class="goodType" v-if="level_2.length > 0">
         <div class="goodName">二级类目:</div>
         <div class="goodBox">
-          <div v-for="(tag, index) in level_2" v-bind:key="index" v-bind:class="tag.categoryName === '全部'? 'active': ''" @click="secondType($event, tag.categoryName, tag.categoryType, tag.code)">{{tag.categoryName}}</div>
+          <div v-for="(tag, index) in level_2" v-bind:key="index" v-bind:class="tag.styleFlag === true ? 'active': ''" @click="secondType($event, tag.categoryName, tag.categoryType, tag.code)">{{tag.categoryName}}</div>
         </div>
       </div>
       <div class="goodType"  v-if="level_3.length > 0">
         <div class="goodName">三级类目:</div>
         <div class="goodBox">
-          <div v-for="(tag, index) in level_3" v-bind:key="index" v-bind:class="tag.categoryName === '全部'? 'active': ''" @click="secondType($event, tag.categoryName, tag.categoryType, tag.code)">{{tag.categoryName}}</div>
+          <div v-for="(tag, index) in level_3" v-bind:key="index" v-bind:class="tag.styleFlag === true ? 'active': ''" @click="secondType($event, tag.categoryName, tag.categoryType, tag.code)">{{tag.categoryName}}</div>
         </div>
       </div>
       <div class="goodType" v-if="level_4.length > 0">
         <div class="goodName">四级类目:</div>
         <div class="goodBox">
-          <div v-for="(tag, index) in level_4" v-bind:key="index" v-bind:class="tag.categoryName === '全部'? 'active': ''" @click="secondType($event, tag.categoryName, tag.categoryType, tag.code)">{{tag.categoryName}}</div>
+          <div v-for="(tag, index) in level_4" v-bind:key="index" v-bind:class="tag.styleFlag === true ? 'active': ''" @click="secondType($event, tag.categoryName, tag.categoryType, tag.code)">{{tag.categoryName}}</div>
         </div>
       </div>
       <div class="goodType">
@@ -63,7 +63,7 @@
     </div>
     <div class="goodList">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
-        <div class="goodItemCon">
+        <div class="goodItemCon" @click="toGoodsManage(good.projectId)">
           <div class="goodImg">
             <div class="goodImg2" v-if="good.attachment[0]"><img :src="good.activeImgUrl" alt=""></div>
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
@@ -105,6 +105,26 @@ export default {
       radioVal: '综合排序',
       goodTags: [],
       goodList: [],
+      level_0: [{
+        'categoryName': '全部',
+        'categoryType': '',
+        'styleFlag': true,
+        'code': ''
+      },
+      {
+        'categoryName': '可优比',
+        'categoryType': 'KUB',
+        'styleFlag': false,
+        'code': '0'
+      },
+      {
+        'categoryName': '蒂爱',
+        'categoryType': 'DI',
+        'styleFlag': false,
+        'code': '1'
+      }
+      ],
+      level_1: [],
       level_2: [],
       level_3: [],
       level_4: [],
@@ -146,6 +166,12 @@ export default {
     this.getGoodsListTag(' ', '0')
   },
   methods: {
+    toGoodsManage: function (goodId) {
+      if (goodId) {
+        this.$store.state.proId = goodId
+        this.$router.push('/goodsDetail')
+      }
+    },
     // 切换 预览图片
     previewImg: function (url, index) {
       var that = this
@@ -218,34 +244,48 @@ export default {
       that.getGoodList.pageNum = e
       that.getGoodsList('0')
     },
-    // 第一级点击查询
-    firstType: function (e, type, code) {
-      var that = this
-      var obj = e.currentTarget
-      that.$store.state.goodType = type
-      this.getGoodsListTag(type, code)
-      $(obj).addClass('active').siblings().removeClass('active')
-      this.goodTags = []
-      that.level_2 = []
-      that.level_3 = []
-      that.level_4 = []
-    },
     // 第二级到第四级查询
     secondType: function (e, name, type, code) {
       var that = this
-      var obj = e.target
+      var codeLen = ''
+      that.$store.state.goodType = type
+      if (code.length >= 2) {
+        codeLen = 'level_' + (code.length / 2)
+      } else {
+        codeLen = 'level_0'
+      }
       if (code.length / 2 === 1) {
         that.level_3 = []
         that.level_4 = []
       } else if (code.length / 2 === 2) {
         that.level_4 = []
+      } else if (code.length / 2 < 1) {
+        that.level_2 = []
+        that.level_3 = []
+        that.level_4 = []
       }
-      $(obj).addClass('active').siblings().removeClass('active')
+      for (var j = 0; j < that[codeLen].length; j++) {
+        if (that[codeLen][j].code === code) {
+          that[codeLen][j].styleFlag = true
+        } else {
+          that[codeLen][j].styleFlag = false
+        }
+      }
       if (name !== '全部') {
+        if (code === '1') {
+          code = '0'
+        }
         that.ajax('/goods/getDownByCategory', {code: code}).then(res => {
           if (res.code === 200) {
             if (res.data.length > 1) {
               var level = 'level_' + res.data[1].code.length / 2
+              for (var i = 0; i < res.data.length; i++) {
+                if (res.data[i].code === code) {
+                  res.data[i].styleFlag = true
+                } else {
+                  res.data[i].styleFlag = false
+                }
+              }
               that[level] = res.data
             }
             this.getGoodsList(code)

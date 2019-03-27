@@ -67,7 +67,7 @@ export default {
         } else if (proName === '我的项目') {
           this.$router.push('/MyPro')
         } else if (proName === '商品管理') {
-          this.$router.push('/MyPro3')
+          this.$router.push('/GoodsManage')
         } else {
           this.activeNavIndex = ''
           this.$store.state.activeNavIndex = ''
