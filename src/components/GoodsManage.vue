@@ -260,6 +260,7 @@ export default {
     // 第二级到第四级查询
     secondType: function (e, name, type, code) {
       var that = this
+      that.getGoodList.pageNum = 1
       var codeLen = ''
       that.$store.state.goodType = type
       if (code.length >= 2) {
