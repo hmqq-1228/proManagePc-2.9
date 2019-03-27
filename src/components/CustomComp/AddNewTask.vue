@@ -94,18 +94,18 @@ export default {
   name: 'AddNewTask',
   // props: ['nodeId','defaultText','defaultDetail'],
   props: {
-      nodeId: {
-          type: String,
-          default: ""
-      },
-      defaultText: {
-          type: String,
-          default: "请输入任务名称"
-      },
-      defaultDetail: {
-          type: String,
-          default: "请输入任务简介"
-      }
+    nodeId: {
+      type: String,
+      default: ''
+    },
+    defaultText: {
+      type: String,
+      default: '请输入任务名称'
+    },
+    defaultDetail: {
+      type: String,
+      default: '请输入任务简介'
+    }
   },
   components: {
     FileUploadComp
