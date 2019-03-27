@@ -63,7 +63,7 @@
     </div>
     <div class="goodList">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
-        <div class="goodItemCon" @click="toGoodsManage(good.projectId)">
+        <div class="goodItemCon" @click="toGoodsManage(good.projectUID)">
           <div class="goodImg">
             <div class="goodImg2" v-if="good.attachment[0]"><img :src="good.activeImgUrl" alt=""></div>
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
@@ -75,9 +75,10 @@
             <div class="active" v-if="good.attachment.length === 0"><img src="../../static/img/defult.png" alt=""></div>
           </div>
           <div class="goodInfo">
-            <div>编码: <span>{{good.goodsCode}}</span></div>
-            <div class="goodTypeName" :title="good.name">品名: <span>{{good.name}}</span></div>
-            <div>分类: <span>{{good.categoryName}}</span></div>
+            <div>编码: <span v-if="good.goodsCode">{{good.goodsCode}}</span><span v-if="!good.goodsCode" style="color: #999;font-size: 12px;">无编码</span></div>
+            <div class="goodTypeName" :title="good.name">品名: <span v-if="good.name">{{good.name}}</span><span v-if="!good.name" style="color: #999;font-size: 12px;">未命名</span></div>
+            <div class="goodTypeName" :title="good.projectName">项目: <span v-if="good.projectName">{{good.projectName}}</span><span v-if="!good.projectName" style="color: #999;font-size: 12px;">无项目</span></div>
+            <div>分类: <span v-if="good.categoryName">{{good.categoryName}}</span><span v-if="!good.categoryName" style="color: #999;font-size: 12px;">未分类</span></div>
             <div>状态: <span v-bind:class="'statuStyle' + good.status">{{good.statusStr}}</span></div>
           </div>
         </div>
@@ -134,11 +135,11 @@ export default {
       getGoodList: {
         pageNum: 1,
         pageSize: 12,
-        status: ' ',
+        status: '',
         goodsName: '',
         sortType: '',
-        categoryType: ' ',
-        code: '0'
+        categoryType: '',
+        code: ''
       }
     }
   },
@@ -147,23 +148,23 @@ export default {
     inputVal: function (val, oV) {
       var that = this
       that.getGoodList.goodsName = val
-      that.getGoodsList('0')
+      that.getGoodsList()
     },
     // 商品排序
     radioVal: function (val, oV) {
       var that = this
       if (val === '综合排序') {
         that.getGoodList.sortType = '1'
-        that.getGoodsList('0')
+        that.getGoodsList()
       } else if (val === '上架时间') {
         that.getGoodList.sortType = '2'
-        that.getGoodsList('0')
+        that.getGoodsList()
       }
     }
   },
   created: function () {
     // 默认查询分类
-    this.getGoodsListTag(' ', '0')
+    this.getGoodsList()
   },
   methods: {
     toGoodsManage: function (goodId) {
@@ -205,44 +206,56 @@ export default {
       var obj = e.target
       $(obj).addClass('active').siblings().removeClass('active')
       that.getGoodList.status = str
-      that.getGoodsList('0')
+      that.getGoodsList()
     },
-    // 查询  分类级别
-    getGoodsListTag: function (type, code) {
-      var that = this
-      if (type !== ' ') {
-        that.ajax('/goods/getDownByCategory', {code: code}).then(res => {
-          if (res.code === 200) {
-            that.goodTags = res.data
-            this.getGoodsList(code)
-          }
-        })
-      } else if (type === ' ') {
-        that.getGoodsList(code)
-      }
-    },
+    // // 查询  分类级别
+    // getGoodsListTag: function () {
+    //   var that = this
+    //   that.ajax('/goods/getDownByCategory', {}).then(res => {
+    //     if (res.code === 200) {
+    //       that.goodTags = res.data
+    //       this.getGoodsList()
+    //     }
+    //   })
+    // },
     // 查询商品列表
-    getGoodsList: function (code) {
+    getGoodsList: function (type, code) {
       var that = this
-      that.getGoodList.categoryType = that.$store.state.goodType
-      that.getGoodList.code = code
-      that.ajax('/goods/getGoodsList', that.getGoodList).then(res => {
-        if (res.code === 200) {
-          that.goodList = res.data.list
-          that.goodListTotal = res.data.totalRow
-          for (var i = 0; i < res.data.list.length; i++) {
-            if (res.data.list[i].attachment.length > 0) {
-              res.data.list[i].activeImgUrl = res.data.list[i].attachment[0].previewUrl
+      if (type && code) {
+        that.getGoodList.categoryType = that.$store.state.goodType
+        that.getGoodList.code = code
+        that.ajax('/goods/getGoodsList', that.getGoodList).then(res => {
+          if (res.code === 200) {
+            that.goodList = res.data.list
+            that.goodListTotal = res.data.totalRow
+            for (var i = 0; i < res.data.list.length; i++) {
+              if (res.data.list[i].attachment.length > 0) {
+                res.data.list[i].activeImgUrl = res.data.list[i].attachment[0].previewUrl
+              }
             }
           }
-        }
-      })
+        })
+      } else {
+        that.getGoodList.code = ''
+        that.getGoodList.categoryType = ''
+        that.ajax('/goods/getGoodsList', that.getGoodList).then(res => {
+          if (res.code === 200) {
+            that.goodList = res.data.list
+            that.goodListTotal = res.data.totalRow
+            for (var i = 0; i < res.data.list.length; i++) {
+              if (res.data.list[i].attachment.length > 0) {
+                res.data.list[i].activeImgUrl = res.data.list[i].attachment[0].previewUrl
+              }
+            }
+          }
+        })
+      }
     },
     // 分页
     handleCurrentChange: function (e) {
       var that = this
       that.getGoodList.pageNum = e
-      that.getGoodsList('0')
+      that.getGoodsList()
     },
     // 第二级到第四级查询
     secondType: function (e, name, type, code) {
@@ -250,11 +263,36 @@ export default {
       var codeLen = ''
       that.$store.state.goodType = type
       if (code.length >= 2) {
-        codeLen = 'level_' + (code.length / 2)
-      } else {
+        if (name === '全部') {
+          if (code.length === 1) {
+            codeLen = 'level_1'
+          } else if (code.length === 2) {
+            codeLen = 'level_2'
+          } else if (code.length === 4) {
+            codeLen = 'level_3'
+          } else if (code.length === 6) {
+            codeLen = 'level_4'
+          }
+        } else {
+          codeLen = 'level_' + (code.length / 2)
+        }
+      } else if (code === '') {
         codeLen = 'level_0'
+      } else {
+        if (code.length === 1 && name === '全部') {
+          codeLen = 'level_1'
+        } else {
+          codeLen = 'level_0'
+        }
       }
-      if (code.length / 2 === 1) {
+      // console.log('code.length', code.length)
+      // console.log('codeLen', codeLen)
+      if (code === '') {
+        that.level_1 = []
+        that.level_2 = []
+        that.level_3 = []
+        that.level_4 = []
+      } else if (code.length / 2 === 1) {
         that.level_3 = []
         that.level_4 = []
       } else if (code.length / 2 === 2) {
@@ -275,7 +313,7 @@ export default {
         if (code === '1') {
           code = '0'
         }
-        that.ajax('/goods/getDownByCategory', {code: code}).then(res => {
+        that.ajax('/goods/getDownByCategory', {code: code, categoryType: type}).then(res => {
           if (res.code === 200) {
             if (res.data.length > 1) {
               var level = 'level_' + res.data[1].code.length / 2
@@ -288,11 +326,11 @@ export default {
               }
               that[level] = res.data
             }
-            this.getGoodsList(code)
+            this.getGoodsList(type, code)
           }
         })
       } else if (name === '全部') {
-        that.getGoodsList(code)
+        that.getGoodsList(type, code)
       }
     }
   }
@@ -411,7 +449,7 @@ export default {
     font-size: 14px;
   }
   .goodInfo>div>span{
-    color: #888;
+    color: #666;
   }
   .goodInfo .goodTypeName{
     overflow:hidden;
