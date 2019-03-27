@@ -56,7 +56,7 @@
             <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
             <div class="paiTaskIptRightCnt" style="max-width: 140px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
-              <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
+              <span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>
             </div>
             <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
@@ -191,45 +191,17 @@ export default {
     levelValue2: function (newQuestion, oldQuestion) {
       console.log('newQuestion', newQuestion)
       this.CommunityTaskPayload2.jobLevel = newQuestion.toString()
-    },
-    nodeId: function (val, oV) {
-      console.log('nodeId3333', val)
-      if (val) {
-        this.getUserInfo()
-      }
+    }
+  },
+  computed: {
+    getUserName: function () {
+      var that = this
+      that.defImplementer.name = this.$store.state.userName
+      that.defImplementer.id = this.$store.state.userId
+      return this.$store.state.userName
     }
   },
   methods: {
-    getUserInfo: function () {
-      var that = this
-      this.ajax('/myProject/getUserInfo', {}).then(res => {
-        if (res.code === 200) {
-          // that.log('getUserInfo', res)
-          that.defImplementer.name = res.data.Name + '(' + res.data.jName + ')'
-          that.defImplementer.id = res.data.ID
-        }
-      })
-    },
-    getPlanTaskDetail () {
-      var that = this
-      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        if (res.code === 200) {
-          this.log('getPlanOrTaskDetail:', res)
-          that.selDateStart2 = res.data.start
-          that.selDateEnd2 = res.data.finish
-          var st = res.data.start.split(' ')[0] + ' 00:00:00'
-          var et = res.data.finish
-          var sT = new Date(st)
-          var eT = new Date(et)
-          var disabledStarTime = sT.getTime()
-          var disabledEndTime = eT.getTime()
-          that.pickerOptions3.disabledDate = function (time) {
-            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
-          }
-        }
-        this.log('任务详情999999：', res)
-      })
-    },
     // 附件上传 组件 拼接附件上传的id为字符串
     SetFileIdStr () {
       var that = this
@@ -318,6 +290,25 @@ export default {
     },
     selectDate2: function (e) {
       // 所有的伸缩窗 隐藏
+      var that = this
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+        if (res.code === 200) {
+          console.log('ashfcvasjfvjaskj:', res)
+          that.selDateStart2 = res.data.start
+          that.selDateEnd2 = res.data.finish
+          console.log('11111111111', that.selDateStart2)
+          console.log('2222222222', that.selDateEnd2)
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
+          var sT = new Date(st)
+          var eT = new Date(et)
+          var disabledStarTime = sT.getTime()
+          var disabledEndTime = eT.getTime()
+          that.pickerOptions3.disabledDate = function (time) {
+            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+          }
+        }
+      })
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
