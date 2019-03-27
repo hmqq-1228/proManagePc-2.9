@@ -41,12 +41,15 @@
         </div>
       </div>
       <div class="goodType">
-        <div class="goodName">商品状态:</div>
+        <div class="goodName">商品进度:</div>
         <div class="goodBox">
           <div class="active" @click="selectGoodState($event, ' ')">全部</div>
-          <div @click="selectGoodState($event, '1')">研发中</div>
-          <div @click="selectGoodState($event, '2')">销售中</div>
-          <div @click="selectGoodState($event, '0')">已下架</div>
+          <div @click="selectGoodState($event, '1')">立项中</div>
+          <div @click="selectGoodState($event, '2')">研发中</div>
+          <div @click="selectGoodState($event, '3')">生产中</div>
+          <div @click="selectGoodState($event, '4')">已上市</div>
+          <div @click="selectGoodState($event, '5')">销售中</div>
+          <div @click="selectGoodState($event, '6')">反馈</div>
         </div>
       </div>
     </div>
@@ -63,8 +66,8 @@
     </div>
     <div class="goodList">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
-        <div class="goodItemCon" @click="toGoodsManage(good.projectId)">
-          <div class="goodImg">
+        <div class="goodItemCon">
+          <div class="goodImg" @click="toGoodsManage(good.projectId)">
             <div class="goodImg2" v-if="good.attachment[0]"><img :src="good.activeImgUrl" alt=""></div>
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
           </div>
@@ -74,7 +77,7 @@
             </div>
             <div class="active" v-if="good.attachment.length === 0"><img src="../../static/img/defult.png" alt=""></div>
           </div>
-          <div class="goodInfo">
+          <div class="goodInfo" @click="toGoodsManage(good.projectId)">
             <div>编码: <span v-if="good.goodsCode">{{good.goodsCode}}</span><span v-if="!good.goodsCode" style="color: #999;font-size: 12px;">无编码</span></div>
             <div class="goodTypeName" :title="good.name">品名: <span v-if="good.name">{{good.name}}</span><span v-if="!good.name" style="color: #999;font-size: 12px;">未命名</span></div>
             <div class="goodTypeName" :title="good.projectName">项目: <span v-if="good.projectName">{{good.projectName}}</span><span v-if="!good.projectName" style="color: #999;font-size: 12px;">无项目</span></div>
@@ -260,6 +263,7 @@ export default {
     // 第二级到第四级查询
     secondType: function (e, name, type, code) {
       var that = this
+      that.getGoodList.pageNum = 1
       var codeLen = ''
       that.$store.state.goodType = type
       if (code.length >= 2) {
