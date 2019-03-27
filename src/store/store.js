@@ -15,6 +15,7 @@ const state = {
   debug: true,
   proId: '',
   navType: '',
+  goodType: '',
   routerList: [],
   DevelopmentTab: 'DynamicsTask',
   // 项目类型

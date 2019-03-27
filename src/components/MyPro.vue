@@ -193,6 +193,19 @@
     <el-dialog title="图片预览" :visible.sync="dialogShowImg">
       <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
     </el-dialog>
+    <!-- 完善产品信息 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogGoods"
+      width="30%"
+      center
+    >
+      <span>是否完善产品信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="jumpInfo">跳过</el-button>
+        <el-button type="primary" @click="perfectInfo">去完善</el-button>
+      </span>
+    </el-dialog>
     <!--对话框 项目分类 产品研发 start-->
     <el-dialog title="产品研发" :visible.sync="dialogFormVisible" width="35%">
       <div class="showImg">
@@ -211,6 +224,18 @@
         <el-button type="primary" @click="getPathProject()">确定选择</el-button>
       </div>
     </el-dialog>
+    <!-- 完善商品信息 -->
+    <Drawer title="商品信息" width="740" :closable="false" v-model="goodsEdit">
+      <component
+        v-bind:is="compArr.goodsInfo"
+        fileFormId="BaseInfoEdit"
+        v-on:FilePreEmit="GetFilePreData"
+        v-bind:ProBaseInfoShow="goodsEdit"
+        v-on:ProBaseInfoCallback="ProBaseInfoCallbackFuc"
+        :proId="proId"
+        @cancel="cancelGoods"
+      ></component>
+    </Drawer>
     <!--产品研发 end-->
     <!--抽屉 回复 历史记录-->
     <!--新增 抽屉 查看历史记录 start-->
@@ -250,14 +275,20 @@
 <script>
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import FileUploadComp from './FileUploadComp.vue'
+import goodsInfo from './CustomComp/goodsInfo.vue'
 export default {
   name: 'MyPro',
   components: {
     FileUploadComp,
-    CommentLogs
+    CommentLogs,
+    goodsInfo
   },
   data () {
     return {
+      // 完善茶品信息
+      dialogGoods: false,
+      // 商品信息
+      goodsEdit: false,
       commentTotalNum: 0,
       commentPreviewUrl1: '',
       dialogShowImg1: false,
@@ -275,7 +306,8 @@ export default {
       FileUploadComp: 'FileUploadComp',
       compArr: {
         CommentLogs: 'CommentLogs',
-        FileUploadComp: 'FileUploadComp'
+        FileUploadComp: 'FileUploadComp',
+        goodsInfo: 'goodsInfo'
       },
       // 新建项目 表单
       spinShow: false,
@@ -496,6 +528,10 @@ export default {
     }
   },
   methods: {
+    // 取消商品信息
+    cancelGoods () {
+      this.goodsEdit = false
+    },
     // 预览
     GetFilePreData (obj) {
       this.log('obj::', obj)
@@ -900,7 +936,8 @@ export default {
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
                 that.createProFormLoading = false
-                that.$router.push('/ProDetail')
+                // that.$router.push('/ProDetail')
+                console.log(that.ruleForm.projectType)
               } else {
                 this.$message({
                   type: 'error',
@@ -919,6 +956,30 @@ export default {
           return false
         }
       })
+    },
+    // 去完善信息
+    perfectInfo () {
+      this.proId = this.$store.state.proId
+      this.goodsEdit = true
+      this.dialogGoods = false
+    },
+    // 跳过
+    jumpInfo () {
+      this.$router.push('/ProDetail')
+    },
+    // 商品上传成功后续
+    ProBaseInfoCallbackFuc (res) {
+      var that = this
+      if (res.code === 200) {
+        that.$Message.success('保存成功!')
+        // that.queryProDetail()
+        that.goodsEdit = false
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
     },
     // 新建项目 立即创建项目 (空白模板) 提交基本信息
     submitForm (formName) {
@@ -948,7 +1009,11 @@ export default {
                 that.IsClear = true
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
-                this.$router.push('/ProDetail')
+                if (that.ruleForm.projectType === '产品研发') {
+                  this.dialogGoods = true
+                } else {
+                  this.$router.push('/ProDetail')
+                }
               } else {
                 this.$message({
                   type: 'error',

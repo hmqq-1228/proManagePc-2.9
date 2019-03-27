@@ -2,6 +2,7 @@
   <div class="MyPro">
     <div class="MyProCnt">
       <!--条件选择-->
+      <div style="height: 50px;width: 100px;background-color: cornflowerblue" @click="toGoodsManagePage()">去商品管理</div>
       <!--<button @click="toPro2()">pro2</button>-->
       <div class="selectBox">
         <!--<Select v-model="model1" style="width:200px" class="select1">-->
@@ -534,8 +535,8 @@ export default {
     }
   },
   methods: {
-    toPro2: function () {
-      this.$router.push('/MyPro2')
+    toGoodsManagePage: function () {
+      this.$router.push('/GoodsManage')
     },
     chooseProStyle: function () {
       var that = this
