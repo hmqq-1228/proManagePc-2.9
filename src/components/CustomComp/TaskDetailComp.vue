@@ -129,7 +129,7 @@
           </el-table>
         </div>
       </div>
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%;" @row-click="processItemRowClick">
         <el-table-column prop="SYS_PROCESSNAME" label="流程标题" width="260"></el-table-column>
         <el-table-column prop="creatorName" label="发起人" width="80"></el-table-column>
         <el-table-column prop="STATUSNAME" label="状态" width="80"></el-table-column>
@@ -359,6 +359,11 @@ export default {
       this.createProcessShow = false
       window.open(obj.flowUrl, '_blank')
       // window.location.href = obj.flowUrl
+    },
+    processItemRowClick: function (obj) {
+      // detailUrl
+      window.open(obj.detailUrl, '_blank')
+      // this.log('processItemRowClick:', obj)
     },
     // 创建流程 关闭流程选项列表
     closeProcess: function () {
@@ -1150,5 +1155,9 @@ export default {
     margin-top: 200px;
     padding: 30px;
     background-color: #fff;
+  }
+  /* 流程 */
+  .el-table__row{
+    cursor: pointer;
   }
 </style>
