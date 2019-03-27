@@ -63,7 +63,7 @@
     </div>
     <div class="goodList">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
-        <div class="goodItemCon" @click="toGoodsManage(good.projectUID)">
+        <div class="goodItemCon" @click="toGoodsManage(good.projectId)">
           <div class="goodImg">
             <div class="goodImg2" v-if="good.attachment[0]"><img :src="good.activeImgUrl" alt=""></div>
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
