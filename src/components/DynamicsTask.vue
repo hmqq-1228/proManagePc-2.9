@@ -917,7 +917,7 @@ export default {
     },
     toDetail: function (id) {
       var that = this
-      // that.resetScro()
+      that.log('id:', id)
       that.getTaskChildList(id)
       that.taskId2 = id
       that.taskComment.uid = id
