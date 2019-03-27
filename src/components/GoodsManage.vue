@@ -41,12 +41,15 @@
         </div>
       </div>
       <div class="goodType">
-        <div class="goodName">商品状态:</div>
+        <div class="goodName">商品进度:</div>
         <div class="goodBox">
           <div class="active" @click="selectGoodState($event, ' ')">全部</div>
-          <div @click="selectGoodState($event, '1')">研发中</div>
-          <div @click="selectGoodState($event, '2')">销售中</div>
-          <div @click="selectGoodState($event, '0')">已下架</div>
+          <div @click="selectGoodState($event, '1')">立项中</div>
+          <div @click="selectGoodState($event, '2')">研发中</div>
+          <div @click="selectGoodState($event, '3')">生产中</div>
+          <div @click="selectGoodState($event, '4')">已上市</div>
+          <div @click="selectGoodState($event, '5')">销售中</div>
+          <div @click="selectGoodState($event, '6')">反馈</div>
         </div>
       </div>
     </div>
