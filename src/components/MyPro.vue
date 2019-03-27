@@ -132,11 +132,11 @@
                 <el-option v-for="item in proTypeListPure" :value="item.label" :key="item.value" :label="item.label"></el-option>
               </el-select>
             </el-form-item>
-            <div style="width: 50%" @click="showProType('5')">
-              <el-form-item label="项目分类" prop="projectPath">
-                <el-input v-model="ruleForm.projectPath" readonly></el-input>
-              </el-form-item>
-            </div>
+            <!--<div style="width: 50%" @click="showProType('5')">-->
+              <!--<el-form-item label="项目分类" prop="projectPath">-->
+                <!--<el-input v-model="ruleForm.projectPath" readonly></el-input>-->
+              <!--</el-form-item>-->
+            <!--</div>-->
           </div>
           <!--<div v-if="projectPath" class="proTypePath">{{projectPath}}</div>-->
           <!--<el-input v-model="projectPath" readonly placeholder="请选择项目类型" style="width: 52%;"></el-input>-->
@@ -573,24 +573,24 @@ export default {
     },
     // 新增 对话框 产品研发类型树形结构
     getProjectType: function (e) {
-      var that = this
-      if (e === '5' || e === '产品研发') {
-        // that.showProject = false
-        that.showProjectType = true
-        that.dialogFormVisible = true
-        that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
-          // that.log('getUserInfo', res)
-          if (res.code === 200) {
-            that.data2 = res.data
-          }
-        })
-      } else {
-        that.showProject = true
-        that.showProjectType = false
-        that.projectPath = ''
-        that.projectPathId = ''
-        that.ruleForm.projectClassifyId = ''
-      }
+      // var that = this
+      // if (e === '5' || e === '产品研发') {
+      //   // that.showProject = false
+      //   that.showProjectType = true
+      //   that.dialogFormVisible = true
+      //   that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
+      //     // that.log('getUserInfo', res)
+      //     if (res.code === 200) {
+      //       that.data2 = res.data
+      //     }
+      //   })
+      // } else {
+      //   that.showProject = true
+      //   that.showProjectType = false
+      //   that.projectPath = ''
+      //   that.projectPathId = ''
+      //   that.ruleForm.projectClassifyId = ''
+      // }
     },
     showProType: function (e) {
       this.getProjectType(e)
@@ -937,6 +937,11 @@ export default {
                 that.$store.state.proId = res.data
                 that.createProFormLoading = false
                 // that.$router.push('/ProDetail')
+                if (that.ruleForm.projectType === '产品研发') {
+                  this.dialogGoods = true
+                } else {
+                  this.$router.push('/ProDetail')
+                }
                 console.log(that.ruleForm.projectType)
               } else {
                 this.$message({
@@ -972,7 +977,7 @@ export default {
       var that = this
       if (res.code === 200) {
         that.$Message.success('保存成功!')
-        // that.queryProDetail()
+        that.$router.push('/GoodsManage')
         that.goodsEdit = false
       } else {
         that.$message({

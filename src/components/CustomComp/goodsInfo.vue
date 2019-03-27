@@ -10,7 +10,7 @@
             <Option value="DI">DI</Option>
           </Select>
       </FormItem>
-      <FormItem label="品牌类目">
+      <FormItem label="品牌类目" prop="code" :required = true>
           <Cascader :data="options" trigger="hover" @on-change="changeTree" :value="values"></Cascader>
           <!-- <el-cascader :options="options" :show-all-levels="false" expand-trigger="hover"></el-cascader> -->
       </FormItem>
@@ -31,7 +31,7 @@
       </FormItem>
       <FormItem label="是否选品" prop="selectionFlag">
           <el-switch
-          v-model="editValidate.selectionFlag"
+             v-model="selectionFlag"  @change = "change"
           >
       </el-switch>
       </FormItem>
@@ -62,10 +62,12 @@ export default {
   data () {
     return {
       value5: '',
+      selectionFlag: false,
       // 引入组件
       values: [],
       // 上传图片路径
       filUrl: '/file/uploadGoodsFileAjax',
+      FileUploadArr: [],
       compArr: {
         FileUploadComp: 'FileUploadComp'
       },
@@ -76,7 +78,7 @@ export default {
       optionType: {},
       formValidate: {
         goodsName: '',
-        // code: '',
+        code: '',
         explosiveLevel: '',
         developProgress: '',
         newProductType: '',
@@ -92,14 +94,14 @@ export default {
         newProductType: '',
         expectedShelfTime: '',
         selectionFlag: false,
-        attachment: ''
+        attachmentId: ''
       },
       ruleValidate: {
         goodsName: [
           { required: true, message: '请输入商品名称', trigger: 'blur' }
         ],
         code: [
-          { required: true, message: '请选择品牌类目', trigger: 'change' }
+          { required: true, message: '请选择品牌类目', trigger: 'blur' }
         ],
         explosiveLevel: [
           { required: true, message: '请选择爆品等级', trigger: 'change' }
@@ -128,6 +130,14 @@ export default {
     // this.getDetail()
   },
   methods: {
+    change (val) {
+      this.selectionFlag = val
+      if (val === true) {
+        this.editValidate.selectionFlag = '1'
+      } else {
+        this.editValidate.selectionFlag = '0'
+      }
+    },
     // 获取详情
     getDetail () {
       let that = this
@@ -137,20 +147,30 @@ export default {
             that.formValidate = res.data
           }
           that.values = []
-          that.values.push(that.formValidate.categoryCode)
-          console.log(that.values)
+          that.values = that.formValidate.categoryCode
+          that.editValidate.code = that.values[that.values.length - 1]
+          that.formValidate.code = that.values[that.values.length - 1]
           that.proFileList = []
           var fileListArr = []
-          for (var i = 0; res.data.fileList && i < res.data.fileList.length; i++) {
+          for (var i = 0; res.data.attachmentId && i < res.data.attachmentId.length; i++) {
             var obj = {
-              attachmentId: res.data.fileList[i].id,
-              fileName: res.data.fileList[i].showName,
-              previewUrl: res.data.fileList[i].previewUrl
+              attachmentId: res.data.attachmentId[i].id,
+              fileName: res.data.attachmentId[i].showName,
+              previewUrl: res.data.attachmentId[i].previewUrl
             }
             fileListArr.push(obj)
           }
           that.proFileList = that.proFileList.concat(fileListArr)
-          that.editValidate.selectionFlag = res.data.selectionFlag
+          that.FileUploadArr = that.proFileList
+          console.log(that.FileUploadArr)
+          // that.editValidate.attachmentId = that.SetFileIdStr()
+          // console.log(that.editValidate.attachmentId)
+          that.selectionFlag = res.data.selectionFlag
+          if (that.selectionFlag === true) {
+            that.editValidate.selectionFlag = '1'
+          } else {
+            that.editValidate.selectionFlag = '0'
+          }
         }
       })
     },
@@ -212,24 +232,29 @@ export default {
     // 提交
     handleSubmit (name) {
       var that = this
+      that.formValidate.code = this.editValidate.code
       this.$refs[name].validate((valid) => {
         if (valid) {
-          console.log(1)
           that.editValidate.categoryType = that.formValidate.categoryType
           that.editValidate.projectId = that.proId
           that.editValidate.goodsName = that.formValidate.goodsName
-          that.editValidate.code = that.formValidate.code
+          // that.editValidate.code = that.formValidate.code
           that.editValidate.explosiveLevel = that.formValidate.explosiveLevel
           that.editValidate.developProgress = that.formValidate.developProgress
           that.editValidate.newProductType = that.formValidate.newProductType
           that.editValidate.expectedShelfTime = that.DateFormat(that.formValidate.expectedShelfTime)
-          that.editValidate.selectionFlag = that.formValidate.selectionFlag
-          that.editValidate.attachment = that.SetFileIdStr()
-          if (that.editValidate.selectionFlag === true) {
-            that.editValidate.selectionFlag = '1'
+          // that.editValidate.selectionFlag = that.formValidate.selectionFlag
+          if (that.FileUploadArr.length > 0) {
+            that.editValidate.attachmentId = that.SetFileIdStr()
+            console.log(that.editValidate.attachmentId)
           } else {
-            that.editValidate.selectionFlag = '0'
+            that.editValidate.attachmentId = ''
           }
+          // if (that.editValidate.selectionFlag === true) {
+          //   that.editValidate.selectionFlag = '1'
+          // } else {
+          //   that.editValidate.selectionFlag = '0'
+          // }
           that.ajax('/goods/editGoodsInfo', that.editValidate).then(res => {
             that.$emit('ProBaseInfoCallback', res)
             // TaskDistributeCallback

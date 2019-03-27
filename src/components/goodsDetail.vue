@@ -80,8 +80,10 @@
                 <Icon size="18" style="margin-top: -3px;" type="ios-paper-outline"/>
                 <span
                   style="margin-right: 10px; margin-left: 5px;"
-                  v-on:click="proBaseEditClick()"
+                  v-on:click="proGoodsEditClick()"
                 >查看档案</span>
+                <Icon size="20" style="margin-top: -3px;" type="ios-create-outline" />
+                <span style="margin-right: 10px; margin-left: 5px;" v-on:click="proBaseEditClick()">基本信息</span>
                 <Icon size="20" style="margin-top: -3px;" type="ios-time-outline"/>
                 <span style="margin-left: 5px;" v-on:click="openHisDrawer">历史记录</span>
               </div>
@@ -124,8 +126,10 @@
           </div>
       </div>
       <!-- 展开与收起 -->
-      <div class="slideUpConent">
-         <el-button type="primary" size="small" @click="slideToContent">展开/收起</el-button>
+      <div class="slideUpConent" @click="slideToContent">
+         <!--<el-button type="primary" size="small" @click="slideToContent">展开/收起</el-button>-->
+         <i :class="{ 'el-icon-arrow-down':!contentSlide,'el-icon-arrow-up':contentSlide,}"></i>
+         {{contentSlide == true ? '收起' : '展开'}}
       </div>
       <!-- 一级计划 项目计划 start -->
       <div class="planList">
@@ -134,7 +138,7 @@
           <br>目
           <br>计
           <br>划 -->
-          <i class="el-icon-setting" style="font-size:20px;margin-top:10px;"></i>
+          <i class="el-icon-setting" style="font-size:20px;margin-top:50%;"></i>
         </div>
         <div class="planBox" style="position: relative;">
           <div class="plan-list addPlan" v-on:click="addNode(firstPlanId)">
@@ -158,7 +162,7 @@
           >添加 / 编辑</Button> -->
         </div>
       </div>
-      <div style="margin-top:20px;">
+      <div style="margin-top:20px;" v-if="planList.length > 0 ">
           <el-tabs v-model="activeName">
               <el-tab-pane label="加任务" name="first">
                   <component v-bind:is="compArr.AddNewTask"
@@ -184,9 +188,10 @@
     <!-- Part02 start 项目详情 title -->
     <div class="devide">
       <div class="proTreeHeader">
-        <div>项目详情</div>
+        <div>详情</div>
         <div v-if="listTree.length > 0" style="padding-right: 6px">
-           <el-button type="text" @click="slideTree">{{treeName}}</el-button>
+           <el-button type="text" @click="slideTree" v-if="showName">展开</el-button>
+           <el-button type="text" @click="slideTree1" v-else>收缩</el-button>
           <!-- <Button size="small" type="primary" style="width: 84px;" v-on:click="addNode(activeId)">+ 计划 / 任务</Button> -->
         </div>
       </div>
@@ -298,10 +303,21 @@
         fileFormId="BaseInfoEdit"
         v-on:FilePreEmit="GetFilePreData"
         v-bind:ProBaseInfoShow="goodsEdit"
-        v-on:ProBaseInfoCallback="ProBaseInfoCallbackFuc"
+        v-on:ProBaseInfoCallback="ProGoodsInfoCallbackFuc"
         :proId="proId"
         @cancel="cancel"
       ></component>
+    </Drawer>
+    <!-- Part03 end -->
+    <!--新增 抽屉 编辑基本信息 修改基本信息 start-->
+    <Drawer title="基本信息" width="740" :closable="false" v-model="DrawerBaseEdit">
+      <component v-bind:is="compArr.ProBaseInfo"
+                 fileFormId="BaseInfoEdit"
+                 v-on:FilePreEmit="GetFilePreData"
+                 v-bind:ProBaseInfoShow="DrawerBaseEdit"
+                 v-on:ProBaseInfoCallback="ProBaseInfoCallbackFuc"
+                 :proId="proId">
+      </component>
     </Drawer>
     <!--新增 抽屉 一级计划详情 start -->
     <Drawer title="一级计划 / 任务" width="740" :closable="false" v-model="FirstLevelTask">
@@ -444,6 +460,7 @@ import ModifyPlan from './CustomComp/ModifyPlan.vue'
 import ModifyTask from './CustomComp/ModifyTask.vue'
 import TaskDistribute from './CustomComp/TaskDistribute.vue'
 import goodsInfo from './CustomComp/goodsInfo.vue'
+import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 import MemberComp from './CustomComp/MemberComp.vue'
 import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
 import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
@@ -466,10 +483,12 @@ export default {
     PlanDetailComp,
     tree,
     AddNewTask,
-    addNewPlan
+    addNewPlan,
+    ProBaseInfo
   },
   data () {
     return {
+      showName: false,
       // 添加任务计划的id
       parentId: '',
       // 引入组件
@@ -481,6 +500,7 @@ export default {
         CreatePlanOrTask: 'CreatePlanOrTask',
         TaskDistribute: 'TaskDistribute',
         goodsInfo: 'goodsInfo',
+        ProBaseInfo: 'ProBaseInfo',
         MemberComp: 'MemberComp',
         TaskDetailComp: 'TaskDetailComp',
         PlanDetailComp: 'PlanDetailComp',
@@ -838,12 +858,26 @@ export default {
       }
     },
     // // 商品上传成功后续
-    ProBaseInfoCallbackFuc (res) {
+    ProGoodsInfoCallbackFuc (res) {
       var that = this
       if (res.code === 200) {
         that.$Message.success('保存成功!')
         // that.queryProDetail()
         that.goodsEdit = false
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    // 编辑 基本信息 返回结果处理
+    ProBaseInfoCallbackFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.$Message.success('保存成功!')
+        that.queryProDetail()
+        that.DrawerBaseEdit = false
       } else {
         that.$message({
           message: res.msg,
@@ -881,12 +915,21 @@ export default {
         }
       })
     },
-    // zh展开 收缩树状结构
+    // zh展开树状结构
     slideTree () {
       let that = this
+      this.showName = false
       that.listTree.forEach((item, index) => {
-        item.show = !item.show
-        that.treeName = item.show ? '收缩' : '展开'
+        item['show'] = true
+        this.$set(that.listTree, index, item)
+      })
+    },
+    // zh收缩树状结构
+    slideTree1 () {
+      this.showName = true
+      let that = this
+      that.listTree.forEach((item, index) => {
+        item['show'] = false
         this.$set(that.listTree, index, item)
       })
     },
@@ -923,6 +966,9 @@ export default {
       that.modifyTaskVisible = true
     },
     proBaseEditClick () {
+      this.DrawerBaseEdit = true
+    },
+    proGoodsEditClick () {
       this.goodsEdit = true
     },
     // 附件 附件预览
@@ -1461,7 +1507,7 @@ div img {
   width: 75%;
 }
 .topConRt {
-  width: 240px;
+  width: 280px;
   position: relative;
 }
 .title {
@@ -1513,9 +1559,12 @@ div img {
 }
 .slideUpConent {
   /*margin-top: 30px;*/
-  width: 100px;
-  height: 40px;
+  width: 60px;
+  height: 30px;
   margin:30px auto;
+  /*border:1px solid #999;*/
+  text-align:center;
+  line-height: 30px;
 }
 .memName {
   width: 34px;
@@ -1580,7 +1629,7 @@ div img {
   display: flex;
   margin-top: 30px;
   background-color: #f5f8fa;
-  height: 60px;
+  min-height: 60px;
 }
 .planName {
   width: 34px;
@@ -1597,7 +1646,7 @@ div img {
 .planBox {
   width: 98%;
   float: left;
-  max-height: 60px;
+  min-height: 60px;
   overflow: scroll;
   overflow-x: hidden;
   border-top: 1px solid #f0f0f0;
@@ -1615,6 +1664,7 @@ div img {
   background-color: #fff;
   margin-left: 25px;
   margin-top: 15px;
+  margin-bottom: 10px;
   color: #777;
   font-size: 14px;
   font-weight: bold;
