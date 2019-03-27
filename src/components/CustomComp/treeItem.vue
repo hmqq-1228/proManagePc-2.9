@@ -63,7 +63,7 @@ export default {
 <style>
 .tree-second {
   margin-left: 30px;
-  border-left:5px solid #f2f2f2;
+  /*border-left:5px solid #f2f2f2;*/
   list-style: none;
   transition: all 1s;
 }
