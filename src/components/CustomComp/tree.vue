@@ -3,7 +3,7 @@
     <div class="tree-first" v-for="(item,index) in list" :key="index">
         <div :class="item.type==='task'?'menuTree':'planTree'">
             <div class="children-content" :class="item.type==='task'?'havBorder':''">
-                  <div class="children-checked">
+                <div class="children-checked">
                     <i :class="{'el-icon-caret-right':!item.show,'el-icon-caret-bottom':item.show}" @click="showTree(item,index)" v-if="item.children&&item.children.length>0" style="margin-left:-10px"></i>
                     <span class="name" @click="showDetailPage(item)">{{item.name}}</span>
                     <span class="planTime" v-if="item.type==='plan'">
@@ -23,18 +23,18 @@
                     <div  v-if="item.type==='task'">
                           <div class="status" :class="{'noSure':item.status==='0','noFinish':item.status==='1','finish':item.status==='2','stop':item.status==='3','overdue':item.status==='4',}"><p>{{item.statusStr}}</p></div>
                     </div>
+                </div>
             </div>
         </div>
-        <div>
-          <div :class="'tree-all-'+index" v-show="item.show">
+          <div :class="'tree-all-'+index" v-show="item.show" v-if="item.children">
             <div class="tree-second">
               <ul style="margin-left:-30px;">
                  <treeItem v-for="(item,index) in item.children" :menuData="item" @showDetailPage="showDetailPage" :key="index"></treeItem>
               </ul>
             </div>
           </div>
-        </div>
-        </div>
+        <!--</div>-->
+        <!--</div>-->
     </div>
   </div>
 </template>

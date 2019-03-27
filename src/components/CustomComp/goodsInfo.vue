@@ -10,23 +10,23 @@
             <Option value="DI">DI</Option>
           </Select>
       </FormItem>
-      <FormItem label="品牌类目" prop="code">
+      <FormItem label="品牌类目">
           <Cascader :data="options" trigger="hover" @on-change="changeTree" :value="values"></Cascader>
           <!-- <el-cascader :options="options" :show-all-levels="false" expand-trigger="hover"></el-cascader> -->
       </FormItem>
       <FormItem label="爆品等级" prop="explosiveLevel">
           <Select v-model="formValidate.explosiveLevel" placeholder="请选择爆品等级">
-            <Option :value="item.dictName" v-for="(item, index) in optionType.explosiveList" v-bind:key="index">{{item.dictName}}</Option>
+            <Option :value="item.dictCode" v-for="(item, index) in optionType.explosiveList" v-bind:key="index">{{item.dictName}}</Option>
           </Select>
       </FormItem>
       <FormItem label="开发进度" prop="developProgress">
           <Select v-model="formValidate.developProgress" placeholder="请选择开发进度">
-            <Option :value="item.dictName" v-for="(item, index) in optionType.developProgressList" v-bind:key="index">{{item.dictName}}</Option>
+            <Option :value="item.dictCode" v-for="(item, index) in optionType.developProgressList" v-bind:key="index">{{item.dictName}}</Option>
           </Select>
       </FormItem>
       <FormItem label="新品类型" prop="newProductType">
           <Select v-model="formValidate.newProductType" placeholder="请选择新品类型">
-             <Option :value="item.dictName" v-for="(item, index) in optionType.newProductList" v-bind:key="index">{{item.dictName}}</Option>
+             <Option :value="item.dictCode" v-for="(item, index) in optionType.newProductList" v-bind:key="index">{{item.dictName}}</Option>
           </Select>
       </FormItem>
       <FormItem label="是否选品" prop="selectionFlag">
@@ -40,7 +40,7 @@
       </FormItem>
       <!--基本信息 项目附件-->
       <FormItem label="上传图片" prop="desc2">
-          <component v-bind:is="compArr.FileUploadComp" v-on:FilePreEmit="GetFilePreData" v-bind:FileDataList="proFileList" fileFormId="goodsInfo" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+          <component v-bind:is="compArr.FileUploadComp" v-on:FilePreEmit="GetFilePreData" v-bind:FileDataList="proFileList" fileFormId="goodsInfo" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl"></component>
       </FormItem>
       <FormItem label="备注" prop="goodsNames">
           <i-input type="textarea" :maxlength="200" placeholder="请输入..." :rows="5"></i-input>
@@ -64,6 +64,8 @@ export default {
       value5: '',
       // 引入组件
       values: [],
+      // 上传图片路径
+      filUrl: '/file/uploadGoodsFileAjax',
       compArr: {
         FileUploadComp: 'FileUploadComp'
       },
@@ -74,7 +76,7 @@ export default {
       optionType: {},
       formValidate: {
         goodsName: '',
-        code: '',
+        // code: '',
         explosiveLevel: '',
         developProgress: '',
         newProductType: '',
@@ -116,7 +118,7 @@ export default {
     FileUploadComp
   },
   watch: {
-    ProBaseInfoShow (val, old) {
+    ProBaseInfoShow () {
       this.getDetail()
     }
   },
@@ -131,7 +133,10 @@ export default {
       let that = this
       that.ajax('/goods/getGoodsDetail', {projectId: that.proId}).then(res => {
         if (res.code === 200) {
-          that.formValidate = res.data
+          if (res.data) {
+            that.formValidate = res.data
+          }
+          that.values = []
           that.values.push(that.formValidate.categoryCode)
           console.log(that.values)
           that.proFileList = []
@@ -151,7 +156,7 @@ export default {
     },
     // 选择类目
     changeTree (val) {
-      this.formValidate.code = val[val.length - 1]
+      this.editValidate.code = val[val.length - 1]
     },
     // 选择上架时间
     startDateChange (date) {

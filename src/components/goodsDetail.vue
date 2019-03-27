@@ -192,7 +192,7 @@
       </div>
     </div>
     <!-- zh 树形结构 新版本-->
-    <div v-if="listTree.length>0">
+    <div v-if="listTree.length>0 && planList.length > 0">
        <tree :list="listTree" @showDetailPage="showDetailPage"></tree>
     </div>
     <div v-else class="noData">
@@ -838,19 +838,19 @@ export default {
       }
     },
     // // 商品上传成功后续
-    // ProBaseInfoCallbackFuc (res) {
-    //   var that = this
-    //   if (res.code === 200) {
-    //     that.$Message.success('保存成功!')
-    //     // that.queryProDetail()
-    //     that.goodsEdit = false
-    //   } else {
-    //     that.$message({
-    //       message: res.msg,
-    //       type: 'warning'
-    //     })
-    //   }
-    // },
+    ProBaseInfoCallbackFuc (res) {
+      var that = this
+      if (res.code === 200) {
+        that.$Message.success('保存成功!')
+        // that.queryProDetail()
+        that.goodsEdit = false
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
     // 取消商品信息弹窗
     cancel () {
       this.goodsEdit = false
@@ -924,20 +924,6 @@ export default {
     },
     proBaseEditClick () {
       this.goodsEdit = true
-    },
-    // 编辑 基本信息 返回结果处理
-    ProBaseInfoCallbackFuc: function (res) {
-      var that = this
-      if (res.code === 200) {
-        that.$Message.success('保存成功!')
-        that.queryProDetail()
-        that.DrawerBaseEdit = false
-      } else {
-        that.$message({
-          message: res.msg,
-          type: 'warning'
-        })
-      }
     },
     // 附件 附件预览
     GetFilePreData (obj) {

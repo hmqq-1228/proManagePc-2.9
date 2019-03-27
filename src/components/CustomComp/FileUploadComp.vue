@@ -22,7 +22,24 @@
 <script>
 export default {
   name: 'FileUploadComp',
-  props: ['clearInfo', 'fileFormId', 'FileDataList'],
+  props: {
+    clearInfo: {
+      type: Boolean,
+      default: false
+    },
+    fileFormId: {
+      type: String,
+      default: ''
+    },
+    FileDataList: {
+      // type: Array,
+      // default: []
+    },
+    filUrl: {
+      type: String,
+      default: '/file/uploadFileAjax'
+    }
+  },
   data () {
     return {
       loading21: false,
@@ -109,7 +126,7 @@ export default {
       if (formData) {
         $.ajax({
           type: 'post',
-          url: url + '/file/uploadFileAjax',
+          url: url + that.filUrl,
           data: formData,
           cache: false,
           processData: false,

@@ -3,25 +3,25 @@
     <div :class="menuData.type==='task'?'menuTree':'planTree'">
     <div class="children-content" :class="menuData.type==='task'?'havBorder':''" style="margin-left:30px">
           <div class="children-checked">
-              <i :class="{'el-icon-caret-right':!show,'el-icon-caret-bottom':show}" @click="showTree" v-if="menuData.children&&menuData.children.length>0" style="margin-left:-10px"></i>
+            <i :class="{'el-icon-caret-right':!show,'el-icon-caret-bottom':show}" @click="showTree" v-if="menuData.children&&menuData.children.length>0" style="margin-left:-10px"></i>
             <span class="name" @click="showDetailPage(menuData)">{{menuData.name}}</span>
-                      <span class="planTime" v-if="menuData.type==='plan'">
-                        <img src="../../../static/img/data.png">
-                        <span style="margin-left:10px">{{menuData.start}} - {{menuData.finish}}</span>
-                      </span>
-                      <div class="taskDesc" v-if="menuData.type==='task'">
-                           <div class="top">
-                            <span class="residue" v-if="menuData.status!=='2'&&menuData.dayNum" :class="{'number':menuData.dayNum > 1}">剩余{{menuData.dayNum}}天</span>
-                             <div class="createPeople" v-if="menuData.userName">{{menuData.userName.substr(0, 1)}}</div>
-                           </div>
-                         <div class="down">
-                          <img src="../../../static/img/time.png">
-                          <span class="text">{{menuData.start}} - {{menuData.finish}}</span>
-                         </div>
-                      </div>
-                      <div  v-if="menuData.type==='task'">
-                        <div class="status" :class="{'noSure':menuData.status==='0','noFinish':menuData.status==='1','finish':menuData.status==='2','stop':menuData.status==='3','overdue':menuData.status==='4',}"><p>{{menuData.statusStr}}</p></div>
-                      </div>
+            <span class="planTime" v-if="menuData.type==='plan'">
+              <img src="../../../static/img/data.png">
+              <span style="margin-left:10px">{{menuData.start}} - {{menuData.finish}}</span>
+            </span>
+            <div class="taskDesc" v-if="menuData.type==='task'">
+                 <div class="top">
+                  <span class="residue" v-if="menuData.status!=='2'&&menuData.dayNum" :class="{'number':menuData.dayNum > 1}">剩余{{menuData.dayNum}}天</span>
+                   <div class="createPeople" v-if="menuData.userName" :class="{'leftDay':menuData.status==='2'}">{{menuData.userName.substr(0, 1)}}</div>
+                 </div>
+               <div class="down">
+                <img src="../../../static/img/time.png">
+                <span class="text">{{menuData.start}} - {{menuData.finish}}</span>
+               </div>
+            </div>
+            <div  v-if="menuData.type==='task'">
+              <div class="status" :class="{'noSure':menuData.status==='0','noFinish':menuData.status==='1','finish':menuData.status==='2','stop':menuData.status==='3','overdue':menuData.status==='4',}"><p>{{menuData.statusStr}}</p></div>
+            </div>
            </div>
     </div>
     </div>
