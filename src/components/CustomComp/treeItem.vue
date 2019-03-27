@@ -1,9 +1,9 @@
 <template>
   <div v-if="menuData">
-    <div :class="menuData.type==='task'?'menuTree':'planTree'">
+    <div :class="menuData.type==='task'?'menuTree':'planTree'" @click="showDetailPage(menuData)">
     <div class="children-content" :class="menuData.type==='task'?'havBorder':''" style="margin-left:30px">
           <div class="children-checked">
-            <i :class="{'el-icon-caret-right':!show,'el-icon-caret-bottom':show}" @click="showTree" v-if="menuData.children&&menuData.children.length>0" style="margin-left:-10px"></i>
+            <i :class="{'el-icon-caret-right':!show,'el-icon-caret-bottom':show}" @click.stop="showTree" v-if="menuData.children&&menuData.children.length>0" style="margin-left:-10px"></i>
             <span class="name" @click="showDetailPage(menuData)">{{menuData.name}}</span>
             <span class="planTime" v-if="menuData.type==='plan'">
               <img src="../../../static/img/data.png">
@@ -11,7 +11,10 @@
             </span>
             <div class="taskDesc" v-if="menuData.type==='task'">
                  <div class="top">
-                  <span class="residue" v-if="menuData.status!=='2'&&menuData.dayNum" :class="{'number':menuData.dayNum > 1}">剩余{{menuData.dayNum}}天</span>
+                   <span v-if="menuData.status!=='2'&&menuData.dayNum">
+                     <span class="residue" v-if="menuData.dayNum > 0" :class="{'number':menuData.dayNum>1}">剩余{{menuData.dayNum}}天</span>
+                     <span class="residue" v-else :class="{'number':menuData.dayNum>1}">逾期{{Math.abs(menuData.dayNum)}}天</span>
+                   </span>
                    <div class="createPeople" v-if="menuData.userName" :class="{'leftDay':menuData.status==='2'}">{{menuData.userName.substr(0, 1)}}</div>
                  </div>
                <div class="down">
@@ -63,7 +66,7 @@ export default {
 <style>
 .tree-second {
   margin-left: 30px;
-  border-left:5px solid #f2f2f2;
+  /*border-left:5px solid #f2f2f2;*/
   list-style: none;
   transition: all 1s;
 }
@@ -194,9 +197,9 @@ export default {
     background: #27cf97;
   }
   .children-checked .stop {
-    background: #27cf97;
+    background: red;
   }
   .children-checked .overdue {
-    background: red;
+    background: #aaa;
   }
 </style>

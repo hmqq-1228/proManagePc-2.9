@@ -1,10 +1,10 @@
 <template>
   <div class="tree" v-if="list.length>0">
     <div class="tree-first" v-for="(item,index) in list" :key="index">
-        <div :class="item.type==='task'?'menuTree':'planTree'">
+        <div :class="item.type==='task'?'menuTree':'planTree'" @click="showDetailPage(item)">
             <div class="children-content" :class="item.type==='task'?'havBorder':''">
                 <div class="children-checked">
-                    <i :class="{'el-icon-caret-right':!item.show,'el-icon-caret-bottom':item.show}" @click="showTree(item,index)" v-if="item.children&&item.children.length>0" style="margin-left:-10px"></i>
+                    <i :class="{'el-icon-caret-right':!item.show,'el-icon-caret-bottom':item.show}" @click.stop="showTree(item,index)" v-if="item.children&&item.children.length>0" style="margin-left:-10px"></i>
                     <span class="name" @click="showDetailPage(item)">{{item.name}}</span>
                     <span class="planTime" v-if="item.type==='plan'">
                       <img src="../../../static/img/data.png">
@@ -12,7 +12,11 @@
                     </span>
                     <div class="taskDesc" v-if="item.type==='task'">
                          <div class="top">
-                            <span class="residue" v-if="item.status!=='2'&&item.dayNum" :class="{'number':item.dayNum>1}">剩余{{item.dayNum}}天</span>
+                            <span v-if="item.status!=='2'&&item.dayNum">
+                               <span class="residue" v-if="item.dayNum > 0" :class="{'number':item.dayNum>1}">剩余{{item.dayNum}}天</span>
+                               <span class="residue" v-else :class="{'number':item.dayNum>1}">逾期{{Math.abs(item.dayNum)}}天</span>
+                            </span>
+
                             <div class="createPeople" v-if="item.userName" :class="{'leftDay':item.status==='2'}">{{item.userName.substr(0, 1)}}</div>
                          </div>
                        <div class="down">
@@ -29,7 +33,7 @@
           <div :class="'tree-all-'+index" v-show="item.show" v-if="item.children">
             <div class="tree-second">
               <ul style="margin-left:-30px;">
-                 <treeItem v-for="(item,index) in item.children" :menuData="item" @showDetailPage="showDetailPage" :key="index"></treeItem>
+                 <treeItem v-for="(item1,index) in item.children" :menuData="item1" @showDetailPage="showDetailPage" :key="index"></treeItem>
               </ul>
             </div>
           </div>
@@ -93,7 +97,7 @@ export default {
 }
 .tree-second {
   margin-left: 0px;
-  border-left:5px solid #f2f2f2;
+  /*border-left:5px solid #f2f2f2;*/
   list-style: none;
   transition: all 1s;
   overflow: hidden
