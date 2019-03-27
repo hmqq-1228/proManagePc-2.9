@@ -74,7 +74,7 @@
 import AddNewTask from './AddNewTask.vue'
 export default {
   name: 'PlanDetailComp',
-  props: ['nodeId', 'addPlanOrTaskSuc'],
+  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh'],
   components: {
     AddNewTask
   },
@@ -102,6 +102,13 @@ export default {
       if (val) {
         this.getNextPlanTask(this.nodeId)
         this.toPlanDetail(this.nodeId)
+      }
+    },
+    PlanDetailCompRefresh: function (val, old) {
+      if (val) {
+        this.toPlanDetail(this.nodeId)
+        // 抛出信息，告知父组件已刷新，将开关关闭
+        this.$emit('CompRefreshThrow', false)
       }
     }
   },

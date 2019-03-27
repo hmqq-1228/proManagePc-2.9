@@ -6,113 +6,17 @@
           <div class="contentTop"  v-loading="loading3">
             <div class="paiTaskTitTab">
               <div class="paiTask pai active" v-on:click="testValue9()">派任务</div>
-              <!--<div class="paiTask share">发分享(@Ta)</div>-->
             </div>
-            <div class="paiTaskIptBox">
-              <div class="paiTaskIptLeft">
-                <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-                <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" v-on:blur="iptBlur()" type="text" placeholder="请输入您要安排的任务" /></div>
-              </div>
-              <div class="paiTaskIptRight">
-                <div class="paiTaskIptRightIcon" v-on:click="selectUser($event)"><i class="el-icon-edit-outline"></i></div>
-                <div class="paiTaskIptRightCnt" v-on:click="selectUser($event)">
-                  <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
-                  <span v-if="taskForm.value9.length > 0" v-for="user in taskForm.value9" :key="user"> {{user.split('-')[0]}}</span>
-                  <span v-if="taskForm.value9.length === 0">{{defImplementer.name}}</span>
-                  <!--<span> {{defImplementer.name}}</span>-->
-                </div>
-                <div class="paiTaskIptRightIcon" v-on:click="selectDate($event)"><i class="el-icon-date"></i></div>
-                <div class="paiTaskIptRightCnt" v-on:click="selectDate($event)">时间</div>
-                <div class="paiTaskIptRightIcon" v-on:click="selectLevel($event)"><i class="el-icon-bell"></i></div>
-              </div>
-            </div>
-            <!--任务关联 项目组成员 简介-->
-            <div class="taskRelation" v-if="taskRelationShow">
-              <div class="relationHeader">
-                <div class="proBelong">
-                  <!--所属项目 <i class="el-icon-arrow-down"></i>-->
-                  <el-select v-model="projectBelong" placeholder="请选择关联项目">
-                    <el-option
-                      v-for="item in options"
-                      :key="item.projectUID"
-                      :label="item.projectName"
-                      :value="item.projectUID">
-                    </el-option>
-                  </el-select>
-                </div>
-                <!--<div class="taskExecutor">-->
-                  <!--参与人 <i class="el-icon-date"></i>-->
-                <!--</div>-->
-              </div>
-              <div class="relationIntro">
-                <textarea class="relationIntroArea" v-model="taskIntro" placeholder="请输入任务简介"></textarea>
-              </div>
-            </div>
-            <!--附件选择-->
-            <div class="taskFileUpload">
-              <div class="fileUploadCao">
-                <div class="selectLeft">
-                  <form style="height: 30px;" id="uploadFile" enctype="multipart/form-data">
-                    <input type="file" :disabled="fileListDis" v-on:change="fileChange" id="myfile" name="myfile" placeholder="请选择文件"/><br><br>
-                      <!--<el-button type="primary" @click="addMarkInfo()">提 交</el-button>-->
-                  </form>
-                  <div style="margin-top: 8px;font-size: 12px;">
-                    <span style="color: #f00" v-if="fileList.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
-                    <span v-if="fileList.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileList.length}}</span> 个附件:</span>
-                    <span style="color: #888;" v-if="fileList.length === 0">暂无附件</span>
-                    <span style="color: #409EFF" v-if="fileList.length > 0" v-for="(file, index) in fileList" v-bind:key="index"><span style="color: #333">{{index+1}}、</span>{{file.fileName}} <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFile(file.attachmentId)"></div>, </span>
-                  </div>
-                </div>
-                <div class="selectRight">
-                  <div class="selectMoreInfo" v-on:click="moreClick()">
-                    <i v-bind:class="moreIcon"></i><span style="margin-left: 6px;">{{moreText}}</span>
-                  </div>
-                  <div class="submitBtn" v-on:click="depSub()"><el-button type="primary">发布</el-button></div>
-                </div>
-              </div>
-              <div class="fileUploadPre"></div>
-            </div>
+            <component v-bind:is="compArr.QuickCreateTaskComp" fileFormId="QuickCreateTaskComp" v-on:ActionResThrow="ActionResThrowFuc"></component>
           </div>
-          <!--上传的图片在此预览-->
-          <div class="uploadFilePre"></div>
           <!--动态标签页面 tags-->
           <div class="tabsBox">
             <el-tabs v-model="currentTab" @tab-click="handleClick">
               <el-tab-pane v-bind:label="tab.tabName" v-bind:name="tab.tabComp" v-for="tab in tabs" v-bind:key="tab.tabComp"></el-tab-pane>
             </el-tabs>
-            <component v-bind:is="currentTabComponent" v-bind:recall="isRecall"></component>
+            <component v-bind:is="currentTabComponent" v-bind:refresh="isRefresh" v-on:CompThrow="CompThrowFuc" v-bind:recall="isRecall"></component>
           </div>
         </div>
-        <!--<div class="el-main-right">-->
-          <!--<div style="font-size: 16px;">置顶公告</div>-->
-          <!--<div class="gonggaoBox">-->
-            <!--暂无置顶公告，企业超级管理员可在“所有动态”中对单条动态进行置顶操作-->
-          <!--</div>-->
-          <!--<div class="userOnline">-->
-            <!--<div class="OnlineText">在线同事</div>-->
-            <!--<div class="OnlineNum">在线24人，共781人</div>-->
-          <!--</div>-->
-          <!--<div class="userOnlineList">-->
-            <!--<div class="userOnlineItem">赵</div>-->
-            <!--<div class="userOnlineItem">钱</div>-->
-            <!--<div class="userOnlineItem">孙</div>-->
-            <!--<div class="userOnlineItem">李</div>-->
-            <!--<div class="userOnlineItem">周</div>-->
-            <!--<div class="userOnlineItem">吴</div>-->
-            <!--<div class="userOnlineItem">郑</div>-->
-            <!--<div class="userOnlineItem">王</div>-->
-            <!--<div class="userOnlineItem">冯</div>-->
-            <!--<div class="userOnlineItem">陈</div>-->
-            <!--<div class="userOnlineItem">诸</div>-->
-            <!--<div class="userOnlineItem">魏</div>-->
-            <!--<div class="userOnlineItem">蒋</div>-->
-            <!--<div class="userOnlineItem">沈</div>-->
-            <!--<div class="userOnlineItem">韩</div>-->
-            <!--<div class="userOnlineItem">杨</div>-->
-            <!--<div class="userOnlineItem">朱</div>-->
-            <!--<div class="userOnlineItem">...</div>-->
-          <!--</div>-->
-        <!--</div>-->
       </div>
     </el-main>
     <!--发动态 人员选择-->
@@ -174,17 +78,28 @@ import DynamicsSubordinate from './DynamicsSubordinate.vue'
 import DynamicsPublic from './DynamicsPublic.vue'
 import DynamicsTags from './DynamicsTags.vue'
 import DynamicsPro from './DynamicsPro.vue'
+import QuickCreateTaskComp from './CustomComp/QuickCreateTaskComp.vue'
 export default {
-  name: 'MyDep',
+  name: 'MyDepNew',
   components: {
     DynamicsTask,
     DynamicsPublic,
     DynamicsSubordinate,
+    QuickCreateTaskComp,
     DynamicsTags,
     DynamicsPro
   },
   data () {
     return {
+      compArr: {
+        QuickCreateTaskComp: 'QuickCreateTaskComp'
+      },
+      // 接收到的组件数组 新组件
+      FileUploadArr: [],
+      // 是否让子组件(任务动态、项目动态刷新)
+      isRefresh: false,
+      // 是否让子组件清空文件 新组件
+      IsClear: false,
       // 默认指派
       fileList: [],
       fileListDis: false,
@@ -237,8 +152,6 @@ export default {
       currentTab: this.$store.state.DevelopmentTab,
       tabs: [
         {tabName: '任务动态', tabComp: 'DynamicsTask'},
-        // {tabName: '下属动态', tabComp: 'DynamicsSubordinate'},
-        // {tabName: '公开动态', tabComp: 'DynamicsPublic'},
         {tabName: '项目动态', tabComp: 'DynamicsPro'}
       ],
       taskIntro: '',
@@ -326,6 +239,15 @@ export default {
     }
   },
   methods: {
+    // 创建动态
+    ActionResThrowFuc: function (obj) {
+      if (obj.res.code === 200) {
+        this.isRefresh = true
+      }
+    },
+    CompThrowFuc: function (obj) {
+      this.isRefresh = obj
+    },
     testValue9: function () {
       // this.log('taskFormvalue9:', this.taskForm.value9)
       // this.log('defImplementer:', this.defImplementer)
@@ -649,23 +571,6 @@ export default {
         })
         that.loading3 = false
       }
-      // if (that.taskForm.value9.length > 0 && that.taskNameText) {
-      //   var selectUserStr = ''
-      //   for (var i = 0; i < that.taskForm.value9.length; i++) {
-      //     if (i === 0) {
-      //       selectUserStr = that.taskForm.value9[0]
-      //     } else {
-      //       selectUserStr = selectUserStr + '_' + that.taskForm.value9[i]
-      //     }
-      //   }
-      //   // selDateStart projectBelong
-      // } else {
-      //   that.$message({
-      //     message: '有必填项未填写',
-      //     type: 'warning'
-      //   })
-      //   that.loading3 = false
-      // }
     },
     // 派任务（发动态）清空表单
     clearDynamicsForm: function () {

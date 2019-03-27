@@ -12,8 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {},
 
-    // Various Dev Server settings
-    host: '10.0.5.117', // can be overwritten by process.env.HOST
+    // Various Dev Server settings 10.0.5.242
+    host: 'localhost', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
