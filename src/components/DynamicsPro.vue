@@ -231,7 +231,7 @@ import Swiper from 'swiper'
 import 'swiper/dist/css/swiper.min.css'
 export default {
   name: 'DynamicsPro',
-  props: ['recall'],
+  props: ['recall', 'refresh'],
   data () {
     return {
       msg: '任务动态',
@@ -322,6 +322,14 @@ export default {
       var that = this
       if (newValue) {
         that.getProList()
+      }
+    },
+    // 父组件传递过来的信息 是否刷新
+    refresh: function (val, old) {
+      if (val) {
+        this.getProList()
+        // 抛出信息，告知父组件已刷新，将开关关闭
+        this.$emit('CompThrow', false)
       }
     }
   },

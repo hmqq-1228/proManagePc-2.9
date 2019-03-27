@@ -595,7 +595,7 @@
 <script>
 export default {
   name: 'DynamicsMy',
-  props: ['recall'],
+  props: ['recall', 'refresh'],
   data () {
     return {
       msg: '任务动态',
@@ -929,6 +929,14 @@ export default {
       this.transitionManage2('taskLevelHeight2')
     },
     fileName: function (val, oval) {
+    },
+    // 父组件传递过来的信息 是否刷新
+    refresh: function (val, old) {
+      if (val) {
+        this.getTaskList()
+        // 抛出信息，告知父组件已刷新，将开关关闭
+        this.$emit('CompThrow', false)
+      }
     }
   },
   created () {

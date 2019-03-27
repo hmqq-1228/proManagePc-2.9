@@ -6,7 +6,7 @@
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
         <div style="display: flex;justify-content: space-between">
           <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-          <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
         </div>
       </div>
       <div class="taskMsg">
@@ -110,7 +110,37 @@
           暂无子任务
         </div>
       </div>
-      <div class="cannetProject1">
+      <!-- 关联流程 -->
+      <div class="connectProcess">
+        <div style="display: inline-block" class="connectProcessHeader">
+          <img src="../../../static/img/taskList.png" alt="">
+          <span>关联流程<span style="color: #409EFF">({{tableData.length}})</span></span>
+        </div>
+        <div class="connectProcessHeader" v-on:click="connectProcessClick" style="cursor: pointer; color: rgb(64, 158, 255)">申请审批</div>
+      </div>
+      <div class="createProcess" v-show="createProcessShow" v-on:click="createProcessCancel">
+        <div style="padding: 20px; position: relative;" v-on:click.stop="testMaopao">
+          <h3 style="margin-bottom: 10px;">流程选择</h3>
+          <div style="position: absolute; right: 15px; top: 15px;" v-on:click="closeProcess"><Icon type="md-close" size="16" /></div>
+          <el-table :data="FlowData" border style="width: 100%" @row-click="rowClick">
+            <el-table-column prop="flowIndex" label="编号" width="80"></el-table-column>
+            <el-table-column prop="name" label="流程名称"></el-table-column>
+            <el-table-column prop="type" label="类别" width="80"></el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <el-table :data="tableData" border style="width: 100%">
+        <el-table-column prop="SYS_PROCESSNAME" label="流程标题" width="260"></el-table-column>
+        <el-table-column prop="creatorName" label="发起人" width="80"></el-table-column>
+        <el-table-column prop="STATUSNAME" label="状态" width="80"></el-table-column>
+        <el-table-column prop="SYS_STARTTIME" label="发起日期" width="180"></el-table-column>
+        <el-table-column prop="Name" label="当前审批人" width="100"></el-table-column>
+        <!--<el-table-column prop="address" label="地址"></el-table-column>-->
+      </el-table>
+      <!--<div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="tableData.length === 0">-->
+        <!--暂无关联流程-->
+      <!--</div>-->
+      <div class="cannetProject1" style="margin-top: 20px;">
         <div style="display: inline-block"><img src="../../../static/img/goutong.png" alt=""><span>沟 通</span></div>
       </div>
       <div class="el-textarea" v-loading="loading2">
@@ -185,7 +215,7 @@
         </div>
       </div>
     </div>
-    <!--/ 任务完成/-->
+    <!--/ 任务完成 /-->
     <div class="taskFinishedBgcover" title="任务完成" v-if="taskFinishedVisible">
       <div class="el-textarea taskFinishedCnt" v-loading="loading9">
         <textarea name="remark" class="el-textarea__inner" id="textAreaF" type="text" v-model="commitComentF"></textarea>
@@ -274,12 +304,17 @@ export default {
       // 任务完成
       taskFinishedVisible: false,
       commitComentF: '',
-      loading9: false
+      loading9: false,
+      createProcessShow: false,
+      FlowData: [
+      ],
+      tableData: []
     }
   },
   watch: {
     modifyTaskRes: function (val, oV) {
       if (val) {
+        this.$emit('CompThrow', false)
         this.toDetail(this.nodeId)
       }
     },
@@ -288,6 +323,7 @@ export default {
       if (val) {
         that.showDrawer = true
         that.toDetail(that.nodeId)
+        that.TaskConnectProcessList()
       } else {
         that.concelTransfer()
         that.showDrawer = false
@@ -317,6 +353,48 @@ export default {
     }
   },
   methods: {
+    // 创建流程 流程选项列表
+    rowClick: function (obj) {
+      this.log('rowClick:', obj)
+      this.createProcessShow = false
+      window.open(obj.flowUrl, '_blank')
+      // window.location.href = obj.flowUrl
+    },
+    // 创建流程 关闭流程选项列表
+    closeProcess: function () {
+      this.createProcessShow = false
+    },
+    // 流程列表区域 阻止冒泡
+    testMaopao: function () {
+      this.log('阻止冒泡')
+    },
+    // 点击半透明区域
+    createProcessCancel: function () {
+      this.createProcessShow = false
+    },
+    // 点击申请流程
+    connectProcessClick: function () {
+      var that = this
+      this.createProcessShow = true
+      that.ajax('/myTask/getFlowList', {taskId: that.nodeId}).then(res => {
+        that.log('流程入口选项：', res)
+        if (res.code === 200) {
+          for (var i = 0; i < res.data.length; i++) {
+            res.data[i].flowIndex = i + 1
+          }
+          that.FlowData = res.data
+          that.log('that.FlowData:', that.FlowData)
+        }
+      })
+    },
+    // 查询关联流程
+    TaskConnectProcessList: function () {
+      var that = this
+      that.ajax('/myTask/getTaskFlowList', {taskId: that.nodeId}).then(res => {
+        that.log('任务所关联的流程：', res)
+        that.tableData = res.data
+      })
+    },
     testData: function () {
       // var that = this
       this.log('testtest:', this.testtest)
@@ -874,6 +952,50 @@ export default {
     font-family: '黑体';
     font-weight: bold;
     padding:0 10px;
+  }
+  /*流程*/
+  .connectProcess{
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f1f1f1;
+    background-color: #f5f8fa;
+    padding:0 10px;
+  }
+  .connectProcess div img{
+    float: left;
+    margin-top: 9px;
+    margin-right: 10px;
+  }
+  .connectProcessHeader:nth-child(1){
+    font-family: '微软雅黑';
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .connectProcessHeader:nth-child(2){
+    font-family: '微软雅黑';
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .createProcess{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999
+  }
+  .createProcess>div{
+    width: 600px;
+    _height: 200px;
+    background-color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: -300px;
   }
   .cannetProject21{
     width: 100%;
