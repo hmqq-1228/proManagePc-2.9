@@ -275,7 +275,7 @@
 <script>
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import FileUploadComp from './FileUploadComp.vue'
-import goodsInfo from "./CustomComp/goodsInfo.vue"
+import goodsInfo from './CustomComp/goodsInfo.vue'
 export default {
   name: 'MyPro',
   components: {
@@ -286,9 +286,9 @@ export default {
   data () {
     return {
       // 完善茶品信息
-      dialogGoods:false,
+      dialogGoods: false,
       // 商品信息
-      goodsEdit:false,
+      goodsEdit: false,
       commentTotalNum: 0,
       commentPreviewUrl1: '',
       dialogShowImg1: false,
@@ -307,7 +307,7 @@ export default {
       compArr: {
         CommentLogs: 'CommentLogs',
         FileUploadComp: 'FileUploadComp',
-        goodsInfo:"goodsInfo"
+        goodsInfo: 'goodsInfo'
       },
       // 新建项目 表单
       spinShow: false,
@@ -528,8 +528,8 @@ export default {
     }
   },
   methods: {
-    //取消商品信息
-    cancelGoods() {
+    // 取消商品信息
+    cancelGoods () {
       this.goodsEdit = false
     },
     // 预览
@@ -958,28 +958,28 @@ export default {
       })
     },
     // 去完善信息
-    perfectInfo() {
-       this.proId = this.$store.state.proId
-       this.goodsEdit = true
-       this.dialogGoods = false
+    perfectInfo () {
+      this.proId = this.$store.state.proId
+      this.goodsEdit = true
+      this.dialogGoods = false
     },
     // 跳过
-    jumpInfo() {
-       this.$router.push('/ProDetail')
+    jumpInfo () {
+      this.$router.push('/ProDetail')
     },
-    //商品上传成功后续
-    ProBaseInfoCallbackFuc(res) {
-        var that = this
-        if (res.code === 200) {
-          that.$Message.success('保存成功!')
-          // that.queryProDetail()
-          that.goodsEdit = false
-        } else {
-          that.$message({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
+    // 商品上传成功后续
+    ProBaseInfoCallbackFuc (res) {
+      var that = this
+      if (res.code === 200) {
+        that.$Message.success('保存成功!')
+        // that.queryProDetail()
+        that.goodsEdit = false
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
     },
     // 新建项目 立即创建项目 (空白模板) 提交基本信息
     submitForm (formName) {
@@ -1009,10 +1009,10 @@ export default {
                 that.IsClear = true
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
-                if(that.ruleForm.projectType === '产品研发') {
-                   this.dialogGoods = true
+                if (that.ruleForm.projectType === '产品研发') {
+                  this.dialogGoods = true
                 } else {
-                   this.$router.push('/ProDetail')
+                  this.$router.push('/ProDetail')
                 }
               } else {
                 this.$message({

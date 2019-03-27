@@ -62,22 +62,6 @@
       </div>
     </div>
     <div class="goodList">
-      <!--<div class="goodItem">-->
-        <!--<div class="goodItemCon">-->
-          <!--<div class="goodImg"><img v-bind:src="defultImg" alt=""></div>-->
-          <!--<div class="goodSlider">-->
-            <!--<div @mouseover="showBigImg($event)" v-bind:imgPath="imgUrl"><img v-bind:src="imgUrl" alt=""></div>-->
-            <!--<div></div>-->
-            <!--<div></div>-->
-            <!--<div></div>-->
-          <!--</div>-->
-          <!--<div class="goodInfo">-->
-            <!--<div>编码: <span>156654586665585</span></div>-->
-            <!--<div>品名: <span>出行安全用品</span></div>-->
-            <!--<div>状态: <span>研发中</span></div>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
         <div class="goodItemCon">
           <div class="goodImg">
@@ -119,8 +103,6 @@ export default {
     return {
       inputVal: '',
       radioVal: '综合排序',
-      defultImg: '../../static/img/good.png',
-      imgUrl: '../../static/img/111.png',
       goodTags: [],
       goodList: [],
       level_2: [],
@@ -141,11 +123,13 @@ export default {
     }
   },
   watch: {
+    // 监听搜索值
     inputVal: function (val, oV) {
       var that = this
       that.getGoodList.goodsName = val
       that.getGoodsList('0')
     },
+    // 商品排序
     radioVal: function (val, oV) {
       var that = this
       if (val === '综合排序') {
@@ -158,9 +142,11 @@ export default {
     }
   },
   created: function () {
+    // 默认查询分类
     this.getGoodsListTag(' ', '0')
   },
   methods: {
+    // 切换 预览图片
     previewImg: function (url, index) {
       var that = this
       var newGoodList = []
@@ -186,9 +172,8 @@ export default {
       }
       that.goodList = []
       that.goodList = newGoodList
-      // var obj = e.currentTarget
-      // $(obj).addClass('active').siblings().removeClass('active')
     },
+    //  商品状态查询
     selectGoodState: function (e, str) {
       var that = this
       var obj = e.target
@@ -196,12 +181,11 @@ export default {
       that.getGoodList.status = str
       that.getGoodsList('0')
     },
+    // 查询  分类级别
     getGoodsListTag: function (type, code) {
       var that = this
-      console.log('888888', code)
       if (type !== ' ') {
         that.ajax('/goods/getDownByCategory', {code: code}).then(res => {
-          console.log('getGoodsListTag', res)
           if (res.code === 200) {
             that.goodTags = res.data
             this.getGoodsList(code)
@@ -211,12 +195,12 @@ export default {
         that.getGoodsList(code)
       }
     },
+    // 查询商品列表
     getGoodsList: function (code) {
       var that = this
       that.getGoodList.categoryType = that.$store.state.goodType
       that.getGoodList.code = code
       that.ajax('/goods/getGoodsList', that.getGoodList).then(res => {
-        console.log('getGoodsList', res)
         if (res.code === 200) {
           that.goodList = res.data.list
           that.goodListTotal = res.data.totalRow
@@ -228,21 +212,16 @@ export default {
         }
       })
     },
+    // 分页
     handleCurrentChange: function (e) {
-      console.log(e)
       var that = this
       that.getGoodList.pageNum = e
       that.getGoodsList('0')
     },
-    // showBigImg: function (e) {
-    //   console.log('eeee:', e.target.attributes.src.value)
-    //   this.defultImg = e.target.attributes.src.value
-    // },
+    // 第一级点击查询
     firstType: function (e, type, code) {
-      console.log(e)
       var that = this
       var obj = e.currentTarget
-      console.log('11111111', code)
       that.$store.state.goodType = type
       this.getGoodsListTag(type, code)
       $(obj).addClass('active').siblings().removeClass('active')
@@ -251,11 +230,10 @@ export default {
       that.level_3 = []
       that.level_4 = []
     },
+    // 第二级到第四级查询
     secondType: function (e, name, type, code) {
-      console.log(e)
       var that = this
       var obj = e.target
-      console.log('code:', code)
       if (code.length / 2 === 1) {
         that.level_3 = []
         that.level_4 = []
@@ -265,14 +243,11 @@ export default {
       $(obj).addClass('active').siblings().removeClass('active')
       if (name !== '全部') {
         that.ajax('/goods/getDownByCategory', {code: code}).then(res => {
-          console.log('getGoodsListTag222', res)
           if (res.code === 200) {
-            console.log('code55555:', res.data[1].code.length)
             if (res.data.length > 1) {
               var level = 'level_' + res.data[1].code.length / 2
               that[level] = res.data
             }
-            // console.log('getGoodsListTag222999999', level)
             this.getGoodsList(code)
           }
         })
@@ -330,9 +305,6 @@ export default {
     width: 230px;
     height: 190px;
     overflow: hidden;
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
   }
   .goodImg2{
     width: 228px;
@@ -376,13 +348,17 @@ export default {
     width: 100%;
     display: flex;
     margin-top: 6px;
-    justify-content: space-around;
+    justify-content: center;
   }
   .goodSlider>div{
     height: 40px;
     width: 40px;
+    margin-left: 3px;
     border: 1px solid #cacaca;
     background-color: #f5f8fa;
+  }
+  .goodSlider>div:nth-of-type(1){
+    margin-left: 0;
   }
   .goodSlider .active{
     box-shadow: 1px 1px 4px #ccc;

@@ -140,7 +140,7 @@
           <div class="plan-list addPlan" v-on:click="addNode(firstPlanId)">
              <i class="el-icon-plus"></i>
           </div>
-          <div v-for="plan in planList" class="plan-all">
+          <div v-for="(plan, index) in planList" v-bind:key="index" class="plan-all">
               <div class="plan-list"
                     v-if="planList.length > 0"
                     v-bind:class="activeId === plan.id ? 'active' : ''"
@@ -198,7 +198,6 @@
     <div v-else class="noData">
        暂无数据
     </div>
-    
     <!--项目计划树 树形结构 老版本 start-->
     <!--  <div class="block">
       <el-tree
@@ -438,22 +437,22 @@
 </template>
 
 <script>
-import FileUploadComp from "./FileUploadComp.vue"
-import CommentLogs from "./CustomComp/CommentLogs.vue"
-import CreatePlanOrTask from "./CustomComp/CreatePlanOrTask.vue"
-import ModifyPlan from "./CustomComp/ModifyPlan.vue"
-import ModifyTask from "./CustomComp/ModifyTask.vue"
-import TaskDistribute from "./CustomComp/TaskDistribute.vue"
-import goodsInfo from "./CustomComp/goodsInfo.vue"
-import MemberComp from "./CustomComp/MemberComp.vue"
-import TaskDetailComp from "./CustomComp/TaskDetailComp.vue"
-import PlanDetailComp from "./CustomComp/PlanDetailComp.vue"
-import tree from "./CustomComp/tree.vue" //引入树形结构
+import FileUploadComp from './FileUploadComp.vue'
+import CommentLogs from './CustomComp/CommentLogs.vue'
+import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
+import ModifyPlan from './CustomComp/ModifyPlan.vue'
+import ModifyTask from './CustomComp/ModifyTask.vue'
+import TaskDistribute from './CustomComp/TaskDistribute.vue'
+import goodsInfo from './CustomComp/goodsInfo.vue'
+import MemberComp from './CustomComp/MemberComp.vue'
+import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
+import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
+import tree from './CustomComp/tree.vue'
 import AddNewTask from './CustomComp/AddNewTask.vue'
 import addNewPlan from './CustomComp/addNewPlan.vue'
 // DrawerComp
 export default {
-  name: "ProDetail",
+  name: 'ProDetail',
   components: {
     CommentLogs,
     ModifyPlan,
@@ -469,37 +468,37 @@ export default {
     AddNewTask,
     addNewPlan
   },
-  data() {
+  data () {
     return {
       // 添加任务计划的id
-      parentId:'',
+      parentId: '',
       // 引入组件
       compArr: {
-        ModifyTask: "ModifyTask",
-        ModifyPlan: "ModifyPlan",
-        CommentLogs: "CommentLogs",
-        FileUploadComp: "FileUploadComp",
-        CreatePlanOrTask: "CreatePlanOrTask",
-        TaskDistribute: "TaskDistribute",
-        goodsInfo: "goodsInfo",
-        MemberComp: "MemberComp",
-        TaskDetailComp: "TaskDetailComp",
-        PlanDetailComp: "PlanDetailComp",
+        ModifyTask: 'ModifyTask',
+        ModifyPlan: 'ModifyPlan',
+        CommentLogs: 'CommentLogs',
+        FileUploadComp: 'FileUploadComp',
+        CreatePlanOrTask: 'CreatePlanOrTask',
+        TaskDistribute: 'TaskDistribute',
+        goodsInfo: 'goodsInfo',
+        MemberComp: 'MemberComp',
+        TaskDetailComp: 'TaskDetailComp',
+        PlanDetailComp: 'PlanDetailComp',
         AddNewTask: 'AddNewTask',
-        addNewPlan:'addNewPlan'
+        addNewPlan: 'addNewPlan'
       },
-      //zh 树状展开收缩文字
-      treeName: "收缩",
-      //zh 收缩展开内容
-      contentSlide:true,
+      // zh 树状展开收缩文字
+      treeName: '收缩',
+      // zh 收缩展开内容
+      contentSlide: true,
       // 默认计划
       activeName: 'first',
-      defaultText:'请输入计划名称',
-      defaultDetail:'请输入计划简介',
-      //是否可以新增计划
-      panshow:false,
-      //商品信息
-      goodsEdit:false,
+      defaultText: '请输入计划名称',
+      defaultDetail: '请输入计划简介',
+      // 是否可以新增计划
+      panshow: false,
+      // 商品信息
+      goodsEdit: false,
       // 接收到的组件数组 新组件
       FileUploadArr: [],
       // 是否让子组件清空文件 新组件
@@ -508,25 +507,25 @@ export default {
       DrawerBaseEdit: false,
       // 新增 成员管理 抽屉
       DrawerMember: false,
-      proId: "",
+      proId: '',
       // 项目附件
       showFileModel: false,
       dialogFormVisible: false,
-      showFileUrl: "",
-      proDetailMsg: "",
+      showFileUrl: '',
+      proDetailMsg: '',
       memberList: [],
-      startPlanDate: "",
-      endPlanDate: "",
-      planList: "",
-      firstPlanId: "",
-      currentNodeId: "",
-      activeId: "",
+      startPlanDate: '',
+      endPlanDate: '',
+      planList: '',
+      firstPlanId: '',
+      currentNodeId: '',
+      activeId: '',
       data5: [],
       options4: [],
       // 新增 项目组成员列表
       proGrpMemList: [],
       // 详情
-      modifyTaskRes: "",
+      modifyTaskRes: '',
       // 详情 抽屉显示
       TaskDetailCompShow: false,
       // 详情 计划详情
@@ -549,7 +548,7 @@ export default {
       DrawerHistory: false,
       // 历史记录
       loadingRe: false,
-      commentPreviewUrl1: "",
+      commentPreviewUrl1: '',
       // 历史记录
       pageN: 1,
       // 历史记录
@@ -557,7 +556,7 @@ export default {
       // 历史记录
       commentTotalNum: 0,
       // 历史记录
-      commitComent: "",
+      commitComent: '',
       // 历史记录
       butnDisabled: false,
       // 一级计划
@@ -565,150 +564,163 @@ export default {
       // 一级计划 详情 planList数据处理
       FirstLevelPlanList: [],
       // 添加计划 添加任务 切换
-      activeNameBgCover: "first",
+      activeNameBgCover: 'first',
       bgCoverShow: false,
       // 新增
       taskForm: {
-        jobName: "",
-        userName: "",
+        jobName: '',
+        userName: '',
         jobLevel: 3,
-        date1: "",
-        date2: "",
-        state2: "",
+        date1: '',
+        date2: '',
+        state2: '',
         value9: [],
         value8: [],
-        description: "",
-        taskUserId: ""
+        description: '',
+        taskUserId: ''
       },
       // 新增
       moreUserSelectPayload: {
-        projectManager: ""
+        projectManager: ''
       },
       // 新增 添加评论
       addProjectCommentPayload: {
-        projectUID: "",
-        content: "",
-        attachmentId: ""
+        projectUID: '',
+        content: '',
+        attachmentId: ''
       },
       listTree: [
-         {
-           id:1,
-           name:'一级菜单',
-           type:'plan',
-           children:[{
-            id:2,
-            name:'二级菜单',
-            type:'plan',
-            children:[{
-              id:3,
-              name:'三级菜单',
-              type:'task',
-            },{
-              id:4,
-              name:'三级菜单',
-              type:'plan'
-            },{
-              id:5,
-              name:'三级菜单',
-              type:'task'
+        {
+          id: 1,
+          name: '一级菜单',
+          type: 'plan',
+          children: [{
+            id: 2,
+            name: '二级菜单',
+            type: 'plan',
+            children: [{
+              id: 3,
+              name: '三级菜单',
+              type: 'task'
+            },
+            {
+              id: 4,
+              name: '三级菜单',
+              type: 'plan'
+            },
+            {
+              id: 5,
+              name: '三级菜单',
+              type: 'task'
             }]
-           },{
-            id:6,
-            name:'二级菜单',
-            type:'task'
-           },{
-            id:7,
-            name:'二级菜单',
-            type:'task',
-           }]
-         },{
-           id:2,
-           name:'一级菜单',
-           type:'task',
-           children:[{
-            id:8,
-            name:'二级菜单',
-            type:'task',
-           },{
-            id:9,
-            name:'二级菜单',
-            type:'task'
-           },{
-            id:10,
-            name:'二级菜单',
-            type:'task',
-            children:[{
-              id:11,
-              name:'三级菜单',
-              type:'task',
-              children:[{
-                id:12,
-                name:'四级菜单',
-                type:'task',
-                children:[{
-                  id:13,
-                  name:'五级菜单',
-                  type:'task',
+          },
+          {
+            id: 6,
+            name: '二级菜单',
+            type: 'task'
+          },
+          {
+            id: 7,
+            name: '二级菜单',
+            type: 'task'
+          }]
+        },
+        {
+          id: 2,
+          name: '一级菜单',
+          type: 'task',
+          children: [{
+            id: 8,
+            name: '二级菜单',
+            type: 'task'
+          },
+          {
+            id: 9,
+            name: '二级菜单',
+            type: 'task'
+          },
+          {
+            id: 10,
+            name: '二级菜单',
+            type: 'task',
+            children: [{
+              id: 11,
+              name: '三级菜单',
+              type: 'task',
+              children: [{
+                id: 12,
+                name: '四级菜单',
+                type: 'task',
+                children: [{
+                  id: 13,
+                  name: '五级菜单',
+                  type: 'task'
                 }]
-              },{
-                id:13,
-                name:'四级菜单',
-                type:'task',
-              },{
-                id:14,
-                name:'四级菜单',
-                type:'task',
+              },
+              {
+                id: 13,
+                name: '四级菜单',
+                type: 'task'
+              },
+              {
+                id: 14,
+                name: '四级菜单',
+                type: 'task'
               }]
-            },{
-              id:15,
-              name:'三级菜单',
-              type:'task',
-            },{
-              id:16,
-              name:'三级菜单',
-              type:'task',
+            },
+            {
+              id: 15,
+              name: '三级菜单',
+              type: 'task'
+            },
+            {
+              id: 16,
+              name: '三级菜单',
+              type: 'task'
             }]
-           }]
-         },{
-           id:3,
-           name:'一级菜单',
-           type:'task',
-           children:[{
-            id:1.1,
-            name:'二级菜单',
-            type:'task',
-           },{
-            id:1.2,
-            name:'二级菜单',
-            type:'task',
-           },{
-            id:1.3,
-            name:'二级菜单',
-            type:'task',
-           }]
-         }
+          }]
+        },
+        {
+          id: 3,
+          name: '一级菜单',
+          type: 'task',
+          children: [{
+            id: 1.1,
+            name: '二级菜单',
+            type: 'task'
+          },
+          {
+            id: 1.2,
+            name: '二级菜单',
+            type: 'task'
+          },
+          {
+            id: 1.3,
+            name: '二级菜单',
+            type: 'task'
+          }]
+        }
       ]
-    };
+    }
   },
-  created: function() {
+  created: function () {
     if (this.$store.state.proId || this.$route.params.proId) {
-      this.proId = this.$store.state.proId || this.$route.params.proId;
-      this.$store.state.proId = this.proId;
+      this.proId = this.$store.state.proId || this.$route.params.proId
+      this.$store.state.proId = this.proId
       // this.queryProDetail()
     }
     // this.getTreeList()
     // this.getPlanTree(this.activeId)
   },
   watch: {
-    proId: function(val, oVal) {
-      var that = this;
+    proId: function (val, oVal) {
+      var that = this
       // this.currentProId = val
       // this.currentType = this.type
-      localStorage.setItem("proId", val);
-      var findId = false;
+      localStorage.setItem('proId', val)
+      var findId = false
       for (
-        var t = 0;
-        that.$store.state.slideMenuGroup.length > 0 &&
+        var t = 0; that.$store.state.slideMenuGroup.length > 0 &&
         t < that.$store.state.slideMenuGroup[0].projectList.length;
         t++
       ) {
@@ -716,89 +728,89 @@ export default {
           that.$store.state.slideMenuGroup[0].projectList[t].projectUID ===
           that.proId
         ) {
-          findId = true;
-          that.$store.state.activeNavIndex = "group_0_" + t;
+          findId = true
+          that.$store.state.activeNavIndex = 'group_0_' + t
         }
       }
       if (!findId) {
         for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
           if (
             that.$store.state.slideMenu[p].projectType ===
-            localStorage.getItem("generalMenuActive")
+            localStorage.getItem('generalMenuActive')
           ) {
-            that.$store.state.activeNavIndex = "general_" + p;
+            that.$store.state.activeNavIndex = 'general_' + p
           }
         }
       }
-      this.queryProDetail();
+      this.queryProDetail()
     },
-    commitComent: function(val, oVal) {
+    commitComent: function (val, oVal) {
       if (val) {
-        this.butnDisabled = false;
+        this.butnDisabled = false
       } else {
-        this.butnDisabled = true;
+        this.butnDisabled = true
       }
     },
-    planList: function(val, old) {
-      var that = this;
+    planList: function (val, old) {
+      var that = this
       if (val) {
-        that.FirstLevelPlanList = [];
+        that.FirstLevelPlanList = []
         for (var i = 0; i < val.length; i++) {
           var obj = {
             planName: val[i].name,
-            planType: val[i].type === "1" ? "计划" : "任务",
-            planStartDate: val[i].start.split(" ")[0],
-            planFinishDate: val[i].finish.split(" ")[0],
+            planType: val[i].type === '1' ? '计划' : '任务',
+            planStartDate: val[i].start.split(' ')[0],
+            planFinishDate: val[i].finish.split(' ')[0],
             planDateDur:
-              val[i].start.split(" ")[0] + " 至 " + val[i].finish.split(" ")[0],
+              val[i].start.split(' ')[0] + ' 至 ' + val[i].finish.split(' ')[0],
             planId: val[i].id,
-            description: val[i].description ? val[i].description : ""
-          };
-          that.FirstLevelPlanList.push(obj);
+            description: val[i].description ? val[i].description : ''
+          }
+          that.FirstLevelPlanList.push(obj)
         }
       }
     }
   },
   computed: {
-    slideMenuGroup: function() {
-      var that = this;
+    slideMenuGroup: function () {
+      var that = this
       if (!this.$route.params.proId && !that.$store.state.proId) {
         if (
           that.$store.state.slideMenuGroup.length > 0 &&
           that.$store.state.slideMenuGroup[0].projectList.length > 0
         ) {
-          if (localStorage.getItem("proId")) {
-            that.$store.state.proId = localStorage.getItem("proId");
-            that.proId = localStorage.getItem("proId");
+          if (localStorage.getItem('proId')) {
+            that.$store.state.proId = localStorage.getItem('proId')
+            that.proId = localStorage.getItem('proId')
           } else {
             that.$store.state.proId =
-              that.$store.state.slideMenuGroup[0].projectList[0].projectUID;
+              that.$store.state.slideMenuGroup[0].projectList[0].projectUID
             that.proId =
-              that.$store.state.slideMenuGroup[0].projectList[0].projectUID;
-            localStorage.setItem("proId", that.proId);
-            that.$store.state.activeNavIndex = "group_0_0";
+              that.$store.state.slideMenuGroup[0].projectList[0].projectUID
+            localStorage.setItem('proId', that.proId)
+            that.$store.state.activeNavIndex = 'group_0_0'
           }
         }
       } else {
         // that.log(555555)
       }
-      return that.$store.state.slideMenuGroup;
+      return that.$store.state.slideMenuGroup
     },
-    getStoreProId: function() {
-      var that = this;
-      that.proId = this.$store.state.proId;
-      return this.$store.state.proId;
+    getStoreProId: function () {
+      var that = this
+      that.proId = this.$store.state.proId
+      return this.$store.state.proId
     },
-    slideMenu: function() {
-      var that = this;
+    slideMenu: function () {
+      var that = this
       if (!this.$route.params.proId && !that.$store.state.proId) {
         if (
           that.$store.state.slideMenuGroup.length === 0 &&
           that.$store.state.slideMenu.length > 0
         ) {
-          if (localStorage.getItem("proId")) {
-            that.$store.state.proId = localStorage.getItem("proId");
-            that.proId = localStorage.getItem("proId");
+          if (localStorage.getItem('proId')) {
+            that.$store.state.proId = localStorage.getItem('proId')
+            that.proId = localStorage.getItem('proId')
           } else {
             // that.$store.state.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
             // that.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
@@ -806,11 +818,11 @@ export default {
           }
         }
       }
-      return that.$store.state.slideMenu;
+      return that.$store.state.slideMenu
     }
   },
   methods: {
-    TaskDistributeCallbackFuc(res) {
+    TaskDistributeCallbackFuc (res) {
       let that = this
       if (res.code === 200) {
         that.getTree()
@@ -825,236 +837,230 @@ export default {
         })
       }
     },
-    // 商品上传成功后续
-    ProBaseInfoCallbackFuc() {
-        var that = this
-        if (res.code === 200) {
-          that.$Message.success('保存成功!')
-          // that.queryProDetail()
-          that.goodsEdit = false
-        } else {
-          that.$message({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-    },
+    // // 商品上传成功后续
+    // ProBaseInfoCallbackFuc (res) {
+    //   var that = this
+    //   if (res.code === 200) {
+    //     that.$Message.success('保存成功!')
+    //     // that.queryProDetail()
+    //     that.goodsEdit = false
+    //   } else {
+    //     that.$message({
+    //       message: res.msg,
+    //       type: 'warning'
+    //     })
+    //   }
+    // },
     // 取消商品信息弹窗
-    cancel() {
-       this.goodsEdit = false;
+    cancel () {
+      this.goodsEdit = false
     },
     // zh点击项目计划获取项目详情
-    getPlanTree(plan) {
-        let that = this;
-        that.activeId = plan.id
-        // 判断是否可以增加计划
-        that.parentId = plan.id
-        if(plan.type === '1') {
-          that.panshow = false
-        } else {
-          that.panshow = true
-        }
-        that.getTree()
-    },
-    getTree() {
+    getPlanTree (plan) {
       let that = this
-      that.ajax("/myProject/getPlanAndTaskTree", { id: that.activeId }).then(res => {
-        if(res.code === 200) {
-           that.listTree = []
-           that.treeName = "收缩"
-           that.listTree = res.data
-           that.listTree.forEach((item,index)=>{
-             item['show'] = true
-           })
+      that.activeId = plan.id
+      // 判断是否可以增加计划
+      that.parentId = plan.id
+      if (plan.type === '1') {
+        that.panshow = false
+      } else {
+        that.panshow = true
+      }
+      that.getTree()
+    },
+    getTree () {
+      let that = this
+      that.ajax('/myProject/getPlanAndTaskTree', { id: that.activeId }).then(res => {
+        if (res.code === 200) {
+          that.listTree = []
+          that.treeName = '收缩'
+          that.listTree = res.data
+          that.listTree.forEach((item, index) => {
+            item['show'] = true
+          })
         }
-      });
+      })
     },
-    //zh展开 收缩树状结构
-    slideTree() {
-       let that = this
-       that.listTree.forEach((item,index)=>{
-           item.show = !item.show
-           that.treeName = item.show?'收缩':'展开'
-           this.$set(that.listTree, index ,item)
-       })
+    // zh展开 收缩树状结构
+    slideTree () {
+      let that = this
+      that.listTree.forEach((item, index) => {
+        item.show = !item.show
+        that.treeName = item.show ? '收缩' : '展开'
+        this.$set(that.listTree, index, item)
+      })
     },
-    //收缩与展开内容
-    slideToContent() {
-       this.contentSlide = !this.contentSlide
+    // 收缩与展开内容
+    slideToContent () {
+      this.contentSlide = !this.contentSlide
     },
-    //zh 点击详情获取任务详情
-    showPlanDetail(nodeId, flag, e) {
-        var that = this
-        this.selectProjectId(nodeId, flag, e)
-        this.currentNodeId = nodeId
-        if (nodeId.substring(0, 1) === 'J') {
-          that.TaskDetailCompShow = true
-        } else {
-          that.value444 = true
-        }
-    },
-    // 项目附件model
-    showFileModelClick: function() {
-      this.showFileModel = true;
-    },
-    fileClose: function() {
-      this.showFileModel = false;
-    },
-    showImagePre: function(url, showName) {
-      if (this.isImage(showName)) {
-        this.dialogFormVisible = true;
-        this.showFileUrl = url;
+    // zh 点击详情获取任务详情
+    showPlanDetail (nodeId, flag, e) {
+      var that = this
+      this.selectProjectId(nodeId, flag, e)
+      this.currentNodeId = nodeId
+      if (nodeId.substring(0, 1) === 'J') {
+        that.TaskDetailCompShow = true
+      } else {
+        that.value444 = true
       }
     },
-    showEditFormFuc: function() {
-      var that = this;
-      that.modifyTaskVisible = true;
+    // 项目附件model
+    showFileModelClick: function () {
+      this.showFileModel = true
     },
-    proBaseEditClick() {
-      this.goodsEdit = true;
+    fileClose: function () {
+      this.showFileModel = false
+    },
+    showImagePre: function (url, showName) {
+      if (this.isImage(showName)) {
+        this.dialogFormVisible = true
+        this.showFileUrl = url
+      }
+    },
+    showEditFormFuc: function () {
+      var that = this
+      that.modifyTaskVisible = true
+    },
+    proBaseEditClick () {
+      this.goodsEdit = true
     },
     // 编辑 基本信息 返回结果处理
-    ProBaseInfoCallbackFuc: function(res) {
-      var that = this;
+    ProBaseInfoCallbackFuc: function (res) {
+      var that = this
       if (res.code === 200) {
-        that.$Message.success("保存成功!");
-        that.queryProDetail();
-        that.DrawerBaseEdit = false;
+        that.$Message.success('保存成功!')
+        that.queryProDetail()
+        that.DrawerBaseEdit = false
       } else {
         that.$message({
           message: res.msg,
-          type: "warning"
-        });
+          type: 'warning'
+        })
       }
     },
     // 附件 附件预览
-    GetFilePreData(obj) {
-      this.log("obj::", obj);
+    GetFilePreData (obj) {
       if (obj.previewUrl && this.isImage(obj.fileName)) {
-        this.showBigImage1(obj.previewUrl);
+        this.showBigImage1(obj.previewUrl)
       }
     },
     // 附件上传 获取附件上传组件发来的附件信息 新组件
-    GetFileInfo(obj) {
-      this.log("GetFileInfo:", obj);
+    GetFileInfo (obj) {
       if (obj) {
-        this.IsClear = false;
+        this.IsClear = false
       }
-      this.FileUploadArr = obj;
+      this.FileUploadArr = obj
     },
     // 附件上传
     // 拼接附件上传的id为字符串
-    SetFileIdStr() {
-      var that = this;
-      var FileIdStr = "";
+    SetFileIdStr () {
+      var that = this
+      var FileIdStr = ''
       for (var i = 0; i < that.FileUploadArr.length; i++) {
-        var splitIcon = ",";
+        var splitIcon = ','
         if (i === that.FileUploadArr.length - 1) {
-          splitIcon = "";
+          splitIcon = ''
         }
-        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon;
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
       }
-      that.FileUploadArr = [];
-      return FileIdStr;
+      that.FileUploadArr = []
+      return FileIdStr
     },
-    showBigImage1: function(url) {
+    showBigImage1: function (url) {
       if (url) {
-        this.commentPreviewUrl1 = url;
-        this.dialogShowImg1 = true;
+        this.commentPreviewUrl1 = url
+        this.dialogShowImg1 = true
       }
     },
     // 新增 获取项目详情
-    queryProDetail: function() {
-      var that = this;
+    queryProDetail: function () {
+      var that = this
       that
-        .ajax("/myProject/getProjectDetail", {
+        .ajax('/myProject/getProjectDetail', {
           projectUID: that.$store.state.proId
         })
         .then(res => {
-          that.log("新getProjectDetail:", res);
           if (res.code === 200) {
-            that.memberList = res.data.memberList;
-            that.proDetailMsg = res.data;
-            that.startPlanDate = res.data.startDate.split(" ")[0];
-            that.endPlanDate = res.data.endDate.split(" ")[0];
-            that.planList = res.data.planOrJobList;
-            that.firstPlanId = res.data.firstPlanId;
+            that.memberList = res.data.memberList
+            that.proDetailMsg = res.data
+            that.startPlanDate = res.data.startDate.split(' ')[0]
+            that.endPlanDate = res.data.endDate.split(' ')[0]
+            that.planList = res.data.planOrJobList
+            that.firstPlanId = res.data.firstPlanId
             for (var i = 0; i < res.data.fileList.length; i++) {
               if (that.isImage(res.data.fileList[i].showName)) {
-                res.data.fileList[i].isImg = true;
+                res.data.fileList[i].isImg = true
               } else {
-                res.data.fileList[i].isImg = false;
+                res.data.fileList[i].isImg = false
               }
               res.data.fileList[i].downloadUrl =
                 that.$store.state.baseServiceUrl +
-                "/file/downloadFile?realUrl=" +
+                '/file/downloadFile?realUrl=' +
                 res.data.fileList[i].realUrl +
-                "&showName=" +
-                res.data.fileList[i].showName;
+                '&showName=' +
+                res.data.fileList[i].showName
             }
             if (res.data.planOrJobList.length > 0) {
               if (!that.activeId) {
-                that.activeId = res.data.planOrJobList[0].id;
+                that.activeId = res.data.planOrJobList[0].id
                 // zh获取默认数据
                 that.getTree()
                 that.parentId = that.activeId
               }
             } else {
-              that.activeId = "";
+              that.activeId = ''
             }
-            that.selectProjectId(that.activeId, "QueryFirstLevelChild");
+            that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
           }
-        });
+        })
     },
     // 根据计划或任务Id 获取子级结构
-    selectProjectId: function(id, type, e) {
-      var that = this;
-      that.data5 = [];
+    selectProjectId: function (id, type, e) {
+      var that = this
+      that.data5 = []
       if (id) {
-        this.currentNodeId = id;
+        this.currentNodeId = id
       }
       // if (id.substring(0, 1) === 'J') {
       //   // that.TaskDetailCompShow = true
       // } else {
       //   // that.value444 = true
       // }
-      if (type === "QueryFirstLevelChild") {
-        that.activeId = id;
+      if (type === 'QueryFirstLevelChild') {
+        that.activeId = id
         if (e) {
-          var obj = e.currentTarget;
-          $(obj)
-            .addClass("active")
-            .siblings()
-            .removeClass("active");
+          var obj = e.currentTarget
+          $(obj).addClass('active').siblings().removeClass('active')
         }
       }
       console.log(that.activeId)
       // that.getPlanTree(that.activeId)
       that.getTree()
       that
-        .ajax("/myProject/getPlanOrTaskById", { id: that.activeId })
+        .ajax('/myProject/getPlanOrTaskById', { id: that.activeId })
         .then(res => {
           if (res.code === 200) {
             for (var i = 0; i < res.data.length; i++) {
-              res.data[i].start = res.data[i].start.split(" ")[0];
-              res.data[i].finish = res.data[i].finish.split(" ")[0];
+              res.data[i].start = res.data[i].start.split(' ')[0]
+              res.data[i].finish = res.data[i].finish.split(' ')[0]
               res.data[i].children = [
                 {
                   id: 1,
-                  name: "测试"
+                  name: '测试'
                 }
-              ];
+              ]
             }
-            that.data5 = res.data;
+            that.data5 = res.data
           }
-        });
+        })
     },
-    showDetailPage: function(data) {
+    showDetailPage: function (data) {
       console.log(data)
-      var that = this;
-      this.currentNodeId = data.id;
-      if (data.type === "task") {
-        that.TaskDetailCompShow = true;
+      var that = this
+      this.currentNodeId = data.id
+      if (data.type === 'task') {
+        that.TaskDetailCompShow = true
         // that.taskId = data.id
         // that.taskComment.uid = data.id
         // that.taskHistoryList.uid = data.id
@@ -1062,47 +1068,47 @@ export default {
         // that.getCommicateCont()
         // that.getHistoryList()
         // that.toDetail(data.id)
-      } else if (data.type === "plan") {
-        that.value444 = true;
+      } else if (data.type === 'plan') {
+        that.value444 = true
         // that.toPlanDetail(data.id)
       }
     },
-    toDetail: function(id) {
-      var that = this;
+    toDetail: function (id) {
+      var that = this
       if (id) {
-        that.taskId = id;
+        that.taskId = id
       }
     },
     // 点击 项目详情 下的树结构节点 获取子计划或任务
-    getNodeMsg: function(e) {
-      var that = this;
-      this.$set(e, "children", []);
-      that.ajax("/myProject/getPlanOrTaskById", { id: e.id }).then(res => {
+    getNodeMsg: function (e) {
+      var that = this
+      this.$set(e, 'children', [])
+      that.ajax('/myProject/getPlanOrTaskById', { id: e.id }).then(res => {
         if (res.code === 200) {
           for (var i = 0; i < res.data.length; i++) {
-            res.data[i].start = res.data[i].start.split(" ")[0];
-            res.data[i].finish = res.data[i].finish.split(" ")[0];
+            res.data[i].start = res.data[i].start.split(' ')[0]
+            res.data[i].finish = res.data[i].finish.split(' ')[0]
             res.data[i].children = [
               {
                 id: 1,
-                name: "测试"
+                name: '测试'
               }
-            ];
+            ]
           }
-          e.children = res.data;
+          e.children = res.data
         }
-      });
+      })
     },
     // 历史记录 点击“历史记录”打开历史记录抽屉
-    openHisDrawer() {
-      this.DrawerHistory = true;
-      this.getHistoryCont();
+    openHisDrawer () {
+      this.DrawerHistory = true
+      this.getHistoryCont()
     },
     // 历史记录 获取历史记录
-    getHistoryCont() {
-      var that = this;
+    getHistoryCont () {
+      var that = this
       that
-        .ajax("/myProject/getLogAndComment", {
+        .ajax('/myProject/getLogAndComment', {
           projectUID: that.proId,
           pageSize: 10,
           pageNum: that.pageN
@@ -1112,349 +1118,349 @@ export default {
             for (var i = 0; i < res.data.list.length; i++) {
               for (var j = 0; j < res.data.list[i].uploads.length; j++) {
                 if (that.isImage(res.data.list[i].uploads[j].showName)) {
-                  res.data.list[i].uploads[j].isImage = true;
+                  res.data.list[i].uploads[j].isImage = true
                 } else {
-                  res.data.list[i].uploads[j].isImage = false;
+                  res.data.list[i].uploads[j].isImage = false
                 }
                 var downurl =
                   that.$store.state.baseServiceUrl +
-                  "/file/downloadFile?realUrl=" +
+                  '/file/downloadFile?realUrl=' +
                   res.data.list[i].uploads[j].realUrl +
-                  "&showName=" +
-                  res.data.list[i].uploads[j].showName;
-                res.data.list[i].uploads[j].downloadUrl = downurl;
+                  '&showName=' +
+                  res.data.list[i].uploads[j].showName
+                res.data.list[i].uploads[j].downloadUrl = downurl
               }
             }
-            that.taskLogs = res.data.list;
-            that.commentTotalNum = res.data.totalRow;
+            that.taskLogs = res.data.list
+            that.commentTotalNum = res.data.totalRow
           }
-        });
+        })
     },
     // 历史记录 分页值改变
-    commentPageChange: function(e) {
-      this.pageN = e;
-      this.getHistoryCont();
+    commentPageChange: function (e) {
+      this.pageN = e
+      this.getHistoryCont()
     },
     // 历史记录 点击回复
-    addMarkInfo() {
-      var that = this;
-      that.loadingRe = true;
-      that.addProjectCommentPayload.projectUID = that.proId;
-      that.addProjectCommentPayload.content = that.commitComent;
-      that.addProjectCommentPayload.attachmentId = that.SetFileIdStr();
+    addMarkInfo () {
+      var that = this
+      that.loadingRe = true
+      that.addProjectCommentPayload.projectUID = that.proId
+      that.addProjectCommentPayload.content = that.commitComent
+      that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
       if (that.commitComent) {
         that
-          .ajax("/myProject/addProjectComment", that.addProjectCommentPayload)
+          .ajax('/myProject/addProjectComment', that.addProjectCommentPayload)
           .then(res => {
             if (res.code === 200) {
-              that.IsClear = true;
+              that.IsClear = true
               that.$message({
-                type: "success",
+                type: 'success',
                 message: res.msg
-              });
-              that.loadingRe = false;
-              that.getHistoryCont();
-              that.commitComent = "";
+              })
+              that.loadingRe = false
+              that.getHistoryCont()
+              that.commitComent = ''
             } else {
               that.$message({
-                type: "success",
+                type: 'success',
                 message: res.msg
-              });
-              that.loadingRe = false;
+              })
+              that.loadingRe = false
             }
-          });
+          })
       }
     },
     // 成员管理
-    updataPageInfo: function(info) {
-      var that = this;
-      that.queryProDetail();
+    updataPageInfo: function (info) {
+      var that = this
+      that.queryProDetail()
     },
     // 成员管理
-    updataPageDelMember: function(info) {
-      var that = this;
-      that.queryProDetail();
+    updataPageDelMember: function (info) {
+      var that = this
+      that.queryProDetail()
     },
     // 成员管理
-    updataPageAddPeople: function(info) {
-      var that = this;
-      that.queryProDetail();
+    updataPageAddPeople: function (info) {
+      var that = this
+      that.queryProDetail()
     },
     // 成员管理
-    moreMemberClick: function() {
-      this.DrawerMember = true;
+    moreMemberClick: function () {
+      this.DrawerMember = true
       // this.queryProGroupMember()
     },
     // 新增 成员搜索
-    remoteMethod(query) {
-      var that = this;
-      if (query !== "") {
-        this.loading2 = true;
-        that.moreUserSelectPayload.projectManager = query;
+    remoteMethod (query) {
+      var that = this
+      if (query !== '') {
+        this.loading2 = true
+        that.moreUserSelectPayload.projectManager = query
         this.ajax(
-          "/myProject/autoCompleteNames",
+          '/myProject/autoCompleteNames',
           that.moreUserSelectPayload
         ).then(res => {
           if (res.code === 200) {
-            that.options4 = res.data;
-            this.loading2 = false;
+            that.options4 = res.data
+            this.loading2 = false
           }
-        });
+        })
       } else {
-        this.options4 = [];
+        this.options4 = []
       }
     },
     // 点击 组织架构
-    organizationalClick() {
+    organizationalClick () {
       // this.organizationalShow = true
       // this.getDepartment()
     },
     // 一级计划
     // 一级计划 详情
-    FistLevelPlanDetail() {
-      this.FirstLevelTask = true;
+    FistLevelPlanDetail () {
+      this.FirstLevelTask = true
     },
-    addChildMsgFuc: function(data) {
-      this.addNode(data.id, data.type);
+    addChildMsgFuc: function (data) {
+      this.addNode(data.id, data.type)
     },
-    toChildMsgFuc: function(id) {
-      var that = this;
-      that.currentNodeId = id;
-      that.value444 = false;
-      that.TaskDetailCompShow = true;
+    toChildMsgFuc: function (id) {
+      var that = this
+      that.currentNodeId = id
+      that.value444 = false
+      that.TaskDetailCompShow = true
     },
-    toPlanDetailFuc: function(id) {
-      var that = this;
-      that.currentNodeId = id;
-      that.value444 = true;
-      that.TaskDetailCompShow = false;
+    toPlanDetailFuc: function (id) {
+      var that = this
+      that.currentNodeId = id
+      that.value444 = true
+      that.TaskDetailCompShow = false
     },
     // 计划删除 返回结果处理
-    PlanDelCallbackFuc: function(res) {
-      var that = this;
+    PlanDelCallbackFuc: function (res) {
+      var that = this
       if (res.code === 200) {
-        that.selectProjectId();
-        that.value444 = false;
+        that.selectProjectId()
+        that.value444 = false
         that.$message({
-          message: "删除成功！",
-          type: "success"
-        });
+          message: '删除成功！',
+          type: 'success'
+        })
       } else {
         that.$message({
           message: res.msg,
-          type: "warning"
-        });
+          type: 'warning'
+        })
       }
     },
-    TaskDelCallbackFuc: function(res) {
-      var that = this;
+    TaskDelCallbackFuc: function (res) {
+      var that = this
       if (res.code === 200) {
-        that.selectProjectId();
-        that.TaskDetailCompShow = false;
+        that.selectProjectId()
+        that.TaskDetailCompShow = false
         that.$message({
-          message: "删除成功！",
-          type: "success"
-        });
+          message: '删除成功！',
+          type: 'success'
+        })
       } else {
         that.$message({
           message: res.msg,
-          type: "warning"
-        });
+          type: 'warning'
+        })
       }
     },
     // 新建 添加子节点
-    addNode: function(nodeId, nodeType) {
-      var that = this;
+    addNode: function (nodeId, nodeType) {
+      var that = this
       if (nodeType) {
-        if (nodeType === "1" || nodeType === "计划") {
-          that.activeNameBgCover = "first";
+        if (nodeType === '1' || nodeType === '计划') {
+          that.activeNameBgCover = 'first'
         } else {
-          that.activeNameBgCover = "second";
+          that.activeNameBgCover = 'second'
         }
       }
-      this.currentNodeId = nodeId;
-      this.bgCoverShow = true;
-      that.ajax("/myProject/getPlanOrTaskDetail", { id: nodeId }).then(res => {
+      this.currentNodeId = nodeId
+      this.bgCoverShow = true
+      that.ajax('/myProject/getPlanOrTaskDetail', { id: nodeId }).then(res => {
         if (res.code === 200) {
-          var st = res.data.start.split(" ")[0] + " 00:00:00";
-          var et = res.data.finish;
-          var sT = new Date(st);
-          var eT = new Date(et);
-          that.form.date1 = res.data.start;
-          that.form.date2 = res.data.finish;
-          that.addTaskForm.date1 = res.data.start;
-          that.addTaskForm.date2 = res.data.finish;
-          that.disabledStarTime2 = sT.getTime();
-          that.disabledEndTime2 = eT.getTime();
-          that.pickerOptionsPlan.disabledDate = function(time) {
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
+          var sT = new Date(st)
+          var eT = new Date(et)
+          that.form.date1 = res.data.start
+          that.form.date2 = res.data.finish
+          that.addTaskForm.date1 = res.data.start
+          that.addTaskForm.date2 = res.data.finish
+          that.disabledStarTime2 = sT.getTime()
+          that.disabledEndTime2 = eT.getTime()
+          that.pickerOptionsPlan.disabledDate = function (time) {
             return (
               time.getTime() < that.disabledStarTime2 ||
               time.getTime() > that.disabledEndTime2
-            );
-          };
+            )
+          }
         } else {
           that.$message({
             message: res.msg
-          });
+          })
         }
-      });
+      })
     },
-    planHandleClick(row, clickType) {
-      var that = this;
-      that.currentNodeId = row.planId;
-      if (clickType === "edit") {
-        if (row.planType === "计划") {
-          that.planEditShow = true;
-        } else if (row.planType === "任务") {
+    planHandleClick (row, clickType) {
+      var that = this
+      that.currentNodeId = row.planId
+      if (clickType === 'edit') {
+        if (row.planType === '计划') {
+          that.planEditShow = true
+        } else if (row.planType === '任务') {
           // 编辑任务
-          that.modifyTask(that.currentNodeId);
+          that.modifyTask(that.currentNodeId)
         }
-      } else if (clickType === "add") {
-        that.addNode(row.planId, row.planType);
-      } else if (clickType === "del") {
-        that.modal2 = true;
+      } else if (clickType === 'add') {
+        that.addNode(row.planId, row.planType)
+      } else if (clickType === 'del') {
+        that.modal2 = true
       }
     },
-    moreSelectOptions: function(nodeName, nodeId, nodeType, nodeData) {
-      var that = this;
-      this.currentNodeId = nodeId;
-      if (nodeName === "add") {
-        this.addNode(nodeId, nodeType);
-      } else if (nodeName === "del") {
-        this.modal2 = true;
-      } else if (nodeName === "edit") {
-        if (nodeType === "2") {
-          that.modifyTask(nodeId);
-        } else if (nodeType === "1") {
-          that.planEditShow = true;
+    moreSelectOptions: function (nodeName, nodeId, nodeType, nodeData) {
+      var that = this
+      this.currentNodeId = nodeId
+      if (nodeName === 'add') {
+        this.addNode(nodeId, nodeType)
+      } else if (nodeName === 'del') {
+        this.modal2 = true
+      } else if (nodeName === 'edit') {
+        if (nodeType === '2') {
+          that.modifyTask(nodeId)
+        } else if (nodeType === '1') {
+          that.planEditShow = true
         }
       }
     },
     // 新建计划 新建任务 引入组件 返回
-    CreatePlanTaskCallbackFuc: function(res) {
-      var that = this;
-      if (res === "shut") {
-        that.bgCoverShow = false;
+    CreatePlanTaskCallbackFuc: function (res) {
+      var that = this
+      if (res === 'shut') {
+        that.bgCoverShow = false
       } else {
         if (res.code === 200) {
-          that.bgCoverShow = false;
-          that.queryProDetail();
+          that.bgCoverShow = false
+          that.queryProDetail()
           that.$message({
-            message: "创建成功！",
-            type: "success"
-          });
+            message: '创建成功！',
+            type: 'success'
+          })
         } else {
           that.$message({
             message: res.msg,
-            type: "warning"
-          });
+            type: 'warning'
+          })
         }
       }
     },
     // 编辑任务 修改任务
-    modifyTask: function(id) {
-      var that = this;
-      that.taskIdEdit = id;
-      that.modifyTaskVisible = true;
+    modifyTask: function (id) {
+      var that = this
+      that.taskIdEdit = id
+      that.modifyTaskVisible = true
     },
     // 新建 展开更多 删除子节点
-    delNode: function() {
-      var that = this;
-      this.modal_loading = true;
+    delNode: function () {
+      var that = this
+      this.modal_loading = true
       that
-        .ajax("/myProject/delPlanOrTask", { id: that.currentNodeId })
+        .ajax('/myProject/delPlanOrTask', { id: that.currentNodeId })
         .then(res => {
           if (res.code === 200) {
-            that.queryProDetail();
-            this.modal_loading = false;
-            this.modal2 = false;
+            that.queryProDetail()
+            this.modal_loading = false
+            this.modal2 = false
             that.$message({
-              message: "删除成功！",
-              type: "success"
-            });
+              message: '删除成功！',
+              type: 'success'
+            })
           } else {
-            that.loading = false;
+            that.loading = false
             that.$message({
               message: res.msg
-            });
+            })
           }
-        });
+        })
     },
     // 修改计划 编辑计划
     // 编辑计划 修改计划
-    ModifyPlanCallbackFuc: function(res) {
-      var that = this;
-      if (res === "shut") {
-        that.planEditShow = false;
+    ModifyPlanCallbackFuc: function (res) {
+      var that = this
+      if (res === 'shut') {
+        that.planEditShow = false
       } else {
         if (res.code === 200) {
-          that.planEditShow = false;
-          that.queryProDetail();
+          that.planEditShow = false
+          that.queryProDetail()
           that.$message({
-            message: "修改成功！",
-            type: "success"
-          });
+            message: '修改成功！',
+            type: 'success'
+          })
         } else {
           that.$message({
             message: res.msg,
-            type: "warning"
-          });
+            type: 'warning'
+          })
         }
       }
     },
     // 编辑任务 修改任务
-    ModifyTaskCallbackFuc: function(res) {
-      var that = this;
-      this.log("ModifyTaskCallbackFuc:", res);
+    ModifyTaskCallbackFuc: function (res) {
+      var that = this
+      this.log('ModifyTaskCallbackFuc:', res)
       if (res.code === 200) {
-        that.modifyTaskVisible = false;
-        that.queryProDetail();
-        that.selectProjectId();
+        that.modifyTaskVisible = false
+        that.queryProDetail()
+        that.selectProjectId()
         that.$message({
-          message: "修改成功！",
-          type: "success"
-        });
+          message: '修改成功！',
+          type: 'success'
+        })
       } else {
         that.$message({
           message: res.msg,
-          type: "warning"
-        });
+          type: 'warning'
+        })
       }
     },
     // 组件内点击了关闭 父组件执行关闭子组件操作
-    ShutCompEmitFuc: function(res) {
-      this[res] = false;
+    ShutCompEmitFuc: function (res) {
+      this[res] = false
     },
-    ActionResThrowFuc: function(obj) {
-      var that = this;
+    ActionResThrowFuc: function (obj) {
+      var that = this
       switch (obj.actionName) {
-        case "transferTask":
+        case 'transferTask':
           // 任务移交
-          that.TaskDetailCompShow = false;
-          that.selectProjectId(that.activeId);
-          break;
-        case "finishTask":
+          that.TaskDetailCompShow = false
+          that.selectProjectId(that.activeId)
+          break
+        case 'finishTask':
           // 任务完成
-          that.selectProjectId();
-          break;
-        case "restartTask":
+          that.selectProjectId()
+          break
+        case 'restartTask':
           // 任务重启
-          that.selectProjectId();
-          break;
-        case "startTask":
+          that.selectProjectId()
+          break
+        case 'startTask':
           // 任务开始
-          that.selectProjectId();
-          break;
-        case "decomposeTask":
+          that.selectProjectId()
+          break
+        case 'decomposeTask':
           // 任务分解
-          that.selectProjectId();
-          break;
+          that.selectProjectId()
+          break
         default:
-          this.log("");
+          this.log('')
       }
     }
   }
-};
+}
 </script>
 
 <style scoped>
