@@ -42,7 +42,7 @@
       <FormItem label="上传图片" prop="desc2">
           <component v-bind:is="compArr.FileUploadComp" v-on:FilePreEmit="GetFilePreData" v-bind:FileDataList="proFileList" fileFormId="goodsInfo" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl"></component>
       </FormItem>
-      <FormItem label="备注" prop="goodsNames">
+      <FormItem label="备注" prop="remark">
           <i-input type="textarea" :maxlength="200" placeholder="请输入..." :rows="5"></i-input>
       </FormItem>
       <FormItem>
