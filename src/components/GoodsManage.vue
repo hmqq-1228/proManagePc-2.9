@@ -72,7 +72,9 @@
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
           </div>
           <div class="goodSlider" style="height: 40px;">
-            <div v-if="good.attachment.length > 0" v-for="(img, index2) in good.attachment" v-bind:class="good.activeImgUrl === img.previewUrl ? 'active' : ''" v-bind:key="index2" @click="previewImg(img.previewUrl, index)">
+            <div v-if="good.attachment.length > 0" v-for="(img, index2) in good.attachment"
+                 v-bind:class="good.activeImgUrl === img.previewUrl ? 'active' : ''"
+                 v-bind:key="index2" @click="previewImg(img.previewUrl, index)">
               <img v-bind:src="img.previewUrl" alt="">
             </div>
             <div class="active" v-if="good.attachment.length === 0"><img src="../../static/img/defult.png" alt=""></div>
@@ -180,25 +182,9 @@ export default {
     previewImg: function (url, index) {
       var that = this
       var newGoodList = []
-      for (var i = 0; i < that.goodList.length; i++) {
-        var urlImg = ''
-        if (i === index) {
-          urlImg = url
-        } else {
-          if (that.goodList[i].attachment.length > 0) {
-            urlImg = that.goodList[i].attachment[0].previewUrl
-          }
-        }
-        var obj = {
-          activeImgUrl: urlImg,
-          attachment: that.goodList[i].attachment,
-          categoryName: that.goodList[i].categoryName,
-          goodsCode: that.goodList[i].goodsCode,
-          name: that.goodList[i].name,
-          status: that.goodList[i].status,
-          statusStr: that.goodList[i].statusStr
-        }
-        newGoodList.push(obj)
+      that.goodList[index].activeImgUrl = url
+      for (var t = 0; t < that.goodList.length; t++) {
+        newGoodList.push(that.goodList[t])
       }
       that.goodList = []
       that.goodList = newGoodList

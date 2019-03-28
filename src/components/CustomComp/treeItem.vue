@@ -71,15 +71,19 @@ export default {
   transition: all 1s;
 }
 .menuTree {
-      height: 65px;
-      border-bottom: 1px solid #f2f2f2;
-      overflow: hidden;
+    height: 65px;
+    border-bottom: 1px solid #f2f2f2;
+    overflow: hidden;
+    cursor: pointer;
 }
 .menuTree:hover {
   background: #E3FBE3;
 }
+.planTree {
+  cursor: pointer;
+}
 .planTree:hover {
-      background: #E3FBE3;
+  background: #E3FBE3;
 }
 .havBorder {
   border-left:3px solid #2D9CFF;
