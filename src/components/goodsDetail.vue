@@ -1,5 +1,5 @@
 <template>
-  <div class="ProDetail" style="position: relative;margin-top: 15px;">
+  <div class="ProDetail goodsDetail" style="position: relative;margin-top: 15px;">
     <div>{{goPerfect?'':''}}</div>
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
@@ -113,7 +113,7 @@
           </div>
         </div>
       </div>
-      <div v-else>
+      <div v-else style="margin-bottom: 15px;">
          <span class="title">{{proDetailMsg.projectName}}</span>
           <div class="myMsg" style="float:right;width:240px;">
             <div>
@@ -134,7 +134,9 @@
       <!-- 展开与收起 -->
       <div class="slideUpConent" @click="slideToContent">
          <!--<el-button type="primary" size="small" @click="slideToContent">展开/收起</el-button>-->
+        <div></div>
         <div><i :class="{ 'el-icon-arrow-down':!contentSlide,'el-icon-arrow-up':contentSlide,}"></i>{{contentSlide == true ? '收起' : '展开'}}</div>
+        <div></div>
       </div>
       <!-- 一级计划 项目计划 start -->
       <div class="planList">
@@ -1587,13 +1589,25 @@ div img {
 }
 .slideUpConent {
   /*margin-top: 30px;*/
-  width: 60px;
+  _width: 60px;
   height: 30px;
-  margin:0px auto;
+  margin-top:0px;
   /*border:1px solid #999;*/
   text-align:center;
   line-height: 30px;
   cursor: pointer;
+  display: flex;
+  _justify-content: space-between;
+}
+.slideUpConent div:nth-child(2){
+  width: 50px;
+  border-left: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+}
+.slideUpConent div:nth-child(1),.slideUpConent div:nth-child(3){
+  flex-grow: 1;
+  border-top: 1px solid #f0f0f0;
 }
 .memName {
   width: 34px;

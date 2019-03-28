@@ -271,8 +271,8 @@ html,body{
 #app{
   height: 100%;
 }
-.el-tabs__content {
-  overflow: visible;
+.goodsDetail .el-tabs__content {
+  overflow: visible !important;
 }
 .copyright{
   padding: 15px;
