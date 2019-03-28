@@ -2,30 +2,30 @@
 <div class="goodsInfo">
   <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
       <FormItem label="商品名称" prop="goodsName">
-          <Input v-model="formValidate.goodsName" placeholder="请输入商品名称" :maxlength="20"/>
+          <Input v-model="formValidate.goodsName" placeholder="请输入商品名称" :maxlength="20" size="large"/>
       </FormItem>
-      <FormItem label="公司项目" prop="categoryType">
-          <Select v-model="formValidate.categoryType" placeholder="请选择项目类型">
+      <FormItem label="品牌类型" prop="categoryType">
+          <Select v-model="formValidate.categoryType" placeholder="请选择品牌类型" size="large">
             <Option value="KUB">KUB</Option>
             <Option value="DI">DI</Option>
           </Select>
       </FormItem>
       <FormItem label="品牌类目" prop="code" :required = true>
-          <Cascader :data="options" trigger="hover" @on-change="changeTree" :value="values"></Cascader>
+          <Cascader :data="options" trigger="hover" @on-change="changeTree" :value="values" size="large"></Cascader>
           <!-- <el-cascader :options="options" :show-all-levels="false" expand-trigger="hover"></el-cascader> -->
       </FormItem>
       <FormItem label="爆品等级" prop="explosiveLevel">
-          <Select v-model="formValidate.explosiveLevel" placeholder="请选择爆品等级">
+          <Select v-model="formValidate.explosiveLevel" placeholder="请选择爆品等级" size="large">
             <Option :value="item.dictCode" v-for="(item, index) in optionType.explosiveList" v-bind:key="index">{{item.dictName}}</Option>
           </Select>
       </FormItem>
       <FormItem label="开发进度" prop="developProgress">
-          <Select v-model="formValidate.developProgress" placeholder="请选择开发进度">
+          <Select v-model="formValidate.developProgress" placeholder="请选择开发进度" size="large">
             <Option :value="item.dictCode" v-for="(item, index) in optionType.developProgressList" v-bind:key="index">{{item.dictName}}</Option>
           </Select>
       </FormItem>
       <FormItem label="新品类型" prop="newProductType">
-          <Select v-model="formValidate.newProductType" placeholder="请选择新品类型">
+          <Select v-model="formValidate.newProductType" placeholder="请选择新品类型" size="large">
              <Option :value="item.dictCode" v-for="(item, index) in optionType.newProductList" v-bind:key="index">{{item.dictName}}</Option>
           </Select>
       </FormItem>
@@ -36,7 +36,7 @@
       </el-switch>
       </FormItem>
       <FormItem label="预计上架时间" prop="expectedShelfTime">
-          <DatePicker type="date" v-bind:value="formValidate.expectedShelfTime" format="yyyy-MM-dd HH:mm:ss" @on-change="startDateChange" placeholder="请输入上架时间" style="width: 100%"></DatePicker>
+          <DatePicker type="date" v-bind:value="formValidate.expectedShelfTime" format="yyyy-MM-dd" @on-change="startDateChange" placeholder="请输入上架时间" style="width: 100%" size="large"></DatePicker>
       </FormItem>
       <!--基本信息 项目附件-->
       <FormItem label="上传图片" prop="desc2">
@@ -100,6 +100,9 @@ export default {
       ruleValidate: {
         goodsName: [
           { required: true, message: '请输入商品名称', trigger: 'blur' }
+        ],
+        categoryType: [
+          { required: true, message: '请输入品牌', trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请选择品牌类目', trigger: 'blur' }

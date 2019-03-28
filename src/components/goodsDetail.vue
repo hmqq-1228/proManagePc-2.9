@@ -1444,8 +1444,10 @@ export default {
       this.log('ModifyTaskCallbackFuc:', res)
       if (res.code === 200) {
         that.modifyTaskVisible = false
+        // that.activated = ''
+        // that.selectProjectId()
         that.queryProDetail()
-        that.selectProjectId()
+        // this.getTree()
         that.$message({
           message: '修改成功！',
           type: 'success'
