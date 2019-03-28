@@ -1,5 +1,6 @@
 <template>
   <div class="ProDetail" style="position: relative;margin-top: 15px;">
+    <div>{{goPerfect?'':''}}</div>
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
     <div class="fileModel" v-if="showFileModel">
@@ -71,11 +72,13 @@
                 </div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 8px; color: #2d8cf0;">
-                <Icon size="18" style="margin-top: -3px;" type="ios-paper-outline"/>
-                <span
-                  style="margin-right: 10px; margin-left: 5px;"
-                  v-on:click="proGoodsEditClick()"
-                >查看档案</span>
+                <span v-if="archives">
+                   <Icon size="18" style="margin-top: -3px;" type="ios-paper-outline"/>
+                   <span
+                     style="margin-right: 10px; margin-left: 5px;"
+                    v-on:click="proGoodsEditClick()"
+                   >查看档案</span>
+                </span>
                 <Icon size="20" style="margin-top: -3px;" type="ios-create-outline" />
                 <span style="margin-right: 10px; margin-left: 5px;" v-on:click="proBaseEditClick()">基本信息</span>
                 <Icon size="20" style="margin-top: -3px;" type="ios-time-outline"/>
@@ -491,6 +494,8 @@ export default {
   data () {
     return {
       showName: false,
+      // 是否有档案
+      archives: true,
       // 添加任务计划的id
       parentId: '',
       // 引入组件
@@ -791,6 +796,12 @@ export default {
           that.FirstLevelPlanList.push(obj)
         }
       }
+    },
+    goodsEdit: function (val, old) {
+      let that = this
+      if (val === false) {
+        that.$store.state.goPerfect = false
+      }
     }
   },
   computed: {
@@ -817,6 +828,16 @@ export default {
         // that.log(555555)
       }
       return that.$store.state.slideMenuGroup
+    },
+    goPerfect: function () {
+      var that = this
+      console.log(that.$store.state.goPerfect)
+      if (that.$store.state.goPerfect === true) {
+        that.goodsEdit = true
+      } else {
+        that.goodsEdit = false
+      }
+      return that.$store.state.goPerfect
     },
     getStoreProId: function () {
       var that = this
@@ -1019,6 +1040,11 @@ export default {
             that.endPlanDate = res.data.endDate.split(' ')[0]
             that.planList = res.data.planOrJobList
             that.firstPlanId = res.data.firstPlanId
+            if (res.data.projectType === '产品研发') {
+              that.archives = true
+            } else {
+              that.archives = false
+            }
             for (var i = 0; i < res.data.fileList.length; i++) {
               if (that.isImage(res.data.fileList[i].showName)) {
                 res.data.fileList[i].isImg = true

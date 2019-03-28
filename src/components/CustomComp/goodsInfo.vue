@@ -4,10 +4,13 @@
       <FormItem label="商品名称" prop="goodsName">
           <Input v-model="formValidate.goodsName" placeholder="请输入商品名称" :maxlength="20" size="large"/>
       </FormItem>
+      <FormItem label="商品编码" prop="goodsCode">
+      <Input v-model="formValidate.goodsCode" placeholder="请输入商品编码" :maxlength="20" size="large"/>
+      </FormItem>
       <FormItem label="品牌类型" prop="categoryType">
           <Select v-model="formValidate.categoryType" placeholder="请选择品牌类型" size="large">
-            <Option value="KUB">KUB</Option>
-            <Option value="DI">DI</Option>
+            <Option value="KUB">可优比</Option>
+            <Option value="DI">蒂爱</Option>
           </Select>
       </FormItem>
       <FormItem label="品牌类目" prop="code" :required = true>
@@ -82,7 +85,8 @@ export default {
         explosiveLevel: '',
         developProgress: '',
         newProductType: '',
-        categoryType: ''
+        categoryType: '',
+        goodsCode: ''
       },
       editValidate: {
         categoryType: '',
@@ -95,14 +99,18 @@ export default {
         expectedShelfTime: '',
         selectionFlag: '0',
         attachmentId: '',
-        remark: ''
+        remark: '',
+        goodsCode: ''
       },
       ruleValidate: {
         goodsName: [
           { required: true, message: '请输入商品名称', trigger: 'blur' }
         ],
         categoryType: [
-          { required: true, message: '请输入品牌', trigger: 'blur' }
+          { required: true, message: '请输入品牌', trigger: 'change' }
+        ],
+        goodsCode: [
+          { required: true, message: '请输入商品编码', trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请选择品牌类目', trigger: 'blur' }
@@ -247,6 +255,7 @@ export default {
           that.editValidate.developProgress = that.formValidate.developProgress
           that.editValidate.newProductType = that.formValidate.newProductType
           that.editValidate.remark = that.formValidate.remark
+          that.editValidate.goodsCode = that.formValidate.goodsCode
           that.editValidate.expectedShelfTime = that.DateFormat(that.formValidate.expectedShelfTime)
           // that.editValidate.selectionFlag = that.formValidate.selectionFlag
           if (that.FileUploadArr.length > 0) {

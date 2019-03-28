@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  goPerfect: false,
   slideMenuGroup: [],
   slideMenu: [],
   // 激活的导航索引

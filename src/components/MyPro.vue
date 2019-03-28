@@ -767,7 +767,7 @@ export default {
     // 新建 点击项目列表项 前往项目详请
     toProDetail: function (id) {
       this.$store.state.proId = id
-      this.$router.push('/ProDetail')
+      this.$router.push('/goodsDetail')
     },
     /**
      *
@@ -965,13 +965,14 @@ export default {
     // 去完善信息
     perfectInfo () {
       this.proId = this.$store.state.proId
-      this.$router.push('/ProDetail')
+      this.$router.push('/goodsDetail')
+      this.$store.state.goPerfect = true
       this.goodsEdit = true
       this.dialogGoods = false
     },
     // 跳过
     jumpInfo () {
-      this.$router.push('/ProDetail')
+      this.$router.push('/goodsDetail')
     },
     // 商品上传成功后续
     ProBaseInfoCallbackFuc (res) {
