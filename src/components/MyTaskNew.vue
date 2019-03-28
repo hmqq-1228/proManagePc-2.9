@@ -248,18 +248,29 @@ export default {
   },
   created () {
     this.queryMyTaskView()
+    this.queryMyProjectList()
   },
   watch: {
     // optionsValue3: function (newValue, oldValue) {
     //   this.myTaskViewPayload.projectName = newValue
     //   this.queryMyTaskView()
-    // },
-    // input3: function (newValue, oldValue) {
-    //   this.myTaskViewPayload.jobName = newValue
-    //   this.queryMyTaskView()
     // }
+    input3: function (newValue, oldValue) {
+      this.myTaskViewPayload.jobName = newValue
+      this.myTaskViewPayload.pageNum = 1
+      this.queryMyTaskView()
+    }
   },
   methods: {
+    queryMyProjectList () {
+      var that = this
+      this.ajax('/myProject/myProjectList', {}).then(res => {
+        // this.log('选择所属项目:', res)
+        if (res.code === 200) {
+          that.projectList = res.data
+        }
+      })
+    },
     myTaskStyleChange: function (e) {
       // console.log('eeeee', e)
       var that = this
