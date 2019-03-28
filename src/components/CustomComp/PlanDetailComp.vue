@@ -56,8 +56,12 @@
         <div class="childTaskName" @click="toPlanDetailMsg(child.id, child.type)" :title="child.name"><Icon type="md-copy" size="16" color="#409EFF"/> {{child.name}} <span style="color: #888;" v-if="child.type === '2'">(任务)</span><span style="color: #888;" v-if="child.type === '1'">(计划)</span></div>
         <div class="childTaskMsg">
           <div v-if="child.status" style="width: 60px;" :class="'childTaskStyle' + child.status">{{child.statusStr}}</div>
-          <div v-if="child.status && child.dayNum >= 0" style="width: 100px;">剩余 <span style="color:#13ce66;font-size: 18px;">{{child.dayNum}}</span> 天</div>
-          <div v-if="child.status && child.dayNum < 0" style="width: 100px;">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(child.dayNum)}}</span> 天</div>
+          <div v-if="child.status && child.dayNum >= 0" style="width: 100px;">
+            <span v-if="child.status !== '2'">剩余 <span style="color:#13ce66;font-size: 18px;">{{child.dayNum}}</span> 天</span>
+          </div>
+          <div v-if="child.status && child.dayNum < 0" style="width: 100px;">
+            <span v-if="child.status !== '2'">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(child.dayNum)}}</span> 天</span>
+          </div>
           <div v-if="child.userName" style="width: 160px;">{{child.userName}}</div>
           <div v-if="!child.userName" style="width: 160px;">创建人: {{child.creator}}</div>
           <div style="width: 20px;margin-right: 0" @click="delChildTask(child.id)"><div class="taskDel"><Icon type="md-close" size="18"/></div></div>
