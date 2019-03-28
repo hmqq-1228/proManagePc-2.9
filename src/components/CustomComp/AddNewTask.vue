@@ -78,7 +78,7 @@
               <div class="selectMoreInfo" v-on:click="moreClick2()">
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
-              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">创建</i-button></div>
+              <div class="submitBtn" v-on:click="depSub()"><i-button type="info">创建</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>
@@ -202,6 +202,27 @@ export default {
     }
   },
   methods: {
+    getDefultTime () {
+      var that = this
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+        if (res.code === 200) {
+          console.log('ashfcvasjfvjaskj:', res)
+          that.selDateStart2 = res.data.start
+          that.selDateEnd2 = res.data.finish
+          console.log('11111111111', that.selDateStart2)
+          console.log('2222222222', that.selDateEnd2)
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
+          var sT = new Date(st)
+          var eT = new Date(et)
+          var disabledStarTime = sT.getTime()
+          var disabledEndTime = eT.getTime()
+          that.pickerOptions3.disabledDate = function (time) {
+            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+          }
+        }
+      })
+    },
     // 附件上传 组件 拼接附件上传的id为字符串
     SetFileIdStr () {
       var that = this
@@ -290,25 +311,7 @@ export default {
     },
     selectDate2: function (e) {
       // 所有的伸缩窗 隐藏
-      var that = this
-      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        if (res.code === 200) {
-          console.log('ashfcvasjfvjaskj:', res)
-          that.selDateStart2 = res.data.start
-          that.selDateEnd2 = res.data.finish
-          console.log('11111111111', that.selDateStart2)
-          console.log('2222222222', that.selDateEnd2)
-          var st = res.data.start.split(' ')[0] + ' 00:00:00'
-          var et = res.data.finish
-          var sT = new Date(st)
-          var eT = new Date(et)
-          var disabledStarTime = sT.getTime()
-          var disabledEndTime = eT.getTime()
-          that.pickerOptions3.disabledDate = function (time) {
-            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
-          }
-        }
-      })
+      this.getDefultTime()
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
@@ -338,8 +341,28 @@ export default {
         this.taskRelationShow2 = false
       }
     },
+    depSub: function () {
+      var that = this
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+        if (res.code === 200) {
+          that.selDateStart2 = res.data.start
+          that.selDateEnd2 = res.data.finish
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
+          var sT = new Date(st)
+          var eT = new Date(et)
+          var disabledStarTime = sT.getTime()
+          var disabledEndTime = eT.getTime()
+          that.pickerOptions3.disabledDate = function (time) {
+            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+          }
+          that.depSub2()
+        }
+      })
+    },
     depSub2: function () {
       var that = this
+      this.getDefultTime()
       that.loading32 = true
       var fileStr = ''
       for (var j = 0; j < this.fileList2.length; j++) {

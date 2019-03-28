@@ -84,7 +84,7 @@
             <div class="goodTypeName" :title="good.name">品名: <span v-if="good.name">{{good.name}}</span><span v-if="!good.name" style="color: #999;font-size: 12px;">未命名</span></div>
             <div class="goodTypeName" :title="good.projectName">项目: <span v-if="good.projectName">{{good.projectName}}</span><span v-if="!good.projectName" style="color: #999;font-size: 12px;">无项目</span></div>
             <div>分类: <span v-if="good.categoryName">{{good.categoryName}}</span><span v-if="!good.categoryName" style="color: #999;font-size: 12px;">未分类</span></div>
-            <div>状态: <span v-bind:class="'statuStyle' + good.status">{{good.statusStr}}</span></div>
+            <div>进度: <span>{{good.developProgress}}</span></div>
           </div>
         </div>
       </div>
@@ -194,7 +194,7 @@ export default {
       var that = this
       var obj = e.target
       $(obj).addClass('active').siblings().removeClass('active')
-      that.getGoodList.status = str
+      that.getGoodList.developProgress = str
       that.getGoodsList()
     },
     // // 查询  分类级别

@@ -1008,10 +1008,7 @@ export default {
     // 新增 获取项目详情
     queryProDetail: function () {
       var that = this
-      that
-        .ajax('/myProject/getProjectDetail', {
-          projectUID: that.$store.state.proId
-        })
+      that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
         .then(res => {
           if (res.code === 200) {
             that.memberList = res.data.memberList

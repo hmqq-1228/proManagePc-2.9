@@ -98,7 +98,6 @@ export default {
       }
     },
     addPlanOrTaskSuc: function (val, oV) {
-      console.log('nodeId888:', this.nodeId)
       if (val) {
         this.getNextPlanTask(this.nodeId)
         this.toPlanDetail(this.nodeId)
@@ -115,7 +114,6 @@ export default {
   methods: {
     toPlanDetail: function (id) {
       var that = this
-      console.log('9999999999999999999999:', id)
       that.ajax('/myProject/getPlanOrTaskDetail', {id: id}).then(res => {
         // console.log('res', res)
         if (res.code === 200) {
@@ -206,9 +204,6 @@ export default {
       if (type === '1') {
         that.toPlanDetail(id)
       } else {
-        // that.value444 = false
-        // that.value4 = true
-        // that.toDetail(id)
         that.$emit('toChildMsg', id)
       }
     },
@@ -224,10 +219,6 @@ export default {
       })
     },
     addChild: function (id, type) {
-      // console.log('id', id)
-      // console.log('type', type)
-      // this.addNode(id, type)
-      // that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       this.$emit('addChildMsg', {'id': id, 'type': type})
     }
   }
