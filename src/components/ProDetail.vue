@@ -763,7 +763,7 @@ export default {
     // 点击 组织架构
     organizationalClick () {
       // this.organizationalShow = true
-      // this.getDepartment()
+      // this.getDepart21ment()
     },
     // 一级计划
     // 一级计划 详情

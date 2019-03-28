@@ -43,7 +43,7 @@
           <component v-bind:is="compArr.FileUploadComp" v-on:FilePreEmit="GetFilePreData" v-bind:FileDataList="proFileList" fileFormId="goodsInfo" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl"></component>
       </FormItem>
       <FormItem label="备注" prop="remark">
-          <i-input type="textarea" :maxlength="200" placeholder="请输入..." :rows="5"></i-input>
+          <i-input v-model="formValidate.remark" type="textarea" :maxlength="200" placeholder="请输入..." :rows="5"></i-input>
       </FormItem>
       <FormItem>
           <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
@@ -93,8 +93,9 @@ export default {
         developProgress: '',
         newProductType: '',
         expectedShelfTime: '',
-        selectionFlag: false,
-        attachmentId: ''
+        selectionFlag: '0',
+        attachmentId: '',
+        remark: ''
       },
       ruleValidate: {
         goodsName: [
@@ -242,6 +243,7 @@ export default {
           that.editValidate.explosiveLevel = that.formValidate.explosiveLevel
           that.editValidate.developProgress = that.formValidate.developProgress
           that.editValidate.newProductType = that.formValidate.newProductType
+          that.editValidate.remark = that.formValidate.remark
           that.editValidate.expectedShelfTime = that.DateFormat(that.formValidate.expectedShelfTime)
           // that.editValidate.selectionFlag = that.formValidate.selectionFlag
           if (that.FileUploadArr.length > 0) {

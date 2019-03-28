@@ -1036,14 +1036,14 @@ export default {
             if (res.data.planOrJobList.length > 0) {
               if (!that.activeId) {
                 that.activeId = res.data.planOrJobList[0].id
-                // zh获取默认数据
-                that.getTree()
                 that.parentId = that.activeId
               }
             } else {
               that.activeId = ''
             }
-            that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
+            // that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
+            // zh获取默认数据
+            that.getTree()
           }
         })
     },
