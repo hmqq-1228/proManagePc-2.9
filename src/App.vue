@@ -271,8 +271,8 @@ html,body{
 #app{
   height: 100%;
 }
-.el-tabs__content {
-  overflow: visible;
+.goodsDetail .el-tabs__content {
+  overflow: visible !important;
 }
 .copyright{
   padding: 15px;
@@ -376,5 +376,8 @@ padding: 8px 20px;
   }
   .goods .el-input.is-active .el-input__inner, .el-input__inner:focus{
     border-color: #34c5be;
+  }
+  .contentTop .el-button{
+    padding: 7px 14px;
   }
 </style>

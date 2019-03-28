@@ -389,7 +389,7 @@ export default {
         }
       ],
       model1: 'all',
-      model2: '0',
+      model2: 'all',
       dialogShowImg: false,
       commentPreviewUrl: '',
       projectViewData: {},

@@ -39,6 +39,16 @@ export default new Router({
       component: goodsDetail
     },
     {
+      path: '/goodsDetail',
+      name: 'goodsDetail',
+      component: goodsDetail
+    },
+    {
+      path: '/goodsDetail/:proId',
+      name: 'goodsDetail',
+      component: goodsDetail
+    },
+    {
       path: '/',
       name: 'Wellcome',
       component: Wellcome
