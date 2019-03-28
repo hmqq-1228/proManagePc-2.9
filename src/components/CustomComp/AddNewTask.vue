@@ -420,7 +420,7 @@ export default {
         })
       } else {
         that.$message({
-          message: '请填写任务名',
+          message: '请填写名称',
           type: 'warning'
         })
         that.loading32 = false
