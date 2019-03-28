@@ -57,9 +57,9 @@
       <div class="lineName">商品排序:</div>
       <div style="margin-left: 10px">
         <el-radio-group v-model="radioVal" size="mini">
-          <el-radio-button label="综合排序"></el-radio-button>
+          <el-radio-button label="创建时间"></el-radio-button>
+          <el-radio-button label="爆品等级"></el-radio-button>
           <el-radio-button label="上架时间"></el-radio-button>
-          <!--<el-radio-button label="销量"></el-radio-button>-->
           <!--<el-radio-button label="库存"></el-radio-button>-->
         </el-radio-group>
       </div>
@@ -108,7 +108,7 @@ export default {
   data () {
     return {
       inputVal: '',
-      radioVal: '综合排序',
+      radioVal: '创建时间',
       goodTags: [],
       goodList: [],
       level_0: [{
@@ -158,11 +158,14 @@ export default {
     // 商品排序
     radioVal: function (val, oV) {
       var that = this
-      if (val === '综合排序') {
+      if (val === '爆品等级') {
         that.getGoodList.sortType = '1'
         that.getGoodsList()
       } else if (val === '上架时间') {
         that.getGoodList.sortType = '2'
+        that.getGoodsList()
+      } else if (val === '创建时间') {
+        that.getGoodList.sortType = ''
         that.getGoodsList()
       }
     }

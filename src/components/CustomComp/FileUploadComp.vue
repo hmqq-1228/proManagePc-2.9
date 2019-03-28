@@ -52,9 +52,12 @@ export default {
   },
   watch: {
     FileDataList (val, old) {
-      // this.log('FileDataList:', val)
+      this.log('FileDataList:', val)
       if (val) {
         this.fileListComment = val
+        if (val.length >= 5) {
+          this.commentDis = true
+        }
       }
     },
     clearInfo (val, old) {
