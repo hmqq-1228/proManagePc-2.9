@@ -965,6 +965,7 @@ export default {
     // 去完善信息
     perfectInfo () {
       this.proId = this.$store.state.proId
+      this.$router.push('/ProDetail')
       this.goodsEdit = true
       this.dialogGoods = false
     },
@@ -977,7 +978,7 @@ export default {
       var that = this
       if (res.code === 200) {
         that.$Message.success('保存成功!')
-        that.$router.push('/GoodsManage')
+        that.$router.push('/goodsDetail')
         that.goodsEdit = false
       } else {
         that.$message({
