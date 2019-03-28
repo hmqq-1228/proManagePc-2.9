@@ -3,13 +3,7 @@
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
     <div class="fileModel" v-if="showFileModel">
-      <div
-        style="text-align: center;height: 30px;line-height: 30px;color: #999;border-bottom: 1px solid #f1f1f1"
-      >
-        共
-        <span
-          style="color: chocolate;font-size: 16px;font-weight: bold;"
-        >{{proDetailMsg.fileList.length}}</span> 个附件
+      <div style="text-align: center;height: 30px;line-height: 30px;color: #999;border-bottom: 1px solid #f1f1f1">共<span style="color: chocolate;font-size: 16px;font-weight: bold;">{{proDetailMsg.fileList.length}}</span> 个附件
       </div>
       <div class="fileItem" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl">
         <div
@@ -122,14 +116,22 @@
             <div>
               <img src="../../static/img/my.png" alt>
             </div>
-            <div style="margin-left: 10px;">{{proDetailMsg.projectManager}}</div>
+            <div style="margin-left: 10px;">{{proDetailMsg.projectManager}} {{startPlanDate}}  {{endPlanDate}}</div>
+            <div class="imgBox" v-if="proDetailMsg.state === '0'">
+              <img src="../../static/img/unstart.png" alt>
+            </div>
+            <div class="imgBox" v-if="proDetailMsg.state === '2'">
+              <img src="../../static/img/doing.png" alt>
+            </div>
+            <div class="imgBox" v-if="proDetailMsg.state === '3'">
+              <img src="../../static/img/finish.png" alt>
+            </div>
           </div>
       </div>
       <!-- 展开与收起 -->
       <div class="slideUpConent" @click="slideToContent">
          <!--<el-button type="primary" size="small" @click="slideToContent">展开/收起</el-button>-->
-         <i :class="{ 'el-icon-arrow-down':!contentSlide,'el-icon-arrow-up':contentSlide,}"></i>
-         {{contentSlide == true ? '收起' : '展开'}}
+        <div><i :class="{ 'el-icon-arrow-down':!contentSlide,'el-icon-arrow-up':contentSlide,}"></i>{{contentSlide == true ? '收起' : '展开'}}</div>
       </div>
       <!-- 一级计划 项目计划 start -->
       <div class="planList">
@@ -510,7 +512,7 @@ export default {
       // zh 树状展开收缩文字
       treeName: '收缩',
       // zh 收缩展开内容
-      contentSlide: true,
+      contentSlide: false,
       // 默认计划
       activeName: 'first',
       defaultText: '请输入计划名称',
@@ -1559,7 +1561,7 @@ div img {
   /*margin-top: 30px;*/
   width: 60px;
   height: 30px;
-  margin:30px auto;
+  margin:0px auto;
   /*border:1px solid #999;*/
   text-align:center;
   line-height: 30px;
@@ -1626,7 +1628,7 @@ div img {
 .planList {
   width: 100%;
   display: flex;
-  margin-top: 30px;
+  margin-top: 10px;
   background-color: #f5f8fa;
   min-height: 60px;
 }
