@@ -377,4 +377,7 @@ padding: 8px 20px;
   .goods .el-input.is-active .el-input__inner, .el-input__inner:focus{
     border-color: #34c5be;
   }
+  .contentTop .el-button{
+    padding: 7px 14px;
+  }
 </style>

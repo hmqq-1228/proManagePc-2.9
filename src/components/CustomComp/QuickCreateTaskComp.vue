@@ -553,6 +553,7 @@ export default {
   }
   .moreAndSubbtn{
     display: flex;
+    padding-top: 6px;
   }
   .FileUploadCompBox{
     width: 70%;
