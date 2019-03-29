@@ -979,6 +979,7 @@ export default {
       // this.log('pppppp:', nodeId)
       // this.selectProjectId(nodeId, flag, e)
       this.currentNodeId = nodeId
+      console.log('idddddd', this.currentNodeId)
       if (nodeId.substring(0, 1) === 'J') {
         that.TaskDetailCompShow = true
       } else {

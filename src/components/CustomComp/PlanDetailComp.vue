@@ -242,6 +242,7 @@ export default {
       var that = this
       if (type === '1') {
         that.toPlanDetail(id)
+        that.currentNodeId = id
       } else {
         that.$emit('toChildMsg', id)
       }
