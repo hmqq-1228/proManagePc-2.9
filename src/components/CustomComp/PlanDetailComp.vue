@@ -1,5 +1,6 @@
 <template>
   <div class="PlanDetailComp">
+    <div>{{refshPlan?'':''}}</div>
     <div class="slidTop">
       <div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>
       <div></div>
@@ -80,7 +81,7 @@ import AddNewTask from './AddNewTask.vue'
 import ModifyPlan from './ModifyPlan.vue'
 export default {
   name: 'PlanDetailComp',
-  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh', 'planDetailEdit', 'taskDrawerOpen', 'refshPlanMsg'],
+  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh', 'planDetailEdit', 'taskDrawerOpen'],
   components: {
     AddNewTask,
     ModifyPlan
@@ -96,6 +97,17 @@ export default {
       },
       planMsgPlanList: [],
       currentNodeId: ''
+    }
+  },
+  computed: {
+    refshPlan: function () {
+      var that = this
+      console.log(that.$store.state.goPerfect)
+      if (that.$store.state.refshPlan === true) {
+        that.getNextPlanTask(this.nodeId)
+      }
+      that.$store.state.refshPlan = false
+      return that.$store.state.refshPlan
     }
   },
   watch: {
@@ -115,11 +127,13 @@ export default {
         this.toPlanDetail(this.nodeId)
       }
     },
-    refshPlanMsg: function (val, oVal) {
-      if (val) {
-        this.getNextPlanTask(this.nodeId)
-      }
-    },
+    // refshPlanMsg: function (val, oVal) {
+    //   if (val) {
+    //     console.log(1)
+    //     this.getNextPlanTask(this.nodeId)
+    //     this.$store.state.refshPlan = false
+    //   }
+    // },
     addPlanOrTaskSuc: function (val, oV) {
       if (val) {
         this.getNextPlanTask(this.nodeId)
@@ -152,12 +166,12 @@ export default {
       })
     },
     // 任务分解 返回结果处理
-    TaskDistributeCallbackFuc: function (res) {
+    TaskDistributeCallbackFuc: function (res, id) {
       var that = this
       // 在计划详情添加子任务后刷新树状结构
       that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       if (res.code === 200) {
-        that.getNextPlanTask(that.currentNodeId)
+        that.getNextPlanTask(id)
         that.$message({
           message: '创建成功！',
           type: 'success'
