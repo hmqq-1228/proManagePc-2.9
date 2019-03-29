@@ -429,7 +429,7 @@ export default {
       })
     },
     tableDataReFresh: function (e) {
-      this.TaskConnectProcessList();
+      this.TaskConnectProcessList()
       // var obj = e.currentTarget
       // if ($(obj).hasClass('ratate')) {
       //   $(obj).removeClass('ratate')
