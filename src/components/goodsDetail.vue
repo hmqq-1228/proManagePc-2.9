@@ -1415,6 +1415,8 @@ export default {
         if (res.code === 200) {
           that.bgCoverShow = false
           that.queryProDetail()
+          // that.getNodeMsg()
+          // that.selectProjectId()
           that.$message({
             message: '创建成功！',
             type: 'success'
