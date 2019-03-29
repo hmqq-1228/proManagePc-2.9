@@ -12,14 +12,15 @@
                     </span>
                     <div class="taskDesc" v-if="item.type==='task'">
                          <div class="top">
+                           <span style="font-size:12px;float:left;margin-right: 15px"><Icon type="ios-person" size="24" style="color:#28558C;margin-top:-5px"/>&nbsp;{{item.userName}}</span>
                             <span v-if="item.status!=='2'&&item.dayNum">
                                <span class="residue" v-if="item.dayNum > 0" :class="{'number':item.dayNum>1}">剩余{{item.dayNum}}天</span>
                                <span class="residue" v-else :class="{'number':item.dayNum>1}">逾期{{Math.abs(item.dayNum)}}天</span>
                             </span>
 
-                            <div class="createPeople" v-if="item.userName" :class="{'leftDay':item.status==='2'}">{{item.userName.substr(0, 1)}}</div>
+                            <!--<div class="createPeople" v-if="item.userName" :class="{'leftDay':item.status==='2'}">{{item.userName.substr(0, 1)}}</div>-->
                          </div>
-                       <div class="down">
+                       <div class="down" :class="{'leftDay':item.status==='2'}">
                         <img src="../../../static/img/time.png">
                         <span class="text">{{item.start}} - {{item.finish}}</span>
                        </div>
@@ -106,6 +107,6 @@ export default {
      /*border-bottom: none;*/
   }
   .leftDay {
-    margin-left: 60px !important;
+    margin-left: 100px !important;
   }
 </style>
