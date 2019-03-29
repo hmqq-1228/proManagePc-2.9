@@ -281,7 +281,6 @@
         v-bind:taskDrawerOpen="value444"
         :nodeId="currentNodeId"
         :planDetailEdit="editFlag"
-        :refshPlanMsg = 'refshPlan'
         v-on:ActionResThrow="ActionResThrowFuc"
         v-on:addChildMsg="addChildMsgFuc"
         v-on:toChildMsg="toChildMsgFuc"
@@ -499,7 +498,7 @@ export default {
   },
   data () {
     return {
-      refshPlan: false,
+      // refshPlan: false,
       editFlag: '',
       showName: false,
       // 是否有档案
@@ -1422,7 +1421,7 @@ export default {
         that.bgCoverShow = false
       } else {
         if (res.code === 200) {
-          that.refshPlan = true
+          that.$store.state.refshPlan = true
           that.bgCoverShow = false
           that.queryProDetail()
           that.$message({

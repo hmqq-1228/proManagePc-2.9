@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const state = {
   goPerfect: false,
+  refshPlan: false,
   slideMenuGroup: [],
   slideMenu: [],
   menuRefresh: false,

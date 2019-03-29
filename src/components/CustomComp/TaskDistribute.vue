@@ -380,7 +380,7 @@ export default {
         that.CommunityTaskPayload2._jfinal_token = that.token
         that.log('attachmentId:', that.CommunityTaskPayload2.attachmentId)
         that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
-          that.$emit('TaskDistributeCallback', res)
+          that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1
             that.IsClear = true

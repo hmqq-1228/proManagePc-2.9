@@ -441,6 +441,7 @@ export default {
           if (res.code === 200) {
             that.taskBasicMsg = res.data
             that.rid = res.data.uid
+            that.currentNodeId = id
             // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
             // var et = res.data.taskFinishDate
             // var sT = new Date(st)
@@ -605,7 +606,7 @@ export default {
     //   }
     // },
     // 任务分解 返回结果处理
-    TaskDistributeCallbackFuc: function (res) {
+    TaskDistributeCallbackFuc: function (res, id) {
       var that = this
       that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       if (res.code === 200) {
@@ -613,7 +614,7 @@ export default {
         // that.queryProDetail()
         // that.selectProjectId()
         // that.getHistoryList()
-        that.getTaskChildList(that.nodeId)
+        that.getTaskChildList(id)
         that.$message({
           message: '创建成功！',
           type: 'success'
