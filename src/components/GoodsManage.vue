@@ -200,6 +200,8 @@ export default {
       if (url) {
         this.goodsImgUrl = url
         this.dialogVisible = true
+      } else {
+        this.$message.warning('暂无商品图片')
       }
     },
     toGoodsManage: function (goodId) {
