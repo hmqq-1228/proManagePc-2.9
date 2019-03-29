@@ -940,7 +940,7 @@ export default {
                 if (that.ruleForm.projectType === '产品研发') {
                   this.dialogGoods = true
                 } else {
-                  this.$router.push('/ProDetail')
+                  this.$router.push('/goodsDetail')
                 }
                 console.log(that.ruleForm.projectType)
               } else {
@@ -1019,7 +1019,7 @@ export default {
                 if (that.ruleForm.projectType === '产品研发') {
                   this.dialogGoods = true
                 } else {
-                  this.$router.push('/ProDetail')
+                  this.$router.push('/goodsDetail')
                 }
               } else {
                 this.$message({

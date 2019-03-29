@@ -880,6 +880,7 @@ export default {
       let that = this
       if (res.code === 200) {
         that.getTree()
+        that.queryProDetail()
         that.$message({
           message: '创建成功！',
           type: 'success'
@@ -1049,6 +1050,7 @@ export default {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
         .then(res => {
+          this.log('getProjectDetail:', res)
           if (res.code === 200) {
             that.memberList = res.data.memberList
             that.proDetailMsg = res.data
