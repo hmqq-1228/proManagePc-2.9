@@ -577,6 +577,7 @@ export default {
     ModifyTaskCallbackFuc: function (res) {
       var that = this
       if (res.code === 200) {
+        that.$store.state.taskEdit = true
         that.modifyTaskVisible = false
         that.getTaskList()
         that.$message({

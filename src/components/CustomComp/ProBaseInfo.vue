@@ -109,7 +109,7 @@ export default {
         attachmentId: ''
       },
       // 成员管理 负责人id
-      Mid: '',
+      Mid: this.$store.state.userId,
       ResDepTreeDialog: false,
       // 产品研发 树形弹窗
       ResDepDefaultProps: {
