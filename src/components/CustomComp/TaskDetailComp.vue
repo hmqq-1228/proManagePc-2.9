@@ -115,6 +115,7 @@
         <div style="display: inline-block" class="connectProcessHeader">
           <img src="../../../static/img/taskList.png" alt="">
           <span>关联流程<span style="color: #409EFF">({{tableData.length}})</span></span>
+          <Icon @click="TaskConnectProcessList" type="md-refresh" style="color: #409EFF; font-size: 20px;" />
         </div>
         <div class="connectProcessHeader" v-on:click="connectProcessClick" style="cursor: pointer; color: rgb(64, 158, 255)">申请审批</div>
       </div>
@@ -196,7 +197,7 @@
       </div>
     <!--任务移交-->
     <!--<el-dialog title="任务移交" :visible.sync="taskTransferVisible" width="26%" style="z-index: 82222 !important;">-->
-    <div class="taskTransferBgcover" title="任务移交" v-if="taskTransferVisible">
+    <div class="taskTransferBgcover" title="任务移交" v-if="taskTransferVisible" v-on:mousewheel.stop="noMousewheel($event)">
       <div class="taskTransferCnt" v-loading="taskTransferLoading">
         <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
         <el-autocomplete style="width:90%"
@@ -416,6 +417,9 @@ export default {
         that.tableData = res.data
       })
     },
+    tableDataReFresh: function () {
+      // j
+    },
     testData: function () {
       // var that = this
       this.log('testtest:', this.testtest)
@@ -437,6 +441,7 @@ export default {
           if (res.code === 200) {
             that.taskBasicMsg = res.data
             that.rid = res.data.uid
+            that.currentNodeId = id
             // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
             // var et = res.data.taskFinishDate
             // var sT = new Date(st)
@@ -601,7 +606,7 @@ export default {
     //   }
     // },
     // 任务分解 返回结果处理
-    TaskDistributeCallbackFuc: function (res) {
+    TaskDistributeCallbackFuc: function (res, id) {
       var that = this
       that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       if (res.code === 200) {
@@ -609,7 +614,7 @@ export default {
         // that.queryProDetail()
         // that.selectProjectId()
         // that.getHistoryList()
-        that.getTaskChildList(that.nodeId)
+        that.getTaskChildList(id)
         that.$message({
           message: '创建成功！',
           type: 'success'
@@ -849,6 +854,11 @@ export default {
     finishedTask: function () {
       var that = this
       that.taskFinishedVisible = true
+    },
+    // 阻止滚动
+    noMousewheel: function (e) {
+      e.preventDefault()
+      this.log(55555)
     },
     // 任务完成 点击确定
     confirmFinished () {
@@ -1169,6 +1179,7 @@ export default {
     left: 0;
     top: 0;
     background: rgba(0,0,0,0.4);
+    z-index: 3000;
   }
   .taskTransferCnt,.taskFinishedCnt{
     width: 60%;

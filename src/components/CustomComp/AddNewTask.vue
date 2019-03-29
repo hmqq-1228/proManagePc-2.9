@@ -401,7 +401,7 @@ export default {
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
         that.ajax('/myProject/addTask', that.CommunityTaskPayload2).then(res => {
-          that.$emit('TaskDistributeCallback', res)
+          that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1
             that.IsClear = true
