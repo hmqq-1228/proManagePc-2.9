@@ -1,6 +1,7 @@
 <template>
   <div class="TaskDetailComp">
       <!--<button @click="testData">TEST</button>-->
+      <div>{{taskEdit?'':''}}</div>
       <div class="slidTop">
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
@@ -309,6 +310,16 @@ export default {
       FlowData: [
       ],
       tableData: []
+    }
+  },
+  computed: {
+    taskEdit: function () {
+      var that = this
+      if (that.$store.state.taskEdit === true) {
+        that.toDetail(this.nodeId)
+      }
+      that.$store.state.taskEdit = false
+      return that.$store.state.taskEdit
     }
   },
   watch: {

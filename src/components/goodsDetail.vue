@@ -280,7 +280,6 @@
         v-bind:is="compArr.PlanDetailComp"
         v-bind:taskDrawerOpen="value444"
         :nodeId="currentNodeId"
-        :planDetailEdit="editFlag"
         v-on:ActionResThrow="ActionResThrowFuc"
         v-on:addChildMsg="addChildMsgFuc"
         v-on:toChildMsg="toChildMsgFuc"
@@ -498,8 +497,7 @@ export default {
   },
   data () {
     return {
-      // refshPlan: false,
-      editFlag: '',
+      // refshPlan: false
       showName: false,
       // 是否有档案
       archives: true,
@@ -1048,6 +1046,7 @@ export default {
     },
     // 新增 获取项目详情
     queryProDetail: function () {
+      console.log(1111111111111111111)
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
         .then(res => {
@@ -1081,6 +1080,10 @@ export default {
               // that.log('activeId:', that.activeId)
               if (!that.activeId) {
                 that.activeId = res.data.planOrJobList[0].id
+                console.log(res.data.planOrJobList[0])
+                if (res.data.planOrJobList[0].type === '2') {
+                  that.panshow = true
+                }
                 that.parentId = that.activeId
               }
             } else {
@@ -1476,7 +1479,7 @@ export default {
           that.planEditShow = false
           that.queryProDetail()
           // this.log('999999999999999999')
-          that.editFlag = 'success'
+          that.$store.state.editFlag = true
           that.$message({
             message: '修改成功！',
             type: 'success'
@@ -1497,6 +1500,7 @@ export default {
         that.modifyTaskVisible = false
         // that.activated = ''
         // that.selectProjectId()
+        that.$store.state.taskEdit = true
         that.queryProDetail()
         // this.getTree()
         that.$message({
