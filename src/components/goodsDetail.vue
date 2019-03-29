@@ -1,5 +1,6 @@
 <template>
   <div class="ProDetail goodsDetail" style="position: relative;margin-top: 15px;">
+    <div @click="ttttttt()"><button>TTTTTTT</button></div>
     <div>{{goPerfect?'':''}}</div>
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
@@ -173,7 +174,7 @@
           <el-tabs v-model="activeName">
               <el-tab-pane label="加任务" name="first">
                   <component v-bind:is="compArr.AddNewTask"
-                     fileFormId="AddNewTask"
+                     fileFormId="GetUploadCount1"
                      v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
                      :nodeId="parentId"
                      >
@@ -738,6 +739,7 @@ export default {
       this.$store.state.proId = this.proId
       // this.queryProDetail()
     }
+    // this.$store.commit('uploadCountAdd', {})
     // this.getTreeList()
     // this.getPlanTree(this.activeId)
   },

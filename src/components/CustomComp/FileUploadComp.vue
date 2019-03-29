@@ -1,9 +1,10 @@
 <template>
   <div class="FileUploadComp" v-loading="loading21">
-    <form class="FileCompForm" :id="fileFormId" enctype="multipart/form-data">
+    <form class="FileCompForm" :id="lalala" enctype="multipart/form-data">
       <div class="FileCompFormIcon"><img src="../../../static/img/fujian.png" alt=""></div>
       <div class="FileCompIptWrap">选择文件
-        <input type="file" :disabled="commentDis" name="myfile" :id="fileFormId + '_myfile2'" @change="getFileName">
+        <!--fileFormId-->
+        <input type="file" class="aaa" :disabled="commentDis" name="myfile" :id="lalala + '_myfile2'" @change="getFileName">
       </div>
       <div class="FileCompIptText">{{uploadFileName}}</div>
     </form>
@@ -42,6 +43,7 @@ export default {
   },
   data () {
     return {
+      lalala: '',
       loading21: false,
       uploadFileName: '',
       uploadFileRe: '',
@@ -49,6 +51,10 @@ export default {
       fileListComment: [],
       fileListCommentLen: 0
     }
+  },
+  created () {
+    this.$store.state.uploadCount = this.$store.state.uploadCount + 1
+    this.lalala = 'lala_' + this.$store.state.uploadCount
   },
   watch: {
     FileDataList (val, old) {
@@ -66,7 +72,7 @@ export default {
       if (val) {
         // that.log('父组件传过来的：', val)
         that.fileListComment = []
-        $('#' + that.fileFormId + '_myfile2').val('')
+        $('#' + that.lalala + '_myfile2').val('')
         that.uploadFileName = ''
       }
     },
@@ -83,9 +89,10 @@ export default {
       this.$emit('FilePreEmit', {previewUrl, fileName, attachmentId})
     },
     getFileName: function (filename) {
-      // this.log('ddddd:', filename)
       var that = this
-      var filePath = $('#' + that.fileFormId + '_myfile2').val()
+      var filePath = $('#' + that.lalala + '_myfile2').val()
+      this.log('that.fileFormId:::', that.lalala)
+      this.log('filePath:::', filePath)
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
       this.uploadFileName = fileName
@@ -124,7 +131,7 @@ export default {
       var that = this
       that.loading21 = true
       var url = that.$store.state.baseServiceUrl
-      var formData = new FormData($('#' + that.fileFormId)[0])
+      var formData = new FormData($('#' + that.lalala)[0])
       this.log(456)
       if (formData) {
         $.ajax({

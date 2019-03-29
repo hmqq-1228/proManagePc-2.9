@@ -7,6 +7,7 @@ const state = {
   goPerfect: false,
   slideMenuGroup: [],
   slideMenu: [],
+  uploadCount: 0,
   // 激活的导航索引
   activeNavIndex: 'group_0_0',
   count: 0,
@@ -39,6 +40,9 @@ const state = {
 const mutations = {
   add (state) {
     state.count += 1
+  },
+  uploadCountAdd (state) {
+    state.uploadCount += 1
   },
   setRouterName (state, obj) {
     var flag = false

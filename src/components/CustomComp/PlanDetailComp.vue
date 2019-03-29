@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="PlanDetailComp">
     <div class="slidTop">
       <div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>
       <div></div>
