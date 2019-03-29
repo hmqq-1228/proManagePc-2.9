@@ -400,6 +400,7 @@ export default {
         that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
+        console.log('nodeIDDDDDDDDDDDDDDDDDD', that.nodeId)
         that.ajax('/myProject/addTask', that.CommunityTaskPayload2).then(res => {
           that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
