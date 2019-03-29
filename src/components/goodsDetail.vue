@@ -970,6 +970,7 @@ export default {
     // zh 点击详情获取任务详情
     showPlanDetail (nodeId, flag, e) {
       var that = this
+      this.log('pppppp:', nodeId)
       // this.selectProjectId(nodeId, flag, e)
       this.currentNodeId = nodeId
       if (nodeId.substring(0, 1) === 'J') {

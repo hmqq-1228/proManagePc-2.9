@@ -11,13 +11,14 @@
             </span>
             <div class="taskDesc" v-if="menuData.type==='task'">
                  <div class="top">
+                   <span style="font-size:12px;float:left;margin-right: 15px"><Icon type="ios-person" size="24" style="color:#28558C;margin-top:-5px"/>&nbsp;{{menuData.userName}}</span>
                    <span v-if="menuData.status!=='2'&&menuData.dayNum">
                      <span class="residue" v-if="menuData.dayNum > 0" :class="{'number':menuData.dayNum>1}">剩余{{menuData.dayNum}}天</span>
                      <span class="residue" v-else :class="{'number':menuData.dayNum>1}">逾期{{Math.abs(menuData.dayNum)}}天</span>
                    </span>
-                   <div class="createPeople" v-if="menuData.userName" :class="{'leftDay':menuData.status==='2'}">{{menuData.userName.substr(0, 1)}}</div>
+                   <!--<div class="createPeople" v-if="menuData.userName" :class="{'leftDay':menuData.status==='2'}">{{menuData.userName.substr(0, 1)}}</div>-->
                  </div>
-               <div class="down">
+               <div class="down" :class="{'leftDay':menuData.status==='2'}">
                 <img src="../../../static/img/time.png">
                 <span class="text">{{menuData.start}} - {{menuData.finish}}</span>
                </div>
@@ -129,16 +130,18 @@ export default {
   float:right;
   padding-right:50px;
   height: 55px;
+  margin-top: -12px;
 }
 .taskDesc .top {
-      margin-left: 256px;
+      margin-left: 269px;
       display: inline-block;
 }
 .taskDesc .top .residue {
   color:red;
   font-size: 10px;
   float:left;
-  margin-top: -10px;
+  /*margin-left: 5px;*/
+  /*margin-top: -10px;*/
 }
 .taskDesc .top .number {
   color:#2d8cf0;
@@ -162,7 +165,7 @@ export default {
 }
 .taskDesc .down {
   margin-top: -20px;
-      margin-left: 46px;
+  margin-left: 154px;
   /*margin-top:5px;
   width: 200px;*/
 }
@@ -176,19 +179,19 @@ export default {
 }
 .children-checked .status {
   position: absolute;
-  right:-15px;
-  top:-10px;
-  width: 55px;
-  height: 15px;
+  right:-16px;
+  top:-6px;
+  width: 72px;
+  height: 18px;
   background: #FFC20B;
   color:#fff;
-  line-height: 15px;
+  line-height: 18px;
   /*font-size: 10px;*/
   text-align: center;
   transform: rotate(45deg);
 }
   .children-checked .status p {
-    transform: scale(0.7);
+    /*transform: scale(0.7);*/
     font-size: 10px;
   }
   .children-checked .noSure {
@@ -198,7 +201,7 @@ export default {
     background: #13ce66;
   }
   .children-checked .finish {
-    background: #27cf97;
+    background: #3a8ee6;
   }
   .children-checked .stop {
     background: red;
