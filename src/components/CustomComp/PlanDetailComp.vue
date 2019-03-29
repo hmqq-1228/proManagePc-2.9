@@ -123,12 +123,13 @@ export default {
   watch: {
     nodeId: function (val, oV) {
       if (val) {
-        this.currentNodeId = val
+        // this.currentNodeId = val
         this.toPlanDetail(this.nodeId)
       }
     },
     taskDrawerOpen: function (val, old) {
       if (val) {
+        this.currentNodeId = this.nodeId
         this.toPlanDetail(this.nodeId)
       }
     },
