@@ -166,6 +166,7 @@ export default {
 .taskDesc .down {
   margin-top: -20px;
   margin-left: 154px;
+  text-align: right;
   /*margin-top:5px;
   width: 200px;*/
 }
