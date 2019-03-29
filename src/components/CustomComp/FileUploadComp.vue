@@ -91,12 +91,9 @@ export default {
     getFileName: function (filename) {
       var that = this
       var filePath = $('#' + that.lalala + '_myfile2').val()
-      this.log('that.fileFormId:::', that.lalala)
-      this.log('filePath:::', filePath)
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
       this.uploadFileName = fileName
-      // $('.showFileName').html(fileName)
       if (filePath) {
         that.addMarkInfo4()
       }

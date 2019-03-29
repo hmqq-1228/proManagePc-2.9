@@ -72,7 +72,7 @@
           <div class="fileUploadCao">
             <div class="selectLeft">
               <!-- 任务分解 -->
-              <component v-bind:is="compArr.FileUploadComp" fileFormId="TaskDistribute" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+              <component v-bind:is="compArr.FileUploadComp" fileFormId="TaskDistribute2" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
             </div>
             <div class="selectRight2">
               <div class="selectMoreInfo" v-on:click="moreClick2()">
