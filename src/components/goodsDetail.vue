@@ -160,7 +160,9 @@
                     @click="getPlanTree(plan)"
                   >{{plan.name}}
               </div>
-              <div class="planDetail" @click="showPlanDetail(plan.id, 'QueryFirstLevelChild', $event,)"><i class="el-icon-edit"></i></div>
+              <div class="planDetailBox">
+                <div class="planDetail" @click="showPlanDetail(plan.id, 'QueryFirstLevelChild', $event,)"><i class="el-icon-edit"></i></div>
+              </div>
           </div>
          <!--  <Button
             style="width: 84px; margin-top: 16px; margin-left: 20px; position: absolute; right: 1px;"
@@ -1731,7 +1733,7 @@ div img {
   float: left;
   border-radius: 4px;
   background-color: #fff;
-  margin-left: 25px;
+  margin-left: 10px;
   margin-top: 15px;
   margin-bottom: 10px;
   color: #777;
@@ -1739,12 +1741,18 @@ div img {
   font-weight: bold;
   cursor: pointer;
 }
+.planDetailBox{
+  float: left;
+  width: 21px;
+  _background-color: #ccc;
+}
 /*.planBox .plan-list:hover {
    display: block;
 } */
 .planBox .addPlan {
    border:1px solid #333;
    color:#333;
+  margin-right: 10px;
    padding: 2px 15px;
    font-weight: bolder;
 }
