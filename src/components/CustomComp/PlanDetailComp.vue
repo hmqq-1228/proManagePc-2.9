@@ -78,7 +78,7 @@
 import AddNewTask from './AddNewTask.vue'
 export default {
   name: 'PlanDetailComp',
-  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh'],
+  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh', 'taskDrawerOpen'],
   components: {
     AddNewTask
   },
@@ -98,6 +98,11 @@ export default {
     nodeId: function (val, oV) {
       if (val) {
         this.currentNodeId = val
+        this.toPlanDetail(this.nodeId)
+      }
+    },
+    taskDrawerOpen: function (val, old) {
+      if (val) {
         this.toPlanDetail(this.nodeId)
       }
     },

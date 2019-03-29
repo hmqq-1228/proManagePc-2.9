@@ -1,6 +1,6 @@
 <template>
   <div class="ProDetail goodsDetail" style="position: relative;margin-top: 15px;">
-    <div @click="ttttttt()"><button>TTTTTTT</button></div>
+    <!--<div @click="ttttttt()"><button>TTTTTTT</button></div>-->
     <div>{{goPerfect?'':''}}</div>
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
@@ -967,6 +967,7 @@ export default {
     // zh 点击详情获取任务详情
     showPlanDetail (nodeId, flag, e) {
       var that = this
+      this.log('pppppp:', nodeId)
       // this.selectProjectId(nodeId, flag, e)
       this.currentNodeId = nodeId
       if (nodeId.substring(0, 1) === 'J') {
