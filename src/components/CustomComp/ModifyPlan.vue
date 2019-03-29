@@ -23,7 +23,7 @@
                           value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="选择日期"
                           v-model="detailform.date2"
-                          :picker-options="pickerOptionsPlanEt"
+                          :picker-options="pickerOptionsPlanSt"
           ></el-date-picker>
         </el-col>
       </el-form-item>
@@ -132,6 +132,15 @@ export default {
           that.detailform.date1 = res.data.start
           that.detailform.date2 = res.data.finish
           that.detailform.description = res.data.description
+          var st = res.data.parentSTime.split(' ')[0] + ' 00:00:00'
+          var et = res.data.parentETime
+          var sT = new Date(st)
+          var eT = new Date(et)
+          var disabledStarTime = sT.getTime()
+          var disabledEndTime = eT.getTime()
+          that.pickerOptionsPlanSt.disabledDate = function (time) {
+            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+          }
         } else {
           // j
         }
