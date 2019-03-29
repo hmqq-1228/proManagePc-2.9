@@ -333,7 +333,34 @@ export default {
       that.modifyTaskVisible = true
     },
     ActionResThrowFuc: function (obj) {
-      // j
+      var that = this
+      if (obj.res.code === 200) {
+        switch (obj.actionName) {
+          case 'transferTask':
+            // 任务移交
+            that.TaskDetailCompShow = false
+            that.queryMyTaskView(that.activeId)
+            break
+          case 'finishTask':
+            // 任务完成
+            that.queryMyTaskView()
+            break
+          case 'restartTask':
+            // 任务重启
+            that.queryMyTaskView()
+            break
+          case 'startTask':
+            // 任务开始
+            that.queryMyTaskView()
+            break
+          case 'decomposeTask':
+            // 任务分解
+            that.queryMyTaskView()
+            break
+          default:
+            this.log('')
+        }
+      }
     },
     TaskDelCallbackFuc: function (res) {
       var that = this
