@@ -281,6 +281,7 @@
         v-bind:taskDrawerOpen="value444"
         :nodeId="currentNodeId"
         :planDetailEdit="editFlag"
+        :refshPlanMsg = 'refshPlan'
         v-on:ActionResThrow="ActionResThrowFuc"
         v-on:addChildMsg="addChildMsgFuc"
         v-on:toChildMsg="toChildMsgFuc"
@@ -498,6 +499,7 @@ export default {
   },
   data () {
     return {
+      refshPlan: false,
       editFlag: '',
       showName: false,
       // 是否有档案
@@ -1317,7 +1319,7 @@ export default {
       if (res.code === 200) {
         that.selectProjectId()
         that.queryProDetail()
-        that.value444 = false
+        // that.value444 = false
         that.$message({
           message: '删除成功！',
           type: 'success'
@@ -1420,6 +1422,7 @@ export default {
         that.bgCoverShow = false
       } else {
         if (res.code === 200) {
+          that.refshPlan = true
           that.bgCoverShow = false
           that.queryProDetail()
           that.$message({
