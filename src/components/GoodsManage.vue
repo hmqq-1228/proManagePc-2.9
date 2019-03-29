@@ -67,7 +67,7 @@
     <div class="goodList">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
         <div class="goodItemCon">
-          <div class="goodImg" @click="previewGoodsManageImg(good.activeImgUrl)">
+          <div class="goodImg" @click="toGoodsManage(good.projectId)">
             <div class="goodImg2" v-if="good.attachment[0]"><img :src="good.activeImgUrl" alt=""></div>
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
           </div>
@@ -196,14 +196,14 @@ export default {
     delImgWide: function () {
       this.imgWide = this.imgWide - 10
     },
-    previewGoodsManageImg: function (url) {
-      if (url) {
-        this.goodsImgUrl = url
-        this.dialogVisible = true
-      } else {
-        this.$message.warning('暂无商品图片')
-      }
-    },
+    // previewGoodsManageImg: function (url) {
+    //   if (url) {
+    //     this.goodsImgUrl = url
+    //     this.dialogVisible = true
+    //   } else {
+    //     this.$message.warning('暂无商品图片')
+    //   }
+    // },
     toGoodsManage: function (goodId) {
       if (goodId) {
         this.$store.state.proId = goodId
