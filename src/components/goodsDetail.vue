@@ -1318,7 +1318,7 @@ export default {
       if (res.code === 200) {
         that.selectProjectId()
         that.queryProDetail()
-        that.value444 = false
+        // that.value444 = false
         that.$message({
           message: '删除成功！',
           type: 'success'
@@ -1423,8 +1423,6 @@ export default {
         if (res.code === 200) {
           that.bgCoverShow = false
           that.queryProDetail()
-          // that.getNodeMsg()
-          // that.selectProjectId()
           that.$message({
             message: '创建成功！',
             type: 'success'
