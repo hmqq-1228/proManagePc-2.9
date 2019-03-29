@@ -1495,30 +1495,32 @@ export default {
     },
     ActionResThrowFuc: function (obj) {
       var that = this
-      switch (obj.actionName) {
-        case 'transferTask':
-          // 任务移交
-          that.TaskDetailCompShow = false
-          that.selectProjectId(that.activeId)
-          break
-        case 'finishTask':
-          // 任务完成
-          that.selectProjectId()
-          break
-        case 'restartTask':
-          // 任务重启
-          that.selectProjectId()
-          break
-        case 'startTask':
-          // 任务开始
-          that.selectProjectId()
-          break
-        case 'decomposeTask':
-          // 任务分解
-          that.selectProjectId()
-          break
-        default:
-          this.log('')
+      if (obj.res.code === 200) {
+        switch (obj.actionName) {
+          case 'transferTask':
+            // 任务移交
+            that.TaskDetailCompShow = false
+            that.selectProjectId(that.activeId)
+            break
+          case 'finishTask':
+            // 任务完成
+            that.selectProjectId()
+            break
+          case 'restartTask':
+            // 任务重启
+            that.selectProjectId()
+            break
+          case 'startTask':
+            // 任务开始
+            that.selectProjectId()
+            break
+          case 'decomposeTask':
+            // 任务分解
+            that.selectProjectId()
+            break
+          default:
+            this.log('')
+        }
       }
     }
   }

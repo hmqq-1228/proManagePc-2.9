@@ -83,15 +83,18 @@ export default {
       this.$emit('FilePreEmit', {previewUrl, fileName, attachmentId})
     },
     getFileName: function (filename) {
-      // this.log('ddddd:', filename)
       var that = this
+      // this.log('ddddd:', filename)
+      console.log('that.fileFormId:', that.fileFormId)
       var filePath = $('#' + that.fileFormId + '_myfile2').val()
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
       this.uploadFileName = fileName
       // $('.showFileName').html(fileName)
+      console.log('filePath', filePath)
       if (filePath) {
         that.addMarkInfo4()
+        console.log(2222222222222222222222222)
       }
     },
     delUploadFileComment: function (id) {

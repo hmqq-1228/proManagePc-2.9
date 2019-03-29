@@ -819,7 +819,6 @@ export default {
       that.taskTransferLoading = true
       that.ajax('/myTask/transferTask', {remark: that.commitComentT, attachmentId: that.SetFileIdStr(), taskId: that.taskId, transferUserId: that.transferUserId, transferUserName: that.transferUserName}).then(res => {
         that.$emit('ActionResThrow', {res: res, actionName: 'transferTask'})
-        that.taskTransferLoading = false
         that.log('transferTask:', res)
         if (res.code === 200) {
           that.toDetail()
@@ -833,6 +832,7 @@ export default {
             message: res.msg
           })
         } else {
+          that.taskTransferLoading = false
           that.$message({
             type: 'error',
             message: res.msg
