@@ -67,7 +67,7 @@
     <div class="goodList">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
         <div class="goodItemCon">
-          <div class="goodImg" @click="toGoodsManage(good.projectId)">
+          <div class="goodImg" @click="previewGoodsManageImg(good.activeImgUrl)">
             <div class="goodImg2" v-if="good.attachment[0]"><img :src="good.activeImgUrl" alt=""></div>
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
           </div>
@@ -90,6 +90,13 @@
       </div>
       <div v-if="goodList.length === 0" class="noDate">暂无数据</div>
     </div>
+    <el-dialog title="提示" :visible.sync="dialogVisible" :width="imgWide + '%'">
+      <div style="font-size: 12px;color: #409EFF;text-align: center;">
+        <span style="display: inline-block;cursor: pointer;" @click="addImgWide()">放大</span>&nbsp;&nbsp;&nbsp;&nbsp;
+        <span style="display: inline-block;cursor: pointer;" @click="delImgWide()">缩小</span>
+      </div>
+      <div><img :src="goodsImgUrl" alt=""></div>
+    </el-dialog>
     <div class="block" style="text-align: center;margin-top: 30px;">
       <el-pagination
         @current-change="handleCurrentChange($event)"
@@ -107,6 +114,9 @@ export default {
   name: 'GoodsManage',
   data () {
     return {
+      imgWide: 50,
+      goodsImgUrl: '',
+      dialogVisible: false,
       inputVal: '',
       radioVal: '创建时间',
       goodTags: [],
@@ -149,6 +159,11 @@ export default {
     }
   },
   watch: {
+    dialogVisible: function (val, oV) {
+      if (val === false) {
+        this.imgWide = 50
+      }
+    },
     // 监听搜索值
     inputVal: function (val, oV) {
       var that = this
@@ -175,6 +190,18 @@ export default {
     this.getGoodsList()
   },
   methods: {
+    addImgWide: function () {
+      this.imgWide = this.imgWide + 10
+    },
+    delImgWide: function () {
+      this.imgWide = this.imgWide - 10
+    },
+    previewGoodsManageImg: function (url) {
+      if (url) {
+        this.goodsImgUrl = url
+        this.dialogVisible = true
+      }
+    },
     toGoodsManage: function (goodId) {
       if (goodId) {
         this.$store.state.proId = goodId

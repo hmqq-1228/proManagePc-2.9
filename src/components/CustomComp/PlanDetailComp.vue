@@ -1,6 +1,7 @@
 <template>
   <div class="PlanDetailComp">
     <div>{{refshPlan?'':''}}</div>
+    <div>{{editFlag?'':''}}</div>
     <div class="slidTop">
       <div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>
       <div></div>
@@ -108,6 +109,15 @@ export default {
       }
       that.$store.state.refshPlan = false
       return that.$store.state.refshPlan
+    },
+    editFlag: function () {
+      var that = this
+      if (that.$store.state.editFlag === true) {
+        console.log(88888888888888888)
+        that.toPlanDetail(this.nodeId)
+      }
+      that.$store.state.editFlag = false
+      return that.$store.state.editFlag
     }
   },
   watch: {

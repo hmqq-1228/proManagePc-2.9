@@ -4,6 +4,8 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  editFlag: false,
+  taskEdit: false,
   goPerfect: false,
   refshPlan: false,
   slideMenuGroup: [],
