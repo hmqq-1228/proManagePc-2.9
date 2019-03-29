@@ -138,7 +138,6 @@ export default {
     getPlanTaskDetail () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        this.log('任务详情3338888：', res)
         that.detailTaskform.jobName = res.data.jobName
         that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
         that.detailTaskform.taskStartDate = res.data.taskStartDate

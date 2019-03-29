@@ -80,7 +80,7 @@ import AddNewTask from './AddNewTask.vue'
 import ModifyPlan from './ModifyPlan.vue'
 export default {
   name: 'PlanDetailComp',
-  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh', 'planDetailEdit', 'taskDrawerOpen'],
+  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh', 'planDetailEdit', 'taskDrawerOpen', 'refshPlanMsg'],
   components: {
     AddNewTask,
     ModifyPlan
@@ -113,6 +113,11 @@ export default {
     planDetailEdit: function (val, oV) {
       if (val) {
         this.toPlanDetail(this.nodeId)
+      }
+    },
+    refshPlanMsg: function (val, oVal) {
+      if (val) {
+        this.getNextPlanTask(this.nodeId)
       }
     },
     addPlanOrTaskSuc: function (val, oV) {
