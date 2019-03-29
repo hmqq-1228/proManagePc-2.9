@@ -99,7 +99,7 @@ export default {
   },
   watch: {
     DrawerMemberShow: function (val, oV) {
-      this.log('DrawerMemberShow:val:', val)
+      // this.log('DrawerMemberShow:val:', val)
       if (val) {
         this.queryProGroupMember()
       } else {
@@ -107,7 +107,7 @@ export default {
       }
     },
     proId: function (val, oV) {
-      this.log('DrawerMemberShow:proId:', val)
+      // this.log('DrawerMemberShow:proId:', val)
       if (val) {
         this.proId = val
       }

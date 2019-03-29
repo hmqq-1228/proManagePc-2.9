@@ -776,6 +776,9 @@ export default {
           }
         }
       }
+      if (val) {
+        that.activeId = ''
+      }
       this.queryProDetail()
     },
     commitComent: function (val, oVal) {
@@ -849,6 +852,7 @@ export default {
     getStoreProId: function () {
       var that = this
       that.proId = this.$store.state.proId
+      // this.log('that.proId:', that.proId)
       return this.$store.state.proId
     },
     slideMenu: function () {
@@ -1051,6 +1055,7 @@ export default {
             that.startPlanDate = res.data.startDate.split(' ')[0]
             that.endPlanDate = res.data.endDate.split(' ')[0]
             that.planList = res.data.planOrJobList
+            // that.log('planList:', that.planList)
             that.firstPlanId = res.data.firstPlanId
             if (res.data.projectType === '产品研发') {
               that.archives = true
@@ -1071,6 +1076,7 @@ export default {
                 res.data.fileList[i].showName
             }
             if (res.data.planOrJobList.length > 0) {
+              // that.log('activeId:', that.activeId)
               if (!that.activeId) {
                 that.activeId = res.data.planOrJobList[0].id
                 that.parentId = that.activeId
