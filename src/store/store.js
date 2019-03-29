@@ -8,6 +8,7 @@ const state = {
   refshPlan: false,
   slideMenuGroup: [],
   slideMenu: [],
+  menuRefresh: false,
   uploadCount: 0,
   // 激活的导航索引
   activeNavIndex: 'group_0_0',
