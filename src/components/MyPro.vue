@@ -48,7 +48,7 @@
             </div>
             <div style="text-align: right; padding-right: 30px;">
               <Button size="small" style="margin-left: 15px;" @click="responsePro(item.projectUID)">回复</Button>
-              <Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID)">删除</Button>
+              <Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID, item.projectType)">删除</Button>
             </div>
             <div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
           </div>
@@ -682,7 +682,7 @@ export default {
       this.getHistoryCont()
     },
     // 删除项目
-    delPro: function (pId) {
+    delPro: function (pId, pType) {
       var that = this
       this.$Modal.confirm({
         title: '删除项目！',
@@ -695,6 +695,9 @@ export default {
               this.$Message.info('删除成功！')
               this.$Modal.remove()
               that.queryMyProjectView()
+              if (pType === '集团战略') {
+                that.$store.state.menuRefresh = true
+              }
             }
           })
         },
@@ -942,7 +945,10 @@ export default {
                 } else {
                   this.$router.push('/goodsDetail')
                 }
-                console.log(that.ruleForm.projectType)
+                if (that.ruleForm.projectType === '集团战略') {
+                  that.$store.state.menuRefresh = true
+                }
+                // console.log(that.ruleForm.projectType)
               } else {
                 this.$message({
                   type: 'error',
@@ -1020,6 +1026,9 @@ export default {
                   this.dialogGoods = true
                 } else {
                   this.$router.push('/goodsDetail')
+                }
+                if (that.ruleForm.projectType === '集团战略') {
+                  that.$store.state.menuRefresh = true
                 }
               } else {
                 this.$message({

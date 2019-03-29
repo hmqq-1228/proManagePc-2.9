@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div>{{getActiveNavIndex?'':''}}</div>
+    <div>{{getActiveNavIndex?'':''}} {{getMenuRefresh?'':''}}</div>
     <el-container>
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
@@ -74,6 +74,14 @@ export default {
     }
   },
   computed: {
+    getMenuRefresh: function () {
+      var that = this
+      if (this.$store.state.menuRefresh) {
+        that.$store.state.menuRefresh = false
+        this.queryMenu()
+      }
+      return this.$store.state.menuRefresh
+    },
     getActiveNavIndex: function () {
       var that = this
       that.activeNavIndex = this.$store.state.activeNavIndex
@@ -149,6 +157,8 @@ export default {
       this.ajax('/myTask/getProjectList', {}).then(res => {
         // this.log('请求侧边栏:', res)
         if (res.code === 200) {
+          that.slideMenuGroup = []
+          that.slideMenu = []
           for (var i = 0; i < res.data.length; i++) {
             if (res.data[i].projectType === '集团战略') {
               that.slideMenuGroup.push(res.data[i])

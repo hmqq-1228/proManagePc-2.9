@@ -841,7 +841,7 @@ export default {
     },
     goPerfect: function () {
       var that = this
-      console.log(that.$store.state.goPerfect)
+      // console.log(that.$store.state.goPerfect)
       if (that.$store.state.goPerfect === true) {
         that.goodsEdit = true
       } else {
@@ -975,7 +975,7 @@ export default {
     // zh 点击详情获取任务详情
     showPlanDetail (nodeId, flag, e) {
       var that = this
-      this.log('pppppp:', nodeId)
+      // this.log('pppppp:', nodeId)
       // this.selectProjectId(nodeId, flag, e)
       this.currentNodeId = nodeId
       if (nodeId.substring(0, 1) === 'J') {
@@ -1050,7 +1050,6 @@ export default {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
         .then(res => {
-          this.log('getProjectDetail:', res)
           if (res.code === 200) {
             that.memberList = res.data.memberList
             that.proDetailMsg = res.data
@@ -1111,7 +1110,7 @@ export default {
           $(obj).addClass('active').siblings().removeClass('active')
         }
       }
-      console.log(that.activeId)
+      // this.log(that.activeId)
       // that.getPlanTree(that.activeId)
       that.getTree()
       that
@@ -1133,7 +1132,7 @@ export default {
         })
     },
     showDetailPage: function (data) {
-      console.log(data)
+      // this.log(data)
       var that = this
       this.currentNodeId = data.id
       if (data.type === 'task') {
@@ -1474,7 +1473,7 @@ export default {
         if (res.code === 200) {
           that.planEditShow = false
           that.queryProDetail()
-          console.log('999999999999999999')
+          // this.log('999999999999999999')
           that.editFlag = 'success'
           that.$message({
             message: '修改成功！',
@@ -1491,7 +1490,7 @@ export default {
     // 编辑任务 修改任务
     ModifyTaskCallbackFuc: function (res) {
       var that = this
-      this.log('ModifyTaskCallbackFuc:', res)
+      // this.log('ModifyTaskCallbackFuc:', res)
       if (res.code === 200) {
         that.modifyTaskVisible = false
         // that.activated = ''
