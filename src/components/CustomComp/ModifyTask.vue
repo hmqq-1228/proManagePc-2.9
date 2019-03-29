@@ -138,13 +138,22 @@ export default {
     getPlanTaskDetail () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        this.log('任务详情333：', res)
+        this.log('任务详情3338888：', res)
         that.detailTaskform.jobName = res.data.jobName
         that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
         that.detailTaskform.taskStartDate = res.data.taskStartDate
         that.detailTaskform.taskFinishDate = res.data.taskFinishDate
         that.detailTaskform.description = res.data.description
         that.taskFileList = []
+        var st = res.data.parentSTime.split(' ')[0] + ' 00:00:00'
+        var et = res.data.parentETime
+        var sT = new Date(st)
+        var eT = new Date(et)
+        var disabledStarTime = sT.getTime()
+        var disabledEndTime = eT.getTime()
+        that.pickerOptionsTaskSt.disabledDate = function (time) {
+          return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+        }
         var fileListArr = []
         for (var i = 0; res.data.fileList && i < res.data.fileList.length; i++) {
           var obj = {
@@ -183,26 +192,32 @@ export default {
           that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
           that.editTaskPayload.description = that.detailTaskform.description
           that.editTaskPayload.attachmentId = that.SetFileIdStr()
-          that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
-            // that.log('editTask:', res)
-            that.$emit('ModifyTaskCallback', res)
-            // that.$emit('ModifyTaskCallback', res)
-            if (res.code === 200) {
-              that.$message({
-                message: '保存成功！',
-                type: 'success'
-              })
-              that.IsClear = true
-              that.getPlanTaskDetail()
-              // that.modifyTaskVisible = false
-              // that.loadingEdit = false
-              // that.toDetail(that.taskIdEdit)
-              // that.selectProjectId()
-              // that.getHistoryList()
-            } else {
-              that.loadingEdit = false
-            }
-          })
+          var st = new Date(that.detailTaskform.taskStartDate).getTime()
+          var et = new Date(that.detailTaskform.taskFinishDate).getTime()
+          if (st <= et) {
+            that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+              // that.log('editTask:', res)
+              that.$emit('ModifyTaskCallback', res)
+              // that.$emit('ModifyTaskCallback', res)
+              if (res.code === 200) {
+                that.$message({
+                  message: '保存成功！',
+                  type: 'success'
+                })
+                that.IsClear = true
+                that.getPlanTaskDetail()
+                // that.modifyTaskVisible = false
+                // that.loadingEdit = false
+                // that.toDetail(that.taskIdEdit)
+                // that.selectProjectId()
+                // that.getHistoryList()
+              } else {
+                that.loadingEdit = false
+              }
+            })
+          } else {
+            that.$message.warning('时间区间选择不合理')
+          }
         }
       })
     },

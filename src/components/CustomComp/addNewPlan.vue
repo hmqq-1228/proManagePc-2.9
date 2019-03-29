@@ -216,8 +216,6 @@ export default {
           console.log('ashfcvasjfvjaskj:', res)
           that.selDateStart2 = res.data.start
           that.selDateEnd2 = res.data.finish
-          console.log('11111111111', that.selDateStart2)
-          console.log('2222222222', that.selDateEnd2)
           var st = res.data.start.split(' ')[0] + ' 00:00:00'
           var et = res.data.finish
           var sT = new Date(st)
