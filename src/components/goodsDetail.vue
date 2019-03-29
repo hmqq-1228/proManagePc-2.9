@@ -1478,7 +1478,6 @@ export default {
         if (res.code === 200) {
           that.planEditShow = false
           that.queryProDetail()
-          // this.log('999999999999999999')
           that.$store.state.editFlag = true
           that.$message({
             message: '修改成功！',
