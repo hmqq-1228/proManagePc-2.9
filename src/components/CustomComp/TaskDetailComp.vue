@@ -116,7 +116,7 @@
         <div style="display: inline-block" class="connectProcessHeader">
           <img src="../../../static/img/taskList.png" alt="">
           <span>关联流程<span style="color: #409EFF">({{tableData.length}})</span></span>
-          <Icon @click="TaskConnectProcessList" type="md-refresh" style="color: #409EFF; font-size: 20px;" />
+          <Icon @click="tableDataReFresh($event)" class="reFreshIcon" type="md-refresh" style="color: #409EFF; font-size: 20px;" />
         </div>
         <div class="connectProcessHeader" v-on:click="connectProcessClick" style="cursor: pointer; color: rgb(64, 158, 255)">申请审批</div>
       </div>
@@ -428,8 +428,15 @@ export default {
         that.tableData = res.data
       })
     },
-    tableDataReFresh: function () {
-      // j
+    tableDataReFresh: function (e) {
+      this.TaskConnectProcessList()
+      // var obj = e.currentTarget
+      // if ($(obj).hasClass('ratate')) {
+      //   $(obj).removeClass('ratate')
+      //   // $(obj).addClass('ratate')
+      // } else {
+      //   $(obj).addClass('ratate')
+      // }
     },
     testData: function () {
       // var that = this
@@ -1202,5 +1209,13 @@ export default {
   /* 流程 */
   .el-table__row{
     cursor: pointer;
+  }
+  .reFreshIcon.ratate{
+    animation:processMove 0.5s;
+  }
+  @keyframes processMove
+  {
+    from {transform: rotate(0deg)}
+    to {transform: rotate(360deg)}
   }
 </style>
