@@ -171,8 +171,8 @@ export default {
   width: 200px;*/
 }
 .taskDesc .down img {
-  margin-top: 8px;
-  float:left;
+  /*margin-top: 8px;*/
+  /*float:left;*/
   width: 18px;
 }
 .taskDesc .text {

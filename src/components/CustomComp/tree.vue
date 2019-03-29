@@ -20,7 +20,7 @@
                             <!--<div class="createPeople" v-if="item.userName" :class="{'leftDay':item.status==='2'}">{{item.userName.substr(0, 1)}}</div>-->
                          </div>
                        <div class="down" :class="{'leftDay':item.status==='2'}">
-                        <img src="../../../static/img/time.png">
+                        <span><img src="../../../static/img/time.png"></span>
                         <span class="text">{{item.start}} - {{item.finish}}</span>
                        </div>
                     </div>
