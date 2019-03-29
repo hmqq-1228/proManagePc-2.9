@@ -82,9 +82,9 @@ export default {
       formValidate: {
         goodsName: '',
         code: '',
-        explosiveLevel: '',
-        developProgress: '',
-        newProductType: '',
+        explosiveLevel: 'A',
+        developProgress: '1',
+        newProductType: '1',
         categoryType: '',
         goodsCode: ''
       },

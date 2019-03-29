@@ -166,12 +166,13 @@ export default {
 .taskDesc .down {
   margin-top: -20px;
   margin-left: 154px;
+  text-align: right;
   /*margin-top:5px;
   width: 200px;*/
 }
 .taskDesc .down img {
-  margin-top: 8px;
-  float:left;
+  /*margin-top: 8px;*/
+  /*float:left;*/
   width: 18px;
 }
 .taskDesc .text {
