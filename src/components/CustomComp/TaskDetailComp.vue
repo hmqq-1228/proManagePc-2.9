@@ -5,8 +5,8 @@
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
         <div style="display: flex;justify-content: space-between">
-          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-          <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+          <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
         </div>
       </div>
       <div class="taskMsg">
@@ -47,7 +47,7 @@
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
-        <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
+        <div style="display: inline-block;color: #409EFF;cursor: pointer;" @click="toProjectDetail(taskBasicMsg.projectUID)">{{taskBasicMsg.projectName}}</div>
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级任务:</span></div>
@@ -353,9 +353,14 @@ export default {
     }
   },
   methods: {
+    toProjectDetail: function (id) {
+      if (id) {
+        this.$store.state.proId = id
+        this.$router.push('/goodsDetail')
+      }
+    },
     // 创建流程 流程选项列表
     rowClick: function (obj) {
-      this.log('rowClick:', obj)
       this.createProcessShow = false
       window.open(obj.flowUrl, '_blank')
       // window.location.href = obj.flowUrl

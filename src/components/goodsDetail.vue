@@ -116,11 +116,11 @@
       </div>
       <div v-else style="margin-bottom: 15px;">
          <span class="title">{{proDetailMsg.projectName}}</span>
-          <div class="myMsg" style="float:right;width:240px;">
+          <div class="myMsg" style="float:right;width:280px;">
             <div>
               <img src="../../static/img/my.png" alt>
             </div>
-            <div style="margin-left: 10px;">{{proDetailMsg.projectManager}} {{startPlanDate}}  {{endPlanDate}}</div>
+            <div style="margin-left: 10px;">{{proDetailMsg.projectManager}} {{startPlanDate}} 到 {{endPlanDate}}</div>
             <div class="imgBox" v-if="proDetailMsg.state === '0'">
               <img src="../../static/img/unstart.png" alt>
             </div>
@@ -280,9 +280,11 @@
         v-bind:is="compArr.PlanDetailComp"
         v-bind:taskDrawerOpen="value444"
         :nodeId="currentNodeId"
+        :planDetailEdit="editFlag"
         v-on:ActionResThrow="ActionResThrowFuc"
         v-on:addChildMsg="addChildMsgFuc"
         v-on:toChildMsg="toChildMsgFuc"
+        v-on:showPlanEditForm="showPlanEditFormFuc"
         v-on:PlanDelCallback="PlanDelCallbackFuc"
       ></component>
     </Drawer>
@@ -496,6 +498,7 @@ export default {
   },
   data () {
     return {
+      editFlag: '',
       showName: false,
       // 是否有档案
       archives: true,
@@ -993,6 +996,10 @@ export default {
       var that = this
       that.modifyTaskVisible = true
     },
+    showPlanEditFormFuc: function () {
+      var that = this
+      that.planEditShow = true
+    },
     proBaseEditClick () {
       this.DrawerBaseEdit = true
     },
@@ -1459,6 +1466,8 @@ export default {
         if (res.code === 200) {
           that.planEditShow = false
           that.queryProDetail()
+          console.log('999999999999999999')
+          that.editFlag = 'success'
           that.$message({
             message: '修改成功！',
             type: 'success'

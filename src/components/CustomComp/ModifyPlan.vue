@@ -7,9 +7,9 @@
       </el-form-item>
       <el-form-item label="开始时间" prop="date1">
         <el-col :span="11">
-          <el-date-picker type="date"
-                          format="yyyy-MM-dd"
-                          value-format="yyyy-MM-dd"
+          <el-date-picker type="datetime"
+                          format="yyyy-MM-dd HH:mm:ss"
+                          value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="选择日期"
                           v-model="detailform.date1"
                           :picker-options="pickerOptionsPlanSt"
@@ -18,9 +18,9 @@
       </el-form-item>
       <el-form-item label="结束时间" prop="date2">
         <el-col :span="11">
-          <el-date-picker type="date"
-                          format="yyyy-MM-dd"
-                          value-format="yyyy-MM-dd"
+          <el-date-picker type="datetime"
+                          format="yyyy-MM-dd HH:mm:ss"
+                          value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="选择日期"
                           v-model="detailform.date2"
                           :picker-options="pickerOptionsPlanEt"

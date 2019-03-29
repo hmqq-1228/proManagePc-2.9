@@ -3,8 +3,9 @@
     <div class="slidTop">
       <div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>
       <div></div>
-      <div style="display: flex;justify-content: space-between">
+      <div style="display: flex;justify-content: space-between" v-if="planMsg.showDeleteFlag=== '0' ? false:true">
         <div @click="delCurrentPlan(planMsg.id)" title="删除计划" style="width: 50px;cursor: pointer;"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+        <div @click="modifyPlan()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
       </div>
     </div>
     <div class="taskMsg2" style="border-bottom: 1px solid #f1f1f1;background-color: #f5f8fa">
@@ -76,11 +77,13 @@
 
 <script>
 import AddNewTask from './AddNewTask.vue'
+import ModifyPlan from './ModifyPlan.vue'
 export default {
   name: 'PlanDetailComp',
-  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh', 'taskDrawerOpen'],
+  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh', 'planDetailEdit', 'taskDrawerOpen'],
   components: {
-    AddNewTask
+    AddNewTask,
+    ModifyPlan
   },
   data () {
     return {
@@ -88,6 +91,7 @@ export default {
       delLoading: false,
       // 引入组件
       compArr: {
+        ModifyPlan: 'ModifyPlan',
         AddNewTask: 'AddNewTask'
       },
       planMsgPlanList: [],
@@ -102,6 +106,11 @@ export default {
       }
     },
     taskDrawerOpen: function (val, old) {
+      if (val) {
+        this.toPlanDetail(this.nodeId)
+      }
+    },
+    planDetailEdit: function (val, oV) {
       if (val) {
         this.toPlanDetail(this.nodeId)
       }
@@ -121,24 +130,16 @@ export default {
     }
   },
   methods: {
+    modifyPlan: function () {
+      var that = this
+      that.$emit('showPlanEditForm')
+    },
     toPlanDetail: function (id) {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: id}).then(res => {
         // console.log('res', res)
         if (res.code === 200) {
           that.planMsg = res.data
-          // that.CommunityTaskPayload.parentId = res.data.id
-          // that.selDateStart = res.data.start
-          // that.selDateEnd = res.data.finish
-          // var st = res.data.start.split(' ')[0] + ' 00:00:00'
-          // var et = res.data.finish
-          // var sT = new Date(st)
-          // var eT = new Date(et)
-          // that.disabledStarTime = sT.getTime()
-          // that.disabledEndTime = eT.getTime()
-          // that.pickerOptions01.disabledDate = function (time) {
-          //   return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
-          // }
           that.getNextPlanTask(id)
         } else {
           that.$message.warning(res.msg)

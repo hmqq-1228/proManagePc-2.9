@@ -47,9 +47,9 @@
     </div>
     <!---->
     <div class="taskBox" style="box-sizing: border-box;">
-      <div class="taskList" v-for="(myTask, index) in myTaskList" :key="index">
+      <div class="taskList" v-for="(myTask, index) in myTaskList" :key="index" @click="toDetail(myTask.uid)">
         <div class="taskItem">
-          <div><span style="font-size: 16px;color: #409EFF;cursor: pointer;" @click="toDetail(myTask.uid)">{{myTask.jobName}}</span></div>
+          <div><span style="font-size: 16px;color: #409EFF;cursor: pointer;">{{myTask.jobName}}</span></div>
           <div class="taskName"><Icon type="md-ribbon" size="20"/>{{myTask.projectName}}</div>
         </div>
         <div class="taskMsg">
