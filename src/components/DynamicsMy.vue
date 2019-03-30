@@ -1105,7 +1105,6 @@ export default {
               }
             }
             that.fileListLen2 = that.fileList2.length
-            console.log('edit', that.fileList2)
             $('#myfileDel').val('')
           }
         })
