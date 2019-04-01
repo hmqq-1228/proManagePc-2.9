@@ -253,7 +253,7 @@ export default {
     // 获取所属项目
     getProBelong: function () {
       var that = this
-      that.ajax('/community/getAllProject', {}).then(res => {
+      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         if (res.code === 200) {
           // this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID

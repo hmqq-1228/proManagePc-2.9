@@ -264,7 +264,7 @@ export default {
   methods: {
     queryMyProjectList () {
       var that = this
-      this.ajax('/myProject/myProjectList', {}).then(res => {
+      this.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         // this.log('选择所属项目:', res)
         if (res.code === 200) {
           that.projectList = res.data

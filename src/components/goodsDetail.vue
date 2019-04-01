@@ -1225,30 +1225,28 @@ export default {
     addMarkInfo () {
       var that = this
       that.loadingRe = true
-      that.addProjectCommentPayload.projectUID = that.proId
+      that.addProjectCommentPayload.contentId = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
       if (that.commitComent) {
-        that
-          .ajax('/myProject/addProjectComment', that.addProjectCommentPayload)
-          .then(res => {
-            if (res.code === 200) {
-              that.IsClear = true
-              that.$message({
-                type: 'success',
-                message: res.msg
-              })
-              that.loadingRe = false
-              that.getHistoryCont()
-              that.commitComent = ''
-            } else {
-              that.$message({
-                type: 'success',
-                message: res.msg
-              })
-              that.loadingRe = false
-            }
-          })
+        that.ajax('/comment/addComment', that.addProjectCommentPayload).then(res => {
+          if (res.code === 200) {
+            that.IsClear = true
+            that.$message({
+              type: 'success',
+              message: res.msg
+            })
+            that.loadingRe = false
+            that.getHistoryCont()
+            that.commitComent = ''
+          } else {
+            that.$message({
+              type: 'success',
+              message: res.msg
+            })
+            that.loadingRe = false
+          }
+        })
       }
     },
     // 成员管理
