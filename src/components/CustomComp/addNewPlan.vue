@@ -279,7 +279,7 @@ export default {
       var st = new Date(that.selDateStart2).getTime()
       var et = new Date(that.selDateEnd2).getTime()
       if (st > et) {
-        that.$message.warning('开始时间不能大于结束时间')
+        that.$message.warning('时间区间选择不合理')
       } else {
         this.selectDateDiaShow2 = false
       }

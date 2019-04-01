@@ -115,7 +115,7 @@ export default {
               }
             })
           } else {
-            that.$message.warning('开始时间不能大于结束时间')
+            that.$message.warning('时间区间选择不合理')
           }
         }
       })

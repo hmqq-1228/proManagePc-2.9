@@ -213,49 +213,6 @@
     <div v-else class="noData">
        暂无数据
     </div>
-    <!--项目计划树 树形结构 老版本 start-->
-    <!--  <div class="block">
-      <el-tree
-        :data="data5"
-        node-key="id"
-        @node-expand="getNodeMsg($event)"
-        :expand-on-click-node="false">
-          <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span class="dataName" @click="showDetailPage(data)">{{data.name}}</span>
-            <span class="proMsg">
-              <span class="treeName">
-                <span v-if="data.type === '2'">
-                  <span style="float: left"><img style="width: 16px;" src="../../static/img/my.png" alt=""></span>
-                  <span style="float: left;margin-left: 16px;">{{data.userName}}</span>
-                </span>
-              </span>
-              <span class="treeState">
-                 <span v-if="data.type === '2'">
-                  <span style="float: left"><img style="width: 16px;" src="../../static/img/noted.png" alt=""></span>
-                  <span v-if="data.status === '0'" style="float: left;margin-left: 16px;color: #ffd04b;">未确认</span>
-                  <span v-if="data.status === '1'" style="float: left;margin-left: 16px;color: #53b5ff;">进行中</span>
-                  <span v-if="data.status === '2'" style="float: left;margin-left: 16px;color: #27CF97;">已完成</span>
-                 </span>
-              </span>
-              <span class="treeTime">
-                <span style="float: left"><img style="width: 16px;" src="../../static/img/data.png" alt=""></span>
-                <span style="float: left;margin-left: 16px;">{{data.start}} - {{data.finish}}</span>
-              </span>
-              <span class="treeTime">
-                <Dropdown @on-click="moreSelectOptions($event, data.id, data.type, data)">
-                  <a href="javascript:void(0)">更多操作<Icon type="ios-arrow-down"></Icon></a>
-                  <DropdownMenu slot="list">
-                    <DropdownItem name="add">添加</DropdownItem>
-                    <DropdownItem name="del">删除</DropdownItem>
-                    <DropdownItem name="edit">编辑</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </span>
-            </span>
-          </span>
-      </el-tree>
-    </div>-->
-    <!-- Part02 end -->
     <!-- Part05 start 抽屉 任务详情 -->
     <Drawer
       title="任务详情"
