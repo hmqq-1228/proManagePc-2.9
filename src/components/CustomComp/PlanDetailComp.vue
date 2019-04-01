@@ -202,7 +202,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/myProject/delPlanOrTask', {id: id}).then(res => {
-          that.$emit('PlanDelCallback', res)
+          that.$emit('PlanDelCallback', res, '1')
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
             that.$message.success(res.msg)
@@ -224,7 +224,7 @@ export default {
       }).then(() => {
         that.delLoading = true
         that.ajax('/myProject/delPlanOrTask', {id: id}).then(res => {
-          that.$emit('PlanDelCallback', res)
+          that.$emit('PlanDelCallback', res, '2')
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
             that.getNextPlanTask(that.currentNodeId)

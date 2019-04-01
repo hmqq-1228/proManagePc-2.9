@@ -33,7 +33,7 @@
           <div :class="'tree-all-'+index" v-show="item.show" v-if="item.children">
             <div class="tree-second">
               <ul style="margin-left:-30px;">
-                 <treeItem v-for="(item1,index) in item.children" :menuData="item1" @showDetailPage="showDetailPage" :key="index"></treeItem>
+                 <treeItem v-for="(item1,index) in item.children" :menuData="item1" @showDetailPage="showDetailPage" :key="index" :show="show"></treeItem>
               </ul>
             </div>
           </div>
@@ -46,10 +46,10 @@
 <script>
 import treeItem from './treeItem.vue'
 export default {
-  props: ['list'],
+  props: ['list', 'show'],
   data () {
     return {
-      show: false
+      // show: true
     }
   },
   components: {

@@ -206,7 +206,7 @@
     </div>
     <!-- zh 树形结构 新版本-->
     <div v-if="listTree.length>0 && planList.length > 0">
-       <tree :list="listTree" @showDetailPage="showDetailPage"></tree>
+       <tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>
     </div>
     <div v-else class="noData">
        暂无数据
@@ -503,6 +503,8 @@ export default {
       archives: true,
       // 添加任务计划的id
       parentId: '',
+      // 是否显示二级之后的树结构
+      show: true,
       // 引入组件
       compArr: {
         ModifyTask: 'ModifyTask',
@@ -952,16 +954,18 @@ export default {
     // zh展开树状结构
     slideTree () {
       let that = this
-      this.showName = false
+      that.showName = false
+      that.show = true
       that.listTree.forEach((item, index) => {
         item['show'] = true
-        this.$set(that.listTree, index, item)
+        that.$set(that.listTree, index, item)
       })
     },
     // zh收缩树状结构
     slideTree1 () {
-      this.showName = true
       let that = this
+      that.showName = true
+      that.show = false
       that.listTree.forEach((item, index) => {
         item['show'] = false
         this.$set(that.listTree, index, item)
@@ -1317,12 +1321,16 @@ export default {
       that.TaskDetailCompShow = false
     },
     // 计划删除 返回结果处理
-    PlanDelCallbackFuc: function (res) {
+    PlanDelCallbackFuc: function (res, type) {
       var that = this
       if (res.code === 200) {
         that.selectProjectId()
         that.queryProDetail()
-        // that.value444 = false
+        if (type === '1') {
+          that.value444 = false
+        } else {
+          that.value444 = true
+        }
         that.$message({
           message: '删除成功！',
           type: 'success'
