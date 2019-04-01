@@ -6,26 +6,22 @@
         <el-input class="planNameIpt" v-model="detailform.name" maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="开始时间" prop="date1">
-        <el-col :span="11">
-          <el-date-picker type="datetime"
+          <el-date-picker type="datetime" style="width: 100%"
                           format="yyyy-MM-dd HH:mm:ss"
                           value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="选择日期"
                           v-model="detailform.date1"
                           :picker-options="pickerOptionsPlanSt"
           ></el-date-picker>
-        </el-col>
       </el-form-item>
       <el-form-item label="结束时间" prop="date2">
-        <el-col :span="11">
-          <el-date-picker type="datetime"
+          <el-date-picker type="datetime" style="width: 100%"
                           format="yyyy-MM-dd HH:mm:ss"
                           value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="选择日期"
                           v-model="detailform.date2"
-                          :picker-options="pickerOptionsPlanSt"
+                          :picker-options="pickerOptionsPlanEt"
           ></el-date-picker>
-        </el-col>
       </el-form-item>
       <el-form-item label="计划描述" maxlength="100" width="100">
         <el-input class="planNameIpt" type="textarea" :rows="2" v-model="detailform.description"></el-input>
@@ -131,14 +127,15 @@ export default {
           that.detailform.date1 = res.data.start
           that.detailform.date2 = res.data.finish
           that.detailform.description = res.data.description
-          var st = res.data.parentSTime.split(' ')[0] + ' 00:00:00'
-          var et = res.data.parentETime
-          var sT = new Date(st)
-          var eT = new Date(et)
-          var disabledStarTime = sT.getTime()
-          var disabledEndTime = eT.getTime()
+          var minStart = new Date(res.data.start.split(' ')[0] + ' 00:00:00').getTime()
+          var minEnt = new Date(res.data.finish).getTime()
+          var maxStart = new Date(res.data.parentSTime.split(' ')[0] + ' 00:00:00').getTime()
+          var maxEnd = new Date(res.data.parentETime).getTime()
           that.pickerOptionsPlanSt.disabledDate = function (time) {
-            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+            return time.getTime() > maxStart || time.getTime() < minStart
+          }
+          that.pickerOptionsPlanEt.disabledDate = function (time) {
+            return time.getTime() > maxEnd || time.getTime() < minEnt
           }
         } else {
           // j

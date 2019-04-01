@@ -28,7 +28,7 @@
                             value-format="yyyy-MM-dd HH:mm:ss"
                             placeholder="选择日期"
                             v-model="detailTaskform.taskFinishDate"
-                            :picker-options="pickerOptionsTaskSt"
+                            :picker-options="pickerOptionsTaskEt"
             ></el-date-picker>
           </el-col>
         </el-form-item>
@@ -62,6 +62,7 @@ export default {
         FileUploadComp: 'FileUploadComp'
       },
       pickerOptionsTaskSt: {},
+      pickerOptionsTaskEt: {},
       IsClear: false,
       // 接收到的组件数组 新组件
       FileUploadArr: [],
@@ -144,14 +145,15 @@ export default {
         that.detailTaskform.taskFinishDate = res.data.taskFinishDate
         that.detailTaskform.description = res.data.description
         that.taskFileList = []
-        var st = res.data.parentSTime.split(' ')[0] + ' 00:00:00'
-        var et = res.data.parentETime
-        var sT = new Date(st)
-        var eT = new Date(et)
-        var disabledStarTime = sT.getTime()
-        var disabledEndTime = eT.getTime()
+        var minStart = new Date(res.data.taskStartDate.split(' ')[0] + ' 00:00:00').getTime()
+        var minEnt = new Date(res.data.taskFinishDate).getTime()
+        var maxStart = new Date(res.data.parentSTime.split(' ')[0] + ' 00:00:00').getTime()
+        var maxEnd = new Date(res.data.parentETime).getTime()
         that.pickerOptionsTaskSt.disabledDate = function (time) {
-          return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+          return time.getTime() > maxStart || time.getTime() < minStart
+        }
+        that.pickerOptionsTaskEt.disabledDate = function (time) {
+          return time.getTime() > maxEnd || time.getTime() < minEnt
         }
         var fileListArr = []
         for (var i = 0; res.data.fileList && i < res.data.fileList.length; i++) {
