@@ -51,7 +51,7 @@
         <div style="display: inline-block;color: #409EFF;cursor: pointer;" @click="toProjectDetail(taskBasicMsg.projectUID)">{{taskBasicMsg.projectName}}</div>
       </div>
       <div class="cannetProject">
-        <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级任务:</span></div>
+        <div style="display: inline-block"><img src="../../../static/img/taskFa2.png" alt=""><span>父级任务:</span></div>
         <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.parentTaskName" @click="toDetail(taskBasicMsg.parentTaskID)">{{taskBasicMsg.parentTaskName}}</div>
         <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级任务</div>
       </div>
@@ -114,7 +114,7 @@
       <!-- 关联流程 -->
       <div class="connectProcess">
         <div style="display: inline-block" class="connectProcessHeader">
-          <img src="../../../static/img/taskList.png" alt="">
+          <img src="../../../static/img/liuc.png" alt="">
           <span>关联流程<span style="color: #409EFF">({{tableData.length}})</span></span>
           <Icon @click="tableDataReFresh($event)" class="reFreshIcon" type="md-refresh" style="color: #409EFF; font-size: 20px;" />
         </div>

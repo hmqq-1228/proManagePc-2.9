@@ -1142,13 +1142,6 @@ export default {
       this.currentNodeId = data.id
       if (data.type === 'task') {
         that.TaskDetailCompShow = true
-        // that.taskId = data.id
-        // that.taskComment.uid = data.id
-        // that.taskHistoryList.uid = data.id
-        // that.TaskDetailCompShow = true
-        // that.getCommicateCont()
-        // that.getHistoryList()
-        // that.toDetail(data.id)
       } else if (data.type === 'plan') {
         that.value444 = true
         // that.toPlanDetail(data.id)
