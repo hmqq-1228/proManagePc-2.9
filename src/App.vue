@@ -8,7 +8,7 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside width="250px" style="min-height: 700px;background-color: #2f64a5">
+        <el-aside width="250px" style="height: 100%;background-color: #2f64a5">
           <el-row>
           <el-col :span="24">
             <el-menu
@@ -227,6 +227,9 @@ html,body{
 }
 #app{
   height: 100%;
+}
+.el-aside {
+  overflow: visible !important;
 }
 .goodsDetail .el-tabs__content {
   overflow: visible !important;
