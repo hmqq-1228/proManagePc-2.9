@@ -712,12 +712,6 @@ export default {
       this.myProjectViewPayload.projectName = iptName
       this.queryMyProjectView()
     },
-    // 新增
-    // settoken: function () {
-    //   this.ajax('/general/setToken', {}).then(res => {
-    //     this.token = res._jfinal_token
-    //   })
-    // },
     // 新增 查询用户信息
     getUserInfo: function () {
       var that = this
@@ -870,8 +864,6 @@ export default {
       // this.$router.push('/NewAddPro')
     },
     ctime (e) {
-      // console.log(55555555555)
-      // console.log(e)
     },
     // 新建 搜索选择项目负责人
     querySearchAsync (queryString, cb) {
@@ -909,8 +901,6 @@ export default {
     // 新建项目 立即创建项目 (模板) 提交基本信息
     submitModelForm (formName) {
       var that = this
-      // console.log('startDate', this.ruleForm.value2[0])
-      // console.log('endDate', this.ruleForm.value2[1])
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {

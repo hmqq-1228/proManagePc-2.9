@@ -32,7 +32,7 @@
   <div v-show="show" v-if="menuData.children&&menuData.children.length>0">
     <div class="children-list" v-for="(item,index) in menuData.children" :key="index">
       <div class="children-content" style="margin-left:30px">
-         <treeItem :menuData="item" @showDetailPage="showDetailPage"></treeItem>
+         <treeItem :menuData="item" @showDetailPage="showDetailPage" :show="show"></treeItem>
       </div>
     </div>
   </div>
@@ -41,11 +41,21 @@
 
 <script>
 export default {
-  props: ['menuData'],
+  // props: ['menuData',show],
+  props: {
+    menuData: {
+      // type: Object,
+      // default: {}
+    },
+    show: {
+      type: Boolean,
+      default: true
+    }
+  },
   name: 'treeItem',
   data () {
     return {
-      show: true
+      // show: true
     }
   },
   created () {

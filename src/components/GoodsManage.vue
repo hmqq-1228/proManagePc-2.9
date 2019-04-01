@@ -307,8 +307,6 @@ export default {
           codeLen = 'level_0'
         }
       }
-      // console.log('code.length', code.length)
-      // console.log('codeLen', codeLen)
       if (code === '') {
         that.level_1 = []
         that.level_2 = []
