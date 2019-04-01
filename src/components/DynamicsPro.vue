@@ -159,16 +159,27 @@
           </div>
           <!--添加评论-->
           <div class="responseArea" v-bind:style="{ height: taskItem.responseHeight + 'px'}">
-            <form v-bind:id="'uploadFile2' + '_' + taskItem.projectUID + '_' + taskIndex" enctype="multipart/form-data">
-              <textarea name="content" v-bind:id="'textArea' + '_' + taskItem.projectUID + '_' + taskIndex" v-model="textareaVal" placeholder="请输入回复内容"></textarea>
-              <div class="resAreaOther">
-                <div><input type="file" v-bind:id="'myfileProResp' + '_' + taskItem.projectUID + '_' + taskIndex" name="myfile" placeholder="请选择文件"/></div>
-                <div class="resAreaOtherBtn">
-                  <el-button size="mini" @click="responseCancel(taskItem.projectUID, taskIndex)">取 消</el-button>
-                  <el-button size="mini" type="primary" @click="responseOk('uploadFile2' + '_' + taskItem.projectUID + '_' + taskIndex)">提 交</el-button>
-                </div>
+            <textarea name="content" v-bind:id="'textArea' + '_' + taskItem.projectUID + '_' + taskIndex" v-model="textareaVal" placeholder="请输入回复内容"></textarea>
+            <div class="resAreaOther">
+              <div>
+                <component v-bind:is="compArr.FileUploadComp" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+                <!--<input type="file" v-bind:id="'myfileProResp' + '_' + taskItem.projectUID + '_' + taskIndex" name="myfile" placeholder="请选择文件"/>-->
               </div>
-            </form>
+              <div class="resAreaOtherBtn">
+                <el-button size="mini" @click="responseCancel(taskItem.projectUID, taskIndex)">取 消</el-button>
+                <el-button size="mini" type="primary" @click="responseOk(taskItem.projectUID)">提 交</el-button>
+              </div>
+            </div>
+            <!--<form v-bind:id="'uploadFile2' + '_' + taskItem.projectUID + '_' + taskIndex" enctype="multipart/form-data">-->
+              <!--<textarea name="content" v-bind:id="'textArea' + '_' + taskItem.projectUID + '_' + taskIndex" v-model="textareaVal" placeholder="请输入回复内容"></textarea>-->
+              <!--<div class="resAreaOther">-->
+                <!--<div><input type="file" v-bind:id="'myfileProResp' + '_' + taskItem.projectUID + '_' + taskIndex" name="myfile" placeholder="请选择文件"/></div>-->
+                <!--<div class="resAreaOtherBtn">-->
+                  <!--<el-button size="mini" @click="responseCancel(taskItem.projectUID, taskIndex)">取 消</el-button>-->
+                  <!--<el-button size="mini" type="primary" @click="responseOk('uploadFile2' + '_' + taskItem.projectUID + '_' + taskIndex)">提 交</el-button>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</form>-->
           </div>
           <!---->
           <div class="tabsCntResponse">
@@ -228,13 +239,23 @@
 
 <script>
 import Swiper from 'swiper'
+import FileUploadComp from './CustomComp/FileUploadComp.vue'
 import 'swiper/dist/css/swiper.min.css'
 export default {
   name: 'DynamicsPro',
   props: ['recall', 'refresh'],
+  components: {
+    FileUploadComp
+  },
   data () {
     return {
       msg: '任务动态',
+      compArr: {
+        FileUploadComp: 'FileUploadComp'
+      },
+      // 附件上传
+      FileUploadArr: [],
+      IsClear: false,
       // 控制nodata图片显示与隐藏
       noDataShow: false,
       preImageUrl: '',
@@ -345,6 +366,27 @@ export default {
     this.log(mySwiper)
   },
   methods: {
+    // 获取附件上传组件发来的附件信息
+    GetFileInfo (obj) {
+      if (obj) {
+        this.IsClear = false
+      }
+      this.FileUploadArr = obj
+    },
+    // 拼接附件上传的id为字符串
+    SetFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.FileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.FileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
+      }
+      that.FileUploadArr = []
+      return FileIdStr
+    },
     testSwiper: function () {
       var that = this
       setTimeout(function () {
@@ -556,7 +598,7 @@ export default {
       for (var i = 0; i < that.taskList.length; i++) {
         if (that.taskList[i].projectUID === id) {
           c = i
-          that.taskList[i].responseHeight = 150
+          that.taskList[i].responseHeight = 180
           obj = that.taskList[i]
         } else {
           that.taskList[i].responseHeight = 0
@@ -580,61 +622,89 @@ export default {
       }
       that.taskList.splice(c, 1, obj)
     },
-    // 创建任务
-    responseOk: function (taskId, index) {
+    // that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+    responseOk: function (taskId) {
       var that = this
-      that.loading = true
-      that.currentTaskItemId = taskId.split('_')[1]
-      var url = that.$store.state.baseServiceUrl
-      var formData = new FormData($('#' + taskId)[0])
-      formData.append('rid', taskId.split('_')[1])
-      formData.append('rtype', '1')
-      if (that.textareaVal) {
-        $.ajax({
-          type: 'post',
-          url: url + '/general/addOrEditComment',
-          data: formData,
-          cache: false,
-          processData: false,
-          contentType: false,
-          crossDomain: true,
-          xhrFields: {
-            withCredentials: true
-          }
-        }).then(function (data) {
-          that.loading = false
-          if (data.code === 200) {
+      that.currentTaskItemId = taskId
+      if ($.trim(that.textareaVal)) {
+        that.ajax('/comment/addComment', {content: that.textareaVal, attachmentId: that.SetFileIdStr(), contentId: taskId}).then(res => {
+          if (res.code === 200) {
+            that.IsClear = true
             that.$message({
               type: 'success',
-              message: data.msg
+              message: res.msg
             })
             that.textareaVal = ''
-            $('#myfileProResp' + '_' + taskId.split('_')[1] + '_' + index).val('')
             that.getProList()
-          } else if (data.code === 300) {
-            that.$message({
-              type: 'error',
-              message: data.msg
-            })
-            that.loading = false
           } else {
             that.$message({
               type: 'error',
-              message: data.msg
+              message: res.msg
             })
-            that.loading = false
           }
-          that.textareaVal = ''
-          $('#myfileProResp' + '_' + taskId.split('_')[1] + '_' + index).val('')
         })
       } else {
-        that.loading = false
         that.$message({
           type: 'error',
           message: '评论内容不能为空'
         })
       }
     },
+    // 创建任务
+    // responseOk: function (taskId, index) {
+    //   var that = this
+    //   that.loading = true
+    //   that.currentTaskItemId = taskId.split('_')[1]
+    //   var url = that.$store.state.baseServiceUrl
+    //   var formData = new FormData($('#' + taskId)[0])
+    //   formData.append('rid', taskId.split('_')[1])
+    //   formData.append('rtype', '1')
+    //   if (that.textareaVal) {
+    //     $.ajax({
+    //       type: 'post',
+    //       url: url + '/general/addOrEditComment',
+    //       data: formData,
+    //       cache: false,
+    //       processData: false,
+    //       contentType: false,
+    //       crossDomain: true,
+    //       xhrFields: {
+    //         withCredentials: true
+    //       }
+    //     }).then(function (data) {
+    //       that.loading = false
+    //       if (data.code === 200) {
+    //         that.$message({
+    //           type: 'success',
+    //           message: data.msg
+    //         })
+    //         that.textareaVal = ''
+    //         $('#myfileProResp' + '_' + taskId.split('_')[1] + '_' + index).val('')
+    //         that.getProList()
+    //       } else if (data.code === 300) {
+    //         that.$message({
+    //           type: 'error',
+    //           message: data.msg
+    //         })
+    //         that.loading = false
+    //       } else {
+    //         that.$message({
+    //           type: 'error',
+    //           message: data.msg
+    //         })
+    //         that.loading = false
+    //       }
+    //       that.textareaVal = ''
+    //       $('#myfileProResp' + '_' + taskId.split('_')[1] + '_' + index).val('')
+    //     })
+    //   } else {
+    //     that.loading = false
+    //     that.$message({
+    //       type: 'error',
+    //       message: '评论内容不能为空'
+    //     })
+    //   }
+    // },
     toDetail: function (id) {
       console.log('id', id)
       this.$router.push('/ProDetail')
