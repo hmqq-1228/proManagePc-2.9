@@ -1049,7 +1049,7 @@ export default {
     },
     // 新增 获取项目详情
     queryProDetail: function () {
-      console.log(1111111111111111111)
+      // console.log(1111111111111111111)
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
         .then(res => {
