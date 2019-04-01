@@ -1,10 +1,13 @@
 <template>
-  <div>
+  <div class="PlanDetailComp">
+    <div>{{refshPlan?'':''}}</div>
+    <div>{{editFlag?'':''}}</div>
     <div class="slidTop">
       <div :title="planMsg.name" style="font-weight: bold;width: 80%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{planMsg.name}}</div>
       <div></div>
-      <div style="display: flex;justify-content: space-between">
+      <div style="display: flex;justify-content: space-between" v-if="planMsg.showDeleteFlag=== '0' ? false:true">
         <div @click="delCurrentPlan(planMsg.id)" title="删除计划" style="width: 50px;cursor: pointer;"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+        <div @click="modifyPlan()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
       </div>
     </div>
     <div class="taskMsg2" style="border-bottom: 1px solid #f1f1f1;background-color: #f5f8fa">
@@ -56,8 +59,12 @@
         <div class="childTaskName" @click="toPlanDetailMsg(child.id, child.type)" :title="child.name"><Icon type="md-copy" size="16" color="#409EFF"/> {{child.name}} <span style="color: #888;" v-if="child.type === '2'">(任务)</span><span style="color: #888;" v-if="child.type === '1'">(计划)</span></div>
         <div class="childTaskMsg">
           <div v-if="child.status" style="width: 60px;" :class="'childTaskStyle' + child.status">{{child.statusStr}}</div>
-          <div v-if="child.status && child.dayNum >= 0" style="width: 100px;">剩余 <span style="color:#13ce66;font-size: 18px;">{{child.dayNum}}</span> 天</div>
-          <div v-if="child.status && child.dayNum < 0" style="width: 100px;">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(child.dayNum)}}</span> 天</div>
+          <div v-if="child.status && child.dayNum >= 0" style="width: 100px;">
+            <span v-if="child.status !== '2'">剩余 <span style="color:#13ce66;font-size: 18px;">{{child.dayNum}}</span> 天</span>
+          </div>
+          <div v-if="child.status && child.dayNum < 0" style="width: 100px;">
+            <span v-if="child.status !== '2'">逾期 <span style="color:#f00;font-size: 18px;">{{Math.abs(child.dayNum)}}</span> 天</span>
+          </div>
           <div v-if="child.userName" style="width: 160px;">{{child.userName}}</div>
           <div v-if="!child.userName" style="width: 160px;">创建人: {{child.creator}}</div>
           <div style="width: 20px;margin-right: 0" @click="delChildTask(child.id)"><div class="taskDel"><Icon type="md-close" size="18"/></div></div>
@@ -72,11 +79,13 @@
 
 <script>
 import AddNewTask from './AddNewTask.vue'
+import ModifyPlan from './ModifyPlan.vue'
 export default {
   name: 'PlanDetailComp',
-  props: ['nodeId', 'addPlanOrTaskSuc'],
+  props: ['nodeId', 'addPlanOrTaskSuc', 'PlanDetailCompRefresh', 'planDetailEdit', 'taskDrawerOpen'],
   components: {
-    AddNewTask
+    AddNewTask,
+    ModifyPlan
   },
   data () {
     return {
@@ -84,47 +93,83 @@ export default {
       delLoading: false,
       // 引入组件
       compArr: {
+        ModifyPlan: 'ModifyPlan',
         AddNewTask: 'AddNewTask'
       },
       planMsgPlanList: [],
       currentNodeId: ''
     }
   },
+  computed: {
+    refshPlan: function () {
+      var that = this
+      console.log(that.$store.state.goPerfect)
+      if (that.$store.state.refshPlan === true) {
+        that.getNextPlanTask(this.nodeId)
+      }
+      that.$store.state.refshPlan = false
+      return that.$store.state.refshPlan
+    },
+    editFlag: function () {
+      var that = this
+      if (that.$store.state.editFlag === true) {
+        console.log(88888888888888888)
+        that.toPlanDetail(this.nodeId)
+      }
+      that.$store.state.editFlag = false
+      return that.$store.state.editFlag
+    }
+  },
   watch: {
     nodeId: function (val, oV) {
       if (val) {
-        this.currentNodeId = val
+        // this.currentNodeId = val
         this.toPlanDetail(this.nodeId)
       }
     },
+    taskDrawerOpen: function (val, old) {
+      if (val) {
+        this.currentNodeId = this.nodeId
+        this.toPlanDetail(this.nodeId)
+      }
+    },
+    planDetailEdit: function (val, oV) {
+      if (val) {
+        this.toPlanDetail(this.nodeId)
+      }
+    },
+    // refshPlanMsg: function (val, oVal) {
+    //   if (val) {
+    //     console.log(1)
+    //     this.getNextPlanTask(this.nodeId)
+    //     this.$store.state.refshPlan = false
+    //   }
+    // },
     addPlanOrTaskSuc: function (val, oV) {
-      console.log('nodeId888:', this.nodeId)
       if (val) {
         this.getNextPlanTask(this.nodeId)
         this.toPlanDetail(this.nodeId)
       }
+    },
+    PlanDetailCompRefresh: function (val, old) {
+      if (val) {
+        this.toPlanDetail(this.nodeId)
+        // 抛出信息，告知父组件已刷新，将开关关闭
+        this.$emit('CompRefreshThrow', false)
+      }
     }
   },
   methods: {
+    modifyPlan: function () {
+      var that = this
+      that.$emit('showPlanEditForm')
+    },
     toPlanDetail: function (id) {
       var that = this
-      console.log('9999999999999999999999:', id)
       that.ajax('/myProject/getPlanOrTaskDetail', {id: id}).then(res => {
         // console.log('res', res)
         if (res.code === 200) {
           that.planMsg = res.data
-          // that.CommunityTaskPayload.parentId = res.data.id
-          // that.selDateStart = res.data.start
-          // that.selDateEnd = res.data.finish
-          // var st = res.data.start.split(' ')[0] + ' 00:00:00'
-          // var et = res.data.finish
-          // var sT = new Date(st)
-          // var eT = new Date(et)
-          // that.disabledStarTime = sT.getTime()
-          // that.disabledEndTime = eT.getTime()
-          // that.pickerOptions01.disabledDate = function (time) {
-          //   return time.getTime() < that.disabledStarTime || time.getTime() > that.disabledEndTime
-          // }
           that.getNextPlanTask(id)
         } else {
           that.$message.warning(res.msg)
@@ -132,12 +177,12 @@ export default {
       })
     },
     // 任务分解 返回结果处理
-    TaskDistributeCallbackFuc: function (res) {
+    TaskDistributeCallbackFuc: function (res, id) {
       var that = this
       // 在计划详情添加子任务后刷新树状结构
       that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       if (res.code === 200) {
-        that.getNextPlanTask(that.currentNodeId)
+        that.getNextPlanTask(id)
         that.$message({
           message: '创建成功！',
           type: 'success'
@@ -158,7 +203,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/myProject/delPlanOrTask', {id: id}).then(res => {
-          that.$emit('PlanDelCallback', res)
+          that.$emit('PlanDelCallback', res, '1')
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
             that.$message.success(res.msg)
@@ -180,7 +225,7 @@ export default {
       }).then(() => {
         that.delLoading = true
         that.ajax('/myProject/delPlanOrTask', {id: id}).then(res => {
-          that.$emit('PlanDelCallback', res)
+          that.$emit('PlanDelCallback', res, '2')
           if (res.code === 200) {
             that.log('delPlanOrTask:', res)
             that.getNextPlanTask(that.currentNodeId)
@@ -198,10 +243,8 @@ export default {
       var that = this
       if (type === '1') {
         that.toPlanDetail(id)
+        that.currentNodeId = id
       } else {
-        // that.value444 = false
-        // that.value4 = true
-        // that.toDetail(id)
         that.$emit('toChildMsg', id)
       }
     },
@@ -217,10 +260,6 @@ export default {
       })
     },
     addChild: function (id, type) {
-      // console.log('id', id)
-      // console.log('type', type)
-      // this.addNode(id, type)
-      // that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       this.$emit('addChildMsg', {'id': id, 'type': type})
     }
   }

@@ -15,7 +15,7 @@ Vue.use(ElementUI)
 Vue.use(iView)
 Vue.use(ajax)
 /* eslint-disable no-new */
-new Vue({
+var jvm = new Vue({
   el: '#app',
   $,
   store,
@@ -23,3 +23,4 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+console.log(jvm ? '' : '')

@@ -1,9 +1,10 @@
 <template>
   <div class="FileUploadComp" v-loading="loading21">
-    <form class="FileCompForm" :id="fileFormId" enctype="multipart/form-data">
+    <form class="FileCompForm" :id="lalala" enctype="multipart/form-data">
       <div class="FileCompFormIcon"><img src="../../../static/img/fujian.png" alt=""></div>
       <div class="FileCompIptWrap">选择文件
-        <input type="file" :disabled="commentDis" name="myfile" :id="fileFormId + '_myfile2'" @change="getFileName">
+        <!--fileFormId-->
+        <input type="file" class="aaa" :disabled="commentDis" name="myfile" :id="lalala + '_myfile2'" @change="getFileName">
       </div>
       <div class="FileCompIptText">{{uploadFileName}}</div>
     </form>
@@ -22,9 +23,27 @@
 <script>
 export default {
   name: 'FileUploadComp',
-  props: ['clearInfo', 'fileFormId', 'FileDataList'],
+  props: {
+    clearInfo: {
+      type: Boolean,
+      default: false
+    },
+    fileFormId: {
+      type: String,
+      default: ''
+    },
+    FileDataList: {
+      // type: Array,
+      // default: []
+    },
+    filUrl: {
+      type: String,
+      default: '/file/uploadFileAjax'
+    }
+  },
   data () {
     return {
+      lalala: '',
       loading21: false,
       uploadFileName: '',
       uploadFileRe: '',
@@ -33,11 +52,18 @@ export default {
       fileListCommentLen: 0
     }
   },
+  created () {
+    this.$store.state.uploadCount = this.$store.state.uploadCount + 1
+    this.lalala = 'lala_' + this.$store.state.uploadCount
+  },
   watch: {
     FileDataList (val, old) {
-      // this.log('FileDataList:', val)
+      this.log('FileDataList:', val)
       if (val) {
         this.fileListComment = val
+        if (val.length >= 5) {
+          this.commentDis = true
+        }
       }
     },
     clearInfo (val, old) {
@@ -46,7 +72,7 @@ export default {
       if (val) {
         // that.log('父组件传过来的：', val)
         that.fileListComment = []
-        $('#' + that.fileFormId + '_myfile2').val('')
+        $('#' + that.lalala + '_myfile2').val('')
         that.uploadFileName = ''
       }
     },
@@ -63,13 +89,11 @@ export default {
       this.$emit('FilePreEmit', {previewUrl, fileName, attachmentId})
     },
     getFileName: function (filename) {
-      // this.log('ddddd:', filename)
       var that = this
-      var filePath = $('#' + that.fileFormId + '_myfile2').val()
+      var filePath = $('#' + that.lalala + '_myfile2').val()
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
       this.uploadFileName = fileName
-      // $('.showFileName').html(fileName)
       if (filePath) {
         that.addMarkInfo4()
       }
@@ -104,12 +128,12 @@ export default {
       var that = this
       that.loading21 = true
       var url = that.$store.state.baseServiceUrl
-      var formData = new FormData($('#' + that.fileFormId)[0])
+      var formData = new FormData($('#' + that.lalala)[0])
       this.log(456)
       if (formData) {
         $.ajax({
           type: 'post',
-          url: url + '/file/uploadFileAjax',
+          url: url + that.filUrl,
           data: formData,
           cache: false,
           processData: false,

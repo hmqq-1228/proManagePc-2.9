@@ -1,11 +1,10 @@
 <template>
   <div id="app">
-    <div>{{getActiveNavIndex?'':''}}</div>
+    <div>{{getActiveNavIndex?'':''}} {{getMenuRefresh?'':''}}</div>
     <el-container>
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
           <div @click="testUpload">贝豪实业项目管理中心</div>
-          <!--<div class="LoginInfo"><span class="LoginWellcome">欢迎你：</span><span class="LoginUserName">张三</span></div>-->
         </div>
       </el-header>
       <el-container>
@@ -65,8 +64,6 @@ export default {
     }
   },
   created: function () {
-    // this.log('参数：proId:', this.$route.params.proId)
-    // this.$store.state.proId = this.$route.params.proId
     this.queryMenu()
     this.getPmsVersion()
     this.getUserInfo()
@@ -77,29 +74,19 @@ export default {
     }
   },
   computed: {
+    getMenuRefresh: function () {
+      var that = this
+      if (this.$store.state.menuRefresh) {
+        that.$store.state.menuRefresh = false
+        this.queryMenu()
+      }
+      return this.$store.state.menuRefresh
+    },
     getActiveNavIndex: function () {
       var that = this
       that.activeNavIndex = this.$store.state.activeNavIndex
       return this.$store.state.activeNavIndex
     }
-    // slideMenuData: function () {
-    //   var that = this
-    //   // this.log()
-    //   if (that.$store.state.slideMenu.length > 0) {
-    //     if (window.location.href.indexOf('Schedule') > 0) {
-    //       that.setActiveNavIndex('我的日程')
-    //     } else if () {
-    //      // j
-    //     }
-    //     for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
-    //       if (that.$store.state.slideMenu[i].projectType === '我的日程') {
-    //         that.$store.state.activeNavIndex = 'general_' + i
-    //         localStorage.setItem('generalMenuActive', '我的日程')
-    //       }
-    //     }
-    //   }
-    //   return this.$store.state.slideMenu
-    // }
   },
   methods: {
     getUserInfo: function () {
@@ -109,8 +96,6 @@ export default {
           that.$store.state.userId = res.data.ID
           that.$store.state.userName = res.data.Name
           that.$store.state.userLoginInfo = res.data
-          // that.defImplementer.name = res.data.Name
-          // that.defImplementer.id = res.data.ID
         }
       })
     },
@@ -124,7 +109,6 @@ export default {
       }
     },
     generalSelect: function (menu) {
-      // this.log('generalSelect:', menu)
     },
     getPmsVersion: function () {
       var that = this
@@ -142,16 +126,12 @@ export default {
     },
     toMenu: function (menuName) {
       var that = this
-      // this.log('menuName:', menuName)
       switch (menuName) {
         case '商品管理':
-          // localStorage.setItem('navType', '商品管理')
           localStorage.setItem('generalMenuActive', '商品管理')
-          // that.$store.state.generalMenuActive = '商品管理'
-          that.$router.push('/MyPro3')
+          that.$router.push('/GoodsManage')
           break
         case '我的项目':
-          // localStorage.setItem('generalMenuActive', '我的项目')
           localStorage.setItem('generalMenuActive', '我的项目')
           that.$router.push('/MyPro')
           break
@@ -161,11 +141,11 @@ export default {
           break
         case '我的动态':
           localStorage.setItem('generalMenuActive', '我的动态')
-          that.$router.push('/MyDep')
+          that.$router.push('/MyDepNew')
           break
         case '我的任务':
           localStorage.setItem('generalMenuActive', '我的任务')
-          that.$router.push('/MyTask')
+          that.$router.push('/MyTaskNew')
           break
         default:
           this.log('未找到')
@@ -177,6 +157,8 @@ export default {
       this.ajax('/myTask/getProjectList', {}).then(res => {
         // this.log('请求侧边栏:', res)
         if (res.code === 200) {
+          that.slideMenuGroup = []
+          that.slideMenu = []
           for (var i = 0; i < res.data.length; i++) {
             if (res.data[i].projectType === '集团战略') {
               that.slideMenuGroup.push(res.data[i])
@@ -184,31 +166,12 @@ export default {
               that.slideMenu.push(res.data[i])
             }
           }
-          // that.log('that.slideMenu:', that.slideMenu)
-          // that.log('that.slideMenuGroup:', that.slideMenuGroup)
           that.$store.state.slideMenuGroup = that.slideMenuGroup
           that.$store.state.slideMenu = that.slideMenu
-          // if (this.$route.params.proId) {
-          //   this.log('url带参数')
-          //   that.getProjectDetail(this.$route.params.proId)
-          // } else {
-          //   that.log('url不带参数')
-          //   if (that.slideMenuGroup.length > 0) {
-          //     that.log('集团战略menu有值')
-          //     that.getProjectDetail(that.slideMenuGroup[0].projectList[0].projectUID, '1', '集团战略')
-          //   } else {
-          //     that.log('集团战略menu没有值')
-          //     that.getProjectDetail(that.slideMenu[0].projectUID, '2', '', that.slideMenu[0].projectType)
-          //   }
-          // }
           if (localStorage.getItem('generalMenuActive') !== '集团战略') {
-            // this.log('nimanimanima------:', localStorage.getItem('generalMenuActive'))
-            // this.log('nimanimanima------:', that.$store.state.slideMenu[p].projectType)
             for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
               if (that.$store.state.slideMenu[p].projectType === localStorage.getItem('generalMenuActive')) {
-                // that.log(99999999)
                 that.$store.state.activeNavIndex = 'general_' + p
-                // that.$store
               }
             }
           }
@@ -221,20 +184,14 @@ export default {
       })
     },
     getProjectDetail: function (id, n, proType, proName) {
-      // this.log('getProjectDetail:id:', id)
-      // this.log('getProjectDetail:n:', n)
-      // this.log('getProjectDetail:proType:', proType)
-      // this.log('getProjectDetail:proName:', proName)
       if (proType === '集团战略') {
         localStorage.setItem('generalMenuActive', '集团战略')
-        // this.log('getProjectDetail：', '走了集团战略')
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
-          this.$router.push('/ProDetail')
+          this.$router.push('/goodsDetail')
         }
       } else {
-        // this.log('getProjectDetail：', '没走集团战略')
         if (proName === '我的日程') {
           this.$router.push('/Schedule')
         } else if (proName === '我的动态') {
@@ -270,6 +227,9 @@ html,body{
 }
 #app{
   height: 100%;
+}
+.goodsDetail .el-tabs__content {
+  overflow: visible !important;
 }
 .copyright{
   padding: 15px;
@@ -354,4 +314,27 @@ padding: 8px 20px;
 .searchItem .el-input__icon{
   line-height: 30px;
 }
+.goodSer .el-input__inner{
+  height: 34px;
+  line-height: 34px;
+}
+.goodSer .el-input__icon{
+  line-height: 34px;
+}
+.line .el-radio-button--mini .el-radio-button__inner{
+  padding: 5px 10px;
+}
+  .goods .el-pagination.is-background .el-pager li:not(.disabled).active{
+    background-color: #34c5be;
+  }
+  .goods .el-radio-button__orig-radio:checked+.el-radio-button__inner{
+    background-color: #34c5be;
+    border-color: #34c5be;
+  }
+  .goods .el-input.is-active .el-input__inner, .el-input__inner:focus{
+    border-color: #34c5be;
+  }
+  .contentTop .el-button{
+    padding: 7px 14px;
+  }
 </style>

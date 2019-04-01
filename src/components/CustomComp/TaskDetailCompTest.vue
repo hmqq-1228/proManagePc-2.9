@@ -1,13 +1,13 @@
 <template>
-  <div class="TaskDetailComp">
+  <div class="TaskDetailCompTest">
+    <Drawer class="drawerScroll" :closable="false" width="750%" v-model="drawerKK">
       <!--<button @click="testData">TEST</button>-->
-      <div>{{taskEdit?'':''}}</div>
       <div class="slidTop">
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
         <div style="display: flex;justify-content: space-between">
-          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-          <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+          <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showMenu===0?false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
         </div>
       </div>
       <div class="taskMsg">
@@ -48,18 +48,18 @@
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
-        <div style="display: inline-block;color: #409EFF;cursor: pointer;" @click="toProjectDetail(taskBasicMsg.projectUID)">{{taskBasicMsg.projectName}}</div>
+        <div style="display: inline-block">{{taskBasicMsg.projectName}}</div>
       </div>
       <div class="cannetProject">
-        <div style="display: inline-block"><img src="../../../static/img/taskFa2.png" alt=""><span>父级任务:</span></div>
+        <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级任务:</span></div>
         <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.parentTaskName" @click="toDetail(taskBasicMsg.parentTaskID)">{{taskBasicMsg.parentTaskName}}</div>
         <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级任务</div>
       </div>
-    <div class="cannetProject">
-      <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
-      <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.planName" @click="toPlanDetail(taskBasicMsg.planUID)">{{taskBasicMsg.planName}}</div>
-      <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.planName">无父级计划</div>
-    </div>
+      <div class="cannetProject">
+        <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
+        <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.planName" @click="toPlanDetail(taskBasicMsg.planUID)">{{taskBasicMsg.planName}}</div>
+        <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.planName">无父级计划</div>
+      </div>
       <div class="cannetProjectFile">
         <div style="display: inline-block"><img src="../../../static/img/fujian.png" alt=""><span>任务附件:</span></div>
         <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
@@ -81,8 +81,8 @@
         <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
       </div>
       <!-- 任务分解 引入组件-->
-    <!--v-bind:TaskDistributeShow="toShowDevided"-->
-    <!--v-bind:TaskDistributeShow="rilegou" tetstt -->
+      <!--v-bind:TaskDistributeShow="toShowDevided"-->
+      <!--v-bind:TaskDistributeShow="rilegou" tetstt -->
       <div v-show="toShowDevided2">
         <component v-bind:is="compArr.TaskDistribute"
                    v-bind:TaskDistributeShow="testtest"
@@ -114,9 +114,8 @@
       <!-- 关联流程 -->
       <div class="connectProcess">
         <div style="display: inline-block" class="connectProcessHeader">
-          <img src="../../../static/img/liuc.png" alt="">
+          <img src="../../../static/img/taskList.png" alt="">
           <span>关联流程<span style="color: #409EFF">({{tableData.length}})</span></span>
-          <Icon @click="tableDataReFresh($event)" class="reFreshIcon" type="md-refresh" style="color: #409EFF; font-size: 20px;" />
         </div>
         <div class="connectProcessHeader" v-on:click="connectProcessClick" style="cursor: pointer; color: rgb(64, 158, 255)">申请审批</div>
       </div>
@@ -124,14 +123,14 @@
         <div style="padding: 20px; position: relative;" v-on:click.stop="testMaopao">
           <h3 style="margin-bottom: 10px;">流程选择</h3>
           <div style="position: absolute; right: 15px; top: 15px;" v-on:click="closeProcess"><Icon type="md-close" size="16" /></div>
-          <el-table :cell-class-name="slectRowClass" :data="FlowData" border style="width: 100%" @row-click="rowClick">
+          <el-table :data="FlowData" border style="width: 100%" @row-click="rowClick">
             <el-table-column prop="flowIndex" label="编号" width="80"></el-table-column>
             <el-table-column prop="name" label="流程名称"></el-table-column>
             <el-table-column prop="type" label="类别" width="80"></el-table-column>
           </el-table>
         </div>
       </div>
-      <el-table :cell-class-name="rowClass" :data="tableData" border style="width: 100%;" @row-click="processItemRowClick">
+      <el-table :data="tableData" border style="width: 100%;" @row-click="processItemRowClick">
         <el-table-column prop="SYS_PROCESSNAME" label="流程标题" width="260"></el-table-column>
         <el-table-column prop="creatorName" label="发起人" width="80"></el-table-column>
         <el-table-column prop="STATUSNAME" label="状态" width="80"></el-table-column>
@@ -196,43 +195,56 @@
           <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
         </div>
       </div>
-    <!--任务移交-->
-    <!--<el-dialog title="任务移交" :visible.sync="taskTransferVisible" width="26%" style="z-index: 82222 !important;">-->
-    <div class="taskTransferBgcover" title="任务移交" v-if="taskTransferVisible" v-on:mousewheel.stop="noMousewheel($event)">
-      <div class="taskTransferCnt" v-loading="taskTransferLoading">
-        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
-        <el-autocomplete style="width:90%"
-                         v-model="projectManager"
-                         :fetch-suggestions="querySearchAsync2"
-                         placeholder="请输入移交人姓名"
-                         :trigger-on-focus="false"
-                         @select="handleSelect2"
-        ></el-autocomplete>
-        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交备注：</div>
-        <textarea name="remark" class="el-textarea__inner" id="Transfer" type="text" v-model="commitComentT"></textarea>
-        <component v-bind:is="compArr.FileUploadComp" fileFormId="taskTransfer" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
-        <div slot="footer" class="dialog-footer" style="text-align: center;">
-          <i-button @click="concelTransfer()">取消</i-button>
-          <i-button type="info" v-bind:disabled="butnDisabledT" @click="taskTransfer()">确定</i-button>
+      <!--任务移交-->
+      <!--<el-dialog title="任务移交" :visible.sync="taskTransferVisible" width="26%" style="z-index: 82222 !important;">-->
+      <div class="taskTransferBgcover" title="任务移交" v-if="taskTransferVisible">
+        <div class="taskTransferCnt" v-loading="taskTransferLoading">
+          <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
+          <el-autocomplete style="width:90%"
+                           v-model="projectManager"
+                           :fetch-suggestions="querySearchAsync2"
+                           placeholder="请输入移交人姓名"
+                           :trigger-on-focus="false"
+                           @select="handleSelect2"
+          ></el-autocomplete>
+          <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交备注：</div>
+          <textarea name="remark" class="el-textarea__inner" id="Transfer" type="text" v-model="commitComentT"></textarea>
+          <component v-bind:is="compArr.FileUploadComp" fileFormId="taskTransfer" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+          <div slot="footer" class="dialog-footer" style="text-align: center;">
+            <i-button @click="concelTransfer()">取消</i-button>
+            <i-button type="info" v-bind:disabled="butnDisabledT" @click="taskTransfer()">确定</i-button>
+          </div>
         </div>
       </div>
-    </div>
-    <!--/ 任务完成 /-->
-    <div class="taskFinishedBgcover" title="任务完成" v-if="taskFinishedVisible">
-      <div class="el-textarea taskFinishedCnt" v-loading="loading9">
-        <textarea name="remark" class="el-textarea__inner" id="textAreaF" type="text" v-model="commitComentF"></textarea>
-        <!--<div class="cannetProject2">-->
-        <component v-bind:is="compArr.FileUploadComp" fileFormId="taskFinished" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
-        <div slot="footer" class="dialog-footer" style="text-align: center;">
-          <i-button @click="concelFinished()">取消</i-button>
-          <i-button type="info" v-bind:disabled="butnDisabledF" @click="confirmFinished()">确定</i-button>
+      <!--/ 任务完成 /-->
+      <div class="taskFinishedBgcover" title="任务完成" v-if="taskFinishedVisible">
+        <div class="el-textarea taskFinishedCnt" v-loading="loading9">
+          <textarea name="remark" class="el-textarea__inner" id="textAreaF" type="text" v-model="commitComentF"></textarea>
+          <!--<div class="cannetProject2">-->
+          <component v-bind:is="compArr.FileUploadComp" fileFormId="taskFinished" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+          <div slot="footer" class="dialog-footer" style="text-align: center;">
+            <i-button @click="concelFinished()">取消</i-button>
+            <i-button type="info" v-bind:disabled="butnDisabledF" @click="confirmFinished()">确定</i-button>
+          </div>
         </div>
       </div>
-    </div>
-    <!--<Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">-->
-      <!--&lt;!&ndash; 修改任务 编辑任务 引入组件 &ndash;&gt;-->
-      <!--<component v-bind:is="compArr.ModifyTask" v-bind:DrawerOpen="modifyTaskVisible" fileFormId="ModifyTask" v-on:FilePreEmit="GetFilePreData" v-on:ModifyTaskCallback="ModifyTaskCallbackFuc" :nodeId="currentNodeId"></component>-->
-    <!--</Drawer>-->
+    </Drawer>
+    <!-- 图片预览 新加的 -->
+    <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
+      <div class="showImg"><img v-bind:src="commentPreviewUrl1" alt=""></div>
+    </el-dialog>
+    <!--修改任务 编辑任务 任务 修改-->
+    <Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">
+      <!-- 修改任务 编辑任务 引入组件 -->
+      <component v-bind:is="compArr.ModifyTask"
+                 v-bind:DrawerOpen="modifyTaskVisible"
+                 fileFormId="ModifyTask"
+                 v-on:FilePreEmit="GetFilePreData"
+                 v-on:ModifyTaskCallback="ModifyTaskCallbackFuc"
+                 v-on:ShutCompEmit="ShutCompEmitFuc"
+                 :nodeId="nodeId">
+      </component>
+    </Drawer>
   </div>
 </template>
 
@@ -241,7 +253,7 @@ import FileUploadComp from '././FileUploadComp.vue'
 import ModifyTask from './ModifyTask.vue'
 import TaskDistribute from './TaskDistribute.vue'
 export default {
-  name: 'TaskDetailComp',
+  name: 'TaskDetailCompTest',
   props: ['nodeId', 'taskDrawerOpen', 'modifyTaskRes'],
   components: {
     ModifyTask,
@@ -250,6 +262,10 @@ export default {
   },
   data () {
     return {
+      modifyTaskVisible: false,
+      dialogShowImg1: false,
+      commentPreviewUrl1: '',
+      drawerKK: false,
       rid: '',
       taskIdEdit: '',
       IsClear: false,
@@ -270,7 +286,6 @@ export default {
       toShowDevided2: false,
       rilegou: false,
       testtest: 1,
-      modifyTaskVisible: false,
       taskId: [],
       commentList: [],
       historyList: [],
@@ -313,16 +328,6 @@ export default {
       tableData: []
     }
   },
-  computed: {
-    taskEdit: function () {
-      var that = this
-      if (that.$store.state.taskEdit === true) {
-        that.toDetail(this.nodeId)
-      }
-      that.$store.state.taskEdit = false
-      return that.$store.state.taskEdit
-    }
-  },
   watch: {
     modifyTaskRes: function (val, oV) {
       if (val) {
@@ -332,14 +337,23 @@ export default {
     },
     taskDrawerOpen: function (val, oV) {
       var that = this
+      this.log(123)
+      that.drawerKK = val
       if (val) {
         that.showDrawer = true
+        that.drawerKK = true
         that.toDetail(that.nodeId)
         that.TaskConnectProcessList()
       } else {
         that.concelTransfer()
         that.showDrawer = false
+        that.drawerKK = false
         that.taskFinishedVisible = false
+      }
+    },
+    drawerKK: function (val, ov) {
+      if (!val) {
+        this.$emit('CommonThrow', {drawerKK: false, type: 'drawerKK'})
       }
     },
     commitComent: function (val, oVal) {
@@ -365,14 +379,13 @@ export default {
     }
   },
   methods: {
-    toProjectDetail: function (id) {
-      if (id) {
-        this.$store.state.proId = id
-        this.$router.push('/goodsDetail')
-      }
+    // 组件内点击了关闭 父组件执行关闭子组件操作
+    ShutCompEmitFuc: function (res) {
+      this[res] = false
     },
     // 创建流程 流程选项列表
     rowClick: function (obj) {
+      this.log('rowClick:', obj)
       this.createProcessShow = false
       window.open(obj.flowUrl, '_blank')
       // window.location.href = obj.flowUrl
@@ -381,17 +394,6 @@ export default {
       // detailUrl
       window.open(obj.detailUrl, '_blank')
       // this.log('processItemRowClick:', obj)
-    },
-    // 表格 单元格 样式设置
-    rowClass: function ({row, column, rowIndex, columnIndex}) {
-      if (columnIndex === 0) {
-        return 'fontStyle'
-      }
-    },
-    slectRowClass: function ({row, column, rowIndex, columnIndex}) {
-      if (columnIndex === 1) {
-        return 'fontStyle'
-      }
     },
     // 创建流程 关闭流程选项列表
     closeProcess: function () {
@@ -428,16 +430,6 @@ export default {
         that.tableData = res.data
       })
     },
-    tableDataReFresh: function (e) {
-      this.TaskConnectProcessList()
-      // var obj = e.currentTarget
-      // if ($(obj).hasClass('ratate')) {
-      //   $(obj).removeClass('ratate')
-      //   // $(obj).addClass('ratate')
-      // } else {
-      //   $(obj).addClass('ratate')
-      // }
-    },
     testData: function () {
       // var that = this
       this.log('testtest:', this.testtest)
@@ -459,7 +451,6 @@ export default {
           if (res.code === 200) {
             that.taskBasicMsg = res.data
             that.rid = res.data.uid
-            that.currentNodeId = id
             // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
             // var et = res.data.taskFinishDate
             // var sT = new Date(st)
@@ -603,28 +594,28 @@ export default {
     },
     modifyTask: function () {
       var that = this
-      that.$emit('showEditForm')
+      that.modifyTaskVisible = true
+      // that.$emit('showEditForm')
     },
-    // // 编辑任务 修改任务 ModifyTaskCallbackFuc
-    // ModifyTaskCallbackFuc: function (res) {
-    //   var that = this
-    //   if (res.code === 200) {
-    //     that.modifyTaskVisible = false
-    //     that.queryProDetail()
-    //     that.toDetail(that.currentNodeId)
-    //     that.$message({
-    //       message: '修改成功！',
-    //       type: 'success'
-    //     })
-    //   } else {
-    //     that.$message({
-    //       message: res.msg,
-    //       type: 'warning'
-    //     })
-    //   }
-    // },
+    // 编辑任务 修改任务
+    ModifyTaskCallbackFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.modifyTaskVisible = false
+        that.toDetail(that.nodeId)
+        that.$message({
+          message: '修改成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
     // 任务分解 返回结果处理
-    TaskDistributeCallbackFuc: function (res, id) {
+    TaskDistributeCallbackFuc: function (res) {
       var that = this
       that.$emit('ActionResThrow', {res: res, actionName: 'decomposeTask'})
       if (res.code === 200) {
@@ -632,7 +623,7 @@ export default {
         // that.queryProDetail()
         // that.selectProjectId()
         // that.getHistoryList()
-        that.getTaskChildList(id)
+        that.getTaskChildList(that.nodeId)
         that.$message({
           message: '创建成功！',
           type: 'success'
@@ -775,7 +766,11 @@ export default {
     },
     showImagePre: function (previewUrl, showName) {
       // this.log('showName:', showName)
-      this.$emit('FilePreEmit', {previewUrl: previewUrl, fileName: showName})
+      if (previewUrl) {
+        this.commentPreviewUrl1 = previewUrl
+        this.dialogShowImg1 = true
+      }
+      // this.$emit('FilePreEmit', {previewUrl: previewUrl, fileName: showName})
     },
     // 任务分解
     DistributeFormVisibleFuc: function (res) {
@@ -847,6 +842,7 @@ export default {
       that.taskTransferLoading = true
       that.ajax('/myTask/transferTask', {remark: that.commitComentT, attachmentId: that.SetFileIdStr(), taskId: that.taskId, transferUserId: that.transferUserId, transferUserName: that.transferUserName}).then(res => {
         that.$emit('ActionResThrow', {res: res, actionName: 'transferTask'})
+        that.taskTransferLoading = false
         that.log('transferTask:', res)
         if (res.code === 200) {
           that.toDetail()
@@ -860,7 +856,6 @@ export default {
             message: res.msg
           })
         } else {
-          that.taskTransferLoading = false
           that.$message({
             type: 'error',
             message: res.msg
@@ -872,11 +867,6 @@ export default {
     finishedTask: function () {
       var that = this
       that.taskFinishedVisible = true
-    },
-    // 阻止滚动
-    noMousewheel: function (e) {
-      e.preventDefault()
-      this.log(55555)
     },
     // 任务完成 点击确定
     confirmFinished () {
@@ -909,12 +899,7 @@ export default {
   }
 }
 </script>
-<style>
-  .TaskDetailComp .fontStyle div{
-    color: #3a8ee6 !important;
-    cursor: pointer;
-  }
-</style>
+
 <style scoped>
   .slidTop{
     height: 40px;
@@ -1197,7 +1182,6 @@ export default {
     left: 0;
     top: 0;
     background: rgba(0,0,0,0.4);
-    z-index: 3000;
   }
   .taskTransferCnt,.taskFinishedCnt{
     width: 60%;
@@ -1209,13 +1193,5 @@ export default {
   /* 流程 */
   .el-table__row{
     cursor: pointer;
-  }
-  .reFreshIcon.ratate{
-    animation:processMove 0.5s;
-  }
-  @keyframes processMove
-  {
-    from {transform: rotate(0deg)}
-    to {transform: rotate(360deg)}
   }
 </style>

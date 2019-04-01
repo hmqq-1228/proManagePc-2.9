@@ -17,7 +17,7 @@
             <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
             <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
           </div>
-          <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">
+          <div class="selectDateDialog2"  style="right: 0;top: 0;" v-show="selectDateDiaShow2">
             <div class="selectDateBox">
               <div class="selectDateItem">
                 <el-date-picker
@@ -50,13 +50,13 @@
           </div>
           <div class="paiTaskIptLeft">
             <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建任务名称" /></div>
+            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" :placeholder="defaultText" /></div>
           </div>
           <div class="paiTaskIptRight">
             <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
             <div class="paiTaskIptRightCnt" style="max-width: 140px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
-              <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
+              <span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>
             </div>
             <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
@@ -65,20 +65,20 @@
         </div>
         <div class="taskRelation" v-if="taskRelationShow2">
           <div class="relationIntro">
-            <textarea class="relationIntroArea" v-model="taskIntro2" placeholder="请输入任务简介"></textarea>
+            <textarea class="relationIntroArea" v-model="taskIntro2" :placeholder="defaultDetail"></textarea>
           </div>
         </div>
         <div class="taskFileUpload">
           <div class="fileUploadCao">
             <div class="selectLeft">
               <!-- 任务分解 -->
-              <component v-bind:is="compArr.FileUploadComp" fileFormId="TaskDistribute" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+              <component v-bind:is="compArr.FileUploadComp" fileFormId="GetUploadCount2" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
             </div>
             <div class="selectRight2">
               <div class="selectMoreInfo" v-on:click="moreClick2()">
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
-              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">创建</i-button></div>
+              <div class="submitBtn" v-on:click="depSub()"><i-button type="info">创建</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>
@@ -92,7 +92,21 @@
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 export default {
   name: 'AddNewTask',
-  props: ['nodeId'],
+  // props: ['nodeId','defaultText','defaultDetail'],
+  props: {
+    nodeId: {
+      type: String,
+      default: ''
+    },
+    defaultText: {
+      type: String,
+      default: '请输入任务名称'
+    },
+    defaultDetail: {
+      type: String,
+      default: '请输入任务简介'
+    }
+  },
   components: {
     FileUploadComp
   },
@@ -177,32 +191,30 @@ export default {
     levelValue2: function (newQuestion, oldQuestion) {
       console.log('newQuestion', newQuestion)
       this.CommunityTaskPayload2.jobLevel = newQuestion.toString()
+    }
+  },
+  computed: {
+    GetUploadCount: function () {
+      this.$store.commit('uploadCountAdd', {})
+      return 'uploadId_' + this.$store.state.uploadCount
     },
-    nodeId: function (val, oV) {
-      console.log('nodeId3333', val)
-      if (val) {
-        this.getPlanTaskDetail()
-        this.getUserInfo()
-      }
+    getUserName: function () {
+      var that = this
+      that.defImplementer.name = this.$store.state.userName
+      that.defImplementer.id = this.$store.state.userId
+      return this.$store.state.userName
     }
   },
   methods: {
-    getUserInfo: function () {
-      var that = this
-      this.ajax('/myProject/getUserInfo', {}).then(res => {
-        if (res.code === 200) {
-          // that.log('getUserInfo', res)
-          that.defImplementer.name = res.data.Name + '(' + res.data.jName + ')'
-          that.defImplementer.id = res.data.ID
-        }
-      })
-    },
-    getPlanTaskDetail () {
+    getDefultTime () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
         if (res.code === 200) {
+          // console.log('ashfcvasjfvjaskj:', res)
           that.selDateStart2 = res.data.start
           that.selDateEnd2 = res.data.finish
+          // console.log('11111111111', that.selDateStart2)
+          // console.log('2222222222', that.selDateEnd2)
           var st = res.data.start.split(' ')[0] + ' 00:00:00'
           var et = res.data.finish
           var sT = new Date(st)
@@ -213,7 +225,6 @@ export default {
             return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
           }
         }
-        this.log('任务详情999999：', res)
       })
     },
     // 附件上传 组件 拼接附件上传的id为字符串
@@ -304,6 +315,7 @@ export default {
     },
     selectDate2: function (e) {
       // 所有的伸缩窗 隐藏
+      this.getDefultTime()
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
@@ -333,8 +345,28 @@ export default {
         this.taskRelationShow2 = false
       }
     },
+    depSub: function () {
+      var that = this
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+        if (res.code === 200) {
+          that.selDateStart2 = res.data.start
+          that.selDateEnd2 = res.data.finish
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
+          var sT = new Date(st)
+          var eT = new Date(et)
+          var disabledStarTime = sT.getTime()
+          var disabledEndTime = eT.getTime()
+          that.pickerOptions3.disabledDate = function (time) {
+            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+          }
+          that.depSub2()
+        }
+      })
+    },
     depSub2: function () {
       var that = this
+      this.getDefultTime()
       that.loading32 = true
       var fileStr = ''
       for (var j = 0; j < this.fileList2.length; j++) {
@@ -368,8 +400,9 @@ export default {
         that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
+        console.log('nodeIDDDDDDDDDDDDDDDDDD', that.nodeId)
         that.ajax('/myProject/addTask', that.CommunityTaskPayload2).then(res => {
-          that.$emit('TaskDistributeCallback', res)
+          that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1
             that.IsClear = true
@@ -392,7 +425,7 @@ export default {
         })
       } else {
         that.$message({
-          message: '请填写动态任务名',
+          message: '请填写名称',
           type: 'warning'
         })
         that.loading32 = false

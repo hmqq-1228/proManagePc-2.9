@@ -4,8 +4,14 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  editFlag: false,
+  taskEdit: false,
+  goPerfect: false,
+  refshPlan: false,
   slideMenuGroup: [],
   slideMenu: [],
+  menuRefresh: false,
+  uploadCount: 0,
   // 激活的导航索引
   activeNavIndex: 'group_0_0',
   count: 0,
@@ -15,8 +21,9 @@ const state = {
   debug: true,
   proId: '',
   navType: '',
+  goodType: '',
   routerList: [],
-  DevelopmentTab: 'DynamicsMy',
+  DevelopmentTab: 'DynamicsTask',
   // 项目类型
   projectType: [
     {label: '公司项目', value: '0'},
@@ -27,7 +34,6 @@ const state = {
     {label: '产品研发', value: '5'}
   ],
   fileFormat: ['jpg', 'jpeg', 'png', 'gif'],
-  // baseServiceUrl: 'http://10.0.5.241:8089'
   // baseServiceUrl: 'http://10.0.5.29:8088'
   // baseServiceUrl: 'https://ityp.baho.cn:8094/pms2'
   // baseServiceUrl: 'https://pms.baho.cn/pms'
@@ -37,6 +43,9 @@ const state = {
 const mutations = {
   add (state) {
     state.count += 1
+  },
+  uploadCountAdd (state) {
+    state.uploadCount += 1
   },
   setRouterName (state, obj) {
     var flag = false

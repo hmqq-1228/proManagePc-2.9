@@ -48,7 +48,7 @@
             </div>
             <div style="text-align: right; padding-right: 30px;">
               <Button size="small" style="margin-left: 15px;" @click="responsePro(item.projectUID)">回复</Button>
-              <Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID)">删除</Button>
+              <Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID, item.projectType)">删除</Button>
             </div>
             <div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
           </div>
@@ -132,11 +132,11 @@
                 <el-option v-for="item in proTypeListPure" :value="item.label" :key="item.value" :label="item.label"></el-option>
               </el-select>
             </el-form-item>
-            <div style="width: 50%" @click="showProType('5')">
-              <el-form-item label="项目分类" prop="projectPath">
-                <el-input v-model="ruleForm.projectPath" readonly></el-input>
-              </el-form-item>
-            </div>
+            <!--<div style="width: 50%" @click="showProType('5')">-->
+              <!--<el-form-item label="项目分类" prop="projectPath">-->
+                <!--<el-input v-model="ruleForm.projectPath" readonly></el-input>-->
+              <!--</el-form-item>-->
+            <!--</div>-->
           </div>
           <!--<div v-if="projectPath" class="proTypePath">{{projectPath}}</div>-->
           <!--<el-input v-model="projectPath" readonly placeholder="请选择项目类型" style="width: 52%;"></el-input>-->
@@ -193,6 +193,19 @@
     <el-dialog title="图片预览" :visible.sync="dialogShowImg">
       <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
     </el-dialog>
+    <!-- 完善产品信息 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogGoods"
+      width="30%"
+      center
+    >
+      <span>是否完善产品信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="jumpInfo">跳过</el-button>
+        <el-button type="primary" @click="perfectInfo">去完善</el-button>
+      </span>
+    </el-dialog>
     <!--对话框 项目分类 产品研发 start-->
     <el-dialog title="产品研发" :visible.sync="dialogFormVisible" width="35%">
       <div class="showImg">
@@ -211,6 +224,18 @@
         <el-button type="primary" @click="getPathProject()">确定选择</el-button>
       </div>
     </el-dialog>
+    <!-- 完善商品信息 -->
+    <Drawer title="商品信息" width="740" :closable="false" v-model="goodsEdit">
+      <component
+        v-bind:is="compArr.goodsInfo"
+        fileFormId="BaseInfoEdit"
+        v-on:FilePreEmit="GetFilePreData"
+        v-bind:ProBaseInfoShow="goodsEdit"
+        v-on:ProBaseInfoCallback="ProBaseInfoCallbackFuc"
+        :proId="proId"
+        @cancel="cancelGoods"
+      ></component>
+    </Drawer>
     <!--产品研发 end-->
     <!--抽屉 回复 历史记录-->
     <!--新增 抽屉 查看历史记录 start-->
@@ -250,14 +275,20 @@
 <script>
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import FileUploadComp from './FileUploadComp.vue'
+import goodsInfo from './CustomComp/goodsInfo.vue'
 export default {
   name: 'MyPro',
   components: {
     FileUploadComp,
-    CommentLogs
+    CommentLogs,
+    goodsInfo
   },
   data () {
     return {
+      // 完善茶品信息
+      dialogGoods: false,
+      // 商品信息
+      goodsEdit: false,
       commentTotalNum: 0,
       commentPreviewUrl1: '',
       dialogShowImg1: false,
@@ -275,7 +306,8 @@ export default {
       FileUploadComp: 'FileUploadComp',
       compArr: {
         CommentLogs: 'CommentLogs',
-        FileUploadComp: 'FileUploadComp'
+        FileUploadComp: 'FileUploadComp',
+        goodsInfo: 'goodsInfo'
       },
       // 新建项目 表单
       spinShow: false,
@@ -357,7 +389,7 @@ export default {
         }
       ],
       model1: 'all',
-      model2: '0',
+      model2: 'all',
       dialogShowImg: false,
       commentPreviewUrl: '',
       projectViewData: {},
@@ -496,6 +528,10 @@ export default {
     }
   },
   methods: {
+    // 取消商品信息
+    cancelGoods () {
+      this.goodsEdit = false
+    },
     // 预览
     GetFilePreData (obj) {
       this.log('obj::', obj)
@@ -537,24 +573,24 @@ export default {
     },
     // 新增 对话框 产品研发类型树形结构
     getProjectType: function (e) {
-      var that = this
-      if (e === '5' || e === '产品研发') {
-        // that.showProject = false
-        that.showProjectType = true
-        that.dialogFormVisible = true
-        that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
-          // that.log('getUserInfo', res)
-          if (res.code === 200) {
-            that.data2 = res.data
-          }
-        })
-      } else {
-        that.showProject = true
-        that.showProjectType = false
-        that.projectPath = ''
-        that.projectPathId = ''
-        that.ruleForm.projectClassifyId = ''
-      }
+      // var that = this
+      // if (e === '5' || e === '产品研发') {
+      //   // that.showProject = false
+      //   that.showProjectType = true
+      //   that.dialogFormVisible = true
+      //   that.ajax('/myProject/getProjectClassifyTree', {}).then(res => {
+      //     // that.log('getUserInfo', res)
+      //     if (res.code === 200) {
+      //       that.data2 = res.data
+      //     }
+      //   })
+      // } else {
+      //   that.showProject = true
+      //   that.showProjectType = false
+      //   that.projectPath = ''
+      //   that.projectPathId = ''
+      //   that.ruleForm.projectClassifyId = ''
+      // }
     },
     showProType: function (e) {
       this.getProjectType(e)
@@ -646,7 +682,7 @@ export default {
       this.getHistoryCont()
     },
     // 删除项目
-    delPro: function (pId) {
+    delPro: function (pId, pType) {
       var that = this
       this.$Modal.confirm({
         title: '删除项目！',
@@ -659,6 +695,9 @@ export default {
               this.$Message.info('删除成功！')
               this.$Modal.remove()
               that.queryMyProjectView()
+              if (pType === '集团战略') {
+                that.$store.state.menuRefresh = true
+              }
             }
           })
         },
@@ -673,12 +712,6 @@ export default {
       this.myProjectViewPayload.projectName = iptName
       this.queryMyProjectView()
     },
-    // 新增
-    // settoken: function () {
-    //   this.ajax('/general/setToken', {}).then(res => {
-    //     this.token = res._jfinal_token
-    //   })
-    // },
     // 新增 查询用户信息
     getUserInfo: function () {
       var that = this
@@ -731,7 +764,7 @@ export default {
     // 新建 点击项目列表项 前往项目详请
     toProDetail: function (id) {
       this.$store.state.proId = id
-      this.$router.push('/ProDetail')
+      this.$router.push('/goodsDetail')
     },
     /**
      *
@@ -831,8 +864,6 @@ export default {
       // this.$router.push('/NewAddPro')
     },
     ctime (e) {
-      // console.log(55555555555)
-      // console.log(e)
     },
     // 新建 搜索选择项目负责人
     querySearchAsync (queryString, cb) {
@@ -870,8 +901,6 @@ export default {
     // 新建项目 立即创建项目 (模板) 提交基本信息
     submitModelForm (formName) {
       var that = this
-      // console.log('startDate', this.ruleForm.value2[0])
-      // console.log('endDate', this.ruleForm.value2[1])
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (that.Mid) {
@@ -900,7 +929,16 @@ export default {
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
                 that.createProFormLoading = false
-                that.$router.push('/ProDetail')
+                // that.$router.push('/ProDetail')
+                if (that.ruleForm.projectType === '产品研发') {
+                  this.dialogGoods = true
+                } else {
+                  this.$router.push('/goodsDetail')
+                }
+                if (that.ruleForm.projectType === '集团战略') {
+                  that.$store.state.menuRefresh = true
+                }
+                // console.log(that.ruleForm.projectType)
               } else {
                 this.$message({
                   type: 'error',
@@ -919,6 +957,32 @@ export default {
           return false
         }
       })
+    },
+    // 去完善信息
+    perfectInfo () {
+      this.proId = this.$store.state.proId
+      this.$router.push('/goodsDetail')
+      this.$store.state.goPerfect = true
+      this.goodsEdit = true
+      this.dialogGoods = false
+    },
+    // 跳过
+    jumpInfo () {
+      this.$router.push('/goodsDetail')
+    },
+    // 商品上传成功后续
+    ProBaseInfoCallbackFuc (res) {
+      var that = this
+      if (res.code === 200) {
+        that.$Message.success('保存成功!')
+        that.$router.push('/goodsDetail')
+        that.goodsEdit = false
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
     },
     // 新建项目 立即创建项目 (空白模板) 提交基本信息
     submitForm (formName) {
@@ -948,7 +1012,14 @@ export default {
                 that.IsClear = true
                 that.projectUID = res.data
                 that.$store.state.proId = res.data
-                this.$router.push('/ProDetail')
+                if (that.ruleForm.projectType === '产品研发') {
+                  this.dialogGoods = true
+                } else {
+                  this.$router.push('/goodsDetail')
+                }
+                if (that.ruleForm.projectType === '集团战略') {
+                  that.$store.state.menuRefresh = true
+                }
               } else {
                 this.$message({
                   type: 'error',

@@ -4,20 +4,20 @@
     <div style="position: relative;width: 100%;">
       <div v-loading="loading32">
         <div class="paiTaskIptBox" style="position: relative;">
-          <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+     <!--      <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
             <div class="selectUserIpt">
               <el-select v-model="taskForm2.value9" multiple filterable remote style="width: 100%;"
                          :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
                          :remote-method="remoteMethod2" :loading="loading22">
                 <el-option v-for="item in options42" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                           :value="item.Name + '-' + item.ID">
+                           :value="item.Name + '(' + item.jName + ')' + '-' + item.ID">
                 </el-option>
               </el-select>
             </div>
             <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
             <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
-          </div>
-          <div class="selectDateDialog2"  style="right: 0;top: 0;z-index: 999;" v-if="selectDateDiaShow2">
+          </div> -->
+          <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">
             <div class="selectDateBox">
               <div class="selectDateItem">
                 <el-date-picker
@@ -43,43 +43,41 @@
               <el-button v-on:click="selectDateOk2()">确定</el-button>
             </div>
           </div>
-          <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight2 + 'px', top: taskLevelTop2 + 'px', left: taskLevelLeft2 + 'px'}" v-on:mouseleave="rateMouseLeave2()">
+         <!--  <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight2 + 'px', top: taskLevelTop2 + 'px', left: taskLevelLeft2 + 'px'}" v-on:mouseleave="rateMouseLeave2()">
             <div class="rateBox">
               <el-rate v-model="levelValue2"></el-rate>
             </div>
-          </div>
+          </div> -->
           <div class="paiTaskIptLeft">
             <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建任务名称" /></div>
+            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" :placeholder="defaultText" /></div>
           </div>
           <div class="paiTaskIptRight">
-            <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
-            <div class="paiTaskIptRightCnt" v-on:click="selectUser2($event)">
+            <!-- <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div> -->
+            <!-- <div class="paiTaskIptRightCnt" style="max-width: 140px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
-              <span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>
-            </div>
+              <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
+            </div> -->
             <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
-            <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div>
+            <!-- <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div> -->
           </div>
         </div>
         <div class="taskRelation" v-if="taskRelationShow2">
           <div class="relationIntro">
-            <textarea class="relationIntroArea" v-model="taskIntro2" placeholder="请输入任务简介"></textarea>
+            <textarea class="relationIntroArea" v-model="taskIntro2" :placeholder="defaultDetail"></textarea>
           </div>
         </div>
         <div class="taskFileUpload">
           <div class="fileUploadCao">
             <div class="selectLeft">
-              <!-- 任务分解 -->
-              <component v-bind:is="compArr.FileUploadComp" fileFormId="TaskDistribute2" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+             <!--  <component v-bind:is="compArr.FileUploadComp" fileFormId="TaskDistribute" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component> -->
             </div>
             <div class="selectRight2">
               <div class="selectMoreInfo" v-on:click="moreClick2()">
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
-              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">分解</i-button></div>
-              <div class="submitBtn" v-on:click="cancelDevide()"><i-button :disabled="cancelBtn">取消</i-button></div>
+              <div class="submitBtn" v-on:click="depSub()"><i-button type="info">创建</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>
@@ -92,8 +90,22 @@
 <script>
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 export default {
-  name: 'TaskDistribute',
-  props: ['nodeId', 'TaskDistributeShow', 'cancelBtnShow'],
+  name: 'addNewPlan',
+  // props: ['nodeId','defaultText','defaultDetail'],
+  props: {
+    nodeId: {
+      type: String,
+      default: ''
+    },
+    defaultText: {
+      type: String,
+      default: '请输入任务名称'
+    },
+    defaultDetail: {
+      type: String,
+      default: '请输入任务简介'
+    }
+  },
   components: {
     FileUploadComp
   },
@@ -109,7 +121,7 @@ export default {
       IsClear: false,
       // 附件上传 组件 接收到的组件数组 新组件
       FileUploadArr: [],
-      // toShowDevided: false,
+      toShowDevided: false,
       loading32: false,
       selectUserDiaShow2: false,
       // 任务分解
@@ -136,8 +148,8 @@ export default {
       selDateEnd2: '',
       levelValue2: 3,
       defImplementer: {
-        name: this.$store.state.userName,
-        id: this.$store.state.userId
+        name: '张三',
+        id: ''
       },
       taskRelationShow2: false,
       taskIntro2: '',
@@ -151,29 +163,30 @@ export default {
       fileList2: [],
       // 任务开始
       CommunityTaskPayload2: {
-        projectUID: '1',
-        uid: '1',
-        pStr: '',
+        parentPlanId: '',
         attachmentId: '',
         description: '',
         jobName: '',
         jobLevel: 3,
-        startTime: '',
-        endTime: '',
-        userId: '',
-        _jfinal_token: '',
-        userName: ''
+        taskStartDate: '',
+        taskFinishDate: '',
+        users: '',
+        userId: ''
+      },
+      planData: {
+        parentId: '',
+        name: '',
+        start: '',
+        finish: '',
+        description: '',
+        userId: ''
       }
     }
   },
   watch: {
-    TaskDistributeShow: function (val, old) {
-      this.log('val:', val)
-      this.log('old:', old)
-      this.log(55555555)
+    TaskDistributeShow (val, old) {
       if (val) {
-        // this.toShowDevided = val
-        this.getPlanTaskDetail()
+        this.toShowDevided = val
       }
     },
     cancelBtnShow: function (val, oV) {
@@ -182,39 +195,29 @@ export default {
         this.cancelBtn = true
       }
     },
-    nodeId: function (val, oV) {
-      if (val) {
-        // this.getUserInfo()
-      }
+    levelValue2: function (newQuestion, oldQuestion) {
+      console.log('newQuestion', newQuestion)
+      this.CommunityTaskPayload2.jobLevel = newQuestion.toString()
     }
   },
-  computed: {
-    getUserName: function () {
-      var that = this
-      that.defImplementer.name = this.$store.state.userName
-      that.defImplementer.id = this.$store.state.userId
-      return this.$store.state.userName
-    }
-  },
+  // computed: {
+  //   getUserName: function () {
+  //     var that = this
+  //     that.defImplementer.name = this.$store.state.userName
+  //     that.defImplementer.id = this.$store.state.userId
+  //     return this.$store.state.userName
+  //   }
+  // },
   methods: {
-    // getUserInfo: function () {
-    //   var that = this
-    //   this.ajax('/myProject/getUserInfo', {}).then(res => {
-    //     if (res.code === 200) {
-    //       // that.log('getUserInfo', res)
-    //       that.defImplementer.name = res.data.Name
-    //       that.defImplementer.id = res.data.ID
-    //     }
-    //   })
-    // },
-    getPlanTaskDetail () {
+    getDefultTime () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
         if (res.code === 200) {
-          that.selDateStart2 = res.data.taskStartDate
-          that.selDateEnd2 = res.data.taskFinishDate
-          var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
-          var et = res.data.taskFinishDate
+          console.log('ashfcvasjfvjaskj:', res)
+          that.selDateStart2 = res.data.start
+          that.selDateEnd2 = res.data.finish
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
           var sT = new Date(st)
           var eT = new Date(et)
           var disabledStarTime = sT.getTime()
@@ -313,6 +316,8 @@ export default {
     },
     selectDate2: function (e) {
       // 所有的伸缩窗 隐藏
+      var that = this
+      that.getDefultTime()
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
@@ -342,8 +347,28 @@ export default {
         this.taskRelationShow2 = false
       }
     },
+    depSub: function () {
+      var that = this
+      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+        if (res.code === 200) {
+          that.selDateStart2 = res.data.start
+          that.selDateEnd2 = res.data.finish
+          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          var et = res.data.finish
+          var sT = new Date(st)
+          var eT = new Date(et)
+          var disabledStarTime = sT.getTime()
+          var disabledEndTime = eT.getTime()
+          that.pickerOptions3.disabledDate = function (time) {
+            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+          }
+          that.depSub2()
+        }
+      })
+    },
     depSub2: function () {
       var that = this
+      that.getDefultTime()
       that.loading32 = true
       var fileStr = ''
       for (var j = 0; j < this.fileList2.length; j++) {
@@ -369,18 +394,16 @@ export default {
           // value9没有值，取默认
           selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
-        that.CommunityTaskPayload2.projectUID = that.$store.state.proId
-        that.CommunityTaskPayload2.uid = that.nodeId
-        that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
-        that.CommunityTaskPayload2.pStr = selectUserStr
-        that.CommunityTaskPayload2.jobName = that.taskNameText2
-        that.CommunityTaskPayload2.startTime = that.selDateStart2
-        that.CommunityTaskPayload2.endTime = that.selDateEnd2
-        that.CommunityTaskPayload2.description = that.taskIntro2
-        that.CommunityTaskPayload2._jfinal_token = that.token
-        that.log('attachmentId:', that.CommunityTaskPayload2.attachmentId)
-        that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
-          that.$emit('TaskDistributeCallback', res, that.nodeId)
+        that.planData.parentPlanId = that.nodeId
+        // that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
+        // that.CommunityTaskPayload2.users = selectUserStr
+        that.planData.name = that.taskNameText2
+        that.planData.start = that.selDateStart2
+        that.planData.finish = that.selDateEnd2
+        that.planData.description = that.taskIntro2
+        // that.CommunityTaskPayload2._jfinal_token = that.token
+        that.ajax('/myProject/addPlan', that.planData).then(res => {
+          that.$emit('TaskDistributeCallback', res)
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1
             that.IsClear = true
@@ -403,7 +426,7 @@ export default {
         })
       } else {
         that.$message({
-          message: '请填写动态任务名',
+          message: '请填写名称',
           type: 'warning'
         })
         that.loading32 = false
@@ -412,7 +435,7 @@ export default {
     cancelDevide: function () {
       var that = this
       that.taskRelationShow2 = false
-      // that.toShowDevided = false
+      that.toShowDevided = false
       that.$emit('DistributeFormVisible', false)
       that.clearDynamicsForm2()
     },
@@ -520,10 +543,10 @@ export default {
     text-align: center;
     position: fixed;
     overflow: hidden;
+    z-index: 300;
     margin-top: -1px;
     background-color: #fff;
     transition: height 0.3s;
-    z-index:2;
   }
   .rateBox{
     padding: 12px;
@@ -566,6 +589,7 @@ export default {
     padding: 0px 20px 20px 20px;
     background-color: #fff;
     position: absolute;
+    z-index: 200;
     border-radius: 6px;
     box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
   }
@@ -574,9 +598,9 @@ export default {
     padding: 20px 10px;
     background-color: #fff;
     position: absolute;
+    z-index: 200;
     border-radius: 6px;
     box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
-    z-index:2
   }
   .selectUserBtn{
     text-align: center;

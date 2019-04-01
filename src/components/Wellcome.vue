@@ -1,7 +1,8 @@
 <template>
   <div class="Wellcome">
     <div>Wellcome</div>
-    <div>{{querySlideMenuData}} {{querySlideMenuGroupData}}</div>
+    <div>{{querySlideMenuData?'':''}} {{querySlideMenuGroupData?'':''}}</div>
+    <Spin size="large" fix v-if="spinShow"></Spin>
   </div>
 </template>
 
@@ -10,6 +11,7 @@ export default {
   name: 'Wellcome',
   data () {
     return {
+      spinShow: true,
       slideMenuData: [],
       slideMenuGroupData: []
     }
@@ -42,19 +44,15 @@ export default {
   },
   methods: {
     testVal: function () {
-      this.log('testVal:', this.test)
+      // this.log('testVal:', this.test)
     },
     getProjectDetail: function (id, n, proType, proName) {
-      // this.log('getProjectDetail:id:', id)
-      // this.log('getProjectDetail:n:', n)
-      // this.log('getProjectDetail:proType:', proType)
-      // this.log('getProjectDetail:proName:', proName)
       if (proType === '集团战略') {
         // this.log('getProjectDetail：', '走了集团战略')
         if (id) {
           this.$store.state.proId = id
           this.$store.state.navType = n
-          this.$router.push('/ProDetail')
+          this.$router.push('/goodsDetail')
         }
       } else {
         // this.log('getProjectDetail：', '没走集团战略')
@@ -67,7 +65,7 @@ export default {
         } else if (proName === '我的项目') {
           this.$router.push('/MyPro')
         } else if (proName === '商品管理') {
-          this.$router.push('/MyPro3')
+          this.$router.push('/GoodsManage')
         } else {
           this.activeNavIndex = ''
           this.$store.state.activeNavIndex = ''

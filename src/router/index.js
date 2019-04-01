@@ -1,22 +1,48 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+/**
+ *  ==================================================================== ZhangH
+ */
+import goodsDetail from '@/components/goodsDetail'
 import HelloWorld from '@/components/HelloWorld'
-import Schedule from '@/components/Schedule'
+import Wellcome from '@/components/Wellcome'
+/**
+ *  ==================================================================== HuangM
+ */
 import MyDep from '@/components/MyDep'
 import MyTask from '@/components/MyTask'
-import MyPro from '@/components/MyPro'
 import MyPro3 from '@/components/MyPro3'
-import ProEdit from '@/components/ProEdit'
-import TestUpload from '@/components/TestUpload'
-import Wellcome from '@/components/Wellcome'
-import ProDetail from '@/components/ProDetail'
+import GoodsManage from '@/components/GoodsManage'
 import ProDetail2 from '@/components/ProDetail2'
-// Schedule TestUpload Wellcome
+/**
+ *  ==================================================================== DongG
+ */
+import MyTaskNew from '@/components/MyTaskNew'
+import MyDepNew from '@/components/MyDepNew'
+import TEST from '@/components/TEST'
+import Schedule from '@/components/Schedule'
+import MyPro from '@/components/MyPro'
+import ProDetail from '@/components/ProDetail'
+import TestUpload from '@/components/TestUpload'
+import CompUse from '@/components/CompUse'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
+    /**
+     *  ===================================================== ZhangH
+     */
+    {
+      path: '/goodsDetail',
+      name: 'goodsDetail',
+      component: goodsDetail
+    },
+    {
+      path: '/goodsDetail/:proId',
+      name: 'goodsDetail',
+      component: goodsDetail
+    },
     {
       path: '/',
       name: 'Wellcome',
@@ -27,15 +53,13 @@ export default new Router({
       name: 'HelloWorld',
       component: HelloWorld
     },
+    /**
+     *  ===================================================== HuangM
+     */
     {
-      path: '/Schedule',
-      name: 'Schedule',
-      component: Schedule
-    },
-    {
-      path: '/MyDep',
-      name: 'MyDep',
-      component: MyDep
+      path: '/GoodsManage',
+      name: 'GoodsManage',
+      component: GoodsManage
     },
     {
       path: '/MyTask',
@@ -48,9 +72,9 @@ export default new Router({
       component: MyTask
     },
     {
-      path: '/MyPro',
-      name: 'MyPro',
-      component: MyPro
+      path: '/MyDep',
+      name: 'MyDep',
+      component: MyDep
     },
     {
       path: '/MyPro3',
@@ -58,14 +82,32 @@ export default new Router({
       component: MyPro3
     },
     {
-      path: '/ProEdit',
-      name: 'ProEdit',
-      component: ProEdit
+      path: '/ProDetail2',
+      name: 'ProDetail2',
+      component: ProDetail2
+    },
+    /**
+     *  ===================================================== DongG
+     */
+    {
+      path: '/TEST',
+      name: 'TEST',
+      component: TEST
     },
     {
-      path: '/ProEdit/:proId',
-      name: 'ProEditParam',
-      component: ProEdit
+      path: '/Schedule',
+      name: 'Schedule',
+      component: Schedule
+    },
+    {
+      path: '/MyDepNew',
+      name: 'MyDepNew',
+      component: MyDepNew
+    },
+    {
+      path: '/MyPro',
+      name: 'MyPro',
+      component: MyPro
     },
     {
       path: '/TestUpload',
@@ -78,9 +120,14 @@ export default new Router({
       component: ProDetail
     },
     {
-      path: '/ProDetail2',
-      name: 'ProDetail2',
-      component: ProDetail2
+      path: '/MyTaskNew',
+      name: 'MyTaskNew',
+      component: MyTaskNew
+    },
+    {
+      path: '/CompUse',
+      name: 'CompUse',
+      component: CompUse
     }
   ]
 })
