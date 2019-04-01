@@ -1404,7 +1404,7 @@ export default {
     },
     queryMyProjectList () {
       var that = this
-      this.ajax('/myProject/myProjectList', that.myProjectListPayload).then(res => {
+      this.ajax('/myProject/getAllProjectByUser', that.myProjectListPayload).then(res => {
         // this.log('选择所属项目:', res)
         if (res.code === 200) {
           that.projectList = res.data
@@ -1549,7 +1549,7 @@ export default {
     // 获取所属项目
     getProBelong: function () {
       var that = this
-      that.ajax('/community/getAllProject', {}).then(res => {
+      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         if (res.code === 200) {
           // this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID

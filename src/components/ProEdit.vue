@@ -2501,12 +2501,12 @@ export default {
     addMarkInfo () {
       var that = this
       that.loadingRe = true
-      that.addProjectCommentPayload.projectUID = that.proId
+      that.addProjectCommentPayload.contentId = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
       // console.log('idStr：', that.addProjectCommentPayload.attachmentId)
       if (that.commitComent) {
-        that.ajax('/myProject/addProjectComment', that.addProjectCommentPayload).then(res => {
+        that.ajax('/comment/addComment', that.addProjectCommentPayload).then(res => {
           // that.log('addProjectComment:', res)
           if (res.code === 200) {
             that.IsClear = true
