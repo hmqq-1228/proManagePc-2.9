@@ -891,7 +891,7 @@ export default {
       }
       that.taskList.splice(c, 1, obj)
     },
-    // that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+    // that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
     responseOk: function (taskId) {
       var that = this
       that.currentTaskItemId = taskId
