@@ -113,7 +113,6 @@ export default {
     editFlag: function () {
       var that = this
       if (that.$store.state.editFlag === true) {
-        console.log(88888888888888888)
         that.toPlanDetail(this.nodeId)
       }
       that.$store.state.editFlag = false
@@ -138,13 +137,6 @@ export default {
         this.toPlanDetail(this.nodeId)
       }
     },
-    // refshPlanMsg: function (val, oVal) {
-    //   if (val) {
-    //     console.log(1)
-    //     this.getNextPlanTask(this.nodeId)
-    //     this.$store.state.refshPlan = false
-    //   }
-    // },
     addPlanOrTaskSuc: function (val, oV) {
       if (val) {
         this.getNextPlanTask(this.nodeId)
