@@ -1085,7 +1085,7 @@ export default {
           that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
           that.editTaskPayload.description = that.detailTaskform.description
           that.editTaskPayload.attachmentId = fileStr
-          that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+          that.ajax('/myTask/editTask', that.editTaskPayload).then(res => {
             that.log('editTask:', res)
             if (res.code === 200) {
               that.$message({

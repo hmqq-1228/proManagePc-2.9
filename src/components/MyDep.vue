@@ -624,7 +624,7 @@ export default {
         that.CommunityTaskPayload.endTime = that.selDateEnd
         that.CommunityTaskPayload.projectUID = that.projectBelong
         that.CommunityTaskPayload.description = that.taskIntro
-        that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+        that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
           if (res.code === 200) {
             that.isRecall = that.isRecall + 1
             that.$message({

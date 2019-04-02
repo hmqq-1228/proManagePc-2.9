@@ -418,7 +418,7 @@ export default {
         var st = new Date(that.selDateStart).getTime()
         var et = new Date(that.selDateEnd).getTime()
         if (st <= et) {
-          that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+          that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
             that.$emit('ActionResThrow', {res: res, actionName: 'addCommunityTask'})
             if (res.code === 200) {
               that.IsClear = true

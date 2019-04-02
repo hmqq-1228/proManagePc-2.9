@@ -622,7 +622,7 @@ export default {
       }
       that.taskList.splice(c, 1, obj)
     },
-    // that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+    // that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
     responseOk: function (taskId) {
       var that = this
       that.currentTaskItemId = taskId
@@ -707,7 +707,7 @@ export default {
     // },
     toDetail: function (id) {
       console.log('id', id)
-      this.$router.push('/ProDetail')
+      this.$router.push('/goodsDetail')
       this.$store.state.proId = id
     },
     currentChange: function (pageNum) {

@@ -196,7 +196,7 @@ export default {
           var st = new Date(that.detailTaskform.taskStartDate).getTime()
           var et = new Date(that.detailTaskform.taskFinishDate).getTime()
           if (st <= et) {
-            that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+            that.ajax('/myTask/editTask', that.editTaskPayload).then(res => {
               // that.log('editTask:', res)
               that.$emit('ModifyTaskCallback', res)
               // that.$emit('ModifyTaskCallback', res)
