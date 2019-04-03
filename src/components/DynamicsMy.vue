@@ -1538,7 +1538,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (st <= et) {
-            that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+            that.ajax('/myTask/editTask', that.editTaskPayload).then(res => {
               that.log('editTask:', res)
               if (res.code === 200) {
                 that.$message({

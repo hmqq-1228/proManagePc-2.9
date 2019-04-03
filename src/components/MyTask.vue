@@ -865,8 +865,8 @@ export default {
         taskId: '',
         jobName: '',
         description: '',
-        startTime: '',
-        endTime: '',
+        taskStartDate: '',
+        taskFinishDate: '',
         jobLevel: '3',
         // 附件id
         attachmentId: '',
@@ -1309,7 +1309,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (st <= et) {
-            that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+            that.ajax('/myTask/editTask', that.editTaskPayload).then(res => {
               that.log('editTask:', res)
               if (res.code === 200) {
                 that.$message({
@@ -1776,14 +1776,14 @@ export default {
         that.CommunityTaskPayload.attachmentId = fileStr
         that.CommunityTaskPayload.pStr = selectUserStr
         that.CommunityTaskPayload.jobName = that.taskNameText
-        that.CommunityTaskPayload.startTime = that.selDateStart
-        that.CommunityTaskPayload.endTime = that.selDateEnd
+        that.CommunityTaskPayload.taskStartDate = that.selDateStart
+        that.CommunityTaskPayload.taskFinishDate = that.selDateEnd
         that.CommunityTaskPayload.projectUID = that.projectBelong
         that.CommunityTaskPayload.description = that.taskIntro
         var st = new Date(that.selDateStart).getTime()
         var et = new Date(that.selDateEnd).getTime()
         if (st <= et) {
-          that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+          that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
             if (res.code === 200) {
               that.isRecall = that.isRecall + 1
               that.$message({
@@ -1892,9 +1892,9 @@ export default {
       this.fileList = []
       this.CommunityTaskPayload.jobName = ''
       this.selDateStart = this.startTimeFirst
-      this.CommunityTaskPayload.startTime = this.startTimeFirst
+      this.CommunityTaskPayload.taskStartDate = this.startTimeFirst
       this.selDateEnd = this.endTimeFirst
-      this.CommunityTaskPayload.endTime = this.endTimeFirst
+      this.CommunityTaskPayload.taskFinishDate = this.endTimeFirst
       this.taskIntro = ''
       this.CommunityTaskPayload.description = ''
       this.attachmentId = ''

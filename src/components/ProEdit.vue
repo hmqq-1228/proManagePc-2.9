@@ -449,7 +449,7 @@ export default {
         jobLevel: 3,
         taskStartDate: '',
         taskFinishDate: '',
-        users: '',
+        pStr: '',
         userId: ''
       },
       // 产品研发 树形结构 单选
@@ -715,7 +715,7 @@ export default {
         taskFinishDate: '',
         description: '',
         jobLevel: 1,
-        users: []
+        pStr: []
       },
       // 任务分解
       taskForm2: {
@@ -1782,7 +1782,7 @@ export default {
       this.form.date2 = ''
       this.form.description = ''
       // 多人
-      this.addTaskPayload.users = []
+      this.addTaskPayload.pStr = []
       this.options4 = []
       this.value9 = []
       this.user = ''
@@ -1816,7 +1816,7 @@ export default {
           this.addTaskPayload.parentId = that.currentNodeId
           this.addTaskPayload.jobName = that.addTaskForm.jobName
           this.addTaskPayload.jobLevel = that.addTaskForm.jobLevel
-          this.addTaskPayload.users = that.user
+          this.addTaskPayload.pStr = that.user
           this.addTaskPayload.taskStartDate = that.addTaskForm.date1
           this.addTaskPayload.taskFinishDate = that.addTaskForm.date2
           this.addTaskPayload.description = that.addTaskForm.description
@@ -1825,7 +1825,7 @@ export default {
           // this.addTaskPayload.formId = this.formId
           // console.log('that.addTaskForm.date1', that.addTaskForm.date1)
           // console.log('that.addTaskForm.date2', that.addTaskForm.date2)
-          this.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
+          this.ajax('/myTask/addTask', that.addTaskPayload).then(res => {
             if (res.code === 200) {
               // 告知附件子组件清空
               that.IsClear = true
@@ -3385,7 +3385,7 @@ export default {
     //       // that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
     //       that.editTaskPayload.description = that.detailTaskform.description
     //       that.editTaskPayload.attachmentId = that.SetFileIdStr()
-    //       that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+    //       that.ajax('/myTask/editTask', that.editTaskPayload).then(res => {
     //         that.log('editTask:', res)
     //         if (res.code === 200) {
     //           that.$message({
@@ -3655,13 +3655,13 @@ export default {
           selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
         that.CommunityTaskPayload.attachmentId = fileStr
-        that.CommunityTaskPayload.users = selectUserStr
+        that.CommunityTaskPayload.pStr = selectUserStr
         that.CommunityTaskPayload.jobName = that.taskNameText
         that.CommunityTaskPayload.taskStartDate = that.selDateStart
         that.CommunityTaskPayload.taskFinishDate = that.selDateEnd
         that.CommunityTaskPayload.description = that.taskIntro
         that.CommunityTaskPayload._jfinal_token = that.token
-        that.ajax('/myProject/addTask', that.CommunityTaskPayload).then(res => {
+        that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
           if (res.code === 200) {
             that.isRecall = that.isRecall + 1
             that.token = res._jfinal_token
