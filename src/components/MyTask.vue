@@ -873,15 +873,15 @@ export default {
         pStr: ''
       },
       CommunityTaskPayload2: {
-        projectUID: '1',
-        uid: '1',
+        // projectUID: '1',
+        parentId: '1',
         pStr: '',
         attachmentId: '',
         description: '',
         jobName: '',
         jobLevel: 3,
-        startTime: '',
-        endTime: '',
+        taskStartDate: '',
+        taskFinishDate: '',
         userId: '',
         _jfinal_token: '',
         userName: ''
@@ -1843,14 +1843,14 @@ export default {
         that.CommunityTaskPayload2.attachmentId = fileStr
         that.CommunityTaskPayload2.pStr = selectUserStr
         that.CommunityTaskPayload2.jobName = that.taskNameText2
-        that.CommunityTaskPayload2.startTime = that.selDateStart2
-        that.CommunityTaskPayload2.endTime = that.selDateEnd2
+        that.CommunityTaskPayload2.taskStartDate = that.selDateStart2
+        that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
         var st = new Date(that.selDateStart2).getTime()
         var et = new Date(that.selDateEnd2).getTime()
         if (st <= et) {
-          that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
+          that.ajax('/myTask/addTask', that.CommunityTaskPayload2).then(res => {
             if (res.code === 200) {
               that.isRecall2 = that.isRecall2 + 1
               that.token = res._jfinal_token
@@ -2189,8 +2189,8 @@ export default {
           that.taskBasicMsg = res.data
           that.selDateStart2 = res.data.taskStartDate
           that.selDateEnd2 = res.data.taskFinishDate
-          that.CommunityTaskPayload2.projectUID = res.data.projectUID
-          that.CommunityTaskPayload2.uid = res.data.uid
+          // that.CommunityTaskPayload2.projectUID = res.data.projectUID
+          that.CommunityTaskPayload2.parentId = res.data.uid
           that.rid2 = res.data.uid
           var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
           var et = res.data.taskFinishDate
