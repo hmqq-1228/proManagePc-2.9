@@ -272,7 +272,6 @@ export default {
       })
     },
     myTaskStyleChange: function (e) {
-      // console.log('eeeee', e)
       var that = this
       that.myTaskViewPayload.pageNum = 1
       that.myTaskViewPayload.taskSource = e
