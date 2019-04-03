@@ -177,8 +177,8 @@ export default {
         taskId: '',
         jobName: '',
         description: '',
-        startTime: '',
-        endTime: '',
+        taskStartDate: '',
+        taskFinishDate: '',
         jobLevel: '3',
         // 附件id
         attachmentId: '',
@@ -542,8 +542,8 @@ export default {
         that.CommunityTaskPayload.attachmentId = fileStr
         that.CommunityTaskPayload.pStr = selectUserStr
         that.CommunityTaskPayload.jobName = that.taskNameText
-        that.CommunityTaskPayload.startTime = that.selDateStart
-        that.CommunityTaskPayload.endTime = that.selDateEnd
+        that.CommunityTaskPayload.taskStartDate = that.selDateStart
+        that.CommunityTaskPayload.taskFinishDate = that.selDateEnd
         that.CommunityTaskPayload.projectUID = that.projectBelong
         that.CommunityTaskPayload.description = that.taskIntro
         that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
@@ -579,9 +579,9 @@ export default {
       this.taskNameText = ''
       this.CommunityTaskPayload.jobName = ''
       this.selDateStart = this.startTimeFirst
-      this.CommunityTaskPayload.startTime = this.startTimeFirst
+      this.CommunityTaskPayload.taskStartDate = this.startTimeFirst
       this.selDateEnd = this.endTimeFirst
-      this.CommunityTaskPayload.endTime = this.endTimeFirst
+      this.CommunityTaskPayload.taskFinishDate = this.endTimeFirst
       this.taskIntro = ''
       this.CommunityTaskPayload.description = ''
       this.attachmentId = ''
