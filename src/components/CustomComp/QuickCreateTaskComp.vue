@@ -159,13 +159,14 @@ export default {
         projectManager: ''
       },
       CommunityTaskPayload: {
-        projectUID: '',
-        planId: '',
-        taskId: '',
+        parentId: '',
+        // projectUID: '',
+        // planId: '',
+        // taskId: '',
         jobName: '',
         description: '',
-        startTime: '',
-        endTime: '',
+        taskStartDate: '',
+        taskFinishDate: '',
         jobLevel: '3',
         // 附件id
         attachmentId: '',
@@ -277,6 +278,7 @@ export default {
           }
           that.selDateStart = res.data.startDate
           that.selDateEnd = res.data.endDate
+          that.CommunityTaskPayload.parentId = res.data.firstPlanId
         } else {
           that.$message({
             message: res.msg
@@ -411,8 +413,8 @@ export default {
         that.CommunityTaskPayload.attachmentId = that.SetFileIdStr()
         that.CommunityTaskPayload.pStr = selectUserStr
         that.CommunityTaskPayload.jobName = that.taskNameText
-        that.CommunityTaskPayload.startTime = that.selDateStart
-        that.CommunityTaskPayload.endTime = that.selDateEnd
+        that.CommunityTaskPayload.taskStartDate = that.selDateStart
+        that.CommunityTaskPayload.taskFinishDate = that.selDateEnd
         that.CommunityTaskPayload.projectUID = that.projectBelong
         that.CommunityTaskPayload.description = that.taskIntro
         var st = new Date(that.selDateStart).getTime()

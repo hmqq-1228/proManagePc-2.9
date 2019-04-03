@@ -171,8 +171,8 @@ export default {
         jobLevel: 3,
         taskStartDate: '',
         taskFinishDate: '',
-        users: '',
-        userId: ''
+        // users: '',
+        pStr: ''
       }
     }
   },
@@ -397,14 +397,14 @@ export default {
         }
         that.CommunityTaskPayload2.parentId = that.nodeId
         that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
-        that.CommunityTaskPayload2.users = selectUserStr
+        that.CommunityTaskPayload2.pStr = selectUserStr
         that.CommunityTaskPayload2.jobName = that.taskNameText2
         that.CommunityTaskPayload2.taskStartDate = that.selDateStart2
         that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
         console.log('nodeIDDDDDDDDDDDDDDDDDD', that.nodeId)
-        that.ajax('/myProject/addTask', that.CommunityTaskPayload2).then(res => {
+        that.ajax('/myTask/addTask', that.CommunityTaskPayload2).then(res => {
           that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1

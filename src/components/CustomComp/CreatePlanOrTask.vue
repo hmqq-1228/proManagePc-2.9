@@ -225,7 +225,7 @@ export default {
         taskFinishDate: '',
         description: '',
         jobLevel: 1,
-        users: []
+        pStr: []
       },
       moreUserSelectPayload: {
         projectManager: ''
@@ -371,7 +371,7 @@ export default {
             that.addTaskPayload.parentId = that.nodeId
             that.addTaskPayload.jobName = that.addTaskForm.jobName
             that.addTaskPayload.jobLevel = that.addTaskForm.jobLevel
-            that.addTaskPayload.users = that.user
+            that.addTaskPayload.pStr = that.user
             that.addTaskPayload.taskStartDate = that.addTaskForm.date1
             that.addTaskPayload.taskFinishDate = that.addTaskForm.date2
             that.addTaskPayload.description = that.addTaskForm.description
@@ -379,7 +379,7 @@ export default {
             var st = new Date(that.addTaskForm.date1).getTime()
             var et = new Date(that.addTaskForm.date2).getTime()
             if (st < et) {
-              that.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
+              that.ajax('/myTask/addTask', that.addTaskPayload).then(res => {
                 that.$emit('CreatePlanTaskCallback', res)
                 that.submitKK = true
                 if (res.code === 200) {

@@ -4,7 +4,7 @@
       <div class="paiTaskTitTab">
         <div class="paiTask pai active">新建任务</div>
       </div>
-      <component v-bind:is="compArr.QuickCreateTaskComp" fileFormId="QuickCreateTaskComp"></component>
+      <component v-bind:is="compArr.QuickCreateTaskComp" fileFormId="QuickCreateTaskComp" v-on:ActionResThrow="ActionResThrowFuc"></component>
     </div>
     <div class="searchItem">
       <div>
@@ -339,6 +339,10 @@ export default {
             // 任务移交
             that.TaskDetailCompShow = false
             that.queryMyTaskView(that.activeId)
+            break
+          case 'addCommunityTask':
+            // 任务完成
+            that.queryMyTaskView()
             break
           case 'finishTask':
             // 任务完成
