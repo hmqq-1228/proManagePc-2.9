@@ -604,6 +604,7 @@ export default {
       if (res.code === 200) {
         that.getTaskList()
         that.TaskDetailCompShow = false
+        that.value4 = false
         that.$message({
           message: '删除成功！',
           type: 'success'

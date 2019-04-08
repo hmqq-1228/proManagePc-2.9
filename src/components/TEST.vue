@@ -49,6 +49,14 @@ export default {
     TestBtnClick: function () {
       this.value4 = true
     },
+    // test start
+    TestMethod: function () {
+      var arr = []
+      for (var i = 0; i < arr.length; i++) {
+        this.log(arr[i].name)
+      }
+    },
+    // test end
     CommonThrowFuc: function (obj) {
       if (obj.type === 'drawerKK') {
         this.value4 = obj.drawerKK

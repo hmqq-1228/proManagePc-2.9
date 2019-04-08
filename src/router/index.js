@@ -25,6 +25,7 @@ import MyPro from '@/components/MyPro'
 import ProDetail from '@/components/ProDetail'
 import TestUpload from '@/components/TestUpload'
 import CompUse from '@/components/CompUse'
+import goodsDetail2 from '@/components/goodsDetail2'
 
 Vue.use(Router)
 
@@ -128,6 +129,11 @@ export default new Router({
       path: '/CompUse',
       name: 'CompUse',
       component: CompUse
+    },
+    {
+      path: '/goodsDetail2',
+      name: 'goodsDetail2',
+      component: goodsDetail2
     }
   ]
 })

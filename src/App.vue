@@ -8,10 +8,19 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside width="250px" style="height: 100%;background-color: #2f64a5">
-          <el-row>
-          <el-col :span="24">
+        <!--height: 100%; background-color: #2f64a5-->
+        <el-aside class="asideBox" v-bind:style="{width: asideWidth, height: '100%', backgroundColor: '#2f64a5'}">
+          <div class="collapseBtnBox" v-on:click="collapseBtnClick">
+            <div style="position: absolute; top: 45%;">
+              <i v-if="!isCollapse" class="el-icon-d-arrow-left" />
+              <i v-if="isCollapse" class="el-icon-d-arrow-right" />
+            </div>
+          </div>
+          <el-row style="padding-right: 10px;">
+          <el-col>
             <el-menu
+              :collapse-transition="false"
+              :collapse="isCollapse"
               :default-active="activeNavIndex"
               class="el-menu-vertical-demo"
               @select="generalSelect"
@@ -21,7 +30,7 @@
               <!--侧边栏 集团战略-->
               <el-submenu v-for="(name, index) in slideMenuGroup" :index="'group_' + index" v-bind:key="index">
                 <template slot="title">
-                  <i class="el-icon-location"></i>
+                  <Icon style="color: #ddd" size="18" type="ios-ribbon-outline" />
                   <span>{{name.projectType}}</span>
                 </template>
                 <el-menu-item-group>
@@ -30,7 +39,7 @@
               </el-submenu>
               <!--侧边栏 非集团战略-->
               <el-menu-item v-for="(name, index2) in slideMenu" :index="'general_' + index2" v-bind:key="name.projectType + '-' + index2" @click="toMenu(name.projectType)">
-                <i class="el-icon-menu"></i>
+                <Icon size="18" :type="name.icon" />
                 <span slot="title">{{name.projectType}}</span>
               </el-menu-item>
             </el-menu>
@@ -52,7 +61,8 @@ export default {
   data () {
     return {
       activeNavIndex: this.$store.state.activeNavIndex,
-      isCollapse: true,
+      isCollapse: false,
+      asideWidth: '250px',
       // 侧边栏 集团战略
       slideMenuGroup: [],
       // 非集团战略的侧边栏
@@ -89,6 +99,14 @@ export default {
     }
   },
   methods: {
+    collapseBtnClick: function () {
+      this.isCollapse = !this.isCollapse
+      if (!this.isCollapse) {
+        this.asideWidth = '250px'
+      } else {
+        this.asideWidth = 'auto'
+      }
+    },
     getUserInfo: function () {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
@@ -160,6 +178,32 @@ export default {
           that.slideMenuGroup = []
           that.slideMenu = []
           for (var i = 0; i < res.data.length; i++) {
+            // 设置图标
+            switch (res.data[i].projectType) {
+              // case '集团战略':
+              //   res.data[i].icon = 'ios-ribbon-outline'
+              //   break
+              case '商品管理':
+                res.data[i].icon = 'md-cart'
+                break
+              case '我的动态':
+                res.data[i].icon = 'md-chatboxes'
+                break
+              case '我的日程':
+                res.data[i].icon = 'ios-calendar'
+                break
+              case '我的项目':
+                res.data[i].icon = 'ios-paper'
+                break
+              case '我的任务':
+                res.data[i].icon = 'md-analytics'
+                break
+              default:
+                res.data[i].icon = 'md-analytics'
+            }
+            if (res.data[i].projectType === '集团战略') {
+              res.data[i].icon = ''
+            }
             if (res.data[i].projectType === '集团战略') {
               that.slideMenuGroup.push(res.data[i])
             } else {
@@ -292,6 +336,26 @@ padding: 8px 20px;
     font-weight: normal;
     font-size: 16px;
   }
+  .asideBox{
+    transition: width 2s;
+    position: relative;
+  }
+  .asideBox:hover .collapseBtnBox{
+    display: block;
+  }
+  .collapseBtnBox{
+    color: #fff;
+    font-size: 16px;
+    width: 20px;
+    height: 100%;
+    background: rgba(255,255,255,0.2);
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-top: 50%;
+    z-index: 999;
+    display: none;
+  }
 .HelloWorld .el-tree-node__content{
   height: 40px;
   border-bottom: 1px dashed #ddd;
@@ -339,6 +403,9 @@ padding: 8px 20px;
   }
   .contentTop .el-button{
     padding: 7px 14px;
+  }
+  .el-menu-item i{
+    color: #ddd;
   }
 /*.el-container{*/
   /*display: -webkit-box;*/
