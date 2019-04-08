@@ -38,7 +38,7 @@
         <div class="topCon">
           <div class="topConLf">
             <div class="title" style="display: flex;">
-              <div v-on:contextmenu="rightKey"><span>{{proDetailMsg.projectType}}:</span> {{proDetailMsg.projectName}}</div>
+              <div v-on:contextmenu="rightKey">项目:{{proDetailMsg.projectName}}</div>
               <div style="position: relative; width: 100px; margin-left: 15px;">
                 <div class="imgBox" style="position: absolute;" v-if="proDetailMsg.state === '0'">
                   <img src="../../static/img/unstart.png" alt>
@@ -71,28 +71,18 @@
                 <div style="color: #28558c; font-size: 20px; margin-top: -6px">
                   <Icon type="ios-image"/>
                 </div>
-                <div style="margin-left: 10px; color: #28558c; display: flex;">
-                  <div>附件:</div>
-                  <div v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0" style="display: flex">
-                    <div class="proFileListPre"
-                         :style="{background: 'url(' + fileItem.previewUrl + ')', backgroundSize: 'cover'}"
-                         v-for="fileItem in proDetailMsg.fileList"
-                         :key="fileItem.previewUrl">
-                      <div v-if="fileItem.isImg" style="width: 60%" @click="showImagePre(fileItem.previewUrl, fileItem.showName)"></div>
-                      <div v-if="!fileItem.isImg" style="width: 60%">
-                        <a v-bind:download="fileItem.showName" v-bind:href="fileItem.downloadUrl">
-                          <Icon style="margin-top: -8px; font-size: 16px;" type="ios-document-outline" />
-                        </a>
-                      </div>
-                      <div style="width: 40%; background: rgba(64,158,255, 0.5)">
-                        <a v-bind:download="fileItem.showName" v-bind:href="fileItem.downloadUrl"><Icon style="color: #fff" type="md-arrow-down" /></a>
-                      </div>
-                    </div>
-                  </div>
-                  <!--<span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0">-->
-                    <!--<span style="cursor: pointer;color: #409EFF;font-size: 14px;" @click="showFileModelClick()">查看附件</span>-->
-                  <!--</span>-->
-                  <div style="color: #aaa;font-size: 14px" v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0">暂无附件</div>
+                <div style="margin-left: 10px; color: #28558c;">
+                  附件:
+                  <span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0">
+                    <span
+                      style="cursor: pointer;color: #409EFF;font-size: 14px;"
+                      @click="showFileModelClick()"
+                    >查看附件</span>
+                  </span>
+                  <span
+                    style="color: #aaa;font-size: 14px"
+                    v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0"
+                  >暂无附件</span>
                 </div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 8px; color: #2d8cf0;">
@@ -139,7 +129,7 @@
       </div>
       <div v-else style="margin-bottom: 15px; display: flex; justify-content: space-between;">
         <div style="display: flex;">
-          <div class="title"><span>{{proDetailMsg.projectType}}:</span> {{proDetailMsg.projectName}}</div>
+          <div class="title">项目:{{proDetailMsg.projectName}}</div>
           <div style="position: relative; width: 100px; margin-left: 15px;">
             <div class="imgBox" style="position: absolute;" v-if="proDetailMsg.state === '0'">
               <img src="../../static/img/unstart.png" alt>
@@ -177,7 +167,6 @@
       </div>
       <!-- 一级计划 项目计划 start -->
       <div class="planList">
-         <!--<div class="planName" v-on:click="toGoodsDetail2">-->
         <div class="planName">
           <!-- 项
           <br>目
@@ -244,8 +233,12 @@
       </div>
     </div>
     <!-- zh 树形结构 新版本-->
+    <!--<div v-if="listTree.length>0 && planList.length > 0">-->
+       <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
+    <!--</div>-->
     <div v-if="listTree.length>0 && planList.length > 0">
-       <tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>
+      <component v-bind:is="compArr.NewTree" v-bind:proId="proId" v-bind:firstPlanId="firstPlanId" v-bind:TreeNodeId="TreeNodeId"></component>
+      <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
     </div>
     <div v-else class="noData">
        暂无数据
@@ -480,10 +473,12 @@ import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 import tree from './CustomComp/tree.vue'
 import AddNewTask from './CustomComp/AddNewTask.vue'
 import addNewPlan from './CustomComp/addNewPlan.vue'
+import NewTree from './CustomComp/NewTree.vue'
 // DrawerComp
 export default {
-  name: 'ProDetail',
+  name: 'ProDetail2',
   components: {
+    NewTree,
     CommentLogs,
     ModifyPlan,
     ModifyTask,
@@ -501,6 +496,8 @@ export default {
   },
   data () {
     return {
+      // j
+      TreeNodeId: '',
       // refshPlan: false
       showName: false,
       // 是否有档案
@@ -881,9 +878,6 @@ export default {
     }
   },
   methods: {
-    toGoodsDetail2: function () {
-      this.$router.push('/goodsDetail2')
-    },
     // 测试右键
     rightKey: function (e) {
       this.log('e.:', e.offsetX)
@@ -951,6 +945,7 @@ export default {
     getPlanTree (plan) {
       let that = this
       that.activeId = plan.id
+      that.TreeNodeId = plan.id
       // 判断是否可以增加计划
       that.parentId = plan.id
       if (plan.type === '1') {
@@ -964,6 +959,7 @@ export default {
       let that = this
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.activeId }).then(res => {
         if (res.code === 200) {
+          that.log('查询树形结构：', res)
           that.listTree = []
           that.treeName = '收缩'
           that.listTree = res.data
@@ -1077,6 +1073,7 @@ export default {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
         .then(res => {
+          that.log('getProjectDetail:', res)
           if (res.code === 200) {
             that.memberList = res.data.memberList
             that.proDetailMsg = res.data
@@ -1085,6 +1082,7 @@ export default {
             that.planList = res.data.planOrJobList
             // that.log('planList:', that.planList)
             that.firstPlanId = res.data.firstPlanId
+            that.TreeNodeId = res.data.firstPlanId
             if (res.data.projectType === '产品研发') {
               that.archives = true
             } else {
@@ -1359,7 +1357,6 @@ export default {
       var that = this
       if (res.code === 200) {
         that.selectProjectId()
-        that.queryProDetail()
         that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
@@ -1613,22 +1610,6 @@ div img {
   display: flex;
   font-size: 15px;
   justify-content: start;
-}
-.proFileListPre{
-  border: 1px solid #409eff;
-  border-radius: 3px;
-  width: 30px;
-  height: 20px;
-  margin-left: 6px;
-  display: flex;
-  /*background: url("");*/
-  background-size: cover;
-}
-.proFileListPre div:nth-child(2){
-  display: none;
-}
-.proFileListPre:hover div:nth-child(2){
-  display: block;
 }
 .editHistoryBtn span {
   cursor: pointer;

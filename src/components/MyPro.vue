@@ -795,7 +795,7 @@ export default {
     // 查询模板信息
     getModelDetail: function () {
       var that = this
-      this.ajax('/model/getModelDetail', {modelId: that.modId}).then(res => {
+      this.ajax('/myProject/getModelDetail', {modelId: that.modId}).then(res => {
         if (res.code === 200) {
           // that.ruleForm.projectName = res.data.modelName
           that.duration = res.data.duration
@@ -838,7 +838,7 @@ export default {
     newAdd: function () {
       var that = this
       this.newAddDialog = true
-      that.ajax('/model/getModelList', that.modelData).then(res => {
+      that.ajax('/myProject/getModelList', that.modelData).then(res => {
         if (res.code === 200) {
           that.log('getModelList:', res)
           that.modelList = res.data.list
