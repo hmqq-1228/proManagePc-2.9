@@ -1296,6 +1296,7 @@ export default {
       var that = this
       if (res.code === 200) {
         that.selectProjectId()
+        that.queryProDetail()
         that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
