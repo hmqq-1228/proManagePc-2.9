@@ -14,11 +14,19 @@ export default {
     }
   },
   created () {
-    // j
+    // this.getTree()
+  },
+  watch: {
+    firstPlanId (val, old) {
+      if (val) {
+        this.getTree()
+      }
+    }
   },
   methods: {
     getTree () {
       let that = this
+      that.log('firstPlanId:', that.firstPlanId)
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.firstPlanId }).then(res => {
         if (res.code === 200) {
           that.log('查询树形结构：', res)

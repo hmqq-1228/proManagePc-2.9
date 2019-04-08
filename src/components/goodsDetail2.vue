@@ -1073,6 +1073,7 @@ export default {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
         .then(res => {
+          that.log('getProjectDetail:', res)
           if (res.code === 200) {
             that.memberList = res.data.memberList
             that.proDetailMsg = res.data
