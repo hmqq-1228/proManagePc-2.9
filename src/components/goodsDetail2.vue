@@ -167,7 +167,7 @@
       </div>
       <!-- 一级计划 项目计划 start -->
       <div class="planList">
-        <div class="planName" v-on:click="toGoodsDetail2">
+        <div class="planName">
           <!-- 项
           <br>目
           <br>计
@@ -233,8 +233,12 @@
       </div>
     </div>
     <!-- zh 树形结构 新版本-->
+    <!--<div v-if="listTree.length>0 && planList.length > 0">-->
+       <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
+    <!--</div>-->
     <div v-if="listTree.length>0 && planList.length > 0">
-       <tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>
+      <component v-bind:is="compArr.NewTree" v-bind:proId="proId" v-bind:firstPlanId="firstPlanId" v-bind:TreeNodeId="TreeNodeId"></component>
+      <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
     </div>
     <div v-else class="noData">
        暂无数据
@@ -469,10 +473,12 @@ import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 import tree from './CustomComp/tree.vue'
 import AddNewTask from './CustomComp/AddNewTask.vue'
 import addNewPlan from './CustomComp/addNewPlan.vue'
+import NewTree from './CustomComp/NewTree.vue'
 // DrawerComp
 export default {
-  name: 'ProDetail',
+  name: 'ProDetail2',
   components: {
+    NewTree,
     CommentLogs,
     ModifyPlan,
     ModifyTask,
@@ -490,6 +496,8 @@ export default {
   },
   data () {
     return {
+      // j
+      TreeNodeId: '',
       // refshPlan: false
       showName: false,
       // 是否有档案
@@ -870,9 +878,6 @@ export default {
     }
   },
   methods: {
-    toGoodsDetail2: function () {
-      this.$router.push('/goodsDetail2')
-    },
     // 测试右键
     rightKey: function (e) {
       this.log('e.:', e.offsetX)
@@ -940,6 +945,7 @@ export default {
     getPlanTree (plan) {
       let that = this
       that.activeId = plan.id
+      that.TreeNodeId = plan.id
       // 判断是否可以增加计划
       that.parentId = plan.id
       if (plan.type === '1') {
@@ -953,6 +959,7 @@ export default {
       let that = this
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.activeId }).then(res => {
         if (res.code === 200) {
+          that.log('查询树形结构：', res)
           that.listTree = []
           that.treeName = '收缩'
           that.listTree = res.data
@@ -1074,6 +1081,7 @@ export default {
             that.planList = res.data.planOrJobList
             // that.log('planList:', that.planList)
             that.firstPlanId = res.data.firstPlanId
+            that.TreeNodeId = res.data.firstPlanId
             if (res.data.projectType === '产品研发') {
               that.archives = true
             } else {
