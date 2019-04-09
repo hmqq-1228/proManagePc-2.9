@@ -154,7 +154,7 @@ export default {
   methods: {
     modifyPlan: function () {
       var that = this
-      that.$emit('showPlanEditForm')
+      that.$emit('showPlanEditForm', that.currentNodeId)
     },
     toPlanDetail: function (id) {
       var that = this
