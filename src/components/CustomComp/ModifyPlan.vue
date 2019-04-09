@@ -98,7 +98,7 @@ export default {
           var st = new Date(this.detailform.date1).getTime()
           var et = new Date(this.detailform.date2).getTime()
           that.editPlanPayload.description = this.detailform.description
-          if (st < et) {
+          if (st <= et) {
             that.ajax('/myProject/editPlan', that.editPlanPayload).then(res => {
               that.log('editPlan:', res)
               that.$emit('ModifyPlanCallback', res)
