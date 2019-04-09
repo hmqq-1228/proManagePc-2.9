@@ -418,4 +418,7 @@ padding: 8px 20px;
 /*.el-container{*/
   /*display: -webkit-box;*/
 /*}*/
+  .Schedule .el-input--prefix .el-input__inner{
+    padding-right: 0;
+  }
 </style>

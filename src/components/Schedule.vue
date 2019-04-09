@@ -82,13 +82,14 @@
         <div class="close" v-on:click="close()"><i class="el-icon-close"></i> </div>
       </div>
       <!--简易详情悬浮窗-->
-      <div class="ScheduleDetail" v-on:mouseover="detailMouseOver()" v-on:mouseleave="detailMouseOut()" v-if="ScheduleDetailShow" v-bind:style="{ top: detailTop + 'px', left: detailLeft + 'px' }">
+      <!-- v-on:mouseleave="detailMouseOut()" -->
+      <div class="ScheduleDetail" v-on:mouseover="detailMouseOver()" v-if="ScheduleDetailShow" v-bind:style="{ top: detailTop + 'px', left: detailLeft + 'px' }">
         <div class="detailFormArrow" v-bind:style="{ top: detailArrowTop + 'px', left: detailArrowLeft + 'px'}"></div>
         <div class="detailTit">{{titleType}}</div>
         <div class="newScheduleIpt"><el-input v-bind:disabled="detailCanEdit" v-model="detailScheduleTit" placeholder="请输入要做什么"></el-input></div>
         <div class="newScheduleDate">
-          <el-date-picker v-bind:disabled="detailCanEdit" style="width: 170px; padding-right: 15px;" value-format="yyyy-MM-dd HH:mm:ss" v-model="detailValue1" type="datetime" placeholder="选择开始时间"></el-date-picker>
-          <el-date-picker v-bind:disabled="detailCanEdit" style="width: 170px; padding-right: 15px;" value-format="yyyy-MM-dd HH:mm:ss" v-model="detailValue2" type="datetime" placeholder="选择结束时间"></el-date-picker>
+          <el-date-picker v-bind:disabled="detailCanEdit" style="width: 50%; padding-right: 15px;" value-format="yyyy-MM-dd HH:mm:ss" v-model="detailValue1" type="datetime" placeholder="选择开始时间"></el-date-picker>
+          <el-date-picker v-bind:disabled="detailCanEdit" style="width: 50%;" value-format="yyyy-MM-dd HH:mm:ss" v-model="detailValue2" type="datetime" placeholder="选择结束时间"></el-date-picker>
         </div>
         <div class="durationSelect" v-if="currentTargetType===1?true:false">
           <el-select v-bind:disabled="detailCanEdit" v-model="detailDurationValue" placeholder="请选择提醒时间">
