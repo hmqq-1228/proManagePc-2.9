@@ -38,7 +38,7 @@
         <div class="topCon">
           <div class="topConLf">
             <div class="title" style="display: flex;">
-              <div v-on:contextmenu="rightKey">项目:{{proDetailMsg.projectName}}</div>
+              <div>项目:{{proDetailMsg.projectName}}</div>
               <div style="position: relative; width: 100px; margin-left: 15px;">
                 <div class="imgBox" style="position: absolute;" v-if="proDetailMsg.state === '0'">
                   <img src="../../static/img/unstart.png" alt>
@@ -236,13 +236,18 @@
     <!--<div v-if="listTree.length>0 && planList.length > 0">-->
        <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
     <!--</div>-->
-    <div v-if="listTree.length>0 && planList.length > 0">
-      <component v-bind:is="compArr.NewTree" v-bind:proId="proId" v-bind:firstPlanId="firstPlanId" v-bind:TreeNodeId="TreeNodeId"></component>
+    <div>
+      <component v-bind:is="compArr.NewTree"
+                 v-bind:proId="proId"
+                 v-bind:firstPlanId="firstPlanId"
+                 v-bind:newTreeList="newTreeList"
+                 v-bind:TreeNodeId="TreeNodeId">
+      </component>
       <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
     </div>
-    <div v-else class="noData">
-       暂无数据
-    </div>
+    <!--<div>-->
+       <!--暂无数据-->
+    <!--</div>-->
     <!-- Part05 start 抽屉 任务详情 -->
     <Drawer
       title="任务详情"
@@ -520,7 +525,8 @@ export default {
         TaskDetailComp: 'TaskDetailComp',
         PlanDetailComp: 'PlanDetailComp',
         AddNewTask: 'AddNewTask',
-        addNewPlan: 'addNewPlan'
+        addNewPlan: 'addNewPlan',
+        NewTree: 'NewTree'
       },
       // zh 树状展开收缩文字
       treeName: '收缩',
@@ -624,6 +630,7 @@ export default {
         content: '',
         attachmentId: ''
       },
+      newTreeList: [],
       listTree: [
         {
           id: 1,
@@ -959,13 +966,41 @@ export default {
       let that = this
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.activeId }).then(res => {
         if (res.code === 200) {
-          that.log('查询树形结构：', res)
+          // that.log('查询树形结构：', res)
           that.listTree = []
           that.treeName = '收缩'
           that.listTree = res.data
           that.listTree.forEach((item, index) => {
             item['show'] = true
           })
+        }
+      })
+    },
+    queryNewTree (proDetRes) {
+      let that = this
+      // that.log('firstPlanId:', that.firstPlanId)
+      that.ajax('/myProject/getPlanAndTaskTree', { id: that.firstPlanId }).then(res => {
+        if (res.code === 200) {
+          that.log('查询新树：', res)
+          that.listTree = []
+          that.listTree = res.data
+          // that.log(111111)
+          that.log('proDetRes:::', proDetRes)
+          if (proDetRes) {
+            var obj = {
+              children: res.data,
+              createDate: proDetRes.data.createDate,
+              finish: proDetRes.data.endDate,
+              id: proDetRes.data.firstPlanId,
+              name: proDetRes.data.content,
+              parentId: proDetRes.data.projectUID,
+              sortCode: '',
+              start: proDetRes.data.startDate,
+              type: 'rootPlan'
+            }
+            that.newTreeList = []
+            that.newTreeList.push(obj)
+          }
         }
       })
     },
@@ -1075,6 +1110,7 @@ export default {
         .then(res => {
           that.log('getProjectDetail:', res)
           if (res.code === 200) {
+            // that.queryNewTree(res)
             that.memberList = res.data.memberList
             that.proDetailMsg = res.data
             that.startPlanDate = res.data.startDate.split(' ')[0]
@@ -1105,7 +1141,7 @@ export default {
               // that.log('activeId:', that.activeId)
               if (!that.activeId) {
                 that.activeId = res.data.planOrJobList[0].id
-                console.log(res.data.planOrJobList[0])
+                // console.log(res.data.planOrJobList[0])
                 if (res.data.planOrJobList[0].type === '2') {
                   that.panshow = true
                 }
@@ -1117,6 +1153,7 @@ export default {
             // that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
             // zh获取默认数据
             that.getTree()
+            that.queryNewTree(res)
           }
         })
     },
@@ -1563,7 +1600,7 @@ export default {
             that.selectProjectId()
             break
           default:
-            this.log('')
+            this.log('占')
         }
       }
     }

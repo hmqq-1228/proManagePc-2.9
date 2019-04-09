@@ -1032,7 +1032,8 @@ export default {
           }
         } else {
           // console.log('网络错误!!')
-          // that.loading = false
+          that.createProFormLoading = false
+          // that.newAddDiaModel = true
           return false
         }
       })
