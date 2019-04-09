@@ -38,7 +38,7 @@
         <div class="topCon">
           <div class="topConLf">
             <div class="title" style="display: flex;">
-              <div v-on:contextmenu="rightKey">项目:{{proDetailMsg.projectName}}</div>
+              <div>项目:{{proDetailMsg.projectName}}</div>
               <div style="position: relative; width: 100px; margin-left: 15px;">
                 <div class="imgBox" style="position: absolute;" v-if="proDetailMsg.state === '0'">
                   <img src="../../static/img/unstart.png" alt>
@@ -237,7 +237,12 @@
        <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
     <!--</div>-->
     <div>
-      <component v-bind:is="compArr.NewTree" v-bind:proId="proId" v-bind:firstPlanId="firstPlanId" v-bind:TreeNodeId="TreeNodeId"></component>
+      <component v-bind:is="compArr.NewTree"
+                 v-bind:proId="proId"
+                 v-bind:firstPlanId="firstPlanId"
+                 v-bind:newTreeList="newTreeList"
+                 v-bind:TreeNodeId="TreeNodeId">
+      </component>
       <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
     </div>
     <!--<div>-->
@@ -625,6 +630,7 @@ export default {
         content: '',
         attachmentId: ''
       },
+      newTreeList: [],
       listTree: [
         {
           id: 1,
@@ -970,6 +976,34 @@ export default {
         }
       })
     },
+    queryNewTree (proDetRes) {
+      let that = this
+      // that.log('firstPlanId:', that.firstPlanId)
+      that.ajax('/myProject/getPlanAndTaskTree', { id: that.firstPlanId }).then(res => {
+        if (res.code === 200) {
+          that.log('查询新树：', res)
+          that.listTree = []
+          that.listTree = res.data
+          // that.log(111111)
+          that.log('proDetRes:::', proDetRes)
+          if (proDetRes) {
+            var obj = {
+              children: res.data,
+              createDate: proDetRes.data.createDate,
+              finish: proDetRes.data.endDate,
+              id: proDetRes.data.firstPlanId,
+              name: proDetRes.data.content,
+              parentId: proDetRes.data.projectUID,
+              sortCode: '',
+              start: proDetRes.data.startDate,
+              type: 'rootPlan'
+            }
+            that.newTreeList = []
+            that.newTreeList.push(obj)
+          }
+        }
+      })
+    },
     // zh展开树状结构
     slideTree () {
       let that = this
@@ -1076,6 +1110,7 @@ export default {
         .then(res => {
           that.log('getProjectDetail:', res)
           if (res.code === 200) {
+            // that.queryNewTree(res)
             that.memberList = res.data.memberList
             that.proDetailMsg = res.data
             that.startPlanDate = res.data.startDate.split(' ')[0]
@@ -1118,6 +1153,7 @@ export default {
             // that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
             // zh获取默认数据
             that.getTree()
+            that.queryNewTree(res)
           }
         })
     },
