@@ -502,6 +502,8 @@ export default {
   data () {
     return {
       // refshPlan: false
+      // 点击任务详情删除是否默认第一个
+      isChangeActive: false,
       showName: false,
       // 是否有档案
       archives: true,
@@ -1003,6 +1005,7 @@ export default {
       // this.log('pppppp:', nodeId)
       // this.selectProjectId(nodeId, flag, e)
       this.currentNodeId = nodeId
+      this.isChangeActive = true
       console.log('idddddd', this.currentNodeId)
       if (nodeId.substring(0, 1) === 'J') {
         that.TaskDetailCompShow = true
@@ -1075,52 +1078,51 @@ export default {
     queryProDetail: function () {
       // console.log(1111111111111111111)
       var that = this
-      that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
-        .then(res => {
-          if (res.code === 200) {
-            that.memberList = res.data.memberList
-            that.proDetailMsg = res.data
-            that.startPlanDate = res.data.startDate.split(' ')[0]
-            that.endPlanDate = res.data.endDate.split(' ')[0]
-            that.planList = res.data.planOrJobList
-            // that.log('planList:', that.planList)
-            that.firstPlanId = res.data.firstPlanId
-            if (res.data.projectType === '产品研发') {
-              that.archives = true
-            } else {
-              that.archives = false
-            }
-            for (var i = 0; i < res.data.fileList.length; i++) {
-              if (that.isImage(res.data.fileList[i].showName)) {
-                res.data.fileList[i].isImg = true
-              } else {
-                res.data.fileList[i].isImg = false
-              }
-              res.data.fileList[i].downloadUrl =
-                that.$store.state.baseServiceUrl +
-                '/file/downloadFile?realUrl=' +
-                res.data.fileList[i].realUrl +
-                '&showName=' +
-                res.data.fileList[i].showName
-            }
-            if (res.data.planOrJobList.length > 0) {
-              // that.log('activeId:', that.activeId)
-              if (!that.activeId) {
-                that.activeId = res.data.planOrJobList[0].id
-                console.log(res.data.planOrJobList[0])
-                if (res.data.planOrJobList[0].type === '2') {
-                  that.panshow = true
-                }
-                that.parentId = that.activeId
-              }
-            } else {
-              that.activeId = ''
-            }
-            // that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
-            // zh获取默认数据
-            that.getTree()
+      that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
+        if (res.code === 200) {
+          that.memberList = res.data.memberList
+          that.proDetailMsg = res.data
+          that.startPlanDate = res.data.startDate.split(' ')[0]
+          that.endPlanDate = res.data.endDate.split(' ')[0]
+          that.planList = res.data.planOrJobList
+          // that.log('planList:', that.planList)
+          that.firstPlanId = res.data.firstPlanId
+          if (res.data.projectType === '产品研发') {
+            that.archives = true
+          } else {
+            that.archives = false
           }
-        })
+          for (var i = 0; i < res.data.fileList.length; i++) {
+            if (that.isImage(res.data.fileList[i].showName)) {
+              res.data.fileList[i].isImg = true
+            } else {
+              res.data.fileList[i].isImg = false
+            }
+            res.data.fileList[i].downloadUrl =
+              that.$store.state.baseServiceUrl +
+              '/file/downloadFile?realUrl=' +
+              res.data.fileList[i].realUrl +
+              '&showName=' +
+              res.data.fileList[i].showName
+          }
+          if (res.data.planOrJobList.length > 0) {
+            // that.log('activeId:', that.activeId)
+            if (!that.activeId) {
+              that.activeId = res.data.planOrJobList[0].id
+              console.log(res.data.planOrJobList[0])
+              if (res.data.planOrJobList[0].type === '2') {
+                that.panshow = true
+              }
+              that.parentId = that.activeId
+            }
+          } else {
+            that.activeId = ''
+          }
+          // that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
+          // zh获取默认数据
+          that.getTree()
+        }
+      })
     },
     // 根据计划或任务Id 获取子级结构
     selectProjectId: function (id, type, e) {
@@ -1134,38 +1136,37 @@ export default {
       // } else {
       //   // that.value444 = true
       // }
-      if (type === 'QueryFirstLevelChild') {
-        that.activeId = id
-        if (e) {
-          var obj = e.currentTarget
-          $(obj).addClass('active').siblings().removeClass('active')
-        }
-      }
+      // if (type === 'QueryFirstLevelChild') {
+      //   that.activeId = id
+      //   if (e) {
+      //     var obj = e.currentTarget
+      //     $(obj).addClass('active').siblings().removeClass('active')
+      //   }
+      // }
       // this.log(that.activeId)
       // that.getPlanTree(that.activeId)
       that.getTree()
-      that
-        .ajax('/myProject/getPlanOrTaskById', { id: that.activeId })
-        .then(res => {
-          if (res.code === 200) {
-            for (var i = 0; i < res.data.length; i++) {
-              res.data[i].start = res.data[i].start.split(' ')[0]
-              res.data[i].finish = res.data[i].finish.split(' ')[0]
-              res.data[i].children = [
-                {
-                  id: 1,
-                  name: '测试'
-                }
-              ]
-            }
-            that.data5 = res.data
-          }
-        })
+      // that.ajax('/myProject/getPlanOrTaskById', { id: that.activeId }).then(res => {
+      //   if (res.code === 200) {
+      //     for (var i = 0; i < res.data.length; i++) {
+      //       res.data[i].start = res.data[i].start.split(' ')[0]
+      //       res.data[i].finish = res.data[i].finish.split(' ')[0]
+      //       res.data[i].children = [
+      //         {
+      //           id: 1,
+      //           name: '测试'
+      //         }
+      //       ]
+      //     }
+      //     that.data5 = res.data
+      //   }
+      // })
     },
     showDetailPage: function (data) {
       // this.log(data)
       var that = this
-      this.currentNodeId = data.id
+      that.currentNodeId = data.id
+      that.isChangeActive = false
       if (data.type === 'task') {
         that.TaskDetailCompShow = true
       } else if (data.type === 'plan') {
@@ -1337,8 +1338,12 @@ export default {
     PlanDelCallbackFuc: function (res, type) {
       var that = this
       if (res.code === 200) {
-        that.selectProjectId()
         that.queryProDetail()
+        // that. = that.planList[0].id
+        that.getTree()
+        if (that.isChangeActive) {
+          that.activeId = ''
+        }
         if (type === '1') {
           that.value444 = false
         } else {
@@ -1358,8 +1363,11 @@ export default {
     TaskDelCallbackFuc: function (res) {
       var that = this
       if (res.code === 200) {
-        that.selectProjectId()
         that.queryProDetail()
+        if (that.isChangeActive) {
+          that.activeId = ''
+        }
+        // that.activeId = that.planList[0].id
         that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
