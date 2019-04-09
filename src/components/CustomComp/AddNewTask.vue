@@ -318,8 +318,10 @@ export default {
       this.transitionManage2('', true)
     },
     selectDate2: function (e) {
-      // 所有的伸缩窗 隐藏
-      this.getDefultTime()
+      // 所有的伸缩窗 隐藏 selDateStart2
+      if (!this.selDateStart2 || !this.selDateEnd2) {
+        this.getDefultTime()
+      }
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
@@ -408,6 +410,9 @@ export default {
         that.ajax('/myTask/addTask', that.CommunityTaskPayload2).then(res => {
           that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
+            // 时间选项重置
+            this.selDateStart2 = ''
+            this.selDateEnd2 = ''
             that.isRecall2 = that.isRecall2 + 1
             that.IsClear = true
             that.$message({

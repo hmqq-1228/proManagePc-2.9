@@ -321,7 +321,9 @@ export default {
     selectDate2: function (e) {
       // 所有的伸缩窗 隐藏
       var that = this
-      that.getDefultTime()
+      if (!that.selDateStart2 || !that.selDateEnd2) {
+        that.getDefultTime()
+      }
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
@@ -408,6 +410,8 @@ export default {
         that.ajax('/myProject/addPlan', that.planData).then(res => {
           that.$emit('TaskDistributeCallback', res)
           if (res.code === 200) {
+            that.selDateStart2 = ''
+            that.selDateEnd2 = ''
             that.isRecall2 = that.isRecall2 + 1
             that.IsClear = true
             that.$message({
