@@ -413,7 +413,7 @@ padding: 8px 20px;
     padding: 7px 14px;
   }
   .el-menu-item i{
-    color: #ddd;
+    color: #ddd !important;
   }
 /*.el-container{*/
   /*display: -webkit-box;*/
