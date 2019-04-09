@@ -256,8 +256,9 @@
       <div class="discription lis" style="margin-top: 15px;">
         <!-- 历史记录 评论 引入组件-->
         <component v-bind:is="compArr.CommentLogs" fileFormId="ProCommentLogs" v-on:FilePreEmit="GetFilePreData" :commentList="taskLogs"></component>
+        <!--<button v-on:click="setCurrentPage">Test</button>-->
         <div style="text-align: center">
-          <Page :total="commentTotalNum" size="small" :page-size="10" show-total @on-change="commentPageChange($event)"></Page>
+          <Page :total="commentTotalNum" size="small" :page-size="10" show-total ref="currentPageNum" @on-change="commentPageChange($event)"></Page>
         </div>
       </div>
     </Drawer>
@@ -478,6 +479,16 @@ export default {
     // this.settoken()
   },
   watch: {
+    // 历史记录 显示与隐藏
+    DrawerHistory: function (val, old) {
+      if (!val) {
+        // this.log('DrawerHistory:', val)
+        this.pageN = 1
+        // this.currentPageNum = 1
+        this.$refs['currentPageNum'].currentPage = 1
+        // this.log('currentPageNum:', this.currentPageNum)
+      }
+    },
     // 历史记录输入框
     commitComent: function (val, oVal) {
       if (val) {
@@ -528,6 +539,10 @@ export default {
     }
   },
   methods: {
+    setCurrentPage () {
+      // this.currentPageNum = 1
+      this.$refs['currentPageNum'].currentPage = 1
+    },
     // 取消商品信息
     cancelGoods () {
       this.goodsEdit = false
