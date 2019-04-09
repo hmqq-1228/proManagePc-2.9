@@ -599,7 +599,7 @@ export default {
       // 历史记录
       commitComent: '',
       // 历史记录
-      butnDisabled: false,
+      butnDisabled: true,
       // 一级计划
       FirstLevelTask: false,
       // 一级计划 详情 planList数据处理

@@ -149,8 +149,6 @@ export default {
         var minEnt = new Date(res.data.taskFinishDate).getTime()
         var maxStart = new Date(res.data.parentSTime.split(' ')[0] + ' 00:00:00').getTime()
         var maxEnd = new Date(res.data.parentETime).getTime()
-        console.log('maxStart', maxStart)
-        console.log('minStart', minStart)
         that.pickerOptionsTaskSt.disabledDate = function (time) {
           return time.getTime() < maxStart || time.getTime() > minStart
         }
