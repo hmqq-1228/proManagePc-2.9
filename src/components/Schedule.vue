@@ -82,8 +82,7 @@
         <div class="close" v-on:click="close()"><i class="el-icon-close"></i> </div>
       </div>
       <!--简易详情悬浮窗-->
-      <!-- v-on:mouseleave="detailMouseOut()" -->
-      <div class="ScheduleDetail" v-on:mouseover="detailMouseOver()" v-if="ScheduleDetailShow" v-bind:style="{ top: detailTop + 'px', left: detailLeft + 'px' }">
+      <div class="ScheduleDetail" v-on:mouseover="detailMouseOver()" v-on:mouseleave="detailMouseOut()" v-if="ScheduleDetailShow" v-bind:style="{ top: detailTop + 'px', left: detailLeft + 'px' }">
         <div class="detailFormArrow" v-bind:style="{ top: detailArrowTop + 'px', left: detailArrowLeft + 'px'}"></div>
         <div class="detailTit">{{titleType}}</div>
         <div class="newScheduleIpt"><el-input v-bind:disabled="detailCanEdit" v-model="detailScheduleTit" placeholder="请输入要做什么"></el-input></div>
