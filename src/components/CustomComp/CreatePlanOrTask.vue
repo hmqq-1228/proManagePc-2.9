@@ -306,7 +306,7 @@ export default {
           var st = new Date(that.form.date1).getTime()
           var et = new Date(that.form.date2).getTime()
           that.addPlanPayload.description = that.form.description
-          if (st <= et) {
+          if (st < et) {
             that.ajax('/myProject/addPlan', that.addPlanPayload).then(res => {
               that.$emit('CreatePlanTaskCallback', res)
               if (res.code === 200) {
@@ -378,7 +378,7 @@ export default {
             that.addTaskPayload.attachmentId = that.SetFileIdStr()
             var st = new Date(that.addTaskForm.date1).getTime()
             var et = new Date(that.addTaskForm.date2).getTime()
-            if (st <= et) {
+            if (st < et) {
               that.ajax('/myTask/addTask', that.addTaskPayload).then(res => {
                 that.$emit('CreatePlanTaskCallback', res)
                 that.submitKK = true
