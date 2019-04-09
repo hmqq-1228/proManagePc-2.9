@@ -16,35 +16,37 @@
               <i v-if="isCollapse" class="el-icon-d-arrow-right" />
             </div>
           </div>
-          <el-row style="padding-right: 10px;">
-          <el-col>
-            <el-menu
-              :collapse-transition="false"
-              :collapse="isCollapse"
-              :default-active="activeNavIndex"
-              class="el-menu-vertical-demo"
-              @select="generalSelect"
-              background-color="#2f64a5"
-              text-color="#fff"
-              active-text-color="#ffd04b">
-              <!--侧边栏 集团战略-->
-              <el-submenu v-for="(name, index) in slideMenuGroup" :index="'group_' + index" v-bind:key="index">
-                <template slot="title">
-                  <Icon style="color: #ddd" size="18" type="ios-ribbon-outline" />
-                  <span>{{name.projectType}}</span>
-                </template>
-                <el-menu-item-group>
-                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="'group_' + index + '_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
-                </el-menu-item-group>
-              </el-submenu>
-              <!--侧边栏 非集团战略-->
-              <el-menu-item v-for="(name, index2) in slideMenu" :index="'general_' + index2" v-bind:key="name.projectType + '-' + index2" @click="toMenu(name.projectType)">
-                <Icon size="18" :type="name.icon" />
-                <span slot="title">{{name.projectType}}</span>
-              </el-menu-item>
-            </el-menu>
-          </el-col>
-          </el-row>
+          <div class="hhhhhh" style="height: 100%; overflow: hidden;">
+            <el-row style="padding-right: 10px; height: 100%; width: 270px; overflow-y: scroll;">
+              <el-col>
+                <el-menu
+                  :collapse-transition="false"
+                  :collapse="isCollapse"
+                  :default-active="activeNavIndex"
+                  class="el-menu-vertical-demo"
+                  @select="generalSelect"
+                  background-color="#2f64a5"
+                  text-color="#fff"
+                  active-text-color="#ffd04b">
+                  <!--侧边栏 集团战略-->
+                  <el-submenu v-for="(name, index) in slideMenuGroup" :index="'group_' + index" v-bind:key="index">
+                    <template slot="title">
+                      <Icon style="color: #ddd" size="18" type="ios-ribbon-outline" />
+                      <span>{{name.projectType}}</span>
+                    </template>
+                    <el-menu-item-group>
+                      <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="'group_' + index + '_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
+                    </el-menu-item-group>
+                  </el-submenu>
+                  <!--侧边栏 非集团战略-->
+                  <el-menu-item v-for="(name, index2) in slideMenu" :index="'general_' + index2" v-bind:key="name.projectType + '-' + index2" @click="toMenu(name.projectType)">
+                    <Icon size="18" :type="name.icon" />
+                    <span slot="title">{{name.projectType}}</span>
+                  </el-menu-item>
+                </el-menu>
+              </el-col>
+            </el-row>
+          </div>
         </el-aside>
         <el-main style="padding: 0 20px;">
           <router-view style="min-height: 800px; padding-top: 20px;"/>

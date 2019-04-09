@@ -75,6 +75,7 @@
                   <div>附件:</div>
                   <div v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0" style="display: flex">
                     <div class="proFileListPre"
+                         :title="fileItem.showName"
                          :style="{background: 'url(' + fileItem.previewUrl + ')', backgroundSize: 'cover'}"
                          v-for="fileItem in proDetailMsg.fileList"
                          :key="fileItem.previewUrl">

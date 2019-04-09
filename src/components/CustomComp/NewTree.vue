@@ -2,18 +2,19 @@
   <div class="NewTree">
     <div class="node" v-for="newTreeItem in newTreeList" :key="newTreeItem.id">
       <div class="nodeTitleBox">
-        <div class="nodeTitle" v-on:contextmenu="rightKey">{{newTreeItem.name}}</div>
+        <!-- v-on:contextmenu="rightKey" -->
+        <div class="nodeTitle">{{newTreeItem.name}}</div>
       </div>
       <component v-bind:is="compArr.NewTree" v-bind:newTreeList="newTreeItem.children"></component>
     </div>
     <!-- 右键菜单测试 -->
-    <div id="menu">
-      <div class="menu">功能1</div>
-      <div class="menu">功能2</div>
-      <div class="menu">功能3</div>
-      <div class="menu">功能4</div>
-      <div class="menu">功能5</div>
-    </div>
+    <!--<div id="menu">-->
+      <!--<div class="menu">功能1</div>-->
+      <!--<div class="menu">功能2</div>-->
+      <!--<div class="menu">功能3</div>-->
+      <!--<div class="menu">功能4</div>-->
+      <!--<div class="menu">功能5</div>-->
+    <!--</div>-->
   </div>
 </template>
 
