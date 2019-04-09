@@ -17,7 +17,7 @@
             </div>
           </div>
           <div class="hhhhhh" style="height: 100%; overflow: hidden;">
-            <el-row style="padding-right: 10px; height: 100%; width: 270px; overflow-y: scroll;">
+            <el-row :style="{paddingRright: '10px', height: '100%', width: Width, overflowY: scrollY}">
               <el-col>
                 <el-menu
                   :collapse-transition="false"
@@ -65,6 +65,8 @@ export default {
       activeNavIndex: this.$store.state.activeNavIndex,
       isCollapse: false,
       asideWidth: '250px',
+      Width: '270px',
+      scrollY: 'auto',
       // 侧边栏 集团战略
       slideMenuGroup: [],
       // 非集团战略的侧边栏
@@ -105,8 +107,12 @@ export default {
       this.isCollapse = !this.isCollapse
       if (!this.isCollapse) {
         this.asideWidth = '250px'
+        this.Width = '270px'
+        this.scrollY = 'auto'
       } else {
         this.asideWidth = 'auto'
+        this.Width = 'auto'
+        this.scrollY = 'visible'
       }
     },
     getUserInfo: function () {
@@ -412,4 +418,7 @@ padding: 8px 20px;
 /*.el-container{*/
   /*display: -webkit-box;*/
 /*}*/
+  .Schedule .el-input--prefix .el-input__inner{
+    padding-right: 0;
+  }
 </style>
