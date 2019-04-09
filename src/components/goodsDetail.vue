@@ -1027,13 +1027,16 @@ export default {
         this.showFileUrl = url
       }
     },
-    showEditFormFuc: function () {
+    showEditFormFuc: function (id) {
       var that = this
       that.modifyTaskVisible = true
+      that.currentNodeId = id
+      console.log(id)
     },
-    showPlanEditFormFuc: function () {
+    showPlanEditFormFuc: function (id) {
       var that = this
       that.planEditShow = true
+      that.currentNodeId = id
     },
     proBaseEditClick () {
       this.DrawerBaseEdit = true

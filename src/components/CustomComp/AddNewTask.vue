@@ -180,6 +180,7 @@ export default {
     TaskDistributeShow (val, old) {
       if (val) {
         this.toShowDevided = val
+        this.getDefultTime()
       }
     },
     cancelBtnShow: function (val, oV) {

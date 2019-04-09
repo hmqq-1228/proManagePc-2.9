@@ -195,7 +195,7 @@ export default {
           that.editTaskPayload.attachmentId = that.SetFileIdStr()
           var st = new Date(that.detailTaskform.taskStartDate).getTime()
           var et = new Date(that.detailTaskform.taskFinishDate).getTime()
-          if (st <= et) {
+          if (st < et) {
             that.ajax('/myTask/editTask', that.editTaskPayload).then(res => {
               // that.log('editTask:', res)
               that.$emit('ModifyTaskCallback', res)
