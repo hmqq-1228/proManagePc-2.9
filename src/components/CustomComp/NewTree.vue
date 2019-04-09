@@ -18,6 +18,7 @@ export default {
   },
   watch: {
     firstPlanId (val, old) {
+      this.log('111111:', val)
       if (val) {
         this.getTree()
       }
@@ -29,7 +30,7 @@ export default {
       that.log('firstPlanId:', that.firstPlanId)
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.firstPlanId }).then(res => {
         if (res.code === 200) {
-          that.log('查询树形结构：', res)
+          that.log('查询新树：', res)
           that.listTree = []
           that.listTree = res.data
           // that.listTree.forEach((item, index) => {
