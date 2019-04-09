@@ -178,8 +178,8 @@
       </div>
       <!-- 一级计划 项目计划 start -->
       <div class="planList">
-        <!--<div class="planName" v-on:click="toGoodsDetail2">-->
-        <div class="planName">
+        <div class="planName" v-on:click="toGoodsDetail2">
+        <!--<div class="planName">-->
           <!-- 项
           <br>目
           <br>计
