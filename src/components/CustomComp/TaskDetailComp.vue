@@ -754,6 +754,11 @@ export default {
           $('#myfile2').val('')
           that.loading2 = false
           that.$message.success('评论成功！')
+        } else {
+          that.$message({
+            message: res.msg,
+            type: 'warning'
+          })
         }
       })
     },
