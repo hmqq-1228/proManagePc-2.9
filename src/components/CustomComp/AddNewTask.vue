@@ -78,7 +78,7 @@
               <div class="selectMoreInfo" v-on:click="moreClick2()">
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
-              <div class="submitBtn" v-on:click="depSub()"><i-button type="info">创建</i-button></div>
+              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">创建</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>
@@ -205,16 +205,16 @@ export default {
       return this.$store.state.userName
     }
   },
+  created: function () {
+    this.getDefultTime()
+  },
   methods: {
     getDefultTime () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
         if (res.code === 200) {
-          // console.log('ashfcvasjfvjaskj:', res)
           that.selDateStart2 = res.data.start
           that.selDateEnd2 = res.data.finish
-          // console.log('11111111111', that.selDateStart2)
-          // console.log('2222222222', that.selDateEnd2)
           if (res.data.start) {
             var st = res.data.start.split(' ')[0] + ' 00:00:00'
           }
@@ -348,28 +348,27 @@ export default {
         this.taskRelationShow2 = false
       }
     },
-    depSub: function () {
-      var that = this
-      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        if (res.code === 200) {
-          that.selDateStart2 = res.data.start
-          that.selDateEnd2 = res.data.finish
-          var st = res.data.start.split(' ')[0] + ' 00:00:00'
-          var et = res.data.finish
-          var sT = new Date(st)
-          var eT = new Date(et)
-          var disabledStarTime = sT.getTime()
-          var disabledEndTime = eT.getTime()
-          that.pickerOptions3.disabledDate = function (time) {
-            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
-          }
-          that.depSub2()
-        }
-      })
-    },
+    // depSub: function () {
+    //   var that = this
+    //   that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+    //     if (res.code === 200) {
+    //       that.selDateStart2 = res.data.start
+    //       that.selDateEnd2 = res.data.finish
+    //       var st = res.data.start.split(' ')[0] + ' 00:00:00'
+    //       var et = res.data.finish
+    //       var sT = new Date(st)
+    //       var eT = new Date(et)
+    //       var disabledStarTime = sT.getTime()
+    //       var disabledEndTime = eT.getTime()
+    //       that.pickerOptions3.disabledDate = function (time) {
+    //         return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+    //       }
+    //       that.depSub2()
+    //     }
+    //   })
+    // },
     depSub2: function () {
       var that = this
-      this.getDefultTime()
       that.loading32 = true
       var fileStr = ''
       for (var j = 0; j < this.fileList2.length; j++) {
@@ -403,7 +402,8 @@ export default {
         that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
-        console.log('nodeIDDDDDDDDDDDDDDDDDD', that.nodeId)
+        // console.log('that.CommunityTaskPayload2.taskStartDate', that.CommunityTaskPayload2.taskStartDate)
+        // console.log('that.CommunityTaskPayload2.taskFinishDate', that.CommunityTaskPayload2.taskFinishDate)
         that.ajax('/myTask/addTask', that.CommunityTaskPayload2).then(res => {
           that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
