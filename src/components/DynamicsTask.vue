@@ -595,9 +595,10 @@ export default {
     ActionResThrowFuc: function (obj) {
       // j
     },
-    showEditFormFuc: function () {
+    showEditFormFuc: function (id) {
       var that = this
       that.modifyTaskVisible = true
+      that.taskId2 = id
     },
     TaskDelCallbackFuc: function (res) {
       var that = this
