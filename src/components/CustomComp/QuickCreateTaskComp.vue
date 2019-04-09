@@ -238,7 +238,7 @@ export default {
       if (e) {
         var obj = e.currentTarget
         this.selectDateDiaShow = true
-        this.selectDateLeft = $(obj).offset().left - 420
+        this.selectDateLeft = $(obj).offset().left - 445
         this.selectDateTop = $(obj).offset().top - 102
       }
       // this.log(123)

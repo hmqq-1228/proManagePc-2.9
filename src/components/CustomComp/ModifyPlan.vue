@@ -132,7 +132,7 @@ export default {
           var maxStart = new Date(res.data.parentSTime.split(' ')[0] + ' 00:00:00').getTime()
           var maxEnd = new Date(res.data.parentETime).getTime()
           that.pickerOptionsPlanSt.disabledDate = function (time) {
-            return time.getTime() > maxStart || time.getTime() < minStart
+            return time.getTime() < maxStart || time.getTime() > minStart
           }
           that.pickerOptionsPlanEt.disabledDate = function (time) {
             return time.getTime() > maxEnd || time.getTime() < minEnt
