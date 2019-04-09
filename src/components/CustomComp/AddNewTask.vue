@@ -292,6 +292,7 @@ export default {
     },
     inputFocus2: function () {
       var that = this
+      this.getDefultTime()
       // this.taskRelationShow2 = true
       if (that.moreText2 === '更多') {
         that.moreText2 = '收起'

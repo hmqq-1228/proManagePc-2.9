@@ -293,15 +293,16 @@ export default {
     },
     inputFocus2: function () {
       var that = this
+      that.getDefultTime()
       // this.taskRelationShow2 = true
       if (that.moreText2 === '更多') {
         that.moreText2 = '收起'
-        this.moreIcon2 = 'el-icon-arrow-up'
-        this.taskRelationShow2 = true
+        that.moreIcon2 = 'el-icon-arrow-up'
+        that.taskRelationShow2 = true
       } else {
         that.moreText2 = '更多'
-        this.moreIcon2 = 'el-icon-arrow-down'
-        this.taskRelationShow2 = false
+        that.moreIcon2 = 'el-icon-arrow-down'
+        that.taskRelationShow2 = false
       }
     },
     iptBlur2: function () {
