@@ -68,7 +68,7 @@
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
         <div class="goodItemCon">
           <div class="goodImg" @click="toGoodsManage(good.projectId)">
-            <div class="goodImg2" v-if="good.attachment[0]"><img :src="good.activeImgUrl" alt=""></div>
+            <div class="goodImg2" v-if="good.attachment[0]" @mouseover="showGoodsManage()"><img :src="good.activeImgUrl" alt=""></div>
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
           </div>
           <div class="goodSlider" style="height: 40px;">
