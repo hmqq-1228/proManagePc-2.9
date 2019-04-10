@@ -455,6 +455,7 @@ export default {
         that.taskId = id
         that.getTaskChildList(id)
         that.ajax('/myTask/queryTaskDetail', {taskId: id}).then(res => {
+          that.$emit('getChildrenId', id)
           this.log('queryTaskDetail：', res)
           if (res.code === 200) {
             that.taskBasicMsg = res.data
@@ -603,7 +604,7 @@ export default {
     },
     modifyTask: function () {
       var that = this
-      that.$emit('showEditForm')
+      that.$emit('showEditForm', that.currentNodeId)
     },
     // // 编辑任务 修改任务 ModifyTaskCallbackFuc
     // ModifyTaskCallbackFuc: function (res) {
@@ -754,6 +755,11 @@ export default {
           $('#myfile2').val('')
           that.loading2 = false
           that.$message.success('评论成功！')
+        } else {
+          that.$message({
+            message: res.msg,
+            type: 'warning'
+          })
         }
       })
     },

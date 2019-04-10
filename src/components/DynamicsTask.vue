@@ -121,16 +121,31 @@
           <!---->
           <!--添加评论-->
           <div class="responseArea" v-bind:style="{ height: taskItem.responseHeight + 'px'}">
-            <form v-bind:id="'uploadFile2' + '_' + taskItem.uid + '_' + taskIndex" enctype="multipart/form-data">
-              <textarea name="content" v-bind:id="'textArea' + '_' + taskItem.uid + '_' + taskIndex" class="textArea" v-model="textareaVal" placeholder="请输入回复内容"></textarea>
-              <div class="resAreaOther">
-                <div><input type="file" v-bind:id="'myfileTaskResp' + '_' + taskItem.uid + '_' + taskIndex" name="myfile" placeholder="请选择文件"/></div>
-                <div class="resAreaOtherBtn">
-                  <el-button size="mini" v-on:click="responseCancel(taskItem.uid, taskIndex)">取 消</el-button>
-                  <el-button size="mini" type="primary" @click="responseOk('uploadFile2' + '_' + taskItem.uid + '_' + taskIndex)">提 交</el-button>
-                </div>
+            <!---->
+            <textarea name="content" v-bind:id="'textArea' + '_' + taskItem.uid + '_' + taskIndex" class="textArea" v-model="textareaVal" placeholder="请输入回复内容"></textarea>
+            <div class="resAreaOther">
+              <div>
+                <component v-bind:is="compArr.FileUploadComp" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
               </div>
-            </form>
+              <!--<div><input type="file" v-bind:id="'myfileTaskResp' + '_' + taskItem.uid + '_' + taskIndex" name="myfile" placeholder="请选择文件"/></div>-->
+              <div class="resAreaOtherBtn">
+                <el-button size="mini" v-on:click="responseCancel(taskItem.uid, taskIndex)">取 消</el-button>
+                <el-button size="mini" type="primary" @click="responseOk(taskItem.uid, taskIndex)">提 交</el-button>
+              </div>
+            </div>
+            <!--<form v-bind:id="'uploadFile2' + '_' + taskItem.uid + '_' + taskIndex" enctype="multipart/form-data">-->
+              <!--<textarea name="content" v-bind:id="'textArea' + '_' + taskItem.uid + '_' + taskIndex" class="textArea" v-model="textareaVal" placeholder="请输入回复内容"></textarea>-->
+              <!--<div class="resAreaOther">-->
+                <!--<div>-->
+                  <!--<component v-bind:is="compArr.FileUploadComp" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
+                <!--</div>-->
+                <!--&lt;!&ndash;<div><input type="file" v-bind:id="'myfileTaskResp' + '_' + taskItem.uid + '_' + taskIndex" name="myfile" placeholder="请选择文件"/></div>&ndash;&gt;-->
+                <!--<div class="resAreaOtherBtn">-->
+                  <!--<el-button size="mini" v-on:click="responseCancel(taskItem.uid, taskIndex)">取 消</el-button>-->
+                  <!--<el-button size="mini" type="primary" @click="responseOk('uploadFile2' + '_' + taskItem.uid + '_' + taskIndex)">提 交</el-button>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</form>-->
           </div>
           <!---->
           <div class="tabsCntResponse">
@@ -221,6 +236,7 @@
 </template>
 
 <script>
+import FileUploadComp from './CustomComp/FileUploadComp.vue'
 import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
 import ModifyTask from './CustomComp/ModifyTask.vue'
 import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
@@ -230,6 +246,7 @@ export default {
   name: 'DynamicsTask',
   props: ['recall', 'refresh'],
   components: {
+    FileUploadComp,
     ModifyTask,
     TaskDetailComp,
     PlanDetailComp,
@@ -238,11 +255,15 @@ export default {
   data () {
     return {
       compArr: {
+        FileUploadComp: 'FileUploadComp',
         ModifyTask: 'ModifyTask',
         TaskDetailComp: 'TaskDetailComp',
         PlanDetailComp: 'PlanDetailComp',
         CreatePlanOrTask: 'CreatePlanOrTask'
       },
+      // 附件上传
+      FileUploadArr: [],
+      IsClear: false,
       msg: '任务动态',
       activeNameBgCover: 'first',
       PlanDetailCompRefresh: false,
@@ -532,6 +553,27 @@ export default {
     this.getUserInfo()
   },
   methods: {
+    // 获取附件上传组件发来的附件信息
+    GetFileInfo (obj) {
+      if (obj) {
+        this.IsClear = false
+      }
+      this.FileUploadArr = obj
+    },
+    // 拼接附件上传的id为字符串
+    SetFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.FileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.FileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
+      }
+      that.FileUploadArr = []
+      return FileIdStr
+    },
     // 附件 附件预览
     GetFilePreData (obj) {
       if (obj.previewUrl && this.isImage(obj.fileName)) {
@@ -553,15 +595,17 @@ export default {
     ActionResThrowFuc: function (obj) {
       // j
     },
-    showEditFormFuc: function () {
+    showEditFormFuc: function (id) {
       var that = this
       that.modifyTaskVisible = true
+      that.taskId2 = id
     },
     TaskDelCallbackFuc: function (res) {
       var that = this
       if (res.code === 200) {
         that.getTaskList()
         that.TaskDetailCompShow = false
+        that.value4 = false
         that.$message({
           message: '删除成功！',
           type: 'success'
@@ -820,7 +864,7 @@ export default {
       for (var i = 0; i < that.taskList.length; i++) {
         if (that.taskList[i].uid === id) {
           c = i
-          that.taskList[i].responseHeight = 150
+          that.taskList[i].responseHeight = 180
           obj = that.taskList[i]
         } else {
           that.taskList[i].responseHeight = 0
@@ -849,53 +893,28 @@ export default {
       }
       that.taskList.splice(c, 1, obj)
     },
-    // 点击回复 提交
+    // that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
     responseOk: function (taskId) {
       var that = this
-      that.currentTaskItemId = taskId.split('_')[1]
-      var url = that.$store.state.baseServiceUrl
-      var formData = new FormData($('#' + taskId)[0])
-      formData.append('rid', taskId.split('_')[1])
-      formData.append('rtype', '3')
-      if (that.textareaVal) {
-        $.ajax({
-          type: 'post',
-          url: url + '/general/addOrEditComment',
-          data: formData,
-          cache: false,
-          processData: false,
-          contentType: false,
-          crossDomain: true,
-          xhrFields: {
-            withCredentials: true
-          }
-        }).then(function (data) {
-          if (data.code === 200) {
+      that.currentTaskItemId = taskId
+      if ($.trim(that.textareaVal)) {
+        that.ajax('/comment/addComment', {content: that.textareaVal, attachmentId: that.SetFileIdStr(), contentId: taskId}).then(res => {
+          if (res.code === 200) {
+            that.IsClear = true
             that.$message({
               type: 'success',
-              message: data.msg
+              message: res.msg
             })
             that.textareaVal = ''
-            $('#myfileTaskResp' + '_' + taskId.split('_')[1] + '_' + taskId.split('_')[2]).val('')
             that.getTaskList()
-          } else if (data.code === 300) {
-            that.$message({
-              type: 'error',
-              message: data.msg
-            })
-            that.loading = false
           } else {
             that.$message({
               type: 'error',
-              message: data.msg
+              message: res.msg
             })
-            that.loading = false
           }
-          that.textareaVal = ''
-          $('#myfileTaskResp' + '_' + taskId.split('_')[1] + '_' + taskId.split('_')[2]).val('')
         })
       } else {
-        that.loading = false
         that.$message({
           type: 'error',
           message: '评论内容不能为空'

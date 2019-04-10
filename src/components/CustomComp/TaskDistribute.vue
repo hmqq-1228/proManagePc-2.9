@@ -151,15 +151,15 @@ export default {
       fileList2: [],
       // 任务开始
       CommunityTaskPayload2: {
-        projectUID: '1',
-        uid: '1',
+        // projectUID: '1',
+        parentId: '1',
         pStr: '',
         attachmentId: '',
         description: '',
         jobName: '',
         jobLevel: 3,
-        startTime: '',
-        endTime: '',
+        taskStartDate: '',
+        taskFinishDate: '',
         userId: '',
         _jfinal_token: '',
         userName: ''
@@ -276,7 +276,7 @@ export default {
       var st = new Date(that.selDateStart2).getTime()
       var et = new Date(that.selDateEnd2).getTime()
       if (st > et) {
-        that.$message.warning('开始时间不能大于结束时间')
+        that.$message.warning('时间区间选择不合理')
       } else {
         this.selectDateDiaShow2 = false
       }
@@ -369,17 +369,17 @@ export default {
           // value9没有值，取默认
           selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
-        that.CommunityTaskPayload2.projectUID = that.$store.state.proId
-        that.CommunityTaskPayload2.uid = that.nodeId
+        // that.CommunityTaskPayload2.projectUID = that.$store.state.proId
+        that.CommunityTaskPayload2.parentId = that.nodeId
         that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
         that.CommunityTaskPayload2.pStr = selectUserStr
         that.CommunityTaskPayload2.jobName = that.taskNameText2
-        that.CommunityTaskPayload2.startTime = that.selDateStart2
-        that.CommunityTaskPayload2.endTime = that.selDateEnd2
+        that.CommunityTaskPayload2.taskStartDate = that.selDateStart2
+        that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
         that.log('attachmentId:', that.CommunityTaskPayload2.attachmentId)
-        that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
+        that.ajax('/myTask/addTask', that.CommunityTaskPayload2).then(res => {
           that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1

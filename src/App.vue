@@ -8,34 +8,45 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside width="250px" style="min-height: 700px;background-color: #2f64a5">
-          <el-row>
-          <el-col :span="24">
-            <el-menu
-              :default-active="activeNavIndex"
-              class="el-menu-vertical-demo"
-              @select="generalSelect"
-              background-color="#2f64a5"
-              text-color="#fff"
-              active-text-color="#ffd04b">
-              <!--侧边栏 集团战略-->
-              <el-submenu v-for="(name, index) in slideMenuGroup" :index="'group_' + index" v-bind:key="index">
-                <template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>{{name.projectType}}</span>
-                </template>
-                <el-menu-item-group>
-                  <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="'group_' + index + '_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
-                </el-menu-item-group>
-              </el-submenu>
-              <!--侧边栏 非集团战略-->
-              <el-menu-item v-for="(name, index2) in slideMenu" :index="'general_' + index2" v-bind:key="name.projectType + '-' + index2" @click="toMenu(name.projectType)">
-                <i class="el-icon-menu"></i>
-                <span slot="title">{{name.projectType}}</span>
-              </el-menu-item>
-            </el-menu>
-          </el-col>
-          </el-row>
+        <!--height: 100%; background-color: #2f64a5-->
+        <el-aside class="asideBox" v-bind:style="{width: asideWidth, height: '100%', backgroundColor: '#2f64a5'}">
+          <div class="collapseBtnBox" v-on:click="collapseBtnClick">
+            <div style="position: absolute; top: 45%;">
+              <i v-if="!isCollapse" class="el-icon-d-arrow-left" />
+              <i v-if="isCollapse" class="el-icon-d-arrow-right" />
+            </div>
+          </div>
+          <div class="hhhhhh" style="height: 100%; overflow: hidden;">
+            <el-row :style="{paddingRright: '10px', height: '100%', width: Width, overflowY: scrollY}">
+              <el-col>
+                <el-menu
+                  :collapse-transition="false"
+                  :collapse="isCollapse"
+                  :default-active="activeNavIndex"
+                  class="el-menu-vertical-demo"
+                  @select="generalSelect"
+                  background-color="#2f64a5"
+                  text-color="#fff"
+                  active-text-color="#ffd04b">
+                  <!--侧边栏 集团战略-->
+                  <el-submenu v-for="(name, index) in slideMenuGroup" :index="'group_' + index" v-bind:key="index">
+                    <template slot="title">
+                      <Icon style="color: #ddd" size="18" type="ios-ribbon-outline" />
+                      <span>{{name.projectType}}</span>
+                    </template>
+                    <el-menu-item-group>
+                      <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="'group_' + index + '_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
+                    </el-menu-item-group>
+                  </el-submenu>
+                  <!--侧边栏 非集团战略-->
+                  <el-menu-item v-for="(name, index2) in slideMenu" :index="'general_' + index2" v-bind:key="name.projectType + '-' + index2" @click="toMenu(name.projectType)">
+                    <Icon size="18" :type="name.icon" />
+                    <span slot="title">{{name.projectType}}</span>
+                  </el-menu-item>
+                </el-menu>
+              </el-col>
+            </el-row>
+          </div>
         </el-aside>
         <el-main style="padding: 0 20px;">
           <router-view style="min-height: 800px; padding-top: 20px;"/>
@@ -52,7 +63,10 @@ export default {
   data () {
     return {
       activeNavIndex: this.$store.state.activeNavIndex,
-      isCollapse: true,
+      isCollapse: false,
+      asideWidth: '250px',
+      Width: '270px',
+      scrollY: 'auto',
       // 侧边栏 集团战略
       slideMenuGroup: [],
       // 非集团战略的侧边栏
@@ -89,6 +103,18 @@ export default {
     }
   },
   methods: {
+    collapseBtnClick: function () {
+      this.isCollapse = !this.isCollapse
+      if (!this.isCollapse) {
+        this.asideWidth = '250px'
+        this.Width = '270px'
+        this.scrollY = 'auto'
+      } else {
+        this.asideWidth = 'auto'
+        this.Width = 'auto'
+        this.scrollY = 'visible'
+      }
+    },
     getUserInfo: function () {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
@@ -160,6 +186,32 @@ export default {
           that.slideMenuGroup = []
           that.slideMenu = []
           for (var i = 0; i < res.data.length; i++) {
+            // 设置图标
+            switch (res.data[i].projectType) {
+              // case '集团战略':
+              //   res.data[i].icon = 'ios-ribbon-outline'
+              //   break
+              case '商品管理':
+                res.data[i].icon = 'md-cart'
+                break
+              case '我的动态':
+                res.data[i].icon = 'md-chatboxes'
+                break
+              case '我的日程':
+                res.data[i].icon = 'ios-calendar'
+                break
+              case '我的项目':
+                res.data[i].icon = 'ios-paper'
+                break
+              case '我的任务':
+                res.data[i].icon = 'md-analytics'
+                break
+              default:
+                res.data[i].icon = 'md-analytics'
+            }
+            if (res.data[i].projectType === '集团战略') {
+              res.data[i].icon = ''
+            }
             if (res.data[i].projectType === '集团战略') {
               that.slideMenuGroup.push(res.data[i])
             } else {
@@ -228,6 +280,9 @@ html,body{
 #app{
   height: 100%;
 }
+.el-aside {
+  overflow: visible !important;
+}
 .goodsDetail .el-tabs__content {
   overflow: visible !important;
 }
@@ -289,6 +344,26 @@ padding: 8px 20px;
     font-weight: normal;
     font-size: 16px;
   }
+  .asideBox{
+    transition: width 2s;
+    position: relative;
+  }
+  .asideBox:hover .collapseBtnBox{
+    display: block;
+  }
+  .collapseBtnBox{
+    color: #fff;
+    font-size: 16px;
+    width: 20px;
+    height: 100%;
+    background: rgba(255,255,255,0.2);
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-top: 50%;
+    z-index: 999;
+    display: none;
+  }
 .HelloWorld .el-tree-node__content{
   height: 40px;
   border-bottom: 1px dashed #ddd;
@@ -336,5 +411,14 @@ padding: 8px 20px;
   }
   .contentTop .el-button{
     padding: 7px 14px;
+  }
+  .el-menu-item i{
+    color: #ddd !important;
+  }
+/*.el-container{*/
+  /*display: -webkit-box;*/
+/*}*/
+  .Schedule .el-input--prefix .el-input__inner{
+    padding-right: 0;
   }
 </style>

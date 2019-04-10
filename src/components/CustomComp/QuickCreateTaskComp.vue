@@ -159,13 +159,14 @@ export default {
         projectManager: ''
       },
       CommunityTaskPayload: {
-        projectUID: '',
-        planId: '',
-        taskId: '',
+        parentId: '',
+        // projectUID: '',
+        // planId: '',
+        // taskId: '',
         jobName: '',
         description: '',
-        startTime: '',
-        endTime: '',
+        taskStartDate: '',
+        taskFinishDate: '',
         jobLevel: '3',
         // 附件id
         attachmentId: '',
@@ -237,7 +238,7 @@ export default {
       if (e) {
         var obj = e.currentTarget
         this.selectDateDiaShow = true
-        this.selectDateLeft = $(obj).offset().left - 420
+        this.selectDateLeft = $(obj).offset().left - 445
         this.selectDateTop = $(obj).offset().top - 102
       }
       // this.log(123)
@@ -253,7 +254,7 @@ export default {
     // 获取所属项目
     getProBelong: function () {
       var that = this
-      that.ajax('/community/getAllProject', {}).then(res => {
+      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         if (res.code === 200) {
           // this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID
@@ -277,6 +278,7 @@ export default {
           }
           that.selDateStart = res.data.startDate
           that.selDateEnd = res.data.endDate
+          that.CommunityTaskPayload.parentId = res.data.firstPlanId
         } else {
           that.$message({
             message: res.msg
@@ -411,14 +413,14 @@ export default {
         that.CommunityTaskPayload.attachmentId = that.SetFileIdStr()
         that.CommunityTaskPayload.pStr = selectUserStr
         that.CommunityTaskPayload.jobName = that.taskNameText
-        that.CommunityTaskPayload.startTime = that.selDateStart
-        that.CommunityTaskPayload.endTime = that.selDateEnd
+        that.CommunityTaskPayload.taskStartDate = that.selDateStart
+        that.CommunityTaskPayload.taskFinishDate = that.selDateEnd
         that.CommunityTaskPayload.projectUID = that.projectBelong
         that.CommunityTaskPayload.description = that.taskIntro
         var st = new Date(that.selDateStart).getTime()
         var et = new Date(that.selDateEnd).getTime()
         if (st <= et) {
-          that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+          that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
             that.$emit('ActionResThrow', {res: res, actionName: 'addCommunityTask'})
             if (res.code === 200) {
               that.IsClear = true

@@ -78,7 +78,7 @@
               <div class="selectMoreInfo" v-on:click="moreClick2()">
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
-              <div class="submitBtn" v-on:click="depSub()"><i-button type="info">创建</i-button></div>
+              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">创建</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>
@@ -171,8 +171,8 @@ export default {
         jobLevel: 3,
         taskStartDate: '',
         taskFinishDate: '',
-        users: '',
-        userId: ''
+        // users: '',
+        pStr: ''
       }
     }
   },
@@ -180,6 +180,7 @@ export default {
     TaskDistributeShow (val, old) {
       if (val) {
         this.toShowDevided = val
+        this.getDefultTime()
       }
     },
     cancelBtnShow: function (val, oV) {
@@ -205,17 +206,19 @@ export default {
       return this.$store.state.userName
     }
   },
+  created: function () {
+    this.getDefultTime()
+  },
   methods: {
     getDefultTime () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
         if (res.code === 200) {
-          // console.log('ashfcvasjfvjaskj:', res)
           that.selDateStart2 = res.data.start
           that.selDateEnd2 = res.data.finish
-          // console.log('11111111111', that.selDateStart2)
-          // console.log('2222222222', that.selDateEnd2)
-          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          if (res.data.start) {
+            var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          }
           var et = res.data.finish
           var sT = new Date(st)
           var eT = new Date(et)
@@ -275,10 +278,11 @@ export default {
     },
     selectDateOk2: function () {
       var that = this
+      // this.getDefultTime()
       var st = new Date(that.selDateStart2).getTime()
       var et = new Date(that.selDateEnd2).getTime()
       if (st > et) {
-        that.$message.warning('开始时间不能大于结束时间')
+        that.$message.warning('时间区间选择不合理')
       } else {
         this.selectDateDiaShow2 = false
       }
@@ -289,6 +293,7 @@ export default {
     },
     inputFocus2: function () {
       var that = this
+      this.getDefultTime()
       // this.taskRelationShow2 = true
       if (that.moreText2 === '更多') {
         that.moreText2 = '收起'
@@ -314,8 +319,10 @@ export default {
       this.transitionManage2('', true)
     },
     selectDate2: function (e) {
-      // 所有的伸缩窗 隐藏
-      this.getDefultTime()
+      // 所有的伸缩窗 隐藏 selDateStart2
+      if (!this.selDateStart2 || !this.selDateEnd2) {
+        this.getDefultTime()
+      }
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
@@ -345,28 +352,27 @@ export default {
         this.taskRelationShow2 = false
       }
     },
-    depSub: function () {
-      var that = this
-      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        if (res.code === 200) {
-          that.selDateStart2 = res.data.start
-          that.selDateEnd2 = res.data.finish
-          var st = res.data.start.split(' ')[0] + ' 00:00:00'
-          var et = res.data.finish
-          var sT = new Date(st)
-          var eT = new Date(et)
-          var disabledStarTime = sT.getTime()
-          var disabledEndTime = eT.getTime()
-          that.pickerOptions3.disabledDate = function (time) {
-            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
-          }
-          that.depSub2()
-        }
-      })
-    },
+    // depSub: function () {
+    //   var that = this
+    //   that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+    //     if (res.code === 200) {
+    //       that.selDateStart2 = res.data.start
+    //       that.selDateEnd2 = res.data.finish
+    //       var st = res.data.start.split(' ')[0] + ' 00:00:00'
+    //       var et = res.data.finish
+    //       var sT = new Date(st)
+    //       var eT = new Date(et)
+    //       var disabledStarTime = sT.getTime()
+    //       var disabledEndTime = eT.getTime()
+    //       that.pickerOptions3.disabledDate = function (time) {
+    //         return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+    //       }
+    //       that.depSub2()
+    //     }
+    //   })
+    // },
     depSub2: function () {
       var that = this
-      this.getDefultTime()
       that.loading32 = true
       var fileStr = ''
       for (var j = 0; j < this.fileList2.length; j++) {
@@ -394,16 +400,20 @@ export default {
         }
         that.CommunityTaskPayload2.parentId = that.nodeId
         that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
-        that.CommunityTaskPayload2.users = selectUserStr
+        that.CommunityTaskPayload2.pStr = selectUserStr
         that.CommunityTaskPayload2.jobName = that.taskNameText2
         that.CommunityTaskPayload2.taskStartDate = that.selDateStart2
         that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
-        console.log('nodeIDDDDDDDDDDDDDDDDDD', that.nodeId)
-        that.ajax('/myProject/addTask', that.CommunityTaskPayload2).then(res => {
+        // console.log('that.CommunityTaskPayload2.taskStartDate', that.CommunityTaskPayload2.taskStartDate)
+        // console.log('that.CommunityTaskPayload2.taskFinishDate', that.CommunityTaskPayload2.taskFinishDate)
+        that.ajax('/myTask/addTask', that.CommunityTaskPayload2).then(res => {
           that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
+            // 时间选项重置
+            this.selDateStart2 = ''
+            this.selDateEnd2 = ''
             that.isRecall2 = that.isRecall2 + 1
             that.IsClear = true
             that.$message({

@@ -225,7 +225,7 @@ export default {
         taskFinishDate: '',
         description: '',
         jobLevel: 1,
-        users: []
+        pStr: []
       },
       moreUserSelectPayload: {
         projectManager: ''
@@ -266,13 +266,15 @@ export default {
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
         console.log('dateLimit-res:', res)
         if (res.code === 200) {
-          var st = res.data.start.split(' ')[0] + ' 00:00:00'
+          if (res.data.start) {
+            var st = res.data.start.split(' ')[0] + ' 00:00:00'
+            that.form.date1 = res.data.start
+            that.addTaskForm.date1 = res.data.start
+          }
           var et = res.data.finish
           var sT = new Date(st)
           var eT = new Date(et)
-          that.form.date1 = res.data.start
           that.form.date2 = res.data.finish
-          that.addTaskForm.date1 = res.data.start
           that.addTaskForm.date2 = res.data.finish
           var disabledStarTime2 = sT.getTime()
           var disabledEndTime2 = eT.getTime()
@@ -315,7 +317,7 @@ export default {
               }
             })
           } else {
-            that.$message.warning('开始时间不能大于结束时间')
+            that.$message.warning('时间区间选择不合理')
           }
         }
       })
@@ -369,7 +371,7 @@ export default {
             that.addTaskPayload.parentId = that.nodeId
             that.addTaskPayload.jobName = that.addTaskForm.jobName
             that.addTaskPayload.jobLevel = that.addTaskForm.jobLevel
-            that.addTaskPayload.users = that.user
+            that.addTaskPayload.pStr = that.user
             that.addTaskPayload.taskStartDate = that.addTaskForm.date1
             that.addTaskPayload.taskFinishDate = that.addTaskForm.date2
             that.addTaskPayload.description = that.addTaskForm.description
@@ -377,7 +379,7 @@ export default {
             var st = new Date(that.addTaskForm.date1).getTime()
             var et = new Date(that.addTaskForm.date2).getTime()
             if (st < et) {
-              that.ajax('/myProject/addTask', that.addTaskPayload).then(res => {
+              that.ajax('/myTask/addTask', that.addTaskPayload).then(res => {
                 that.$emit('CreatePlanTaskCallback', res)
                 that.submitKK = true
                 if (res.code === 200) {
@@ -390,7 +392,7 @@ export default {
                 }
               })
             } else {
-              that.$message.warning('开始时间不能大于结束时间')
+              that.$message.warning('时间区间选择不合理')
             }
           }
         })

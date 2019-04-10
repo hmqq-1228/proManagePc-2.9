@@ -264,8 +264,8 @@ export default {
         taskId: '',
         jobName: '',
         description: '',
-        startTime: '',
-        endTime: '',
+        taskStartDate: '',
+        taskFinishDate: '',
         jobLevel: '3',
         // 附件id
         attachmentId: '',
@@ -454,7 +454,7 @@ export default {
     // 获取所属项目
     getProBelong: function () {
       var that = this
-      that.ajax('/community/getAllProject', {}).then(res => {
+      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         if (res.code === 200) {
           // this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID
@@ -620,11 +620,11 @@ export default {
         that.CommunityTaskPayload.attachmentId = fileStr
         that.CommunityTaskPayload.pStr = selectUserStr
         that.CommunityTaskPayload.jobName = that.taskNameText
-        that.CommunityTaskPayload.startTime = that.selDateStart
-        that.CommunityTaskPayload.endTime = that.selDateEnd
+        that.CommunityTaskPayload.taskStartDate = that.selDateStart
+        that.CommunityTaskPayload.taskFinishDate = that.selDateEnd
         that.CommunityTaskPayload.projectUID = that.projectBelong
         that.CommunityTaskPayload.description = that.taskIntro
-        that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+        that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
           if (res.code === 200) {
             that.isRecall = that.isRecall + 1
             that.$message({
@@ -674,9 +674,9 @@ export default {
       this.taskNameText = ''
       this.CommunityTaskPayload.jobName = ''
       this.selDateStart = this.startTimeFirst
-      this.CommunityTaskPayload.startTime = this.startTimeFirst
+      this.CommunityTaskPayload.taskStartDate = this.startTimeFirst
       this.selDateEnd = this.endTimeFirst
-      this.CommunityTaskPayload.endTime = this.endTimeFirst
+      this.CommunityTaskPayload.taskFinishDate = this.endTimeFirst
       this.taskIntro = ''
       this.CommunityTaskPayload.description = ''
       this.attachmentId = ''

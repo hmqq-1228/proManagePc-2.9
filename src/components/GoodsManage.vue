@@ -68,7 +68,7 @@
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
         <div class="goodItemCon">
           <div class="goodImg" @click="toGoodsManage(good.projectId)">
-            <div class="goodImg2" v-if="good.attachment[0]"><img :src="good.activeImgUrl" alt=""></div>
+            <div class="goodImg2" v-if="good.attachment[0]" @mouseover="showGoodsManage()"><img :src="good.activeImgUrl" alt=""></div>
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
           </div>
           <div class="goodSlider" style="height: 40px;">
@@ -101,6 +101,7 @@
       <el-pagination
         @current-change="handleCurrentChange($event)"
         background
+        :current-page = 'currentPage'
         :page-size="getGoodList.pageSize"
         layout="total, prev, pager, next, jumper"
         :total="goodListTotal">
@@ -116,6 +117,7 @@ export default {
     return {
       imgWide: 50,
       goodsImgUrl: '',
+      currentPage: 1,
       dialogVisible: false,
       inputVal: '',
       radioVal: '创建时间',
@@ -244,7 +246,7 @@ export default {
       var that = this
       if (type && code) {
         that.getGoodList.categoryType = that.$store.state.goodType
-        that.getGoodList.code = code
+        that.getGoodList.code = that.$store.state.goodCode
         that.ajax('/goods/getGoodsList', that.getGoodList).then(res => {
           if (res.code === 200) {
             that.goodList = res.data.list
@@ -257,8 +259,8 @@ export default {
           }
         })
       } else {
-        that.getGoodList.code = ''
-        that.getGoodList.categoryType = ''
+        that.getGoodList.categoryType = that.$store.state.goodType
+        that.getGoodList.code = that.$store.state.goodCode
         that.ajax('/goods/getGoodsList', that.getGoodList).then(res => {
           if (res.code === 200) {
             that.goodList = res.data.list
@@ -275,14 +277,17 @@ export default {
     // 分页
     handleCurrentChange: function (e) {
       var that = this
+      that.currentPage = e
       that.getGoodList.pageNum = e
       that.getGoodsList()
     },
     // 第二级到第四级查询
     secondType: function (e, name, type, code) {
       var that = this
+      that.currentPage = 1
       that.getGoodList.pageNum = 1
       var codeLen = ''
+      that.$store.state.goodCode = code
       that.$store.state.goodType = type
       if (code.length >= 2) {
         if (name === '全部') {

@@ -4,7 +4,7 @@
       <div class="paiTaskTitTab">
         <div class="paiTask pai active">新建任务</div>
       </div>
-      <component v-bind:is="compArr.QuickCreateTaskComp" fileFormId="QuickCreateTaskComp"></component>
+      <component v-bind:is="compArr.QuickCreateTaskComp" fileFormId="QuickCreateTaskComp" v-on:ActionResThrow="ActionResThrowFuc"></component>
     </div>
     <div class="searchItem">
       <div>
@@ -47,9 +47,9 @@
     </div>
     <!---->
     <div class="taskBox" style="box-sizing: border-box;">
-      <div class="taskList" v-for="(myTask, index) in myTaskList" :key="index" @click="toDetail(myTask.uid)">
+      <div class="taskList" v-for="(myTask, index) in myTaskList" :key="index" @click="toDetail(myTask.uid)" style="cursor: pointer;">
         <div class="taskItem">
-          <div><span style="font-size: 16px;color: #409EFF;cursor: pointer;">{{myTask.jobName}}</span></div>
+          <div><span style="font-size: 16px;color: #409EFF;">{{myTask.jobName}}</span></div>
           <div class="taskName"><Icon type="md-ribbon" size="20"/>{{myTask.projectName}}</div>
         </div>
         <div class="taskMsg">
@@ -264,7 +264,7 @@ export default {
   methods: {
     queryMyProjectList () {
       var that = this
-      this.ajax('/myProject/myProjectList', {}).then(res => {
+      this.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         // this.log('选择所属项目:', res)
         if (res.code === 200) {
           that.projectList = res.data
@@ -272,7 +272,6 @@ export default {
       })
     },
     myTaskStyleChange: function (e) {
-      // console.log('eeeee', e)
       var that = this
       that.myTaskViewPayload.pageNum = 1
       that.myTaskViewPayload.taskSource = e
@@ -328,8 +327,9 @@ export default {
       that.value444 = true
       that.TaskDetailCompShow = false
     },
-    showEditFormFuc: function () {
+    showEditFormFuc: function (id) {
       var that = this
+      that.currentNodeId = id
       that.modifyTaskVisible = true
     },
     ActionResThrowFuc: function (obj) {
@@ -340,6 +340,10 @@ export default {
             // 任务移交
             that.TaskDetailCompShow = false
             that.queryMyTaskView(that.activeId)
+            break
+          case 'addCommunityTask':
+            // 任务完成
+            that.queryMyTaskView()
             break
           case 'finishTask':
             // 任务完成

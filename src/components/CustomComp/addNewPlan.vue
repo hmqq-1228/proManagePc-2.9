@@ -77,7 +77,7 @@
               <div class="selectMoreInfo" v-on:click="moreClick2()">
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
-              <div class="submitBtn" v-on:click="depSub()"><i-button type="info">创建</i-button></div>
+              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">创建</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>
@@ -208,6 +208,9 @@ export default {
   //     return this.$store.state.userName
   //   }
   // },
+  created: function () {
+    this.getDefultTime()
+  },
   methods: {
     getDefultTime () {
       var that = this
@@ -279,7 +282,7 @@ export default {
       var st = new Date(that.selDateStart2).getTime()
       var et = new Date(that.selDateEnd2).getTime()
       if (st > et) {
-        that.$message.warning('开始时间不能大于结束时间')
+        that.$message.warning('时间区间选择不合理')
       } else {
         this.selectDateDiaShow2 = false
       }
@@ -290,15 +293,16 @@ export default {
     },
     inputFocus2: function () {
       var that = this
+      that.getDefultTime()
       // this.taskRelationShow2 = true
       if (that.moreText2 === '更多') {
         that.moreText2 = '收起'
-        this.moreIcon2 = 'el-icon-arrow-up'
-        this.taskRelationShow2 = true
+        that.moreIcon2 = 'el-icon-arrow-up'
+        that.taskRelationShow2 = true
       } else {
         that.moreText2 = '更多'
-        this.moreIcon2 = 'el-icon-arrow-down'
-        this.taskRelationShow2 = false
+        that.moreIcon2 = 'el-icon-arrow-down'
+        that.taskRelationShow2 = false
       }
     },
     iptBlur2: function () {
@@ -317,7 +321,9 @@ export default {
     selectDate2: function (e) {
       // 所有的伸缩窗 隐藏
       var that = this
-      that.getDefultTime()
+      if (!that.selDateStart2 || !that.selDateEnd2) {
+        that.getDefultTime()
+      }
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
@@ -347,28 +353,27 @@ export default {
         this.taskRelationShow2 = false
       }
     },
-    depSub: function () {
-      var that = this
-      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        if (res.code === 200) {
-          that.selDateStart2 = res.data.start
-          that.selDateEnd2 = res.data.finish
-          var st = res.data.start.split(' ')[0] + ' 00:00:00'
-          var et = res.data.finish
-          var sT = new Date(st)
-          var eT = new Date(et)
-          var disabledStarTime = sT.getTime()
-          var disabledEndTime = eT.getTime()
-          that.pickerOptions3.disabledDate = function (time) {
-            return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
-          }
-          that.depSub2()
-        }
-      })
-    },
+    // depSub: function () {
+    //   var that = this
+    //   that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+    //     if (res.code === 200) {
+    //       that.selDateStart2 = res.data.start
+    //       that.selDateEnd2 = res.data.finish
+    //       var st = res.data.start.split(' ')[0] + ' 00:00:00'
+    //       var et = res.data.finish
+    //       var sT = new Date(st)
+    //       var eT = new Date(et)
+    //       var disabledStarTime = sT.getTime()
+    //       var disabledEndTime = eT.getTime()
+    //       that.pickerOptions3.disabledDate = function (time) {
+    //         return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
+    //       }
+    //       that.depSub2()
+    //     }
+    //   })
+    // },
     depSub2: function () {
       var that = this
-      that.getDefultTime()
       that.loading32 = true
       var fileStr = ''
       for (var j = 0; j < this.fileList2.length; j++) {
@@ -405,6 +410,8 @@ export default {
         that.ajax('/myProject/addPlan', that.planData).then(res => {
           that.$emit('TaskDistributeCallback', res)
           if (res.code === 200) {
+            that.selDateStart2 = ''
+            that.selDateEnd2 = ''
             that.isRecall2 = that.isRecall2 + 1
             that.IsClear = true
             that.$message({

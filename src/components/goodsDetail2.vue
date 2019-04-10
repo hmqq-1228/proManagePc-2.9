@@ -38,7 +38,7 @@
         <div class="topCon">
           <div class="topConLf">
             <div class="title" style="display: flex;">
-              <div v-on:contextmenu="rightKey"><span>{{proDetailMsg.projectType}}:</span> {{proDetailMsg.projectName}}</div>
+              <div>项目:{{proDetailMsg.projectName}}</div>
               <div style="position: relative; width: 100px; margin-left: 15px;">
                 <div class="imgBox" style="position: absolute;" v-if="proDetailMsg.state === '0'">
                   <img src="../../static/img/unstart.png" alt>
@@ -71,29 +71,18 @@
                 <div style="color: #28558c; font-size: 20px; margin-top: -6px">
                   <Icon type="ios-image"/>
                 </div>
-                <div style="margin-left: 10px; color: #28558c; display: flex;">
-                  <div>附件:</div>
-                  <div v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0" style="display: flex">
-                    <div class="proFileListPre"
-                         :title="fileItem.showName"
-                         :style="{background: 'url(' + fileItem.previewUrl + ')', backgroundSize: 'cover'}"
-                         v-for="fileItem in proDetailMsg.fileList"
-                         :key="fileItem.previewUrl">
-                      <div v-if="fileItem.isImg" style="width: 60%" @click="showImagePre(fileItem.previewUrl, fileItem.showName)"></div>
-                      <div v-if="!fileItem.isImg" style="width: 60%">
-                        <a v-bind:download="fileItem.showName" v-bind:href="fileItem.downloadUrl">
-                          <Icon style="margin-top: -8px; font-size: 16px;" type="ios-document-outline" />
-                        </a>
-                      </div>
-                      <div style="width: 40%; background: rgba(64,158,255, 0.5)">
-                        <a v-bind:download="fileItem.showName" v-bind:href="fileItem.downloadUrl"><Icon style="color: #fff" type="md-arrow-down" /></a>
-                      </div>
-                    </div>
-                  </div>
-                  <!--<span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0">-->
-                    <!--<span style="cursor: pointer;color: #409EFF;font-size: 14px;" @click="showFileModelClick()">查看附件</span>-->
-                  <!--</span>-->
-                  <div style="color: #aaa;font-size: 14px" v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0">暂无附件</div>
+                <div style="margin-left: 10px; color: #28558c;">
+                  附件:
+                  <span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0">
+                    <span
+                      style="cursor: pointer;color: #409EFF;font-size: 14px;"
+                      @click="showFileModelClick()"
+                    >查看附件</span>
+                  </span>
+                  <span
+                    style="color: #aaa;font-size: 14px"
+                    v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0"
+                  >暂无附件</span>
                 </div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 8px; color: #2d8cf0;">
@@ -140,7 +129,7 @@
       </div>
       <div v-else style="margin-bottom: 15px; display: flex; justify-content: space-between;">
         <div style="display: flex;">
-          <div class="title"><span>{{proDetailMsg.projectType}}:</span> {{proDetailMsg.projectName}}</div>
+          <div class="title">项目:{{proDetailMsg.projectName}}</div>
           <div style="position: relative; width: 100px; margin-left: 15px;">
             <div class="imgBox" style="position: absolute;" v-if="proDetailMsg.state === '0'">
               <img src="../../static/img/unstart.png" alt>
@@ -178,7 +167,6 @@
       </div>
       <!-- 一级计划 项目计划 start -->
       <div class="planList">
-        <!--<div class="planName" v-on:click="toGoodsDetail2">-->
         <div class="planName">
           <!-- 项
           <br>目
@@ -245,12 +233,21 @@
       </div>
     </div>
     <!-- zh 树形结构 新版本-->
-    <div v-if="listTree.length>0 && planList.length > 0">
-       <tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>
+    <!--<div v-if="listTree.length>0 && planList.length > 0">-->
+       <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
+    <!--</div>-->
+    <div>
+      <component v-bind:is="compArr.NewTree"
+                 v-bind:proId="proId"
+                 v-bind:firstPlanId="firstPlanId"
+                 v-bind:newTreeList="newTreeList"
+                 v-bind:TreeNodeId="TreeNodeId">
+      </component>
+      <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
     </div>
-    <div v-else class="noData">
-       暂无数据
-    </div>
+    <!--<div>-->
+       <!--暂无数据-->
+    <!--</div>-->
     <!-- Part05 start 抽屉 任务详情 -->
     <Drawer
       title="任务详情"
@@ -481,10 +478,12 @@ import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 import tree from './CustomComp/tree.vue'
 import AddNewTask from './CustomComp/AddNewTask.vue'
 import addNewPlan from './CustomComp/addNewPlan.vue'
+import NewTree from './CustomComp/NewTree.vue'
 // DrawerComp
 export default {
-  name: 'ProDetail',
+  name: 'ProDetail2',
   components: {
+    NewTree,
     CommentLogs,
     ModifyPlan,
     ModifyTask,
@@ -502,9 +501,9 @@ export default {
   },
   data () {
     return {
+      // j
+      TreeNodeId: '',
       // refshPlan: false
-      // 点击任务详情删除是否默认第一个
-      isChangeActive: false,
       showName: false,
       // 是否有档案
       archives: true,
@@ -526,7 +525,8 @@ export default {
         TaskDetailComp: 'TaskDetailComp',
         PlanDetailComp: 'PlanDetailComp',
         AddNewTask: 'AddNewTask',
-        addNewPlan: 'addNewPlan'
+        addNewPlan: 'addNewPlan',
+        NewTree: 'NewTree'
       },
       // zh 树状展开收缩文字
       treeName: '收缩',
@@ -599,7 +599,7 @@ export default {
       // 历史记录
       commitComent: '',
       // 历史记录
-      butnDisabled: true,
+      butnDisabled: false,
       // 一级计划
       FirstLevelTask: false,
       // 一级计划 详情 planList数据处理
@@ -630,6 +630,7 @@ export default {
         content: '',
         attachmentId: ''
       },
+      newTreeList: [],
       listTree: [
         {
           id: 1,
@@ -884,9 +885,6 @@ export default {
     }
   },
   methods: {
-    toGoodsDetail2: function () {
-      this.$router.push('/goodsDetail2')
-    },
     // 测试右键
     rightKey: function (e) {
       this.log('e.:', e.offsetX)
@@ -954,6 +952,7 @@ export default {
     getPlanTree (plan) {
       let that = this
       that.activeId = plan.id
+      that.TreeNodeId = plan.id
       // 判断是否可以增加计划
       that.parentId = plan.id
       if (plan.type === '1') {
@@ -967,12 +966,41 @@ export default {
       let that = this
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.activeId }).then(res => {
         if (res.code === 200) {
+          // that.log('查询树形结构：', res)
           that.listTree = []
           that.treeName = '收缩'
           that.listTree = res.data
           that.listTree.forEach((item, index) => {
             item['show'] = true
           })
+        }
+      })
+    },
+    queryNewTree (proDetRes) {
+      let that = this
+      // that.log('firstPlanId:', that.firstPlanId)
+      that.ajax('/myProject/getPlanAndTaskTree', { id: that.firstPlanId }).then(res => {
+        if (res.code === 200) {
+          that.log('查询新树：', res)
+          that.listTree = []
+          that.listTree = res.data
+          // that.log(111111)
+          that.log('proDetRes:::', proDetRes)
+          if (proDetRes) {
+            var obj = {
+              children: res.data,
+              createDate: proDetRes.data.createDate,
+              finish: proDetRes.data.endDate,
+              id: proDetRes.data.firstPlanId,
+              name: proDetRes.data.content,
+              parentId: proDetRes.data.projectUID,
+              sortCode: '',
+              start: proDetRes.data.startDate,
+              type: 'rootPlan'
+            }
+            that.newTreeList = []
+            that.newTreeList.push(obj)
+          }
         }
       })
     },
@@ -1006,7 +1034,6 @@ export default {
       // this.log('pppppp:', nodeId)
       // this.selectProjectId(nodeId, flag, e)
       this.currentNodeId = nodeId
-      this.isChangeActive = true
       console.log('idddddd', this.currentNodeId)
       if (nodeId.substring(0, 1) === 'J') {
         that.TaskDetailCompShow = true
@@ -1027,16 +1054,13 @@ export default {
         this.showFileUrl = url
       }
     },
-    showEditFormFuc: function (id) {
+    showEditFormFuc: function () {
       var that = this
       that.modifyTaskVisible = true
-      that.currentNodeId = id
-      console.log(id)
     },
-    showPlanEditFormFuc: function (id) {
+    showPlanEditFormFuc: function () {
       var that = this
       that.planEditShow = true
-      that.currentNodeId = id
     },
     proBaseEditClick () {
       this.DrawerBaseEdit = true
@@ -1082,51 +1106,56 @@ export default {
     queryProDetail: function () {
       // console.log(1111111111111111111)
       var that = this
-      that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
-        if (res.code === 200) {
-          that.memberList = res.data.memberList
-          that.proDetailMsg = res.data
-          that.startPlanDate = res.data.startDate.split(' ')[0]
-          that.endPlanDate = res.data.endDate.split(' ')[0]
-          that.planList = res.data.planOrJobList
-          // that.log('planList:', that.planList)
-          that.firstPlanId = res.data.firstPlanId
-          if (res.data.projectType === '产品研发') {
-            that.archives = true
-          } else {
-            that.archives = false
-          }
-          for (var i = 0; i < res.data.fileList.length; i++) {
-            if (that.isImage(res.data.fileList[i].showName)) {
-              res.data.fileList[i].isImg = true
+      that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
+        .then(res => {
+          that.log('getProjectDetail:', res)
+          if (res.code === 200) {
+            // that.queryNewTree(res)
+            that.memberList = res.data.memberList
+            that.proDetailMsg = res.data
+            that.startPlanDate = res.data.startDate.split(' ')[0]
+            that.endPlanDate = res.data.endDate.split(' ')[0]
+            that.planList = res.data.planOrJobList
+            // that.log('planList:', that.planList)
+            that.firstPlanId = res.data.firstPlanId
+            that.TreeNodeId = res.data.firstPlanId
+            if (res.data.projectType === '产品研发') {
+              that.archives = true
             } else {
-              res.data.fileList[i].isImg = false
+              that.archives = false
             }
-            res.data.fileList[i].downloadUrl =
-              that.$store.state.baseServiceUrl +
-              '/file/downloadFile?realUrl=' +
-              res.data.fileList[i].realUrl +
-              '&showName=' +
-              res.data.fileList[i].showName
-          }
-          if (res.data.planOrJobList.length > 0) {
-            // that.log('activeId:', that.activeId)
-            if (!that.activeId) {
-              that.activeId = res.data.planOrJobList[0].id
-              console.log(res.data.planOrJobList[0])
-              if (res.data.planOrJobList[0].type === '2') {
-                that.panshow = true
+            for (var i = 0; i < res.data.fileList.length; i++) {
+              if (that.isImage(res.data.fileList[i].showName)) {
+                res.data.fileList[i].isImg = true
+              } else {
+                res.data.fileList[i].isImg = false
               }
-              that.parentId = that.activeId
+              res.data.fileList[i].downloadUrl =
+                that.$store.state.baseServiceUrl +
+                '/file/downloadFile?realUrl=' +
+                res.data.fileList[i].realUrl +
+                '&showName=' +
+                res.data.fileList[i].showName
             }
-          } else {
-            that.activeId = ''
+            if (res.data.planOrJobList.length > 0) {
+              // that.log('activeId:', that.activeId)
+              if (!that.activeId) {
+                that.activeId = res.data.planOrJobList[0].id
+                // console.log(res.data.planOrJobList[0])
+                if (res.data.planOrJobList[0].type === '2') {
+                  that.panshow = true
+                }
+                that.parentId = that.activeId
+              }
+            } else {
+              that.activeId = ''
+            }
+            // that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
+            // zh获取默认数据
+            that.getTree()
+            that.queryNewTree(res)
           }
-          // that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
-          // zh获取默认数据
-          that.getTree()
-        }
-      })
+        })
     },
     // 根据计划或任务Id 获取子级结构
     selectProjectId: function (id, type, e) {
@@ -1140,37 +1169,38 @@ export default {
       // } else {
       //   // that.value444 = true
       // }
-      // if (type === 'QueryFirstLevelChild') {
-      //   that.activeId = id
-      //   if (e) {
-      //     var obj = e.currentTarget
-      //     $(obj).addClass('active').siblings().removeClass('active')
-      //   }
-      // }
+      if (type === 'QueryFirstLevelChild') {
+        that.activeId = id
+        if (e) {
+          var obj = e.currentTarget
+          $(obj).addClass('active').siblings().removeClass('active')
+        }
+      }
       // this.log(that.activeId)
       // that.getPlanTree(that.activeId)
       that.getTree()
-      // that.ajax('/myProject/getPlanOrTaskById', { id: that.activeId }).then(res => {
-      //   if (res.code === 200) {
-      //     for (var i = 0; i < res.data.length; i++) {
-      //       res.data[i].start = res.data[i].start.split(' ')[0]
-      //       res.data[i].finish = res.data[i].finish.split(' ')[0]
-      //       res.data[i].children = [
-      //         {
-      //           id: 1,
-      //           name: '测试'
-      //         }
-      //       ]
-      //     }
-      //     that.data5 = res.data
-      //   }
-      // })
+      that
+        .ajax('/myProject/getPlanOrTaskById', { id: that.activeId })
+        .then(res => {
+          if (res.code === 200) {
+            for (var i = 0; i < res.data.length; i++) {
+              res.data[i].start = res.data[i].start.split(' ')[0]
+              res.data[i].finish = res.data[i].finish.split(' ')[0]
+              res.data[i].children = [
+                {
+                  id: 1,
+                  name: '测试'
+                }
+              ]
+            }
+            that.data5 = res.data
+          }
+        })
     },
     showDetailPage: function (data) {
       // this.log(data)
       var that = this
-      that.currentNodeId = data.id
-      that.isChangeActive = false
+      this.currentNodeId = data.id
       if (data.type === 'task') {
         that.TaskDetailCompShow = true
       } else if (data.type === 'plan') {
@@ -1342,12 +1372,8 @@ export default {
     PlanDelCallbackFuc: function (res, type) {
       var that = this
       if (res.code === 200) {
+        that.selectProjectId()
         that.queryProDetail()
-        // that. = that.planList[0].id
-        that.getTree()
-        if (that.isChangeActive) {
-          that.activeId = ''
-        }
         if (type === '1') {
           that.value444 = false
         } else {
@@ -1367,11 +1393,7 @@ export default {
     TaskDelCallbackFuc: function (res) {
       var that = this
       if (res.code === 200) {
-        that.queryProDetail()
-        if (that.isChangeActive) {
-          that.activeId = ''
-        }
-        // that.activeId = that.planList[0].id
+        that.selectProjectId()
         that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
@@ -1578,7 +1600,7 @@ export default {
             that.selectProjectId()
             break
           default:
-            this.log('')
+            this.log('占')
         }
       }
     }
@@ -1625,22 +1647,6 @@ div img {
   display: flex;
   font-size: 15px;
   justify-content: start;
-}
-.proFileListPre{
-  border: 1px solid #409eff;
-  border-radius: 3px;
-  width: 30px;
-  height: 20px;
-  margin-left: 6px;
-  display: flex;
-  /*background: url("");*/
-  background-size: cover;
-}
-.proFileListPre div:nth-child(2){
-  display: none;
-}
-.proFileListPre:hover div:nth-child(2){
-  display: block;
 }
 .editHistoryBtn span {
   cursor: pointer;

@@ -865,23 +865,23 @@ export default {
         taskId: '',
         jobName: '',
         description: '',
-        startTime: '',
-        endTime: '',
+        taskStartDate: '',
+        taskFinishDate: '',
         jobLevel: '3',
         // 附件id
         attachmentId: '',
         pStr: ''
       },
       CommunityTaskPayload2: {
-        projectUID: '1',
-        uid: '1',
+        // projectUID: '1',
+        parentId: '1',
         pStr: '',
         attachmentId: '',
         description: '',
         jobName: '',
         jobLevel: 3,
-        startTime: '',
-        endTime: '',
+        taskStartDate: '',
+        taskFinishDate: '',
         userId: '',
         _jfinal_token: '',
         userName: ''
@@ -1309,7 +1309,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (st <= et) {
-            that.ajax('/myProject/editTask', that.editTaskPayload).then(res => {
+            that.ajax('/myTask/editTask', that.editTaskPayload).then(res => {
               that.log('editTask:', res)
               if (res.code === 200) {
                 that.$message({
@@ -1404,7 +1404,7 @@ export default {
     },
     queryMyProjectList () {
       var that = this
-      this.ajax('/myProject/myProjectList', that.myProjectListPayload).then(res => {
+      this.ajax('/myProject/getAllProjectByUser', that.myProjectListPayload).then(res => {
         // this.log('选择所属项目:', res)
         if (res.code === 200) {
           that.projectList = res.data
@@ -1549,7 +1549,7 @@ export default {
     // 获取所属项目
     getProBelong: function () {
       var that = this
-      that.ajax('/community/getAllProject', {}).then(res => {
+      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         if (res.code === 200) {
           // this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID
@@ -1705,7 +1705,7 @@ export default {
       var st = new Date(that.selDateStart2).getTime()
       var et = new Date(that.selDateEnd2).getTime()
       if (st > et) {
-        that.$message.warning('开始时间不能大于结束时间')
+        that.$message.warning('时间区间选择不合理')
       } else {
         this.selectDateDiaShow2 = false
       }
@@ -1776,14 +1776,14 @@ export default {
         that.CommunityTaskPayload.attachmentId = fileStr
         that.CommunityTaskPayload.pStr = selectUserStr
         that.CommunityTaskPayload.jobName = that.taskNameText
-        that.CommunityTaskPayload.startTime = that.selDateStart
-        that.CommunityTaskPayload.endTime = that.selDateEnd
+        that.CommunityTaskPayload.taskStartDate = that.selDateStart
+        that.CommunityTaskPayload.taskFinishDate = that.selDateEnd
         that.CommunityTaskPayload.projectUID = that.projectBelong
         that.CommunityTaskPayload.description = that.taskIntro
         var st = new Date(that.selDateStart).getTime()
         var et = new Date(that.selDateEnd).getTime()
         if (st <= et) {
-          that.ajax('/community/addCommunityTask', that.CommunityTaskPayload).then(res => {
+          that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
             if (res.code === 200) {
               that.isRecall = that.isRecall + 1
               that.$message({
@@ -1843,14 +1843,14 @@ export default {
         that.CommunityTaskPayload2.attachmentId = fileStr
         that.CommunityTaskPayload2.pStr = selectUserStr
         that.CommunityTaskPayload2.jobName = that.taskNameText2
-        that.CommunityTaskPayload2.startTime = that.selDateStart2
-        that.CommunityTaskPayload2.endTime = that.selDateEnd2
+        that.CommunityTaskPayload2.taskStartDate = that.selDateStart2
+        that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
         var st = new Date(that.selDateStart2).getTime()
         var et = new Date(that.selDateEnd2).getTime()
         if (st <= et) {
-          that.ajax('/myTask/decomposeTask', that.CommunityTaskPayload2).then(res => {
+          that.ajax('/myTask/addTask', that.CommunityTaskPayload2).then(res => {
             if (res.code === 200) {
               that.isRecall2 = that.isRecall2 + 1
               that.token = res._jfinal_token
@@ -1892,9 +1892,9 @@ export default {
       this.fileList = []
       this.CommunityTaskPayload.jobName = ''
       this.selDateStart = this.startTimeFirst
-      this.CommunityTaskPayload.startTime = this.startTimeFirst
+      this.CommunityTaskPayload.taskStartDate = this.startTimeFirst
       this.selDateEnd = this.endTimeFirst
-      this.CommunityTaskPayload.endTime = this.endTimeFirst
+      this.CommunityTaskPayload.taskFinishDate = this.endTimeFirst
       this.taskIntro = ''
       this.CommunityTaskPayload.description = ''
       this.attachmentId = ''
@@ -2189,8 +2189,8 @@ export default {
           that.taskBasicMsg = res.data
           that.selDateStart2 = res.data.taskStartDate
           that.selDateEnd2 = res.data.taskFinishDate
-          that.CommunityTaskPayload2.projectUID = res.data.projectUID
-          that.CommunityTaskPayload2.uid = res.data.uid
+          // that.CommunityTaskPayload2.projectUID = res.data.projectUID
+          that.CommunityTaskPayload2.parentId = res.data.uid
           that.rid2 = res.data.uid
           var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
           var et = res.data.taskFinishDate

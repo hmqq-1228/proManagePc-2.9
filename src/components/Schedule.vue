@@ -87,8 +87,8 @@
         <div class="detailTit">{{titleType}}</div>
         <div class="newScheduleIpt"><el-input v-bind:disabled="detailCanEdit" v-model="detailScheduleTit" placeholder="请输入要做什么"></el-input></div>
         <div class="newScheduleDate">
-          <el-date-picker v-bind:disabled="detailCanEdit" style="width: 170px; padding-right: 15px;" value-format="yyyy-MM-dd HH:mm:ss" v-model="detailValue1" type="datetime" placeholder="选择开始时间"></el-date-picker>
-          <el-date-picker v-bind:disabled="detailCanEdit" style="width: 170px; padding-right: 15px;" value-format="yyyy-MM-dd HH:mm:ss" v-model="detailValue2" type="datetime" placeholder="选择结束时间"></el-date-picker>
+          <el-date-picker v-bind:disabled="detailCanEdit" style="width: 50%; padding-right: 15px;" value-format="yyyy-MM-dd HH:mm:ss" v-model="detailValue1" type="datetime" placeholder="选择开始时间"></el-date-picker>
+          <el-date-picker v-bind:disabled="detailCanEdit" style="width: 50%;" value-format="yyyy-MM-dd HH:mm:ss" v-model="detailValue2" type="datetime" placeholder="选择结束时间"></el-date-picker>
         </div>
         <div class="durationSelect" v-if="currentTargetType===1?true:false">
           <el-select v-bind:disabled="detailCanEdit" v-model="detailDurationValue" placeholder="请选择提醒时间">

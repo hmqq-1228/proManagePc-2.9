@@ -26,10 +26,10 @@
         ></el-autocomplete>
       </FormItem>
       <FormItem label="开始时间" prop="startDate">
-        <DatePicker type="date" v-bind:value="formValidate.startDate" :options="startTimeOption" format="yyyy-MM-dd HH:mm:ss" @on-change="startDateChange" @on-open-change="startTimeChange" placeholder="请输入开始时间" style="width: 100%"></DatePicker>
+        <DatePicker type="datetime" v-bind:value="formValidate.startDate" :options="startTimeOption" format="yyyy-MM-dd HH:mm:ss" @on-change="startDateChange" @on-open-change="startTimeChange" placeholder="请输入开始时间" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="结束时间" prop="endDate">
-        <DatePicker type="date" v-bind:value="formValidate.endDate" :options="endTimeOption" format="yyyy-MM-dd HH:mm:ss" @on-change="endDateChange" @on-open-change="endTimeChange" placeholder="请输入结束时间" style="width: 100%"></DatePicker>
+        <DatePicker type="datetime" v-bind:value="formValidate.endDate" :options="endTimeOption" format="yyyy-MM-dd HH:mm:ss" @on-change="endDateChange" @on-open-change="endTimeChange" placeholder="请输入结束时间" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="项目简介" prop="desc">
         <Input v-model="formValidate.desc" type="textarea" placeholder="请输入项目简介" />
