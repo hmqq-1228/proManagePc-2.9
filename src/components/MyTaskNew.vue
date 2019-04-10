@@ -327,8 +327,9 @@ export default {
       that.value444 = true
       that.TaskDetailCompShow = false
     },
-    showEditFormFuc: function () {
+    showEditFormFuc: function (id) {
       var that = this
+      that.currentNodeId = id
       that.modifyTaskVisible = true
     },
     ActionResThrowFuc: function (obj) {
