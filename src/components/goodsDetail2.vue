@@ -236,7 +236,7 @@
     <!--<div v-if="listTree.length>0 && planList.length > 0">-->
        <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
     <!--</div>-->
-    <div>
+    <div class="NewTreeCompWrap">
       <component v-bind:is="compArr.NewTree"
                  v-bind:proId="proId"
                  v-bind:firstPlanId="firstPlanId"

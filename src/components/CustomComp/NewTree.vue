@@ -1,20 +1,18 @@
 <template>
-  <div class="NewTree">
-    <div class="node" v-for="newTreeItem in newTreeList" :key="newTreeItem.id">
-      <div class="nodeTitleBox">
-        <!-- v-on:contextmenu="rightKey" -->
-        <div class="nodeTitle">{{newTreeItem.name}}</div>
+  <div class="NewTreeBox" style="position: relative;">
+    <div class="NewTree">
+      <div class="node" v-for="newTreeItem in newTreeList" :key="newTreeItem.id">
+        <div class="lineLeft" v-if="newTreeItem.type!=='rootPlan'"></div>
+        <div class="nodeCnt">
+          <div class="nodeTitleBox">
+            <div v-if="newTreeItem.type!=='rootPlan'">---</div>
+            <div class="nodeTitle">{{newTreeItem.name}}</div>
+          </div>
+          <component v-if="newTreeItem.children.length>0" v-bind:is="compArr.NewTree" v-bind:newTreeList="newTreeItem.children"></component>
+        </div>
       </div>
-      <component v-bind:is="compArr.NewTree" v-bind:newTreeList="newTreeItem.children"></component>
     </div>
-    <!-- 右键菜单测试 -->
-    <!--<div id="menu">-->
-      <!--<div class="menu">功能1</div>-->
-      <!--<div class="menu">功能2</div>-->
-      <!--<div class="menu">功能3</div>-->
-      <!--<div class="menu">功能4</div>-->
-      <!--<div class="menu">功能5</div>-->
-    <!--</div>-->
+    <div class="jiajian" @click="jiajianClick($event)"><span class="open">-</span></div>
   </div>
 </template>
 
@@ -76,20 +74,74 @@ export default {
 
       // 改变自定义菜单的宽，让它显示出来
       menu.style.width = '125px'
+    },
+    jiajianClick: function (e) {
+      var obj = e.currentTarget
+      if ($(obj).children().eq(0).hasClass('open')) {
+        $(obj).children().eq(0).removeClass('open').addClass('close')
+        $(obj).siblings('.NewTree').css('height', 16 + 'px')
+        $(obj).children().eq(0).text('+')
+      } else {
+        $(obj).children().eq(0).removeClass('close').addClass('open')
+        $(obj).siblings('.NewTree').css('height', 'auto')
+        $(obj).children().eq(0).text('-')
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-.node .NewTree{
-  margin-left: 30px;
-}
+  .jiajian{
+    position: absolute;
+    left: 44px;
+    top: 3px;
+    width: 13px;
+    height: 13px;
+    color: #ccc;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  .jiajian:hover{
+    cursor: default ;
+    color: #aaa;
+    border: 1px solid #aaa;
+  }
+  .jiajian span{
+    position: absolute;
+    left: 2px;
+    top: -3px;
+  }
+  .NewTreeCompWrap>.NewTreeBox>.jiajian{
+    display: none;
+  }
+  .NewTree{
+    transition: height 2s;
+    overflow: hidden;
+  }
+  .node{
+    display: flex;
+  }
+  .lineLeft{
+    width: 2px;
+    border-left: 1px solid #ccc;
+  }
+  .node:last-child>.lineLeft{
+    height: 30px;
+  }
+  .nodeCnt{
+    padding-top: 20px;
+  }
+  .node .NewTree{
+    margin-left: 50px;
+  }
   .nodeTitleBox{
     display: flex;
-    margin-bottom: 10px;
+    _margin-bottom: 10px;
   }
   .nodeTitle{
+    cursor: default;
     border: 2px solid #3a8ee6;
     border-radius: 4px;
     padding: 2px 5px;
