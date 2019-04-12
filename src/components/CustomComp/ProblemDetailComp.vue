@@ -1,18 +1,18 @@
 <template>
-  <div class="TaskDetailComp" @click="hidePanel">
+  <div class="ProblemDetailComp">
       <!--<button @click="testData">TEST</button>-->
       <div>{{taskEdit?'':''}}</div>
       <div class="slidTop">
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
-        <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
+        <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.questionLevel" disabled/></span></div>
         <div style="display: flex;justify-content: space-between">
-          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true" @click="delTask(taskBasicMsg.id)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
           <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
         </div>
       </div>
       <div class="taskMsg">
         <div class="taskLf">
-          <div class="taskName">{{taskBasicMsg.jobName}}</div>
+          <div class="taskName">{{taskBasicMsg.questionName}}</div>
           <div class="taskDetail" v-bind:title="taskBasicMsg.description">{{taskBasicMsg.description}}</div>
         </div>
         <div class="taskRt">
@@ -25,14 +25,14 @@
         <el-collapse v-model="activeNames">
           <el-collapse-item style="padding: 0 10px;" name="1">
             <template slot="title">
-              <img src="../../../static/img/time.png" alt=""><span style="margin-left: 10px;">起止时间: {{taskBasicMsg.taskStartDate}} 到 {{taskBasicMsg.taskFinishDate}}</span>
+              <img src="../../../static/img/time.png" alt=""><span style="margin-left: 10px;">起止时间: {{taskBasicMsg.queStartDate}} 到 {{taskBasicMsg.queFinishDate}}</span>
               <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum >= 0">剩余 <span style="color: #53b5ff;font-size: 16px;font-weight: bold">{{taskBasicMsg.dayNum}}</span> 天</div>
               <div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum < 0"><span style="color:red;font-size: 16px;">已逾期</span></div>
               <div style="margin-left: 10%;" v-if="!taskBasicMsg.dayNum"><span v-bind:class="'topState' + taskBasicMsg.status">{{taskBasicMsg.statusStr}}</span></div>
             </template>
             <div class="managePro">
               <div><img src="../../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span>{{taskBasicMsg.userName}}</span></div>
-              <div><img src="../../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>
+              <div><img src="../../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.creatorName}}</span></div>
             </div>
             <div class="managePro" style="margin-top: 10px;">
               <div><img src="../../../static/img/kaishi.png" alt=""><span class="proLabel">实际开始:</span><span v-if="taskBasicMsg.dealWithDate">{{taskBasicMsg.dealWithDate}}</span><span style="color: #888;" v-if="!taskBasicMsg.dealWithDate">暂未开始</span></div>
@@ -41,30 +41,30 @@
           </el-collapse-item>
         </el-collapse>
       </div>
+      <!--<div class="cannetProject">-->
+        <!--<div style="display: inline-block"><img src="../../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>-->
+        <!--<span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>-->
+        <!--<span style="font-size: 14px;color: #888;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>-->
+      <!--</div>-->
       <div class="cannetProject">
-        <div style="display: inline-block"><img src="../../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
-        <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>
-        <span style="font-size: 14px;color: #888;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
+        <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>反馈类型:</span></div>
+        <div style="display: inline-block;">{{taskBasicMsg.typeName}}</div>
       </div>
       <div class="cannetProject">
-        <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
-        <div style="display: inline-block;color: #409EFF;cursor: pointer;" @click="toProjectDetail(taskBasicMsg.projectUID)">{{taskBasicMsg.projectName}}</div>
-      </div>
-      <div class="cannetProject">
-        <div style="display: inline-block"><img src="../../../static/img/taskFa2.png" alt=""><span>父级任务:</span></div>
+        <div style="display: inline-block"><img src="../../../static/img/taskFa2.png" alt=""><span>父级问题:</span></div>
         <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.parentTaskName" @click="toDetail(taskBasicMsg.parentTaskID)">{{taskBasicMsg.parentTaskName}}</div>
-        <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级任务</div>
+        <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级</div>
       </div>
-    <div class="cannetProject">
-      <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
-      <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.planName" @click="toPlanDetail(taskBasicMsg.planUID)">{{taskBasicMsg.planName}}</div>
-      <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.planName">无父级计划</div>
-    </div>
+    <!--<div class="cannetProject">-->
+      <!--<div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>-->
+      <!--<div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.planName" @click="toPlanDetail(taskBasicMsg.planUID)">{{taskBasicMsg.planName}}</div>-->
+      <!--<div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.planName">无父级计划</div>-->
+    <!--</div>-->
       <div class="cannetProjectFile">
-        <div style="display: inline-block"><img src="../../../static/img/fujian.png" alt=""><span>任务附件:</span></div>
+        <div style="display: inline-block"><img src="../../../static/img/fujian.png" alt=""><span>反馈附件:</span></div>
         <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
           <span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">
-            <span style="display: inline-block;">{{file.showName}}</span>
+            <span style="display: inline-block;">{{index+1}}、{{file.showName}}</span>
             <span v-if="file.isImg" @click="showImagePre(file.previewUrl, file.showName)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
             <span style="display: inline-block;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
           </span>
@@ -72,21 +72,21 @@
         <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
       </div>
       <div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">
-        <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
-        <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
-        <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
-        <Button type="info" @click="taskToDevided(taskBasicMsg.uid)">任务分解</Button>
+        <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.id)">开始问题</Button>
+        <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">完成问题</Button>
+        <Button type="info" style="margin-right: 20px;" @click="transferTask()">移交问题</Button>
+        <Button type="info" @click="taskToDevided(taskBasicMsg.id)">分解问题</Button>
       </div>
       <div class="cannetProject" v-if="taskBasicMsg.isRestart">
-        <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
+        <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.id)">重启问题</Button>
       </div>
       <!-- 任务分解 引入组件-->
     <!--v-bind:TaskDistributeShow="toShowDevided"-->
     <!--v-bind:TaskDistributeShow="rilegou" tetstt -->
       <div v-show="toShowDevided2">
-        <component v-bind:is="compArr.TaskDistribute"
-                   v-bind:TaskDistributeShow="testtest"
-                   fileFormId="TaskDistribute"
+        <component v-bind:is="compArr.ProblemDistribute"
+                   v-bind:TaskDistributeShow="toShowDevided2"
+                   fileFormId="ProblemDistribute"
                    v-on:DistributeFormVisible="DistributeFormVisibleFuc"
                    v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
                    :nodeId="currentNodeId">
@@ -98,13 +98,13 @@
       </div>
       <div class="taskListChild">
         <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
-          <div class="childTaskName" @click="toDetail(childTask.uid)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.jobName}}</div>
+          <div class="childTaskName" @click="toDetail(childTask.id)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.questionName}}</div>
           <div class="childTaskMsg">
             <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
             <div style="width: 100px;" v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
             <div style="width: 100px;" v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
             <div style="width: 160px;">{{childTask.userName}}</div>
-            <div style="margin-right: 0" class="taskDel" @click="childTaskDelete(childTask.uid)"><Icon type="md-close" size="18"/></div>
+            <div style="margin-right: 0" class="taskDel" @click="childTaskDelete(childTask.id)"><Icon type="md-close" size="18"/></div>
           </div>
         </div>
         <div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="childTaskList.length === 0">
@@ -112,33 +112,33 @@
         </div>
       </div>
       <!-- 关联流程 -->
-      <div class="connectProcess">
-        <div style="display: inline-block" class="connectProcessHeader">
-          <img src="../../../static/img/liuc.png" alt="">
-          <span>关联流程<span style="color: #409EFF">({{tableData.length}})</span></span>
-          <Icon @click="tableDataReFresh($event)" class="reFreshIcon" type="md-refresh" style="color: #409EFF; font-size: 20px;" />
-        </div>
-        <div class="connectProcessHeader" v-on:click="connectProcessClick" style="cursor: pointer; color: rgb(64, 158, 255)">申请审批</div>
-      </div>
-      <div class="createProcess" v-show="createProcessShow" v-on:click="createProcessCancel">
-        <div style="padding: 20px; position: relative;" v-on:click.stop="testMaopao">
-          <h3 style="margin-bottom: 10px;">流程选择</h3>
-          <div style="position: absolute; right: 15px; top: 15px;" v-on:click="closeProcess"><Icon type="md-close" size="16" /></div>
-          <el-table :cell-class-name="slectRowClass" :data="FlowData" border style="width: 100%" @row-click="rowClick">
-            <el-table-column prop="flowIndex" label="编号" width="80"></el-table-column>
-            <el-table-column prop="name" label="流程名称"></el-table-column>
-            <el-table-column prop="type" label="类别" width="80"></el-table-column>
-          </el-table>
-        </div>
-      </div>
-      <el-table :cell-class-name="rowClass" :data="tableData" border style="width: 100%;" @row-click="processItemRowClick">
-        <el-table-column prop="SYS_PROCESSNAME" label="流程标题" width="260"></el-table-column>
-        <el-table-column prop="creatorName" label="发起人" width="80"></el-table-column>
-        <el-table-column prop="STATUSNAME" label="状态" width="80"></el-table-column>
-        <el-table-column prop="SYS_STARTTIME" label="发起日期" width="180"></el-table-column>
-        <el-table-column prop="Name" label="当前审批人" width="100"></el-table-column>
-        <!--<el-table-column prop="address" label="地址"></el-table-column>-->
-      </el-table>
+      <!--<div class="connectProcess">-->
+        <!--<div style="display: inline-block" class="connectProcessHeader">-->
+          <!--<img src="../../../static/img/liuc.png" alt="">-->
+          <!--<span>关联流程<span style="color: #409EFF">({{tableData.length}})</span></span>-->
+          <!--<Icon @click="tableDataReFresh($event)" class="reFreshIcon" type="md-refresh" style="color: #409EFF; font-size: 20px;" />-->
+        <!--</div>-->
+        <!--<div class="connectProcessHeader" v-on:click="connectProcessClick" style="cursor: pointer; color: rgb(64, 158, 255)">申请审批</div>-->
+      <!--</div>-->
+      <!--<div class="createProcess" v-show="createProcessShow" v-on:click="createProcessCancel">-->
+        <!--<div style="padding: 20px; position: relative;" v-on:click.stop="testMaopao">-->
+          <!--<h3 style="margin-bottom: 10px;">流程选择</h3>-->
+          <!--<div style="position: absolute; right: 15px; top: 15px;" v-on:click="closeProcess"><Icon type="md-close" size="16" /></div>-->
+          <!--<el-table :cell-class-name="slectRowClass" :data="FlowData" border style="width: 100%" @row-click="rowClick">-->
+            <!--<el-table-column prop="flowIndex" label="编号" width="80"></el-table-column>-->
+            <!--<el-table-column prop="name" label="流程名称"></el-table-column>-->
+            <!--<el-table-column prop="type" label="类别" width="80"></el-table-column>-->
+          <!--</el-table>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<el-table :cell-class-name="rowClass" :data="tableData" border style="width: 100%;" @row-click="processItemRowClick">-->
+        <!--<el-table-column prop="SYS_PROCESSNAME" label="流程标题" width="260"></el-table-column>-->
+        <!--<el-table-column prop="creatorName" label="发起人" width="80"></el-table-column>-->
+        <!--<el-table-column prop="STATUSNAME" label="状态" width="80"></el-table-column>-->
+        <!--<el-table-column prop="SYS_STARTTIME" label="发起日期" width="180"></el-table-column>-->
+        <!--<el-table-column prop="Name" label="当前审批人" width="100"></el-table-column>-->
+        <!--&lt;!&ndash;<el-table-column prop="address" label="地址"></el-table-column>&ndash;&gt;-->
+      <!--</el-table>-->
       <!--<div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="tableData.length === 0">-->
         <!--暂无关联流程-->
       <!--</div>-->
@@ -146,15 +146,7 @@
         <div style="display: inline-block"><img src="../../../static/img/goutong.png" alt=""><span>沟 通</span></div>
       </div>
       <div class="el-textarea" v-loading="loading2">
-        <div class="peopleList" style="right: 0;top: -230px;" v-if="selectUserDiaShow2">
-          <Input prefix="ios-search-outline" placeholder="请输人员姓名或拼音(如'张三'或 'zs')" style="width: 270px"  autofocus v-model="searchPeople" ref="re"/>
-          <ul>
-            <li v-for="(item, index) in options42" :key="index" @click="checkPeople(item)">{{item.Name + ' (' + item.jName + ')'}}</li>
-          </ul>
-        </div>
-        <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent" v-on:input="inputFunt"
-                  @keyup.shift.50="inputConent"
-                  @click="getTxt1CursorPosition"></textarea>
+        <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent"></textarea>
         <div class="cannetProject21">
           <!--引入组件 详情 沟通-->
           <component v-bind:is="compArr.FileUploadComp" fileFormId="taskDetailConnect" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
@@ -190,7 +182,7 @@
         <Timeline>
           <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
             <p class="time">{{history.oTime}}</p>
-            <p class="content">{{history.oName}}{{history.oContent}}</p>
+            <p class="content">{{history.oName}}，{{history.oContent}}</p>
             <span v-for="(his, index2) in history.attachment" v-bind:key="index2">
               <p class="content" v-if="his.showName"><span>附件:</span>
                 <span style="display: inline-block"> {{his.showName}}</span>
@@ -206,8 +198,9 @@
       </div>
     <!--任务移交-->
     <!--<el-dialog title="任务移交" :visible.sync="taskTransferVisible" width="26%" style="z-index: 82222 !important;">-->
-    <div class="taskTransferBgcover" title="任务移交" v-if="taskTransferVisible" v-on:mousewheel.stop="noMousewheel($event)">
+    <div class="taskTransferBgcover" v-if="taskTransferVisible" v-on:mousewheel.stop="noMousewheel($event)">
       <div class="taskTransferCnt" v-loading="taskTransferLoading">
+        <div style="font-size: 14px;text-align: center;">问题移交</div>
         <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
         <el-autocomplete style="width:90%"
                          v-model="projectManager"
@@ -226,8 +219,9 @@
       </div>
     </div>
     <!--/ 任务完成 /-->
-    <div class="taskFinishedBgcover" title="任务完成" v-if="taskFinishedVisible">
+    <div class="taskFinishedBgcover" v-if="taskFinishedVisible">
       <div class="el-textarea taskFinishedCnt" v-loading="loading9">
+        <div style="font-size: 14px;text-align: center;">完成问题</div>
         <textarea name="remark" class="el-textarea__inner" id="textAreaF" type="text" v-model="commitComentF"></textarea>
         <!--<div class="cannetProject2">-->
         <component v-bind:is="compArr.FileUploadComp" fileFormId="taskFinished" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
@@ -247,24 +241,17 @@
 <script>
 import FileUploadComp from '././FileUploadComp.vue'
 import ModifyTask from './ModifyTask.vue'
-import TaskDistribute from './TaskDistribute.vue'
+import ProblemDistribute from './ProblemDistribute.vue'
 export default {
-  name: 'TaskDetailComp',
+  name: 'ProblemDetailComp',
   props: ['nodeId', 'taskDrawerOpen', 'modifyTaskRes'],
   components: {
     ModifyTask,
     FileUploadComp,
-    TaskDistribute
+    ProblemDistribute
   },
   data () {
     return {
-      peopleList: [],
-      // 组织架构人员
-      options42: [],
-      // 搜索人员
-      searchPeople: '',
-      // @组织架构是否出现
-      selectUserDiaShow2: false,
       rid: '',
       taskIdEdit: '',
       IsClear: false,
@@ -308,7 +295,7 @@ export default {
       compArr: {
         ModifyTask: 'ModifyTask',
         FileUploadComp: 'FileUploadComp',
-        TaskDistribute: 'TaskDistribute'
+        ProblemDistribute: 'ProblemDistribute'
       },
       // 任务移交
       taskTransferVisible: false,
@@ -338,13 +325,6 @@ export default {
       return that.$store.state.taskEdit
     }
   },
-  directives: {
-    focus: {
-      inserted: function (el) {
-        el.focus()
-      }
-    }
-  },
   watch: {
     modifyTaskRes: function (val, oV) {
       if (val) {
@@ -357,11 +337,12 @@ export default {
       if (val) {
         that.showDrawer = true
         that.toDetail(that.nodeId)
-        that.TaskConnectProcessList()
-        that.getPeople()
+        console.log('999999999', that.nodeId)
+        // that.TaskConnectProcessList()
       } else {
         that.concelTransfer()
         that.showDrawer = false
+        that.toShowDevided2 = false
         that.taskFinishedVisible = false
       }
     },
@@ -370,15 +351,6 @@ export default {
         this.butnDisabled = false
       } else {
         this.butnDisabled = true
-      }
-      let str = val.charAt(val.length - 1)
-      if (str === '@') {
-        this.selectUserDiaShow2 = true
-        setTimeout(() => {
-          this.$refs['re'].focus()
-        }, 200)
-      } else {
-        this.selectUserDiaShow2 = false
       }
     },
     commitComentF: function (val, oVal) {
@@ -394,152 +366,82 @@ export default {
       } else {
         this.butnDisabledT = true
       }
-    },
-    searchPeople: function (val, old) {
-      if (val) {
-        this.getPeople()
-      }
-      if (val === '') {
-        this.searchPeople = ''
-        this.getPeople()
-      }
     }
   },
   methods: {
-    getPosition (element) {
-      let cursorPos = 0
-      if (document.selection) { // IE
-        var selectRange = document.selection.createRange()
-        selectRange.moveStart('character', -element.value.length)
-        cursorPos = selectRange.text.length
-      } else if (element.selectionStart || element.selectionStart === '0') {
-        cursorPos = element.selectionStart
-      }
-      this.position = cursorPos
-    },
-    getTxt1CursorPosition (e) {
-      this.getPosition(e.target)
-    },
-    // 点击任意区域弹窗消失
-    hidePanel (event) {
-      let sp2 = document.querySelector('.peopleList')
-      if (sp2) {
-        if (!sp2.contains(event.target)) {
-          this.selectUserDiaShow2 = false
-        }
-      }
-    },
-    // 检测历史记录输入功能
-    inputFunt (e) {
-      this.getTxt1CursorPosition(e)
-    },
-    inputConent () {
-      this.selectUserDiaShow2 = true
-      let arr = this.commitComent.split('@')
-      console.log(arr)
-      if (this.selectUserDiaShow2) {
-        setTimeout(() => {
-          this.$refs['re'].focus()
-        }, 200)
-      }
-    },
-    // 点击获取@人员
-    checkPeople (item) {
-      let that = this
-      that.peopleList.push(item)
-      that.selectUserDiaShow2 = false
-      $('.el-textarea__inner').focus()
-      // that.commitComent = that.commitComent + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0'
-      let content1 = that.commitComent
-      let content2 = that.commitComent
-      let before = content1.substring(0, that.position)
-      let after = content2.substring(that.position)
-      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0' + after
-      console.log(that.peopleList)
-    },
-    // 获取默认的人员
-    getPeople () {
-      let that = this
-      that.ajax('/myProject/autoCompleteNames', {projectManager: that.searchPeople, projectId: that.$store.state.proId}).then(res => {
-        if (res.code === 200) {
-          that.options42 = res.data
-          // this.loading22 = false
-        }
-      })
-    },
     toProjectDetail: function (id) {
       if (id) {
         this.$store.state.proId = id
         this.$router.push('/goodsDetail')
       }
     },
-    // 创建流程 流程选项列表
-    rowClick: function (obj) {
-      this.createProcessShow = false
-      window.open(obj.flowUrl, '_blank')
-      // window.location.href = obj.flowUrl
-    },
-    processItemRowClick: function (obj) {
-      // detailUrl
-      window.open(obj.detailUrl, '_blank')
-      // this.log('processItemRowClick:', obj)
-    },
+    // // 创建流程 流程选项列表
+    // rowClick: function (obj) {
+    //   this.createProcessShow = false
+    //   window.open(obj.flowUrl, '_blank')
+    //   // window.location.href = obj.flowUrl
+    // },
+    // processItemRowClick: function (obj) {
+    //   // detailUrl
+    //   window.open(obj.detailUrl, '_blank')
+    //   // this.log('processItemRowClick:', obj)
+    // },
     // 表格 单元格 样式设置
-    rowClass: function ({row, column, rowIndex, columnIndex}) {
-      if (columnIndex === 0) {
-        return 'fontStyle'
-      }
-    },
-    slectRowClass: function ({row, column, rowIndex, columnIndex}) {
-      if (columnIndex === 1) {
-        return 'fontStyle'
-      }
-    },
+    // rowClass: function ({row, column, rowIndex, columnIndex}) {
+    //   if (columnIndex === 0) {
+    //     return 'fontStyle'
+    //   }
+    // },
+    // slectRowClass: function ({row, column, rowIndex, columnIndex}) {
+    //   if (columnIndex === 1) {
+    //     return 'fontStyle'
+    //   }
+    // },
     // 创建流程 关闭流程选项列表
-    closeProcess: function () {
-      this.createProcessShow = false
-    },
+    // closeProcess: function () {
+    //   this.createProcessShow = false
+    // },
     // 流程列表区域 阻止冒泡
-    testMaopao: function () {
-      this.log('阻止冒泡')
-    },
+    // testMaopao: function () {
+    //   this.log('阻止冒泡')
+    // },
     // 点击半透明区域
-    createProcessCancel: function () {
-      this.createProcessShow = false
-    },
+    // createProcessCancel: function () {
+    //   this.createProcessShow = false
+    // },
     // 点击申请流程
-    connectProcessClick: function () {
-      var that = this
-      this.createProcessShow = true
-      that.ajax('/myTask/getFlowList', {taskId: that.nodeId}).then(res => {
-        that.log('流程入口选项：', res)
-        if (res.code === 200) {
-          for (var i = 0; i < res.data.length; i++) {
-            res.data[i].flowIndex = i + 1
-          }
-          that.FlowData = res.data
-          that.log('that.FlowData:', that.FlowData)
-        }
-      })
-    },
-    // 查询关联流程
-    TaskConnectProcessList: function () {
-      var that = this
-      that.ajax('/myTask/getTaskFlowList', {taskId: that.nodeId}).then(res => {
-        that.log('任务所关联的流程：', res)
-        that.tableData = res.data
-      })
-    },
-    tableDataReFresh: function (e) {
-      this.TaskConnectProcessList()
-      // var obj = e.currentTarget
-      // if ($(obj).hasClass('ratate')) {
-      //   $(obj).removeClass('ratate')
-      //   // $(obj).addClass('ratate')
-      // } else {
-      //   $(obj).addClass('ratate')
-      // }
-    },
+    // connectProcessClick: function () {
+    //   var that = this
+    //   this.createProcessShow = true
+    //   that.ajax('/myTask/getFlowList', {taskId: that.nodeId}).then(res => {
+    //     that.log('流程入口选项：', res)
+    //     if (res.code === 200) {
+    //       for (var i = 0; i < res.data.length; i++) {
+    //         res.data[i].flowIndex = i + 1
+    //       }
+    //       that.FlowData = res.data
+    //       that.log('that.FlowData:', that.FlowData)
+    //     }
+    //   })
+    // },
+    // // 查询关联流程
+    // TaskConnectProcessList: function () {
+    //   var that = this
+    //   that.ajax('/myTask/getTaskFlowList', {taskId: that.nodeId}).then(res => {
+    //     that.log('任务所关联的流程：', res)
+    //     that.tableData = res.data
+    //   })
+    // },
+    // tableDataReFresh: function (e) {
+    //   this.TaskConnectProcessList()
+    //   // var obj = e.currentTarget
+    //   // if ($(obj).hasClass('ratate')) {
+    //   //   $(obj).removeClass('ratate')
+    //   //   // $(obj).addClass('ratate')
+    //   // } else {
+    //   //   $(obj).addClass('ratate')
+    //   // }
+    // },
     testData: function () {
       // var that = this
       this.log('testtest:', this.testtest)
@@ -556,7 +458,7 @@ export default {
       if (id) {
         that.taskId = id
         that.getTaskChildList(id)
-        that.ajax('/myTask/queryTaskDetail', {taskId: id}).then(res => {
+        that.ajax('/question/queryQuestionDetail', {id: id}).then(res => {
           that.$emit('getChildrenId', id)
           this.log('queryTaskDetail：', res)
           if (res.code === 200) {
@@ -589,7 +491,7 @@ export default {
         })
       } else {
         that.getTaskChildList(that.taskId)
-        that.ajax('/myTask/queryTaskDetail', {taskId: that.taskId}).then(res => {
+        that.ajax('/question/queryQuestionDetail', {id: that.taskId}).then(res => {
           this.log('查看返回2：', res)
           if (res.code === 200) {
             that.taskBasicMsg = res.data
@@ -629,7 +531,7 @@ export default {
         showClose: false,
         type: 'warning'
       }).then(() => {
-        that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
+        that.ajax('/question/delQuestionById', {id: id}).then(res => {
           that.$emit('TaskDelCallback', res)
           if (res.code === 200) {
             // that.log('delPlanOrTask:', res)
@@ -645,14 +547,14 @@ export default {
     getTaskChildList: function (id) {
       var that = this
       if (id) {
-        that.ajax('/myTask/myChildTask', {taskId: id}).then(res => {
+        that.ajax('/question/myChildQuestion', {id: id}).then(res => {
           if (res.code === 200) {
             that.childTaskList = res.data
-            // that.log('that.childTaskList:', that.childTaskList)
+            that.log('that.childTaskList:', that.childTaskList)
           }
         })
       } else {
-        that.ajax('/myTask/myChildTask', {taskId: that.taskId}).then(res => {
+        that.ajax('/question/myChildQuestion', {id: that.taskId}).then(res => {
           if (res.code === 200) {
             // that.log('myChildTask:', res)
             that.childTaskList = res.data
@@ -768,7 +670,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        that.ajax('/myTask/startTask', {taskId: id}).then(res => {
+        that.ajax('/question/startQuestion', {id: id}).then(res => {
           that.$emit('ActionResThrow', {res: res, actionName: 'startTask'})
           if (res.code === 200) {
             that.log('dealTask:', res)
@@ -786,7 +688,7 @@ export default {
     },
     taskToDevided: function (id) {
       var that = this
-      that.toShowDevided2 = true
+      that.toShowDevided2 = !that.toShowDevided2
       that.testtest = 2
       that.currentNodeId = id
       // that.taskRelationShow2 = false
@@ -800,7 +702,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        that.ajax('/myTask/restartTask', {taskId: id}).then(res => {
+        that.ajax('/question/restartQuestion', {id: id}).then(res => {
           that.$emit('ActionResThrow', {res: res, actionName: 'restartTask'})
           if (res.code === 200) {
             this.log('restartTask', res)
@@ -825,8 +727,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
-          that.$emit('TaskDelCallback', res)
+        that.ajax('/question/delQuestionById', {id: id}).then(res => {
+          // that.$emit('TaskDelCallback', res)
           if (res.code === 200) {
             // that.log('delPlanOrTask:', res)
             that.getTaskChildList(that.taskId)
@@ -841,20 +743,16 @@ export default {
     // 新增 点击“回复”按钮
     taskDetailconnect () {
       var that = this
-      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')') !== -1)
-      let obj = {
+      that.ajax('/comment/addComment', {
         content: that.commitComent,
         attachmentId: that.SetFileIdStr(),
         contentId: that.taskId,
-        parentCommentId: '11',
-        memberList: that.peopleList
-      }
-      that.ajax('/comment/addComment', JSON.stringify(obj)).then(res => {
+        parentCommentId: '11'
+      }).then(res => {
         if (res.code === 200) {
           that.IsClear = true
           // that.log('myTaskView:', res)
           that.getCommicateCont()
-          that.peopleList = []
           // that.fileListComment = []
           that.commitComent = ''
           $('.showFileName').html('')
@@ -957,7 +855,7 @@ export default {
     taskTransfer () {
       var that = this
       that.taskTransferLoading = true
-      that.ajax('/myTask/transferTask', {remark: that.commitComentT, attachmentId: that.SetFileIdStr(), taskId: that.taskId, transferUserId: that.transferUserId, transferUserName: that.transferUserName}).then(res => {
+      that.ajax('/question/transferQuestion', {remark: that.commitComentT, attachmentId: that.SetFileIdStr(), id: that.taskId, transferUserId: that.transferUserId, transferUserName: that.transferUserName}).then(res => {
         that.$emit('ActionResThrow', {res: res, actionName: 'transferTask'})
         that.log('transferTask:', res)
         if (res.code === 200) {
@@ -994,7 +892,7 @@ export default {
     confirmFinished () {
       var that = this
       that.loading9 = true
-      that.ajax('/myTask/finishTask', {remark: that.commitComentF, attachmentId: that.SetFileIdStr(), taskId: that.taskId}).then(res => {
+      that.ajax('/question/finishQuestion', {remark: that.commitComentF, attachmentId: that.SetFileIdStr(), id: that.taskId}).then(res => {
         that.$emit('ActionResThrow', {res: res, actionName: 'finishTask'})
         that.taskFinishedVisible = false
         if (res.code === 200) {
@@ -1064,7 +962,7 @@ export default {
     font-family: '黑体';
   }
   .taskDetail{
-    font-size: 14px;
+    font-size: 12px;
     margin-top: 10px;
     text-indent: 2em;
     display: -webkit-box;
@@ -1288,7 +1186,6 @@ export default {
   .el-textarea{
     margin-top: 15px;
     margin-left: 0px;
-    position: relative;
   }
   .el-textarea__inner{
     width: 100%;
@@ -1317,14 +1214,8 @@ export default {
     margin-left: 20%;
     margin-top: 200px;
     padding: 30px;
+    padding-top: 10px;
     background-color: #fff;
-  }
-  /* 流程 */
-  .el-table__row{
-    cursor: pointer;
-  }
-  .reFreshIcon.ratate{
-    animation:processMove 0.5s;
   }
   .childTaskStyle0{
     color: #ffc107;
@@ -1335,32 +1226,12 @@ export default {
   .childTaskStyle2{
     color: #409EFF;
   }
-  .peopleList {
-    width:300px;
-    height: 370px;
-    padding: 20px 10px;
-    background-color: #fff;
-    position: absolute;
-    z-index: 200;
-    border-radius: 6px;
-    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
-  }
-  .peopleList ul {
-    list-style: none;
-    width:270px;
-    max-height:300px;
-    overflow: auto;
-    margin-top:10px;
-  }
-  .peopleList ul li{
-    list-style: none;
-    height: 40px;
-    line-height: 40px;
-    border-bottom: 1px solid #f2f2f2;
+  /* 流程 */
+  .el-table__row{
     cursor: pointer;
   }
-  .peopleList ul li:hover{
-    background: #f5f8fa;
+  .reFreshIcon.ratate{
+    animation:processMove 0.5s;
   }
   @keyframes processMove
   {

@@ -1,6 +1,6 @@
 <template>
   <!--任务派发 任务分解 创建动态 折叠表单-->
-  <div class="TaskDistribute">
+  <div class="ProblemDistribute">
     <div style="position: relative;width: 100%;">
       <div v-loading="loading32">
         <div class="paiTaskIptBox" style="position: relative;">
@@ -50,7 +50,7 @@
           </div>
           <div class="paiTaskIptLeft">
             <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建任务名称" /></div>
+            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建问题名称" /></div>
           </div>
           <div class="paiTaskIptRight">
             <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
@@ -65,7 +65,7 @@
         </div>
         <div class="taskRelation" v-if="taskRelationShow2">
           <div class="relationIntro">
-            <textarea class="relationIntroArea" v-model="taskIntro2" placeholder="请输入任务简介"></textarea>
+            <textarea class="relationIntroArea" v-model="taskIntro2" placeholder="请输入问题简介"></textarea>
           </div>
         </div>
         <div class="taskFileUpload">
@@ -92,7 +92,7 @@
 <script>
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 export default {
-  name: 'TaskDistribute',
+  name: 'ProblemDistribute',
   props: ['nodeId', 'TaskDistributeShow', 'cancelBtnShow'],
   components: {
     FileUploadComp
@@ -156,10 +156,10 @@ export default {
         pStr: '',
         attachmentId: '',
         description: '',
-        jobName: '',
-        jobLevel: 3,
-        taskStartDate: '',
-        taskFinishDate: '',
+        questionName: '',
+        questionLevel: 3,
+        queStartDate: '',
+        queFinishDate: '',
         userId: '',
         _jfinal_token: '',
         userName: ''
@@ -170,8 +170,8 @@ export default {
     TaskDistributeShow: function (val, old) {
       this.log('val:', val)
       this.log('old:', old)
-      this.log(55555555)
       if (val) {
+        this.log('55555555', this.nodeId)
         // this.toShowDevided = val
         this.getPlanTaskDetail()
       }
@@ -209,12 +209,12 @@ export default {
     // },
     getPlanTaskDetail () {
       var that = this
-      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+      that.ajax('/question/getDetailById', {id: that.nodeId}).then(res => {
         if (res.code === 200) {
-          that.selDateStart2 = res.data.taskStartDate
-          that.selDateEnd2 = res.data.taskFinishDate
-          var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
-          var et = res.data.taskFinishDate
+          that.selDateStart2 = res.data.queStartDate
+          that.selDateEnd2 = res.data.queFinishDate
+          var st = res.data.queStartDate.split(' ')[0] + ' 00:00:00'
+          var et = res.data.queFinishDate
           var sT = new Date(st)
           var eT = new Date(et)
           var disabledStarTime = sT.getTime()
@@ -313,6 +313,7 @@ export default {
     },
     selectDate2: function (e) {
       // 所有的伸缩窗 隐藏
+      this.getPlanTaskDetail()
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
@@ -373,14 +374,14 @@ export default {
         that.CommunityTaskPayload2.parentId = that.nodeId
         that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
         that.CommunityTaskPayload2.pStr = selectUserStr
-        that.CommunityTaskPayload2.jobName = that.taskNameText2
-        that.CommunityTaskPayload2.taskStartDate = that.selDateStart2
-        that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
-        that.CommunityTaskPayload2.jobLevel = that.levelValue2
+        that.CommunityTaskPayload2.questionName = that.taskNameText2
+        that.CommunityTaskPayload2.queStartDate = that.selDateStart2
+        that.CommunityTaskPayload2.queFinishDate = that.selDateEnd2
+        that.CommunityTaskPayload2.questionLevel = that.levelValue2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
         that.log('attachmentId:', that.CommunityTaskPayload2.attachmentId)
-        that.ajax('/myTask/addTask', that.CommunityTaskPayload2).then(res => {
+        that.ajax('/question/addQuestion', that.CommunityTaskPayload2).then(res => {
           that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
             that.isRecall2 = that.isRecall2 + 1
@@ -420,9 +421,9 @@ export default {
     clearDynamicsForm2: function () {
       this.taskNameText2 = ''
       this.fileList2 = []
-      this.CommunityTaskPayload2.jobName = ''
-      this.CommunityTaskPayload2.taskStartDate = ''
-      this.CommunityTaskPayload2.taskFinishDate = ''
+      this.CommunityTaskPayload2.questionName = ''
+      this.CommunityTaskPayload2.queStartDate = ''
+      this.CommunityTaskPayload2.queFinishDate = ''
       this.taskIntro2 = ''
       this.CommunityTaskPayload2.description = ''
       this.attachmentId2 = ''

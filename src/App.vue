@@ -173,6 +173,10 @@ export default {
           localStorage.setItem('generalMenuActive', '我的任务')
           that.$router.push('/MyTaskNew')
           break
+        case '问题反馈':
+          localStorage.setItem('generalMenuActive', '问题反馈')
+          that.$router.push('/ProblemFeedback')
+          break
         default:
           this.log('未找到')
       }
@@ -205,6 +209,9 @@ export default {
                 break
               case '我的任务':
                 res.data[i].icon = 'md-analytics'
+                break
+              case '问题反馈':
+                res.data[i].icon = 'md-help-circle'
                 break
               default:
                 res.data[i].icon = 'md-analytics'
@@ -253,7 +260,9 @@ export default {
         } else if (proName === '我的项目') {
           this.$router.push('/MyPro')
         } else if (proName === '商品管理') {
-          this.$router.push('/MyPro2')
+          this.$router.push('/GoodsManage')
+        } else if (proName === '问题反馈') {
+          this.$router.push('/ProblemFeedback')
         } else {
           this.activeNavIndex = ''
           this.$store.state.activeNavIndex = ''
@@ -382,10 +391,14 @@ padding: 8px 20px;
 .ivu-timeline-item-content{
     padding: 1px 1px 0 24px !important;
 }
-  .searchItem .el-input__inner{
+  .searchItem .el-input__inner, .proBelong .el-input__inner{
     height: 30px;
     line-height: 30px;
   }
+.proBelong .el-select .el-input .el-select__caret{
+  height: 30px;
+  line-height: 30px;
+}
 .searchItem .el-input__icon{
   line-height: 30px;
 }
@@ -420,5 +433,8 @@ padding: 8px 20px;
 /*}*/
   .Schedule .el-input--prefix .el-input__inner{
     padding-right: 0;
+  }
+  .goods .el-dialog__body{
+    padding-top: 0;
   }
 </style>
