@@ -50,7 +50,7 @@
       <div class="taskList" v-if="myTaskList.length > 0" v-for="(myTask, index) in myTaskList" :key="index" @click="toDetail(myTask.id)" style="cursor: pointer;">
         <div class="taskItem">
           <div><span style="font-size: 16px;color: #409EFF;">{{myTask.questionName}}</span></div>
-          <div class="taskName"><Icon type="ios-flag" size="20"/>{{myTask.typeName}}</div>
+          <div class="taskName"><Icon type="ios-flag" color="#fd8e6b" size="20"/>{{myTask.typeName}}</div>
         </div>
         <div class="taskMsg">
           <div><Icon type="md-contact" size="20"/><span style="padding-left: 8px;">{{myTask.userName}}</span></div>
@@ -191,7 +191,7 @@ export default {
       // 分类检索
       optionsTask: [{
         value: '1',
-        label: '全部问题'
+        label: '我参与的问题'
       },
       {
         value: '2',
@@ -200,15 +200,11 @@ export default {
       {
         value: '3',
         label: '我提出的问题'
-      },
-      {
-        value: '4',
-        label: '我参与的问题'
       }],
       optionsValue: '1',
       optionsTask2: [{
         value: '',
-        label: '全部任务'
+        label: '全部问题'
       }, {
         value: 'unstart',
         label: '未开始'
