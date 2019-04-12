@@ -26,12 +26,13 @@ import ProDetail from '@/components/ProDetail'
 import TestUpload from '@/components/TestUpload'
 import CompUse from '@/components/CompUse'
 import goodsDetail2 from '@/components/goodsDetail2'
+import ProblemFeedback from '@/components/ProblemFeedback'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
-    /**
+    /** ProblemFeedback
      *  ===================================================== ZhangH
      */
     {
@@ -124,6 +125,11 @@ export default new Router({
       path: '/MyTaskNew',
       name: 'MyTaskNew',
       component: MyTaskNew
+    },
+    {
+      path: '/ProblemFeedback',
+      name: 'ProblemFeedback',
+      component: ProblemFeedback
     },
     {
       path: '/CompUse',
