@@ -349,15 +349,26 @@
     <!--新增 抽屉 一级计划详情 end -->
     <!--新增 抽屉 查看历史记录 start-->
     <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
-      <div class="el-textarea" v-loading="loadingRe">
+      <div @click="hidePanel">
+         <div class="el-textarea" v-loading="loadingRe">
         <!--enctype="multipart/form-data"-->
         <form id="uploadFile">
+          <div class="peopleList" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+              <Input prefix="ios-search-outline" placeholder="请输人员姓名或拼音(如'张三'或 'zs')" style="width: 270px"  autofocus v-model="searchPeople" v-focus ref="re"/>
+              <ul>
+                <li v-for="(item, index) in options42" :key="index" @click="checkPeople(item)">{{item.Name + ' (' + item.jName + ')'}}</li>
+              </ul>
+          </div>
           <textarea
             name="content"
             class="el-textarea__inner"
             id="textArea"
             type="text"
             v-model="commitComent"
+            v-on:input="inputFunt"
+            @keyup.shift.50="inputConent"
+            @click="getTxt1CursorPosition"
+            v-focus
           ></textarea>
           <div class="hisFileUplBox">
             <div style="display: inline-block">
@@ -377,7 +388,7 @@
         </form>
       </div>
       <!--操作记录 历史记录-->
-      <div class="discription lis" style="margin-top: 15px;">
+         <div class="discription lis" style="margin-top: 15px;">
         <!-- 历史记录 评论 引入组件-->
         <component
           v-bind:is="compArr.CommentLogs"
@@ -394,6 +405,7 @@
             @on-change="commentPageChange($event)"
           ></Page>
         </div>
+      </div>
       </div>
     </Drawer>
     <!--新增 添加计划或者任务 start-->
@@ -502,7 +514,20 @@ export default {
   },
   data () {
     return {
+      // 光标位置
+      position: 0,
+      // 搜索组织架构人员
+      searchPeople: '',
+      // @成员
+      peopleList: [],
       // refshPlan: false
+      loading22: false,
+      // 获取默认的人员
+      options42: [],
+      // @人员
+      peopleValue: [],
+      // 判断是否出现@人员
+      selectUserDiaShow2: false,
       // 点击任务详情删除是否默认第一个
       isChangeActive: false,
       showName: false,
@@ -626,9 +651,10 @@ export default {
       },
       // 新增 添加评论
       addProjectCommentPayload: {
-        projectUID: '',
+        // projectUID: '',
         content: '',
-        attachmentId: ''
+        attachmentId: '',
+        memberList: []
       },
       listTree: [
         {
@@ -750,9 +776,6 @@ export default {
       this.$store.state.proId = this.proId
       // this.queryProDetail()
     }
-    // this.$store.commit('uploadCountAdd', {})
-    // this.getTreeList()
-    // this.getPlanTree(this.activeId)
   },
   watch: {
     proId: function (val, oVal) {
@@ -795,6 +818,17 @@ export default {
       } else {
         this.butnDisabled = true
       }
+      let str = val.charAt(val.length - 1)
+      if (str === '@') {
+        this.selectUserDiaShow2 = true
+        if (this.selectUserDiaShow2) {
+          setTimeout(() => {
+            this.$refs['re'].focus()
+          }, 200)
+        }
+      } else {
+        this.selectUserDiaShow2 = false
+      }
     },
     planList: function (val, old) {
       var that = this
@@ -819,6 +853,15 @@ export default {
       let that = this
       if (val === false) {
         that.$store.state.goPerfect = false
+      }
+    },
+    searchPeople: function (val, old) {
+      if (val) {
+        this.getPeople()
+      }
+      if (val === '') {
+        this.searchPeople = ''
+        this.getPeople()
       }
     }
   },
@@ -883,7 +926,76 @@ export default {
       return that.$store.state.slideMenu
     }
   },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        el.focus()
+      }
+    }
+  },
   methods: {
+    getPosition (element) {
+      let cursorPos = 0
+      if (document.selection) { // IE
+        var selectRange = document.selection.createRange()
+        selectRange.moveStart('character', -element.value.length)
+        cursorPos = selectRange.text.length
+      } else if (element.selectionStart || element.selectionStart === '0') {
+        cursorPos = element.selectionStart
+      }
+      this.position = cursorPos
+    },
+    getTxt1CursorPosition (e) {
+      this.getPosition(e.target)
+    },
+    hidePanel (event) {
+      let sp2 = document.querySelector('.peopleList')
+      if (sp2) {
+        if (!sp2.contains(event.target)) {
+          this.selectUserDiaShow2 = false
+        }
+      }
+    },
+    // 点击获取@人员
+    checkPeople (item) {
+      let that = this
+      that.peopleList.push(item)
+      that.selectUserDiaShow2 = false
+      $('.el-textarea__inner').focus()
+      // that.commitComent = that.commitComent + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0'
+      let content1 = that.commitComent
+      let content2 = that.commitComent
+      let before = content1.substring(0, that.position)
+      let after = content2.substring(that.position)
+      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0' + after
+    },
+    // 获取默认的人员
+    getPeople () {
+      let that = this
+      that.ajax('/myProject/autoCompleteNames', {projectManager: that.searchPeople, projectId: that.proId}).then(res => {
+        if (res.code === 200) {
+          that.options42 = res.data
+          this.loading22 = false
+        }
+      })
+    },
+    remoteMethod2 (query) {
+
+    },
+    // 检测历史记录输入功能
+    inputFunt (e) {
+      this.getTxt1CursorPosition(e)
+    },
+    inputConent () {
+      this.selectUserDiaShow2 = true
+      let arr = this.commitComent.split('@')
+      console.log(arr)
+      // if (this.selectUserDiaShow2) {
+      //   setTimeout(() => {
+      //     this.$refs['re'].focus()
+      //   }, 200)
+      // }
+    },
     toGoodsDetail2: function () {
       this.$router.push('/goodsDetail2')
     },
@@ -1208,6 +1320,7 @@ export default {
     openHisDrawer () {
       this.DrawerHistory = true
       this.getHistoryCont()
+      this.getPeople()
     },
     // 历史记录 获取历史记录
     getHistoryCont () {
@@ -1253,10 +1366,14 @@ export default {
       that.addProjectCommentPayload.contentId = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
+      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0') !== -1)
+      that.addProjectCommentPayload.memberList = that.peopleList
+      console.log(that.peopleList)
       if (that.commitComent) {
-        that.ajax('/comment/addComment', that.addProjectCommentPayload).then(res => {
+        that.ajax('/comment/addComment', JSON.stringify(that.addProjectCommentPayload)).then(res => {
           if (res.code === 200) {
             that.IsClear = true
+            that.peopleList = []
             that.$message({
               type: 'success',
               message: res.msg
@@ -1974,4 +2091,47 @@ div img {
     line-height: 25px;
     padding: 0 10px;
   }
+  .selectUserDialog2{
+    width: 300px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .selectUserBtn{
+    text-align: center;
+    margin-top: 20px;
+  }
+  .selectDateItem{
+    margin-top: 20px;
+  }
+  .peopleList {
+    width:300px;
+    height: 370px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+.peopleList ul {
+  list-style: none;
+  width:270px;
+  max-height:300px;
+  overflow: auto;
+  margin-top:10px;
+}
+.peopleList ul li{
+  list-style: none;
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #f2f2f2;
+  cursor: pointer;
+}
+.peopleList ul li:hover{
+  background: #f5f8fa;
+}
 </style>

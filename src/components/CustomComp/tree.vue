@@ -30,13 +30,13 @@
                 </div>
             </div>
         </div>
-          <div :class="'tree-all-'+index" v-show="item.show" v-if="item.children">
+        <div :class="'tree-all-'+index" v-show="item.show" v-if="item.children">
             <div class="tree-second">
               <ul style="margin-left:-30px;">
                  <treeItem v-for="(item1,index) in item.children" :menuData="item1" @showDetailPage="showDetailPage" :key="index" :show="show"></treeItem>
               </ul>
             </div>
-          </div>
+        </div>
         <!--</div>-->
         <!--</div>-->
     </div>
