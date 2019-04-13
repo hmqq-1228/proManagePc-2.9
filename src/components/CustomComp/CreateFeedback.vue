@@ -4,8 +4,8 @@
     <el-form :model="ruleForm" class="demo-ruleForm">
       <div class="paiTaskIptBox">
         <div class="paiTaskIptLeft">
-          <div class="proBelong" style="margin-right: 10px;width: 395px;border-right: 1px dashed #ccc;">
-            <span style="font-size: 14px;">问题类型：</span>
+          <div class="proBelong" style="padding-right: 10px;width: 310px;border-right: 1px dashed #ccc;display: flex">
+            <span style="font-size: 14px;width: 80px;line-height: 30px;">问题类型：</span>
             <el-select v-model="projectBelong" @change="myTaskStyleChange($event)" placeholder="请选择问题反馈类型">
               <el-option
                 v-for="item in options"
@@ -15,8 +15,10 @@
               </el-option>
             </el-select>
           </div>
-          <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-          <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入问题反馈名称" /></div>
+          <div style="margin-left: 10px;width: 50%;display: flex;">
+            <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入问题反馈名称" /></div>
+          </div>
         </div>
         <div class="paiTaskIptRight">
           <div class="paiTaskIptRightIcon" v-on:click="selectUser($event)"><Icon size="22" type="ios-contact-outline" /></div>
@@ -511,7 +513,6 @@ export default {
     padding-left: 8px;
   }
   .paiTaskIptLeft{
-    width: 250px;
     display: flex;
     flex-grow: 1;
   }
