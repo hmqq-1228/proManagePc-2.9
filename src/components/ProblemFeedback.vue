@@ -190,18 +190,18 @@ export default {
       selDateEnd: '',
       // 分类检索
       optionsTask: [{
-        value: '1',
-        label: '我参与的问题'
-      },
-      {
         value: '2',
         label: '我负责的问题'
       },
       {
         value: '3',
         label: '我提出的问题'
+      },
+      {
+        value: '4',
+        label: '@我的问题'
       }],
-      optionsValue: '1',
+      optionsValue: '2',
       optionsTask2: [{
         value: '',
         label: '全部状态'
@@ -226,7 +226,7 @@ export default {
         pageSize: '8',
         status: '',
         questionName: '',
-        typeSource: '1',
+        typeSource: '2',
         typeCode: ''
       },
       // 默认指派
