@@ -472,12 +472,15 @@ export default {
   }
   .paiTaskIptIcon{
     width: 20px;
+    color: #409EFF;
     font-size: 18px;
     margin-right: 6px;
+    line-height: 28px;
   }
   .paiTaskIptWrap{
     width: 100%;
-    line-height: 27px;
+    line-height: 28px;
+    font-size: 14px;
   }
   .paiTaskIptWrap input{
     width: 100%;
