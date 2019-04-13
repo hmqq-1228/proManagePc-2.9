@@ -33,7 +33,7 @@
           <el-option
             v-for="item in projectList"
             :key="item.typeCode"
-            :label="item.name"
+            :label="item.typeName"
             :value="item.typeCode">
           </el-option>
         </el-select>
@@ -204,7 +204,7 @@ export default {
       optionsValue: '1',
       optionsTask2: [{
         value: '',
-        label: '全部问题'
+        label: '全部状态'
       }, {
         value: 'unstart',
         label: '未开始'
@@ -246,7 +246,8 @@ export default {
       value444: false,
       // addNode 表单
       activeNameBgCover: 'first',
-      bgCoverShow: false
+      bgCoverShow: false,
+      typeCode: ''
     }
   },
   created () {
@@ -255,9 +256,9 @@ export default {
   },
   watch: {
     // optionsValue3: function (newValue, oldValue) {
-    //   this.myTaskViewPayload.projectName = newValue
-    //   this.queryMyTaskView()
-    // }
+    //   this.typeCode = newValue
+    //   this.queryProblemType()
+    // },
     input3: function (newValue, oldValue) {
       this.myTaskViewPayload.questionName = newValue
       this.myTaskViewPayload.pageNum = 1

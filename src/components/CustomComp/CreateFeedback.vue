@@ -4,21 +4,21 @@
     <el-form :model="ruleForm" class="demo-ruleForm">
       <div class="paiTaskIptBox">
         <div class="paiTaskIptLeft">
-          <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-          <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入问题反馈名称" /></div>
-        </div>
-        <div class="paiTaskIptRight">
-          <div class="proBelong" style="margin-right: 10px;">
+          <div class="proBelong" style="margin-right: 10px;width: 395px;border-right: 1px dashed #ccc;">
             <span style="font-size: 14px;">问题类型：</span>
-            <el-select v-model="projectBelong" placeholder="请选择问题反馈类型">
+            <el-select v-model="projectBelong" @change="myTaskStyleChange($event)" placeholder="请选择问题反馈类型">
               <el-option
                 v-for="item in options"
                 :key="item.typeCode"
-                :label="item.name"
+                :label="item.typeName"
                 :value="item.typeCode">
               </el-option>
             </el-select>
           </div>
+          <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+          <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入问题反馈名称" /></div>
+        </div>
+        <div class="paiTaskIptRight">
           <div class="paiTaskIptRightIcon" v-on:click="selectUser($event)"><Icon size="22" type="ios-contact-outline" /></div>
           <div class="paiTaskIptRightCnt" v-on:click="selectUser($event)">
             <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
@@ -187,8 +187,10 @@ export default {
     this.getDefultTime()
   },
   watch: {
-    // projectBelong: function (newQuestion, oldQuestion) {
-    //   this.getProjectTime(newQuestion)
+    // projectBelong: function (val, oldQuestion) {
+    //   if (val) {
+    //     this.getProBelong(val)
+    //   }
     // },
     levelValue: function (newQuestion, oldQuestion) {
       this.CommunityTaskPayload.questionLevel = newQuestion.toString()
@@ -208,6 +210,17 @@ export default {
     }
   },
   methods: {
+    myTaskStyleChange: function (e) {
+      var that = this
+      that.ajax('/question/getQuestionType', {typeCode: e}).then(res => {
+        if (res.code === 200) {
+          this.log('getAllProject222:', res)
+          // this.getProjectTime(this.projectBelong)
+          that.defImplementer.name = res.data[0].userName
+          that.defImplementer.id = res.data[0].userId
+        }
+      })
+    },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {
       var that = this
@@ -264,8 +277,9 @@ export default {
       var that = this
       that.ajax('/question/getQuestionType', {}).then(res => {
         if (res.code === 200) {
-          // this.log('getAllProject:', res)
+          this.log('getAllProject:', res)
           this.projectBelong = res.data[0].typeCode
+          that.myTaskStyleChange(that.projectBelong)
           this.options = res.data
           // this.getProjectTime(this.projectBelong)
         }
