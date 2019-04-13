@@ -1001,7 +1001,7 @@ export default {
       let before = content1.substring(0, that.position)
       let after = content2.substring(that.position)
       let ele = document.querySelector('.el-textarea__inner')
-      // console.log(ele)
+      console.log(ele)
       // that.setCaretPosition(ele, 0)
       that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
     },
