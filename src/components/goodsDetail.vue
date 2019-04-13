@@ -951,6 +951,19 @@ export default {
     getTxt1CursorPosition (e) {
       this.getPosition(e.target)
     },
+    // 设置光标位置
+    setCaretPosition (ctrl, pos) {
+      if (ctrl.setSelectionRange) {
+        ctrl.focus()
+        ctrl.setSelectionRange(pos, pos)
+      } else if (ctrl.createTextRange) {
+        var range = ctrl.createTextRange()
+        range.collapse(true)
+        range.moveEnd('character', pos)
+        range.moveStart('character', pos)
+        range.select()
+      }
+    },
     // 点击任意区域取消弹窗
     hidePanel (event) {
       let sp2 = document.querySelector('.peopleList')
@@ -987,6 +1000,9 @@ export default {
       let content2 = that.commitComent
       let before = content1.substring(0, that.position)
       let after = content2.substring(that.position)
+      let ele = document.querySelector('.el-textarea__inner')
+      // console.log(ele)
+      // that.setCaretPosition(ele, 0)
       that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
     },
     // 获取默认的人员
@@ -1009,8 +1025,6 @@ export default {
     // 获取@的事件
     inputConent () {
       this.selectUserDiaShow2 = true
-      let arr = this.commitComent.split('@')
-      console.log(arr)
       if (this.selectUserDiaShow2) {
         setTimeout(() => {
           this.$refs['re'].focus()

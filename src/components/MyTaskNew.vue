@@ -194,6 +194,9 @@ export default {
       }, {
         value: '3',
         label: '我发起的任务'
+      }, {
+        value: '4',
+        label: '@我的任务'
       }],
       optionsValue: '2',
       optionsTask2: [{
