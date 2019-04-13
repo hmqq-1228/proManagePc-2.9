@@ -181,11 +181,6 @@ export default {
       if (val) {
         this.cancelBtn = true
       }
-    },
-    nodeId: function (val, oV) {
-      if (val) {
-        // this.getUserInfo()
-      }
     }
   },
   computed: {
@@ -197,22 +192,14 @@ export default {
     }
   },
   methods: {
-    // getUserInfo: function () {
-    //   var that = this
-    //   this.ajax('/myProject/getUserInfo', {}).then(res => {
-    //     if (res.code === 200) {
-    //       // that.log('getUserInfo', res)
-    //       that.defImplementer.name = res.data.Name
-    //       that.defImplementer.id = res.data.ID
-    //     }
-    //   })
-    // },
     getPlanTaskDetail () {
       var that = this
       that.ajax('/question/getDetailById', {id: that.nodeId}).then(res => {
         if (res.code === 200) {
           that.selDateStart2 = res.data.queStartDate
           that.selDateEnd2 = res.data.queFinishDate
+          // that.defImplementer.name = res.data.userName
+          // that.defImplementer.id = res.data.userId
           var st = res.data.queStartDate.split(' ')[0] + ' 00:00:00'
           var et = res.data.queFinishDate
           var sT = new Date(st)

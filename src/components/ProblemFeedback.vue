@@ -88,6 +88,7 @@
                  v-on:showEditForm="showEditFormFuc"
                  v-on:ActionResThrow="ActionResThrowFuc"
                  v-on:TaskDelCallback="TaskDelCallbackFuc"
+                 v-on:TaskDelCallbackChild="TaskDelCallbackChildFuc"
                  :nodeId="currentNodeId">
       </component>
     </Drawer>
@@ -375,6 +376,21 @@ export default {
       if (res.code === 200) {
         that.queryMyTaskView()
         that.ProDetailCompShow = false
+        that.$message({
+          message: '删除成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    TaskDelCallbackChildFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.queryMyTaskView()
         that.$message({
           message: '删除成功！',
           type: 'success'

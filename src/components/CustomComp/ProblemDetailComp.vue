@@ -94,7 +94,7 @@
       </div>
       <!-- 任务分解 end -->
       <div class="cannetProject1">
-        <div style="display: inline-block"><img src="../../../static/img/taskList.png" alt=""><span>子任务<span style="color: #409EFF">({{childTaskList.length}})</span></span></div>
+        <div style="display: inline-block"><img src="../../../static/img/taskList.png" alt=""><span>子问题<span style="color: #409EFF">({{childTaskList.length}})</span></span></div>
       </div>
       <div class="taskListChild">
         <div class="taskItemChild" v-if="childTaskList.length > 0" v-for="(childTask, index) in childTaskList" v-bind:key="index">
@@ -108,7 +108,7 @@
           </div>
         </div>
         <div class="taskItemChild2" style="text-align: center;color: #aaa;" v-if="childTaskList.length === 0">
-          暂无子任务
+          暂无子问题
         </div>
       </div>
       <!-- 关联流程 -->
@@ -201,7 +201,7 @@
     <div class="taskTransferBgcover" v-if="taskTransferVisible" v-on:mousewheel.stop="noMousewheel($event)">
       <div class="taskTransferCnt" v-loading="taskTransferLoading">
         <div style="font-size: 14px;text-align: center;">问题移交</div>
-        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交人：</div>
+        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 问题移交人：</div>
         <el-autocomplete style="width:90%"
                          v-model="projectManager"
                          :fetch-suggestions="querySearchAsync2"
@@ -209,7 +209,7 @@
                          :trigger-on-focus="false"
                          @select="handleSelect2"
         ></el-autocomplete>
-        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 任务移交备注：</div>
+        <div style="height: 30px;line-height: 30px"><span style="color: red">*</span> 问题移交备注：</div>
         <textarea name="remark" class="el-textarea__inner" id="Transfer" type="text" v-model="commitComentT"></textarea>
         <component v-bind:is="compArr.FileUploadComp" fileFormId="taskTransfer" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -728,7 +728,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/question/delQuestionById', {id: id}).then(res => {
-          // that.$emit('TaskDelCallback', res)
+          that.$emit('TaskDelCallbackChild', res)
           if (res.code === 200) {
             // that.log('delPlanOrTask:', res)
             that.getTaskChildList(that.taskId)
