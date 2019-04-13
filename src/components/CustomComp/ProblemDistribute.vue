@@ -416,6 +416,7 @@ export default {
               message: '任务创建成功',
               type: 'success'
             })
+            that.loading32 = false
             // that.toDetail()
             // that.selectProjectId()
             // that.getHistoryList()
@@ -426,8 +427,8 @@ export default {
               message: res.msg,
               type: 'warning'
             })
+            that.loading32 = false
           }
-          that.loading32 = false
         })
       } else {
         that.$message({

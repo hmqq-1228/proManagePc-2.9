@@ -468,8 +468,8 @@ export default {
                 message: res.msg,
                 type: 'warning'
               })
+              that.addLoading = false
             }
-            that.addLoading = false
           })
         } else {
           that.$message.warning('时间选择不合理')
