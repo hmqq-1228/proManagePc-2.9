@@ -1000,6 +1000,9 @@ export default {
       let content2 = that.commitComent
       let before = content1.substring(0, that.position)
       let after = content2.substring(that.position)
+      let ele = document.querySelector('.el-textarea__inner')
+      // console.log(ele)
+      // that.setCaretPosition(ele, 0)
       that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
     },
     // 获取默认的人员
@@ -1022,8 +1025,6 @@ export default {
     // 获取@的事件
     inputConent () {
       this.selectUserDiaShow2 = true
-      let arr = this.commitComent.split('@')
-      console.log(arr)
       if (this.selectUserDiaShow2) {
         setTimeout(() => {
           this.$refs['re'].focus()
