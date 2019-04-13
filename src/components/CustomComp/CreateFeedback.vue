@@ -1,5 +1,5 @@
 <template>
-  <div class="CreateFeedback">
+  <div class="CreateFeedback" v-loading="addLoading">
     <!---->
     <el-form :model="ruleForm" class="demo-ruleForm">
       <div class="paiTaskIptBox">
@@ -129,6 +129,7 @@ export default {
         FileUploadComp: 'FileUploadComp'
       },
       ruleForm: {},
+      addLoading: false,
       // 选择时间
       selectDateDiaShow: false,
       // 任务级别
@@ -420,7 +421,7 @@ export default {
     // 创建任务 提交
     depSub: function () {
       var that = this
-      that.loading3 = true
+      that.addLoading = true
       // 如果有任务名
       if (that.taskNameText) {
         // value9有值
@@ -451,6 +452,7 @@ export default {
             that.$emit('ActionResThrow', {res: res, actionName: 'addCommunityTask'})
             if (res.code === 200) {
               that.IsClear = true
+              that.addLoading = false
               // that.isRecall = that.isRecall + 1
               that.$message({
                 message: '任务创建成功',
@@ -465,11 +467,11 @@ export default {
                 type: 'warning'
               })
             }
-            that.loading3 = false
+            that.addLoading = false
           })
         } else {
           that.$message.warning('时间选择不合理')
-          that.loading3 = false
+          that.addLoading = false
         }
       } else {
         that.$message({
@@ -515,12 +517,15 @@ export default {
   }
   .paiTaskIptIcon{
     width: 20px;
+    color: #1687d9;
     font-size: 18px;
     margin-right: 6px;
+    line-height: 28px;
   }
   .paiTaskIptWrap{
     width: 100%;
-    line-height: 27px;
+    line-height: 28px;
+    font-size: 14px;
   }
   .paiTaskIptWrap input{
     width: 100%;
