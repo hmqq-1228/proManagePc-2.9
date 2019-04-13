@@ -1,5 +1,5 @@
 <template>
-  <div class="ProblemDetailComp">
+  <div class="ProblemDetailComp" @click="hidePanel">
       <!--<button @click="testData">TEST</button>-->
       <div>{{taskEdit?'':''}}</div>
       <div class="slidTop">
@@ -146,7 +146,15 @@
         <div style="display: inline-block"><img src="../../../static/img/goutong.png" alt=""><span>沟 通</span></div>
       </div>
       <div class="el-textarea" v-loading="loading2">
-        <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent"></textarea>
+        <div class="peopleList" style="right: 0;top: -230px;" v-if="selectUserDiaShow2">
+          <Input prefix="ios-search-outline" placeholder="请输人员姓名或拼音(如'张三'或 'zs')" style="width: 270px"  autofocus v-model="searchPeople" ref="re"/>
+          <ul>
+            <li v-for="(item, index) in options42" :key="index" @click="checkPeople(item)">{{item.Name + ' (' + item.jName + ')'}}</li>
+          </ul>
+        </div>
+        <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent" v-on:input="inputFunt"
+                  @keyup.shift.50="inputConent"
+                  @click="getTxt1CursorPosition" @keyup.delete ="deleteText"></textarea>
         <div class="cannetProject21">
           <!--引入组件 详情 沟通-->
           <component v-bind:is="compArr.FileUploadComp" fileFormId="taskDetailConnect" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
@@ -252,6 +260,13 @@ export default {
   },
   data () {
     return {
+      peopleList: [],
+      // 组织架构人员
+      options42: [],
+      // 搜索人员
+      searchPeople: '',
+      // @组织架构是否出现
+      selectUserDiaShow2: false,
       rid: '',
       taskIdEdit: '',
       IsClear: false,
@@ -338,6 +353,7 @@ export default {
         that.showDrawer = true
         that.toDetail(that.nodeId)
         console.log('999999999', that.nodeId)
+        that.getPeople()
         // that.TaskConnectProcessList()
       } else {
         that.concelTransfer()
@@ -351,6 +367,15 @@ export default {
         this.butnDisabled = false
       } else {
         this.butnDisabled = true
+      }
+      let str = val.charAt(val.length - 1)
+      if (str === '@') {
+        this.selectUserDiaShow2 = true
+        setTimeout(() => {
+          this.$refs['re'].focus()
+        }, 200)
+      } else {
+        this.selectUserDiaShow2 = false
       }
     },
     commitComentF: function (val, oVal) {
@@ -366,9 +391,98 @@ export default {
       } else {
         this.butnDisabledT = true
       }
+    },
+    searchPeople: function (val, old) {
+      if (val) {
+        this.getPeople()
+      }
+      if (val === '') {
+        this.searchPeople = ''
+        this.getPeople()
+      }
     }
   },
   methods: {
+    // 获取光标位置
+    getPosition (element) {
+      let cursorPos = 0
+      if (document.selection) { // IE
+        var selectRange = document.selection.createRange()
+        selectRange.moveStart('character', -element.value.length)
+        cursorPos = selectRange.text.length
+      } else if (element.selectionStart || element.selectionStart === '0') {
+        cursorPos = element.selectionStart
+      }
+      this.position = cursorPos
+    },
+    // 光标位置
+    getTxt1CursorPosition (e) {
+      this.getPosition(e.target)
+    },
+    // 点击任意区域弹窗消失
+    hidePanel (event) {
+      let sp2 = document.querySelector('.peopleList')
+      if (sp2) {
+        if (!sp2.contains(event.target)) {
+          this.selectUserDiaShow2 = false
+        }
+      }
+    },
+    // 键盘删除事件
+    deleteText () {
+      let content = this.commitComent
+      let content1 = this.commitComent
+      let delBefore = content.substring(0, this.position)
+      let delAfter = content1.substring(this.position)
+      let position = delBefore.lastIndexOf('@', this.position)
+      let str = delBefore.substring(position, this.position)
+      this.peopleList.forEach((item, index) => {
+        if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
+          let textarea = this.commitComent
+          let contentB = textarea.substring(0, position)
+          this.commitComent = contentB + delAfter
+        }
+      })
+    },
+    // 检测历史记录输入功能
+    inputFunt (e) {
+      this.getTxt1CursorPosition(e)
+    },
+    // 触发@事件
+    inputConent () {
+      this.selectUserDiaShow2 = true
+      let arr = this.commitComent.split('@')
+      console.log(arr)
+      if (this.selectUserDiaShow2) {
+        setTimeout(() => {
+          this.$refs['re'].focus()
+        }, 200)
+      }
+    },
+    // 点击获取@人员
+    checkPeople (item) {
+      let that = this
+      that.peopleList.push(item)
+      that.selectUserDiaShow2 = false
+      $('.el-textarea__inner').focus()
+      // that.commitComent = that.commitComent + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0'
+      let content1 = that.commitComent
+      let content2 = that.commitComent
+      let before = content1.substring(0, that.position)
+      let after = content2.substring(that.position)
+      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
+      console.log(that.peopleList)
+    },
+    // 获取默认的人员
+    getPeople () {
+      let that = this
+      that.ajax('/myProject/autoCompleteNames', {projectManager: that.searchPeople, projectId: that.$store.state.proId}).then(res => {
+        if (res.code === 200) {
+          that.options42 = res.data
+          // this.loading22 = false
+        }
+      })
+    },
     toProjectDetail: function (id) {
       if (id) {
         this.$store.state.proId = id
@@ -743,17 +857,21 @@ export default {
     // 新增 点击“回复”按钮
     taskDetailconnect () {
       var that = this
-      that.ajax('/comment/addComment', {
+      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')') !== -1)
+      let obj = {
         content: that.commitComent,
         attachmentId: that.SetFileIdStr(),
         contentId: that.taskId,
-        parentCommentId: '11'
-      }).then(res => {
+        parentCommentId: '11',
+        memberList: that.peopleList
+      }
+      that.ajax('/comment/addComment', JSON.stringify(obj)).then(res => {
         if (res.code === 200) {
           that.IsClear = true
           // that.log('myTaskView:', res)
           that.getCommicateCont()
           // that.fileListComment = []
+          that.peopleList = []
           that.commitComent = ''
           $('.showFileName').html('')
           $('#myfile2').val('')
@@ -1186,6 +1304,7 @@ export default {
   .el-textarea{
     margin-top: 15px;
     margin-left: 0px;
+    position: relative;
   }
   .el-textarea__inner{
     width: 100%;
@@ -1232,6 +1351,33 @@ export default {
   }
   .reFreshIcon.ratate{
     animation:processMove 0.5s;
+  }
+  .peopleList {
+    width:300px;
+    height: 370px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .peopleList ul {
+    list-style: none;
+    width:270px;
+    max-height:300px;
+    overflow: auto;
+    margin-top:10px;
+  }
+  .peopleList ul li{
+    list-style: none;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f2f2f2;
+    cursor: pointer;
+  }
+  .peopleList ul li:hover{
+    background: #f5f8fa;
   }
   @keyframes processMove
   {
