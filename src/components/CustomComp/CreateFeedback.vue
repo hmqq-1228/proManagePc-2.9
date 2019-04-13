@@ -423,7 +423,6 @@ export default {
     // 创建任务 提交
     depSub: function () {
       var that = this
-      that.addLoading = true
       // 如果有任务名
       if (that.taskNameText) {
         // value9有值
@@ -450,6 +449,7 @@ export default {
         var st = new Date(that.selDateStart).getTime()
         var et = new Date(that.selDateEnd).getTime()
         if (st < et) {
+          that.addLoading = true
           that.ajax('/question/addQuestion', that.CommunityTaskPayload).then(res => {
             that.$emit('ActionResThrow', {res: res, actionName: 'addCommunityTask'})
             if (res.code === 200) {
