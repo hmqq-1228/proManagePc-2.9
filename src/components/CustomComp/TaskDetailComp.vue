@@ -154,7 +154,7 @@
         </div>
         <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent" v-on:input="inputFunt"
                   @keyup.shift.50="inputConent"
-                  @click="getTxt1CursorPosition"></textarea>
+                  @click="getTxt1CursorPosition" @keyup.delete ="deleteText"></textarea>
         <div class="cannetProject21">
           <!--引入组件 详情 沟通-->
           <component v-bind:is="compArr.FileUploadComp" fileFormId="taskDetailConnect" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
@@ -429,6 +429,22 @@ export default {
         }
       }
     },
+    // 键盘删除事件
+    deleteText () {
+      let content = this.commitComent
+      let content1 = this.commitComent
+      let delBefore = content.substring(0, this.position)
+      let delAfter = content1.substring(this.position)
+      let position = delBefore.lastIndexOf('@', this.position)
+      let str = delBefore.substring(position, this.position)
+      this.peopleList.forEach((item, index) => {
+        if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
+          let textarea = this.commitComent
+          let contentB = textarea.substring(0, position)
+          this.commitComent = contentB + delAfter
+        }
+      })
+    },
     // 检测历史记录输入功能
     inputFunt (e) {
       this.getTxt1CursorPosition(e)
@@ -454,7 +470,7 @@ export default {
       let content2 = that.commitComent
       let before = content1.substring(0, that.position)
       let after = content2.substring(that.position)
-      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0' + after
+      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
       console.log(that.peopleList)
     },
     // 获取默认的人员
