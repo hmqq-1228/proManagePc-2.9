@@ -366,6 +366,7 @@
             type="text"
             v-model="commitComent"
             v-on:input="inputFunt"
+            @keyup.delete ="deleteText"
             @keyup.shift.50="inputConent"
             @click="getTxt1CursorPosition"
             v-focus
@@ -934,6 +935,7 @@ export default {
     }
   },
   methods: {
+    // 获取当前光标的位置
     getPosition (element) {
       let cursorPos = 0
       if (document.selection) { // IE
@@ -945,9 +947,11 @@ export default {
       }
       this.position = cursorPos
     },
+    // 调取获取光标的位置
     getTxt1CursorPosition (e) {
       this.getPosition(e.target)
     },
+    // 点击任意区域取消弹窗
     hidePanel (event) {
       let sp2 = document.querySelector('.peopleList')
       if (sp2) {
@@ -955,6 +959,22 @@ export default {
           this.selectUserDiaShow2 = false
         }
       }
+    },
+    // 键盘删除事件
+    deleteText () {
+      let content = this.commitComent
+      let content1 = this.commitComent
+      let delBefore = content.substring(0, this.position)
+      let delAfter = content1.substring(this.position)
+      let position = delBefore.lastIndexOf('@', this.position)
+      let str = delBefore.substring(position, this.position)
+      this.peopleList.forEach((item, index) => {
+        if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
+          let textarea = this.commitComent
+          let contentB = textarea.substring(0, position)
+          this.commitComent = contentB + delAfter
+        }
+      })
     },
     // 点击获取@人员
     checkPeople (item) {
@@ -967,7 +987,7 @@ export default {
       let content2 = that.commitComent
       let before = content1.substring(0, that.position)
       let after = content2.substring(that.position)
-      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0' + after
+      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
     },
     // 获取默认的人员
     getPeople () {
@@ -986,15 +1006,16 @@ export default {
     inputFunt (e) {
       this.getTxt1CursorPosition(e)
     },
+    // 获取@的事件
     inputConent () {
       this.selectUserDiaShow2 = true
       let arr = this.commitComent.split('@')
       console.log(arr)
-      // if (this.selectUserDiaShow2) {
-      //   setTimeout(() => {
-      //     this.$refs['re'].focus()
-      //   }, 200)
-      // }
+      if (this.selectUserDiaShow2) {
+        setTimeout(() => {
+          this.$refs['re'].focus()
+        }, 200)
+      }
     },
     toGoodsDetail2: function () {
       this.$router.push('/goodsDetail2')
