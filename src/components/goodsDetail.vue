@@ -822,6 +822,7 @@ export default {
       let str = val.charAt(val.length - 1)
       if (str === '@') {
         this.selectUserDiaShow2 = true
+        this.searchPeople = ''
         if (this.selectUserDiaShow2) {
           setTimeout(() => {
             this.$refs['re'].focus()
@@ -956,12 +957,27 @@ export default {
       if (ctrl.setSelectionRange) {
         ctrl.focus()
         ctrl.setSelectionRange(pos, pos)
+        console.log(ctrl.setSelectionRange)
       } else if (ctrl.createTextRange) {
+        console.log(2)
         var range = ctrl.createTextRange()
         range.collapse(true)
         range.moveEnd('character', pos)
         range.moveStart('character', pos)
         range.select()
+      }
+    },
+    setPos: function (o) {
+      if (o.setSelectionRange) { // W3C
+        setTimeout(function () {
+          o.setSelectionRange(2, 2)
+          o.focus()
+        }, 100)
+      } else if (o.createTextRange) { // IE
+        var textRange = o.createTextRange()
+        textRange.moveStart('character', 1)
+        textRange.moveEnd('character', 0)
+        textRange.select()
       }
     },
     // 点击任意区域取消弹窗
@@ -985,6 +1001,8 @@ export default {
         if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
           let textarea = this.commitComent
           let contentB = textarea.substring(0, position)
+          let ele = document.querySelector('.el-textarea__inner')
+          this.setPos(ele)
           this.commitComent = contentB + delAfter
         }
       })
@@ -1001,8 +1019,7 @@ export default {
       let before = content1.substring(0, that.position)
       let after = content2.substring(that.position)
       let ele = document.querySelector('.el-textarea__inner')
-      console.log(ele)
-      // that.setCaretPosition(ele, 0)
+      that.setPos(ele)
       that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
     },
     // 获取默认的人员
@@ -1025,6 +1042,7 @@ export default {
     // 获取@的事件
     inputConent () {
       this.selectUserDiaShow2 = true
+      this.searchPeople = ''
       if (this.selectUserDiaShow2) {
         setTimeout(() => {
           this.$refs['re'].focus()
@@ -1039,7 +1057,7 @@ export default {
       this.log('e.:', e.offsetX)
       e.preventDefault()
 
-      // 获取我们自定义的右键菜单
+      // 获取我们自定义的右键菜单p
       var menu = document.querySelector('#menu')
 
       // 根据事件对象中鼠标点击的位置，进行定位
@@ -1401,7 +1419,7 @@ export default {
       that.addProjectCommentPayload.contentId = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
-      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0') !== -1)
+      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')') !== -1)
       that.addProjectCommentPayload.memberList = that.peopleList
       console.log(that.peopleList)
       if (that.commitComent) {
@@ -1497,11 +1515,14 @@ export default {
         that.queryProDetail()
         // that. = that.planList[0].id
         that.getTree()
-        if (that.isChangeActive) {
-          that.activeId = ''
-        }
+        // if (that.isChangeActive) {
+        //   that.activeId = ''
+        // }
         if (type === '1') {
           that.value444 = false
+          if (that.isChangeActive) {
+            that.activeId = ''
+          }
         } else {
           that.value444 = true
         }
@@ -1516,15 +1537,23 @@ export default {
         })
       }
     },
-    TaskDelCallbackFuc: function (res) {
+    TaskDelCallbackFuc: function (res, type) {
       var that = this
       if (res.code === 200) {
         that.queryProDetail()
-        if (that.isChangeActive) {
-          that.activeId = ''
+        // if (that.isChangeActive) {
+        //   that.activeId = ''
+        // }
+        if (type === '1') {
+          that.TaskDetailCompShow = false
+          if (that.isChangeActive) {
+            that.activeId = ''
+          }
+        } else {
+          that.TaskDetailCompShow = true
         }
         // that.activeId = that.planList[0].id
-        that.TaskDetailCompShow = false
+        // that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
           type: 'success'

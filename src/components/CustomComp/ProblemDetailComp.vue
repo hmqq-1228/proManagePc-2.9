@@ -371,6 +371,7 @@ export default {
       let str = val.charAt(val.length - 1)
       if (str === '@') {
         this.selectUserDiaShow2 = true
+        this.searchPeople = ''
         setTimeout(() => {
           this.$refs['re'].focus()
         }, 200)
@@ -451,8 +452,8 @@ export default {
     // 触发@事件
     inputConent () {
       this.selectUserDiaShow2 = true
-      let arr = this.commitComent.split('@')
-      console.log(arr)
+      // let arr = this.commitComent.split('@')
+      this.searchPeople = ''
       if (this.selectUserDiaShow2) {
         setTimeout(() => {
           this.$refs['re'].focus()

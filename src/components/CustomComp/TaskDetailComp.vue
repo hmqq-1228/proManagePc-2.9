@@ -374,6 +374,7 @@ export default {
       let str = val.charAt(val.length - 1)
       if (str === '@') {
         this.selectUserDiaShow2 = true
+        this.searchPeople = ''
         setTimeout(() => {
           this.$refs['re'].focus()
         }, 200)
@@ -451,8 +452,8 @@ export default {
     },
     inputConent () {
       this.selectUserDiaShow2 = true
-      let arr = this.commitComent.split('@')
-      console.log(arr)
+      // let arr = this.commitComent.split('@')
+      this.searchPeople = ''
       if (this.selectUserDiaShow2) {
         setTimeout(() => {
           this.$refs['re'].focus()
@@ -646,7 +647,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
-          that.$emit('TaskDelCallback', res)
+          that.$emit('TaskDelCallback', res, '1')
           if (res.code === 200) {
             // that.log('delPlanOrTask:', res)
             that.getTaskChildList(id)
@@ -842,7 +843,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
-          that.$emit('TaskDelCallback', res)
+          that.$emit('TaskDelCallback', res, '2')
           if (res.code === 200) {
             // that.log('delPlanOrTask:', res)
             that.getTaskChildList(that.taskId)
