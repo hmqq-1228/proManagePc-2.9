@@ -27,9 +27,11 @@
             <span v-if="userSelectVal.length > 0" v-for="user in userSelectVal" :key="user"> {{user.split('-')[0]}}</span>
             <span v-if="userSelectVal.length === 0">{{defImplementer.name}}</span>
           </div>
-          <div class="paiTaskIptRightIcon" style="cursor: pointer;" v-on:click="selectDate($event)"><Icon size="22" type="ios-time-outline" /></div>
-          <div class="paiTaskIptRightCnt" v-on:click="selectDate($event)">时间</div>
-          <div class="paiTaskIptRightIcon" style="cursor: pointer;" :title="'等级:' + levelValue" v-on:click="selectLevel($event)"><Icon size="22" type="ios-star-outline" /></div>
+          <div class="paiTaskIptRightIcon" :title="selDateStart + ' 到 ' + selDateEnd" style="cursor: pointer;" v-on:click="selectDate($event)"><Icon size="22" type="ios-time-outline" /></div>
+          <div class="paiTaskIptRightCnt" :title="selDateStart + ' 到 ' + selDateEnd" v-on:click="selectDate($event)">时间</div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer;" :title="'等级:' + levelValue" v-on:click="selectLevel($event)">
+            <div style="width: 24px;height: 24px;padding-left: 4px;"><div class="levelNum">{{levelValue}}</div></div>
+          </div>
         </div>
       </div>
       <!---->
@@ -650,6 +652,18 @@ export default {
   }
   .selectDateItem{
     margin-top: 20px;
+  }
+  .levelNum{
+    margin-top: 4px;
+    width: 20px;
+    text-align: center;
+    height: 20px;
+    color: chocolate;
+    line-height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
   }
   /**/
 </style>

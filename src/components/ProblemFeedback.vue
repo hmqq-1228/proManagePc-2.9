@@ -260,6 +260,22 @@ export default {
     this.queryMyTaskView()
     this.queryProblemType()
   },
+  computed: {
+    slideMenu: function () {
+      var that = this
+      // this.log()
+      // this.log('url地址：', window.location.href)
+      if (that.$store.state.slideMenu.length > 0) {
+        for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
+          if (that.$store.state.slideMenu[i].projectType === '问题反馈') {
+            that.$store.state.activeNavIndex = 'general_' + i
+            localStorage.setItem('generalMenuActive', '问题反馈')
+          }
+        }
+      }
+      return that.$store.state.slideMenu
+    }
+  },
   watch: {
     // optionsValue3: function (newValue, oldValue) {
     //   this.typeCode = newValue
