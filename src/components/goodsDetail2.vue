@@ -1,7 +1,7 @@
 <template>
   <div class="ProDetail goodsDetail" style="position: relative;margin-top: 15px;">
-    <div @click="ttttttt()"><button>TTTTTTT</button></div>
-    <div>{{TreeJsonDataName}}</div>
+    <!--<div @click="ttttttt()"><button>TTTTTTT</button></div>-->
+    <div>{{TreeJsonDataName?'':''}}</div>
     <div>{{goPerfect?'':''}}</div>
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
