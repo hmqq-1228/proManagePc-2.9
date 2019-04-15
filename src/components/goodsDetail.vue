@@ -1515,11 +1515,14 @@ export default {
         that.queryProDetail()
         // that. = that.planList[0].id
         that.getTree()
-        if (that.isChangeActive) {
-          that.activeId = ''
-        }
+        // if (that.isChangeActive) {
+        //   that.activeId = ''
+        // }
         if (type === '1') {
           that.value444 = false
+          if (that.isChangeActive) {
+            that.activeId = ''
+          }
         } else {
           that.value444 = true
         }
@@ -1534,15 +1537,23 @@ export default {
         })
       }
     },
-    TaskDelCallbackFuc: function (res) {
+    TaskDelCallbackFuc: function (res, type) {
       var that = this
       if (res.code === 200) {
         that.queryProDetail()
-        if (that.isChangeActive) {
-          that.activeId = ''
+        // if (that.isChangeActive) {
+        //   that.activeId = ''
+        // }
+        if (type === '1') {
+          that.TaskDetailCompShow = false
+          if (that.isChangeActive) {
+            that.activeId = ''
+          }
+        } else {
+          that.TaskDetailCompShow = true
         }
         // that.activeId = that.planList[0].id
-        that.TaskDetailCompShow = false
+        // that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
           type: 'success'
