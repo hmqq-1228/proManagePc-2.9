@@ -1,6 +1,7 @@
 <template>
   <div class="ProDetail goodsDetail" style="position: relative;margin-top: 15px;">
-    <!--<div @click="ttttttt()"><button>TTTTTTT</button></div>-->
+    <div @click="ttttttt()"><button>TTTTTTT</button></div>
+    <div>{{TreeJsonDataName}}</div>
     <div>{{goPerfect?'':''}}</div>
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
@@ -99,15 +100,6 @@
                 <span style="margin-left: 5px;" v-on:click="openHisDrawer">历史记录</span>
               </div>
             </div>
-            <!--<div class="imgBox" v-if="proDetailMsg.state === '0'">-->
-              <!--<img src="../../static/img/unstart.png" alt>-->
-            <!--</div>-->
-            <!--<div class="imgBox" v-if="proDetailMsg.state === '2'">-->
-              <!--<img src="../../static/img/doing.png" alt>-->
-            <!--</div>-->
-            <!--<div class="imgBox" v-if="proDetailMsg.state === '3'">-->
-              <!--<img src="../../static/img/finish.png" alt>-->
-            <!--</div>-->
           </div>
         </div>
       <!-- 项目成员列表 -->
@@ -147,15 +139,6 @@
             <img src="../../static/img/my.png" alt>
           </div>
           <div style="margin-left: 10px;">{{proDetailMsg.projectManager}} {{startPlanDate}} 到 {{endPlanDate}}</div>
-          <!--<div class="imgBox" v-if="proDetailMsg.state === '0'">-->
-            <!--<img src="../../static/img/unstart.png" alt>-->
-          <!--</div>-->
-          <!--<div class="imgBox" v-if="proDetailMsg.state === '2'">-->
-            <!--<img src="../../static/img/doing.png" alt>-->
-          <!--</div>-->
-          <!--<div class="imgBox" v-if="proDetailMsg.state === '3'">-->
-            <!--<img src="../../static/img/finish.png" alt>-->
-          <!--</div>-->
         </div>
       </div>
       <!-- 展开与收起 -->
@@ -198,27 +181,27 @@
           >添加 / 编辑</Button> -->
         </div>
       </div>
-      <div style="margin-top:20px;" v-if="planList.length > 0 ">
-          <el-tabs v-model="activeName">
-              <el-tab-pane label="加任务" name="first">
-                  <component v-bind:is="compArr.AddNewTask"
-                     fileFormId="GetUploadCount1"
-                     v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
-                     :nodeId="parentId"
-                     >
-                  </component>
-              </el-tab-pane>
-              <el-tab-pane label="加计划" name="second" v-bind:disabled="panshow">
-                  <component v-bind:is="compArr.addNewPlan"
-                     fileFormId="addNewPlan"
-                     v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
-                     :nodeId="parentId"
-                     :defaultText="defaultText"
-                     :defaultDetail="defaultDetail">
-                  </component>
-              </el-tab-pane>
-          </el-tabs>
-      </div>
+      <!--<div style="margin-top:20px;" v-if="planList.length > 0 ">-->
+          <!--<el-tabs v-model="activeName">-->
+              <!--<el-tab-pane label="加任务" name="first">-->
+                  <!--<component v-bind:is="compArr.AddNewTask"-->
+                     <!--fileFormId="GetUploadCount1"-->
+                     <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
+                     <!--:nodeId="parentId"-->
+                     <!--&gt;-->
+                  <!--</component>-->
+              <!--</el-tab-pane>-->
+              <!--<el-tab-pane label="加计划" name="second" v-bind:disabled="panshow">-->
+                  <!--<component v-bind:is="compArr.addNewPlan"-->
+                     <!--fileFormId="addNewPlan"-->
+                     <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
+                     <!--:nodeId="parentId"-->
+                     <!--:defaultText="defaultText"-->
+                     <!--:defaultDetail="defaultDetail">-->
+                  <!--</component>-->
+              <!--</el-tab-pane>-->
+          <!--</el-tabs>-->
+      <!--</div>-->
     </div>
     <!-- Part01 end -->
     <!-- Part02 start 项目详情 title -->
@@ -238,6 +221,7 @@
     <!--</div>-->
     <div class="NewTreeCompWrap">
       <component v-bind:is="compArr.NewTree"
+                 v-bind:treeNodeLevel="treeNodeLevel"
                  v-bind:proId="proId"
                  v-bind:firstPlanId="firstPlanId"
                  v-bind:newTreeList="newTreeList"
@@ -479,6 +463,7 @@ import tree from './CustomComp/tree.vue'
 import AddNewTask from './CustomComp/AddNewTask.vue'
 import addNewPlan from './CustomComp/addNewPlan.vue'
 import NewTree from './CustomComp/NewTree.vue'
+import TreeJsonData from '../assets/testData/TreeJsonData.js'
 // DrawerComp
 export default {
   name: 'ProDetail2',
@@ -501,6 +486,9 @@ export default {
   },
   data () {
     return {
+      // 节点级别
+      treeNodeLevel: 0,
+      TreeJsonDataName: '',
       // j
       TreeNodeId: '',
       // refshPlan: false
@@ -885,6 +873,10 @@ export default {
     }
   },
   methods: {
+    ttttttt: function () {
+      this.TreeJsonDataName = JSON.stringify(TreeJsonData)
+      this.log('男儿当自强：', TreeJsonData)
+    },
     // 测试右键
     rightKey: function (e) {
       this.log('e.:', e.offsetX)
@@ -986,6 +978,7 @@ export default {
           that.listTree = res.data
           // that.log(111111)
           that.log('proDetRes:::', proDetRes)
+          // for () {}
           if (proDetRes) {
             var obj = {
               children: res.data,
@@ -1000,6 +993,7 @@ export default {
             }
             that.newTreeList = []
             that.newTreeList.push(obj)
+            that.TreeJsonDataName = JSON.stringify(that.newTreeList)
           }
         }
       })

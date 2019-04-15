@@ -1,71 +1,87 @@
 <template>
   <div class="TEST">
-    <div style="width: 600px; height: 600px; background-color: #eee;"></div>
-    <div v-on:click="TestBtnClick">TEST BTN</div>
-    <!-- 任务详情 start -->
-    <component v-show="value4" v-bind:is="compArr.TaskDetailCompTest"
-               v-bind:taskDrawerOpen="value4"
-               v-on:CommonThrow="CommonThrowFuc"
-               :nodeId="taskId2">
-    </component>
-    <!--<Drawer class="drawerScroll" :closable="false" width="750%" v-model="value4">-->
-      <!--<component v-bind:is="compArr.TaskDetailComp"-->
-                 <!--v-bind:taskDrawerOpen="value4"-->
-                 <!--v-bind:modifyTaskRes="modifyTaskRes"-->
-                 <!--v-on:FilePreEmit="GetFilePreData"-->
-                 <!--v-on:toPlanDetail="toPlanDetailFuc"-->
-                 <!--v-on:showEditForm="showEditFormFuc"-->
-                 <!--v-on:ActionResThrow="ActionResThrowFuc"-->
-                 <!--v-on:TaskDelCallback="TaskDelCallbackFuc"-->
-                 <!--:nodeId="taskId2">-->
-      <!--</component>-->
-    <!--</Drawer>-->
+    <!--<div class="box box1" v-on:mouseout="box1out">-->
+      <!--<div class="box box2" v-on:mouseout="box2out">-->
+        <!--<div class="box box3" v-on:mouseout="box3out"></div>-->
+      <!--</div>-->
+    <!--</div>-->
+    <!---->
+    <div class="box box1" v-on:mouseleave="box1leave">
+      <div class="box box2" v-on:mouseleave="box2leave">
+        <div class="box box3" v-on:mouseleave="box3leave"></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
-import TaskDetailCompTest from './CustomComp/TaskDetailCompTest.vue'
 export default {
   name: 'TEST',
-  components: {
-    TaskDetailComp,
-    TaskDetailCompTest
-  },
   data () {
     return {
-      compArr: {
-        TaskDetailComp: 'TaskDetailComp',
-        TaskDetailCompTest: 'TaskDetailCompTest'
-      },
-      value4: false,
-      taskId2: 'J8a33ea31fc514b61ad14bb15b65856c9'
+      msg: ''
     }
   },
   created () {
     // j
   },
+  watch: {
+  },
   methods: {
-    TestBtnClick: function () {
-      this.value4 = true
+    box1over: function () {
+      this.log('box1')
     },
-    // test start
-    TestMethod: function () {
-      var arr = []
-      for (var i = 0; i < arr.length; i++) {
-        this.log(arr[i].name)
-      }
+    box2over: function () {
+      this.log('box2')
     },
-    // test end
-    CommonThrowFuc: function (obj) {
-      if (obj.type === 'drawerKK') {
-        this.value4 = obj.drawerKK
-      }
+    box3over: function () {
+      this.log('box3')
+    },
+    box1enter: function () {
+      this.log('enter:box1')
+    },
+    box2enter: function () {
+      this.log('enter:box2')
+    },
+    box3enter: function () {
+      this.log('enter:box3')
+    },
+    box1out: function () {
+      this.log('out:box1')
+    },
+    box2out: function () {
+      this.log('out:box2')
+    },
+    box3out: function () {
+      this.log('out:box3')
+    },
+    box1leave: function () {
+      this.log('leave:box1')
+    },
+    box2leave: function () {
+      this.log('leave:box2')
+    },
+    box3leave: function () {
+      this.log('leave:box3')
     }
   }
 }
 </script>
 
 <style scoped>
-
+  .box{
+    height: 100%;
+    padding: 50px;
+  }
+  .box1{
+    width: 500px;
+    height: 500px;
+    background-color: #aaa;
+  }
+  .box2{
+    background-color: #bbb;
+  }
+  .box3{
+    background-color: #ccc;
+  }
 </style>

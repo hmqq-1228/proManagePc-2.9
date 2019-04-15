@@ -39,11 +39,11 @@ export default new Router({
       name: 'goodsDetail',
       component: goodsDetail
     },
-    {
-      path: '/goodsDetail/:proId',
-      name: 'goodsDetail',
-      component: goodsDetail
-    },
+    // {
+    //   path: '/goodsDetail/:proId',
+    //   name: 'goodsDetail',
+    //   component: goodsDetail
+    // },
     {
       path: '/',
       name: 'Wellcome',

@@ -11,6 +11,7 @@ const state = {
   slideMenuGroup: [],
   slideMenu: [],
   menuRefresh: false,
+  treeLevel: -1,
   uploadCount: 0,
   // 激活的导航索引
   activeNavIndex: 'group_0_0',
