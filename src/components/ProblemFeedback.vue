@@ -40,7 +40,7 @@
       </div>
       <div>
         <el-input placeholder="请输入搜索内容" v-model="input3">
-          <el-button type="primary" slot="prepend">任务搜索</el-button>
+          <el-button type="primary" slot="prepend">问题搜索</el-button>
           <!--<template slot="prepend" style="background-color: #fff;">任务搜索</template>-->
         </el-input>
       </div>
@@ -60,7 +60,7 @@
           </div>
           <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum < 0 && myTask.status != '2'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(myTask.dayNum)}}</span> 天</div>
           <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum >= 0 && myTask.status != '2'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{myTask.dayNum}}</span> 天</div>
-          <div style="text-align: right;margin-top: 4px;font-size: 12px;color: #3a8ee6;font-weight: bold;" v-if="myTask.status === '2'">任务已完成</div>
+          <div style="text-align: right;margin-top: 4px;font-size: 12px;color: #3a8ee6;font-weight: bold;" v-if="myTask.status === '2'">问题已解决</div>
         </div>
         <div v-bind:class="'taskTag'+ myTask.status">{{myTask.statusStr}}</div>
       </div>
@@ -94,7 +94,7 @@
     </Drawer>
     <!---->
     <!--修改任务 编辑任务 任务 修改-->
-    <Drawer class="drawerScroll" title="修改问题" :closable="false" width="40%" v-model="ModifyQuestionVisible">
+    <Drawer class="drawerScroll" title="问题修改" :closable="false" width="40%" v-model="ModifyQuestionVisible">
       <!-- 修改任务 编辑任务 引入组件 -->
       <component v-bind:is="compArr.ModifyQuestion"
                  v-bind:DrawerOpen="ModifyQuestionVisible"
@@ -107,7 +107,7 @@
     </Drawer>
     <!---->
     <!-- Part06 start 抽屉 计划详情 -->
-    <Drawer title="计划详情" class="drawerScroll" :closable="false" width="750" v-model="value444">
+    <Drawer title="问题详情" class="drawerScroll" :closable="false" width="750" v-model="value444">
       <component v-bind:is="compArr.PlanDetailComp"
                  v-bind:taskDrawerOpen="value444"
                  :nodeId="currentNodeId"
@@ -118,7 +118,7 @@
       </component>
     </Drawer>
     <!--新增 添加计划或者任务 start-->
-    <Drawer class="drawerScroll" title="计划表单" :closable="false" width="40%" v-model="bgCoverShow">
+    <Drawer class="drawerScroll" title="问题表单" :closable="false" width="40%" v-model="bgCoverShow">
       <component v-bind:is="compArr.CreatePlanOrTask"
                  v-bind:DrawerOpen="bgCoverShow"
                  fileFormId="CreatePlanTask"

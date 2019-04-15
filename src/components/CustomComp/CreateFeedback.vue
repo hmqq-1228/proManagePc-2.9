@@ -21,15 +21,15 @@
           </div>
         </div>
         <div class="paiTaskIptRight">
-          <div class="paiTaskIptRightIcon" v-on:click="selectUser($event)"><Icon size="22" type="ios-contact-outline" /></div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer;" v-on:click="selectUser($event)"><Icon size="22" type="ios-contact-outline" /></div>
           <div class="paiTaskIptRightCnt" v-on:click="selectUser($event)">
             <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
             <span v-if="userSelectVal.length > 0" v-for="user in userSelectVal" :key="user"> {{user.split('-')[0]}}</span>
             <span v-if="userSelectVal.length === 0">{{defImplementer.name}}</span>
           </div>
-          <div class="paiTaskIptRightIcon" v-on:click="selectDate($event)"><Icon size="22" type="ios-time-outline" /></div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer;" v-on:click="selectDate($event)"><Icon size="22" type="ios-time-outline" /></div>
           <div class="paiTaskIptRightCnt" v-on:click="selectDate($event)">时间</div>
-          <div class="paiTaskIptRightIcon" v-on:click="selectLevel($event)"><Icon size="22" type="ios-star-outline" /></div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer;" :title="'等级:' + levelValue" v-on:click="selectLevel($event)"><Icon size="22" type="ios-star-outline" /></div>
         </div>
       </div>
       <!---->
@@ -457,7 +457,7 @@ export default {
               that.addLoading = false
               // that.isRecall = that.isRecall + 1
               that.$message({
-                message: '任务创建成功',
+                message: '问题创建成功',
                 type: 'success'
               })
               // that.queryMyTaskView()
@@ -477,7 +477,7 @@ export default {
         }
       } else {
         that.$message({
-          message: '请填写任务名',
+          message: '请填写问题名称',
           type: 'warning'
         })
         that.loading3 = false
