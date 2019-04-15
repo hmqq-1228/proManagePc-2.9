@@ -132,6 +132,11 @@ export default new Router({
       component: ProblemFeedback
     },
     {
+      path: '/ProblemFeedback/:ProbId',
+      name: 'ProblemFeedback',
+      component: ProblemFeedback
+    },
+    {
       path: '/CompUse',
       name: 'CompUse',
       component: CompUse

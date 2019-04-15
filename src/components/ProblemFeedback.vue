@@ -252,6 +252,11 @@ export default {
     }
   },
   created () {
+    if (this.$route.params.ProbId) {
+      this.$store.state.taskEdit = true
+      this.taskId = this.$route.params.ProbId
+      this.toDetail(this.$route.params.ProbId)
+    }
     this.queryMyTaskView()
     this.queryProblemType()
   },

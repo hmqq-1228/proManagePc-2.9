@@ -49,14 +49,26 @@
             </div>
           </div>
           <div class="paiTaskIptLeft">
-            <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建问题名称" /></div>
+            <div class="proBelong" style="padding-right: 10px;border-right: 1px dashed #ccc;display: flex">
+              <el-select v-model="projectBelong" @change="myTaskStyleChange($event)" placeholder="请选择问题反馈类型">
+                <el-option
+                  v-for="item in options"
+                  :key="item.typeCode"
+                  :label="item.typeName"
+                  :value="item.typeCode">
+                </el-option>
+              </el-select>
+            </div>
+            <div style="margin-left: 10px;width: 100%;display: flex;">
+              <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+              <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" type="text" placeholder="请输入问题反馈名称" /></div>
+            </div>
           </div>
           <div class="paiTaskIptRight">
             <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
-              <span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>
+              <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
             </div>
             <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
@@ -101,6 +113,7 @@ export default {
     return {
       // 取消按钮禁用
       cancelBtn: false,
+      projectBelong: '',
       // 引入组件
       compArr: {
         FileUploadComp: 'FileUploadComp'
@@ -130,6 +143,7 @@ export default {
         projectManager: ''
       },
       options42: [],
+      options: [],
       selectDateDiaShow2: false,
       selDateStart2: '',
       pickerOptions3: {},
@@ -174,6 +188,7 @@ export default {
         this.log('55555555', this.nodeId)
         // this.toShowDevided = val
         this.getPlanTaskDetail()
+        this.getProBelong()
       }
     },
     cancelBtnShow: function (val, oV) {
@@ -183,21 +198,44 @@ export default {
       }
     }
   },
-  computed: {
-    getUserName: function () {
-      var that = this
-      that.defImplementer.name = this.$store.state.userName
-      that.defImplementer.id = this.$store.state.userId
-      return this.$store.state.userName
-    }
-  },
+  // computed: {
+  //   getUserName: function () {
+  //     var that = this
+  //     that.defImplementer.name = this.$store.state.userName
+  //     that.defImplementer.id = this.$store.state.userId
+  //     return this.$store.state.userName
+  //   }
+  // },
   methods: {
+    myTaskStyleChange: function (e) {
+      var that = this
+      that.ajax('/question/getQuestionType', {typeCode: e}).then(res => {
+        if (res.code === 200) {
+          this.log('getAllProject222:', res)
+          // this.getProjectTime(this.projectBelong)
+          that.defImplementer.name = res.data[0].userName
+          that.defImplementer.id = res.data[0].userId
+        }
+      })
+    },
+    getProBelong: function () {
+      var that = this
+      that.ajax('/question/getQuestionType', {}).then(res => {
+        if (res.code === 200) {
+          this.log('getAllProject:', res)
+          this.options = res.data
+          // this.getProjectTime(this.projectBelong)
+        }
+      })
+    },
     getPlanTaskDetail () {
       var that = this
       that.ajax('/question/getDetailById', {id: that.nodeId}).then(res => {
         if (res.code === 200) {
           that.selDateStart2 = res.data.queStartDate
           that.selDateEnd2 = res.data.queFinishDate
+          this.projectBelong = res.data.typeCode
+          that.myTaskStyleChange(that.projectBelong)
           // that.defImplementer.name = res.data.userName
           // that.defImplementer.id = res.data.userId
           var st = res.data.queStartDate.split(' ')[0] + ' 00:00:00'
@@ -332,7 +370,6 @@ export default {
     },
     depSub2: function () {
       var that = this
-      that.loading32 = true
       var fileStr = ''
       for (var j = 0; j < this.fileList2.length; j++) {
         if (j === that.fileList2.length - 1) {
@@ -344,6 +381,7 @@ export default {
       // 如果有任务名
       if (that.taskNameText2) {
         // value9有值
+        that.loading32 = true
         var selectUserStr = ''
         if (that.taskForm2.value9.length > 0) {
           for (var i = 0; i < that.taskForm2.value9.length; i++) {
@@ -366,6 +404,7 @@ export default {
         that.CommunityTaskPayload2.queFinishDate = that.selDateEnd2
         that.CommunityTaskPayload2.questionLevel = that.levelValue2
         that.CommunityTaskPayload2.description = that.taskIntro2
+        that.CommunityTaskPayload2.typeCode = that.projectBelong
         that.CommunityTaskPayload2._jfinal_token = that.token
         that.log('attachmentId:', that.CommunityTaskPayload2.attachmentId)
         that.ajax('/question/addQuestion', that.CommunityTaskPayload2).then(res => {
@@ -377,6 +416,7 @@ export default {
               message: '任务创建成功',
               type: 'success'
             })
+            that.loading32 = false
             // that.toDetail()
             // that.selectProjectId()
             // that.getHistoryList()
@@ -387,8 +427,8 @@ export default {
               message: res.msg,
               type: 'warning'
             })
+            that.loading32 = false
           }
-          that.loading32 = false
         })
       } else {
         that.$message({
@@ -448,7 +488,7 @@ export default {
     display: flex;
     margin-top: 10px;
     justify-content: space-between;
-    padding: 10px 5px;
+    padding: 5px;
     border: 1px solid #dcdfe6;
     padding-left: 8px;
   }

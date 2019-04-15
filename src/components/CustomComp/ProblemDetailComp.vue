@@ -52,8 +52,8 @@
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../../static/img/taskFa2.png" alt=""><span>父级问题:</span></div>
-        <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.parentTaskName" @click="toDetail(taskBasicMsg.parentTaskID)">{{taskBasicMsg.parentTaskName}}</div>
-        <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级</div>
+        <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.parentQuestionName" @click="toDetail(taskBasicMsg.parentId)">{{taskBasicMsg.parentQuestionName}}</div>
+        <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentQuestionName">无父级</div>
       </div>
     <!--<div class="cannetProject">-->
       <!--<div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>-->
@@ -780,7 +780,7 @@ export default {
     startTask: function (id) {
       var that = this
       // console.log('id', id)
-      that.$confirm('确定后将开始此任务，确定开始？', '', {
+      that.$confirm('确定后将开始此问题，确定开始？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -812,7 +812,7 @@ export default {
     isReStartTask: function (id) {
       var that = this
       this.log('restartTaskID', id)
-      that.$confirm('是否确定重启此任务?', '提示', {
+      that.$confirm('是否确定重启此问题?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
