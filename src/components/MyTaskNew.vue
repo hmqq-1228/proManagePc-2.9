@@ -64,6 +64,7 @@
         </div>
         <div v-bind:class="'taskTag'+ myTask.status">{{myTask.statusStr}}</div>
       </div>
+      <div class="noDate" v-if="myTaskList.length === 0">暂无符合该条件的数据~</div>
     </div>
     <!---->
     <div style="text-align: center;margin-top: 40px;margin-bottom: 40px;">
@@ -250,6 +251,13 @@ export default {
     }
   },
   created () {
+    var that = this
+    // this.log('url参数:', this.$route.params.TaskId)
+    if (that.$route.params.TaskId) {
+      that.$store.state.taskEdit = true
+      that.taskId = that.$route.params.TaskId
+      this.toDetail(that.$route.params.TaskId)
+    }
     this.queryMyTaskView()
     this.queryMyProjectList()
   },
@@ -577,5 +585,12 @@ export default {
   }
   .showImg > img{
     width: 100%;
+  }
+  .noDate{
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
   }
 </style>

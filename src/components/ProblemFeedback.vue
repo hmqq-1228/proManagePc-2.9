@@ -1,5 +1,6 @@
 <template>
   <div class="MyTaskNew">
+    <div>{{slideMenu?'':''}}</div>
     <div class="contentTop" v-loading="loading3">
       <div class="paiTaskTitTab">
         <div class="paiTask pai active" style="font-weight: bold;font-size: 14px;">提出问题</div>
@@ -64,7 +65,7 @@
         </div>
         <div v-bind:class="'taskTag'+ myTask.status">{{myTask.statusStr}}</div>
       </div>
-      <div class="noDate" v-if="myTaskList.length === 0">暂无符合条件的数据~</div>
+      <div class="noDate" v-if="myTaskList.length === 0">暂无符合该条件的数据~</div>
     </div>
     <!---->
     <div style="text-align: center;margin-top: 40px;margin-bottom: 40px;">
