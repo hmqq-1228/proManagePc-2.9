@@ -700,9 +700,6 @@ export default {
         }
       })
     },
-    remoteMethod2 (query) {
-
-    },
     // 检测历史记录输入功能
     inputFunt (e) {
       this.getTxt1CursorPosition(e)
