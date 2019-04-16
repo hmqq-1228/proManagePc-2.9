@@ -445,6 +445,7 @@ export default {
     // 组件内点击了关闭 父组件执行关闭子组件操作
     ShutCompEmitFuc: function (res) {
       this[res] = false
+      this.ModifyQuestionVisible = false
     },
     // 计划 计划删除 返回结果处理
     PlanDelCallbackFuc: function (res) {
