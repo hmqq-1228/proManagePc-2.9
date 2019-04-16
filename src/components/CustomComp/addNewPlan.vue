@@ -58,8 +58,8 @@
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
               <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
             </div> -->
-            <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
-            <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
+            <div class="paiTaskIptRightIcon" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
+            <div class="paiTaskIptRightCnt" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)">时间</div>
             <!-- <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div> -->
           </div>
         </div>

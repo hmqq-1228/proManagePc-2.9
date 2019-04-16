@@ -8,15 +8,17 @@
           <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入新建任务名称" /></div>
         </div>
         <div class="paiTaskIptRight">
-          <div class="paiTaskIptRightIcon" v-on:click="selectUser($event)"><i class="el-icon-edit-outline"></i></div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer" v-on:click="selectUser($event)"><i class="el-icon-edit-outline"></i></div>
           <div class="paiTaskIptRightCnt" v-on:click="selectUser($event)">
             <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
             <span v-if="userSelectVal.length > 0" v-for="user in userSelectVal" :key="user"> {{user.split('-')[0]}}</span>
             <span v-if="userSelectVal.length === 0">{{defImplementer.name}}</span>
           </div>
-          <div class="paiTaskIptRightIcon" v-on:click="selectDate($event)"><i class="el-icon-date"></i></div>
-          <div class="paiTaskIptRightCnt" v-on:click="selectDate($event)">时间</div>
-          <div class="paiTaskIptRightIcon" v-on:click="selectLevel($event)"><i class="el-icon-bell"></i></div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="selDateStart + ' 到 ' + selDateEnd" v-on:click="selectDate($event)"><i class="el-icon-date"></i></div>
+          <div class="paiTaskIptRightCnt" :title="selDateStart + ' 到 ' + selDateEnd" v-on:click="selectDate($event)">时间</div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="'等级:' + levelValue" v-on:click="selectLevel($event)">
+            <div style="width: 24px;height: 24px;padding-left: 4px;"><div class="levelNum">{{levelValue}}</div></div>
+          </div>
         </div>
       </div>
       <!---->
@@ -617,6 +619,18 @@ export default {
   }
   .selectDateItem{
     margin-top: 20px;
+  }
+  .levelNum{
+    margin-top: 4px;
+    width: 20px;
+    text-align: center;
+    height: 20px;
+    color: chocolate;
+    line-height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
   }
   /**/
 </style>
