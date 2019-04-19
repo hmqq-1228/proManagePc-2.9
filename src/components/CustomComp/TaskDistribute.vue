@@ -53,14 +53,16 @@
             <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" placeholder="请输入新建任务名称" /></div>
           </div>
           <div class="paiTaskIptRight">
-            <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
+            <div class="paiTaskIptRightIcon" style="cursor: pointer" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
               <span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>
             </div>
-            <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
-            <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
-            <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div>
+            <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
+            <div class="paiTaskIptRightCnt" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)">时间</div>
+            <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="'等级:' + levelValue2" v-on:click="selectLevel2($event)">
+              <div style="width: 24px;height: 24px;padding-left: 4px;"><div class="levelNum">{{levelValue2}}</div></div>
+            </div>
           </div>
         </div>
         <div class="taskRelation" v-if="taskRelationShow2">
@@ -376,6 +378,7 @@ export default {
         that.CommunityTaskPayload2.jobName = that.taskNameText2
         that.CommunityTaskPayload2.taskStartDate = that.selDateStart2
         that.CommunityTaskPayload2.taskFinishDate = that.selDateEnd2
+        that.CommunityTaskPayload2.jobLevel = that.levelValue2
         that.CommunityTaskPayload2.description = that.taskIntro2
         that.CommunityTaskPayload2._jfinal_token = that.token
         that.log('attachmentId:', that.CommunityTaskPayload2.attachmentId)
@@ -468,15 +471,6 @@ export default {
     display: flex;
     flex-grow: 1;
   }
-  .paiTaskIptIcon{
-    width: 20px;
-    font-size: 18px;
-    margin-right: 6px;
-  }
-  .paiTaskIptWrap{
-    width: 100%;
-    line-height: 27px;
-  }
   .paiTaskIptWrap input{
     width: 100%;
     outline: none;
@@ -497,6 +491,18 @@ export default {
     cursor: pointer;
     margin-right: 10px;
     line-height: 25px;
+  }
+  .paiTaskIptIcon{
+    width: 20px;
+    color: #409EFF;
+    font-size: 18px;
+    margin-right: 6px;
+    line-height: 28px;
+  }
+  .paiTaskIptWrap{
+    width: 100%;
+    line-height: 28px;
+    font-size: 14px;
   }
   .taskRelation{
     border: 1px solid #a9b8bf;
@@ -584,5 +590,17 @@ export default {
   }
   .selectDateItem{
     margin-top: 20px;
+  }
+  .levelNum{
+    margin-top: 4px;
+    width: 20px;
+    text-align: center;
+    height: 20px;
+    color: chocolate;
+    line-height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
   }
 </style>

@@ -349,15 +349,27 @@
     <!--新增 抽屉 一级计划详情 end -->
     <!--新增 抽屉 查看历史记录 start-->
     <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
-      <div class="el-textarea" v-loading="loadingRe">
+      <div @click="hidePanel">
+         <div class="el-textarea" v-loading="loadingRe">
         <!--enctype="multipart/form-data"-->
         <form id="uploadFile">
+          <div class="peopleList" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+              <Input prefix="ios-search-outline" placeholder="请输人员姓名或拼音(如'张三'或 'zs')" style="width: 270px"  autofocus v-model="searchPeople" v-focus ref="re"/>
+              <ul>
+                <li v-for="(item, index) in options42" :key="index" @click="checkPeople(item)">{{item.Name + ' (' + item.jName + ')'}}</li>
+              </ul>
+          </div>
           <textarea
             name="content"
             class="el-textarea__inner"
             id="textArea"
             type="text"
             v-model="commitComent"
+            v-on:input="inputFunt"
+            @keyup.delete ="deleteText"
+            @keyup.shift.50="inputConent"
+            @click="getTxt1CursorPosition"
+            v-focus
           ></textarea>
           <div class="hisFileUplBox">
             <div style="display: inline-block">
@@ -377,7 +389,7 @@
         </form>
       </div>
       <!--操作记录 历史记录-->
-      <div class="discription lis" style="margin-top: 15px;">
+         <div class="discription lis" style="margin-top: 15px;">
         <!-- 历史记录 评论 引入组件-->
         <component
           v-bind:is="compArr.CommentLogs"
@@ -394,6 +406,7 @@
             @on-change="commentPageChange($event)"
           ></Page>
         </div>
+      </div>
       </div>
     </Drawer>
     <!--新增 添加计划或者任务 start-->
@@ -502,7 +515,20 @@ export default {
   },
   data () {
     return {
+      // 光标位置
+      position: 0,
+      // 搜索组织架构人员
+      searchPeople: '',
+      // @成员
+      peopleList: [],
       // refshPlan: false
+      loading22: false,
+      // 获取默认的人员
+      options42: [],
+      // @人员
+      peopleValue: [],
+      // 判断是否出现@人员
+      selectUserDiaShow2: false,
       // 点击任务详情删除是否默认第一个
       isChangeActive: false,
       showName: false,
@@ -626,9 +652,10 @@ export default {
       },
       // 新增 添加评论
       addProjectCommentPayload: {
-        projectUID: '',
+        // projectUID: '',
         content: '',
-        attachmentId: ''
+        attachmentId: '',
+        memberList: []
       },
       listTree: [
         {
@@ -750,9 +777,6 @@ export default {
       this.$store.state.proId = this.proId
       // this.queryProDetail()
     }
-    // this.$store.commit('uploadCountAdd', {})
-    // this.getTreeList()
-    // this.getPlanTree(this.activeId)
   },
   watch: {
     proId: function (val, oVal) {
@@ -795,6 +819,18 @@ export default {
       } else {
         this.butnDisabled = true
       }
+      let str = val.charAt(val.length - 1)
+      if (str === '@') {
+        this.selectUserDiaShow2 = true
+        this.searchPeople = ''
+        if (this.selectUserDiaShow2) {
+          setTimeout(() => {
+            this.$refs['re'].focus()
+          }, 200)
+        }
+      } else {
+        this.selectUserDiaShow2 = false
+      }
     },
     planList: function (val, old) {
       var that = this
@@ -819,6 +855,15 @@ export default {
       let that = this
       if (val === false) {
         that.$store.state.goPerfect = false
+      }
+    },
+    searchPeople: function (val, old) {
+      if (val) {
+        this.getPeople()
+      }
+      if (val === '') {
+        this.searchPeople = ''
+        this.getPeople()
       }
     }
   },
@@ -883,7 +928,127 @@ export default {
       return that.$store.state.slideMenu
     }
   },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        el.focus()
+      }
+    }
+  },
   methods: {
+    // 获取当前光标的位置
+    getPosition (element) {
+      let cursorPos = 0
+      if (document.selection) { // IE
+        var selectRange = document.selection.createRange()
+        selectRange.moveStart('character', -element.value.length)
+        cursorPos = selectRange.text.length
+      } else if (element.selectionStart || element.selectionStart === '0') {
+        cursorPos = element.selectionStart
+      }
+      this.position = cursorPos
+    },
+    // 调取获取光标的位置
+    getTxt1CursorPosition (e) {
+      this.getPosition(e.target)
+    },
+    // 设置光标位置
+    setCaretPosition (ctrl, pos) {
+      if (ctrl.setSelectionRange) {
+        ctrl.focus()
+        ctrl.setSelectionRange(pos, pos)
+        console.log(ctrl.setSelectionRange)
+      } else if (ctrl.createTextRange) {
+        console.log(2)
+        var range = ctrl.createTextRange()
+        range.collapse(true)
+        range.moveEnd('character', pos)
+        range.moveStart('character', pos)
+        range.select()
+      }
+    },
+    setPos: function (o) {
+      if (o.setSelectionRange) { // W3C
+        setTimeout(function () {
+          o.setSelectionRange(2, 2)
+          o.focus()
+        }, 100)
+      } else if (o.createTextRange) { // IE
+        var textRange = o.createTextRange()
+        textRange.moveStart('character', 1)
+        textRange.moveEnd('character', 0)
+        textRange.select()
+      }
+    },
+    // 点击任意区域取消弹窗
+    hidePanel (event) {
+      let sp2 = document.querySelector('.peopleList')
+      if (sp2) {
+        if (!sp2.contains(event.target)) {
+          this.selectUserDiaShow2 = false
+        }
+      }
+    },
+    // 键盘删除事件
+    deleteText () {
+      let content = this.commitComent
+      let content1 = this.commitComent
+      let delBefore = content.substring(0, this.position)
+      let delAfter = content1.substring(this.position)
+      let position = delBefore.lastIndexOf('@', this.position)
+      let str = delBefore.substring(position, this.position)
+      this.peopleList.forEach((item, index) => {
+        if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
+          let textarea = this.commitComent
+          let contentB = textarea.substring(0, position)
+          let ele = document.querySelector('.el-textarea__inner')
+          this.setPos(ele)
+          this.commitComent = contentB + delAfter
+        }
+      })
+    },
+    // 点击获取@人员
+    checkPeople (item) {
+      let that = this
+      that.peopleList.push(item)
+      that.selectUserDiaShow2 = false
+      $('.el-textarea__inner').focus()
+      // that.commitComent = that.commitComent + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0'
+      let content1 = that.commitComent
+      let content2 = that.commitComent
+      let before = content1.substring(0, that.position)
+      let after = content2.substring(that.position)
+      let ele = document.querySelector('.el-textarea__inner')
+      that.setPos(ele)
+      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
+    },
+    // 获取默认的人员
+    getPeople () {
+      let that = this
+      that.ajax('/myProject/autoCompleteNames', {projectManager: that.searchPeople, projectId: that.proId}).then(res => {
+        if (res.code === 200) {
+          that.options42 = res.data
+          this.loading22 = false
+        }
+      })
+    },
+    remoteMethod2 (query) {
+
+    },
+    // 检测历史记录输入功能
+    inputFunt (e) {
+      this.getTxt1CursorPosition(e)
+    },
+    // 获取@的事件
+    inputConent () {
+      this.selectUserDiaShow2 = true
+      this.searchPeople = ''
+      if (this.selectUserDiaShow2) {
+        setTimeout(() => {
+          this.$refs['re'].focus()
+        }, 200)
+      }
+    },
     toGoodsDetail2: function () {
       this.$router.push('/goodsDetail2')
     },
@@ -892,7 +1057,7 @@ export default {
       this.log('e.:', e.offsetX)
       e.preventDefault()
 
-      // 获取我们自定义的右键菜单
+      // 获取我们自定义的右键菜单p
       var menu = document.querySelector('#menu')
 
       // 根据事件对象中鼠标点击的位置，进行定位
@@ -1208,6 +1373,7 @@ export default {
     openHisDrawer () {
       this.DrawerHistory = true
       this.getHistoryCont()
+      this.getPeople()
     },
     // 历史记录 获取历史记录
     getHistoryCont () {
@@ -1253,10 +1419,14 @@ export default {
       that.addProjectCommentPayload.contentId = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
+      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')') !== -1)
+      that.addProjectCommentPayload.memberList = that.peopleList
+      console.log(that.peopleList)
       if (that.commitComent) {
-        that.ajax('/comment/addComment', that.addProjectCommentPayload).then(res => {
+        that.ajax('/comment/addComment', JSON.stringify(that.addProjectCommentPayload)).then(res => {
           if (res.code === 200) {
             that.IsClear = true
+            that.peopleList = []
             that.$message({
               type: 'success',
               message: res.msg
@@ -1345,11 +1515,14 @@ export default {
         that.queryProDetail()
         // that. = that.planList[0].id
         that.getTree()
-        if (that.isChangeActive) {
-          that.activeId = ''
-        }
+        // if (that.isChangeActive) {
+        //   that.activeId = ''
+        // }
         if (type === '1') {
           that.value444 = false
+          if (that.isChangeActive) {
+            that.activeId = ''
+          }
         } else {
           that.value444 = true
         }
@@ -1364,15 +1537,23 @@ export default {
         })
       }
     },
-    TaskDelCallbackFuc: function (res) {
+    TaskDelCallbackFuc: function (res, type) {
       var that = this
       if (res.code === 200) {
         that.queryProDetail()
-        if (that.isChangeActive) {
-          that.activeId = ''
+        // if (that.isChangeActive) {
+        //   that.activeId = ''
+        // }
+        if (type === '1') {
+          that.TaskDetailCompShow = false
+          if (that.isChangeActive) {
+            that.activeId = ''
+          }
+        } else {
+          that.TaskDetailCompShow = true
         }
         // that.activeId = that.planList[0].id
-        that.TaskDetailCompShow = false
+        // that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
           type: 'success'
@@ -1974,4 +2155,47 @@ div img {
     line-height: 25px;
     padding: 0 10px;
   }
+  .selectUserDialog2{
+    width: 300px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .selectUserBtn{
+    text-align: center;
+    margin-top: 20px;
+  }
+  .selectDateItem{
+    margin-top: 20px;
+  }
+  .peopleList {
+    width:300px;
+    height: 370px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+.peopleList ul {
+  list-style: none;
+  width:270px;
+  max-height:300px;
+  overflow: auto;
+  margin-top:10px;
+}
+.peopleList ul li{
+  list-style: none;
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #f2f2f2;
+  cursor: pointer;
+}
+.peopleList ul li:hover{
+  background: #f5f8fa;
+}
 </style>

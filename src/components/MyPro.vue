@@ -240,10 +240,28 @@
     <!--抽屉 回复 历史记录-->
     <!--新增 抽屉 查看历史记录 start-->
     <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
-      <div class="el-textarea" v-loading="historyLoading">
+      <div @click="hidePanel">
+         <div class="el-textarea" v-loading="historyLoading">
         <!--enctype="multipart/form-data"-->
         <form id="uploadFile">
-          <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
+          <div class="peopleList" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+            <Input prefix="ios-search-outline" placeholder="请输人员姓名或拼音(如'张三'或 'zs')" style="width: 270px"  autofocus v-model="searchPeople" v-focus ref="re"/>
+            <ul>
+              <li v-for="(item, index) in options42" :key="index" @click="checkPeople(item)">{{item.Name + ' (' + item.jName + ')'}}</li>
+            </ul>
+          </div>
+          <textarea
+            name="content"
+            class="el-textarea__inner"
+            id="textArea"
+            type="text"
+            v-model="commitComent"
+            v-on:input="inputFunt"
+            @keyup.delete ="deleteText"
+            @keyup.shift.50="inputConent"
+            @click="getTxt1CursorPosition"
+            v-focus
+          ></textarea>
           <div class="cannetProject2">
             <div>
               <component v-bind:is="FileUploadComp" fileFormId="proHistory" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
@@ -252,14 +270,15 @@
           </div>
         </form>
       </div>
-      <!--操作记录-->
-      <div class="discription lis" style="margin-top: 15px;">
+         <!--操作记录-->
+         <div class="discription lis" style="margin-top: 15px;">
         <!-- 历史记录 评论 引入组件-->
         <component v-bind:is="compArr.CommentLogs" fileFormId="ProCommentLogs" v-on:FilePreEmit="GetFilePreData" :commentList="taskLogs"></component>
         <!--<button v-on:click="setCurrentPage">Test</button>-->
         <div style="text-align: center">
           <Page :total="commentTotalNum" size="small" :page-size="10" show-total ref="currentPageNum" @on-change="commentPageChange($event)"></Page>
         </div>
+      </div>
       </div>
     </Drawer>
     <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
@@ -286,6 +305,20 @@ export default {
   },
   data () {
     return {
+      // 光标位置
+      position: 0,
+      // 搜索组织架构人员
+      searchPeople: '',
+      // @成员
+      peopleList: [],
+      // refshPlan: false
+      loading22: false,
+      // 获取默认的人员
+      options42: [],
+      // @人员
+      peopleValue: [],
+      // 判断是否出现@人员
+      selectUserDiaShow2: false,
       // 完善茶品信息
       dialogGoods: false,
       // 商品信息
@@ -378,6 +411,10 @@ export default {
         {
           value: '3',
           label: '我参与的'
+        },
+        {
+          value: '4',
+          label: '@我的'
         }
       ],
       // 项目分类列表
@@ -496,6 +533,27 @@ export default {
       } else {
         this.butnDisabled = true
       }
+      let str = val.charAt(val.length - 1)
+      if (str === '@') {
+        this.selectUserDiaShow2 = true
+        this.searchPeople = ''
+        if (this.selectUserDiaShow2) {
+          setTimeout(() => {
+            this.$refs['re'].focus()
+          }, 200)
+        }
+      } else {
+        this.selectUserDiaShow2 = false
+      }
+    },
+    searchPeople: function (val, old) {
+      if (val) {
+        this.getPeople()
+      }
+      if (val === '') {
+        this.searchPeople = ''
+        this.getPeople()
+      }
     },
     pageNum: function (val, old) {
       this.myProjectViewPayload.pageNum = val
@@ -538,7 +596,124 @@ export default {
       this.queryMyProjectView()
     }
   },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        el.focus()
+      }
+    }
+  },
   methods: {
+    // 获取当前光标的位置
+    getPosition (element) {
+      let cursorPos = 0
+      if (document.selection) { // IE
+        var selectRange = document.selection.createRange()
+        selectRange.moveStart('character', -element.value.length)
+        cursorPos = selectRange.text.length
+      } else if (element.selectionStart || element.selectionStart === '0') {
+        cursorPos = element.selectionStart
+      }
+      this.position = cursorPos
+    },
+    // 调取获取光标的位置
+    getTxt1CursorPosition (e) {
+      this.getPosition(e.target)
+    },
+    // 设置光标位置
+    setCaretPosition (ctrl, pos) {
+      if (ctrl.setSelectionRange) {
+        ctrl.focus()
+        ctrl.setSelectionRange(pos, pos)
+        console.log(ctrl.setSelectionRange)
+      } else if (ctrl.createTextRange) {
+        console.log(2)
+        var range = ctrl.createTextRange()
+        range.collapse(true)
+        range.moveEnd('character', pos)
+        range.moveStart('character', pos)
+        range.select()
+      }
+    },
+    setPos: function (o) {
+      if (o.setSelectionRange) { // W3C
+        setTimeout(function () {
+          o.setSelectionRange(2, 2)
+          o.focus()
+        }, 100)
+      } else if (o.createTextRange) { // IE
+        var textRange = o.createTextRange()
+        textRange.moveStart('character', 1)
+        textRange.moveEnd('character', 0)
+        textRange.select()
+      }
+    },
+    // 点击任意区域取消弹窗
+    hidePanel (event) {
+      let sp2 = document.querySelector('.peopleList')
+      if (sp2) {
+        if (!sp2.contains(event.target)) {
+          this.selectUserDiaShow2 = false
+        }
+      }
+    },
+    // 键盘删除事件
+    deleteText () {
+      let content = this.commitComent
+      let content1 = this.commitComent
+      let delBefore = content.substring(0, this.position)
+      let delAfter = content1.substring(this.position)
+      let position = delBefore.lastIndexOf('@', this.position)
+      let str = delBefore.substring(position, this.position)
+      this.peopleList.forEach((item, index) => {
+        if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
+          let textarea = this.commitComent
+          let contentB = textarea.substring(0, position)
+          let ele = document.querySelector('.el-textarea__inner')
+          this.setPos(ele)
+          this.commitComent = contentB + delAfter
+        }
+      })
+    },
+    // 点击获取@人员
+    checkPeople (item) {
+      let that = this
+      that.peopleList.push(item)
+      that.selectUserDiaShow2 = false
+      $('.el-textarea__inner').focus()
+      // that.commitComent = that.commitComent + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0'
+      let content1 = that.commitComent
+      let content2 = that.commitComent
+      let before = content1.substring(0, that.position)
+      let after = content2.substring(that.position)
+      let ele = document.querySelector('.el-textarea__inner')
+      that.setPos(ele)
+      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
+    },
+    // 获取默认的人员
+    getPeople () {
+      let that = this
+      that.ajax('/myProject/autoCompleteNames', {projectManager: that.searchPeople, projectId: that.proId}).then(res => {
+        if (res.code === 200) {
+          that.options42 = res.data
+          this.loading22 = false
+        }
+      })
+    },
+    // 检测历史记录输入功能
+    inputFunt (e) {
+      this.getTxt1CursorPosition(e)
+    },
+    // 获取@的事件
+    inputConent () {
+      this.selectUserDiaShow2 = true
+      this.searchPeople = ''
+      if (this.selectUserDiaShow2) {
+        setTimeout(() => {
+          this.$refs['re'].focus()
+        }, 200)
+      }
+    },
     setCurrentPage () {
       // this.currentPageNum = 1
       this.$refs['currentPageNum'].currentPage = 1
@@ -623,11 +798,14 @@ export default {
       that.addProjectCommentPayload.contentId = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
+      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')') !== -1)
+      that.addProjectCommentPayload.memberList = that.peopleList
       if (that.commitComent) {
-        that.ajax('/comment/addComment', that.addProjectCommentPayload).then(res => {
+        that.ajax('/comment/addComment', JSON.stringify(that.addProjectCommentPayload)).then(res => {
           that.log('addProjectComment:', res)
           if (res.code === 200) {
             that.IsClear = true
+            that.peopleList = []
             that.$message({
               type: 'success',
               message: res.msg
@@ -694,6 +872,9 @@ export default {
     responsePro: function (pId) {
       this.proId = pId
       this.DrawerHistory = true
+      this.commitComent = ''
+      this.peopleList = []
+      this.getPeople()
       this.getHistoryCont()
     },
     // 删除项目
@@ -1335,6 +1516,33 @@ export default {
   .showImg>img{
     width: 100%;
   }
+.peopleList {
+  width:300px;
+  height: 370px;
+  padding: 20px 10px;
+  background-color: #fff;
+  position: absolute;
+  z-index: 200;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+}
+.peopleList ul {
+  list-style: none;
+  width:270px;
+  max-height:300px;
+  overflow: auto;
+  margin-top:10px;
+}
+.peopleList ul li{
+  list-style: none;
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #f2f2f2;
+  cursor: pointer;
+}
+.peopleList ul li:hover{
+  background: #f5f8fa;
+}
   /*历史记录 start*/
   /*历史记录 end*/
 </style>
