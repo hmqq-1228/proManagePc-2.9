@@ -208,16 +208,16 @@ export default {
         value: '',
         label: '全部状态'
       }, {
-        value: 'unstart',
+        value: '0',
         label: '未开始'
       }, {
-        value: 'unfinish',
+        value: '1',
         label: '进行中'
       }, {
-        value: 'finish',
+        value: '2',
         label: '已完成'
       }, {
-        value: 'overtime',
+        value: '4',
         label: '已逾期'
       }],
       optionsValue2: '',
