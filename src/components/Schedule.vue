@@ -37,7 +37,8 @@
       </div>
       <div class="grids">
         <div class="grid" v-bind:class="day.isToday?'isToday':''" v-for="(day, index) in monGrids" :key="day.id" v-on:dblclick="gridDoubleClick(day, index, $event)">
-          <div class="dayDate" v-bind:class="day.light?'light2':''">{{day.date===0?'':day.date}}</div>
+          <div class="dayDate" v-bind:class="day.light?'light2':''">{{day.date===0?'':day.date}}<span class="task" v-if="day.isRest === 1">休</span><span class="task1" v-if="day.isRest === 2"><img
+            src="../../static/img/rest.png" alt=""></span></div>
           <div class="taskBox" v-if="day.date===0?'':day.date">
             <div class="taskItem" v-bind:class="taskItem.light?'light':''" v-for="taskItem in day.dayTaskList" :key="taskItem.mark_id"
                  v-on:mouseover="mouseover(taskItem.id, $event)" v-on:mouseleave="mouseout(taskItem.id)">
@@ -273,6 +274,9 @@ export default {
   },
   data () {
     return {
+      // 双休日期
+      rest: 0,
+      arrList: [],
       // 接收到的组件数组 新组件
       FileUploadArr: [],
       // 是否让子组件清空文件 新组件
@@ -790,7 +794,8 @@ export default {
               isToday: false,
               moreListShow: false,
               moreLight: false,
-              id: 'id_' + that.month + '_' + i
+              id: 'id_' + that.month + '_' + i,
+              isRest: 0
             }
             if (i >= weekDay) {
               if (i - (weekDay - 1) <= that.monthMax) {
@@ -811,7 +816,6 @@ export default {
               }
             }
             this.monGrids.push(obj)
-            // this.log('monGrids:', this.monGrids)
           }
           that.queryAllScheduleTaskId()
         } else {
@@ -821,12 +825,29 @@ export default {
     // 获取所有天的所有任务、日程ID
     queryAllScheduleTaskId: function () {
       var that = this
-      this.ajax('/schedule/getScheduleIDList', that.scheduleListPayload).then(res => {
-        // that.log('getScheduleIDList:', res)
+      that.arrList = []
+      this.ajax('/schedule/getScheduleList', that.scheduleListPayload).then(res => {
         if (res.code === 200) {
           that.allScheduleTaskId = res.data.schedule
+          that.arrList = res.data.holidayMap
+          that.monGrids.forEach((item, index) => {
+            that.arrList.forEach((items, idx) => {
+              let n, g
+              if (items === 1) {
+                n = idx
+              }
+              if (items === 2) {
+                g = idx
+              }
+              if (index === n + that.weekDay) {
+                item.isRest = 1
+              } else if (index === g + that.weekDay) {
+                item.isRest = 2
+              }
+            })
+          })
         } else {
-          // that.log(res.msg)
+
         }
       })
     },
@@ -1583,6 +1604,28 @@ export default {
     padding: 5px 0;
     padding-left: 5px;
     text-align: left;
+  }
+  .dayDate .task {
+    width: 25px;
+    height: 25px;
+    border-radius: 100px;
+    border:1px solid #ccc;
+    color:#fff;
+    float:right;
+    margin-right: 15px;
+    text-align: center;
+    line-height: 25px;
+    background: #e84141;
+  }
+  .dayDate .task1 {
+    width: 25px;
+    height: 25px;
+    float:right;
+    margin-right: 15px;
+  }
+  .dayDate .task1 img {
+    width:20px;
+    height: 30px;
   }
   .dayDate.light{
     color: #fff;

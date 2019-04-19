@@ -14,7 +14,7 @@
             <el-tabs v-model="currentTab" @tab-click="handleClick">
               <el-tab-pane v-bind:label="tab.tabName" v-bind:name="tab.tabComp" v-for="tab in tabs" v-bind:key="tab.tabComp"></el-tab-pane>
             </el-tabs>
-            <component v-bind:is="currentTabComponent" v-bind:refresh="isRefresh" v-on:CompThrow="CompThrowFuc" v-bind:recall="isRecall"></component>
+            <component v-bind:is="currentTabComponent" v-bind:refresh="isRefresh" v-on:CompThrow="CompThrowFuc" v-bind:recall="isRecall" :proId="proId"></component>
           </div>
         </div>
       </div>
@@ -94,6 +94,7 @@ export default {
       compArr: {
         QuickCreateTaskComp: 'QuickCreateTaskComp'
       },
+      proId: '',
       // 接收到的组件数组 新组件
       FileUploadArr: [],
       // 是否让子组件(任务动态、项目动态刷新)
@@ -387,6 +388,7 @@ export default {
     },
     getProjectTime: function (id) {
       var that = this
+      that.proId = id
       that.ajax('/myProject/getProjectDetail', {projectUID: id}).then(res => {
         if (res.code === 200) {
           // that.log('projectBelong', res)
