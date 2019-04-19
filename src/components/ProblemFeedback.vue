@@ -80,7 +80,7 @@
     </div>
     <!---->
     <!-- Part05 start 抽屉 任务详情 -->
-    <Drawer title="反馈详情" class="drawerScroll" :closable="false" width="750" v-model="ProDetailCompShow">
+    <Drawer title="问题详情" class="drawerScroll" :closable="false" width="750" v-model="ProDetailCompShow">
       <component v-bind:is="compArr.ProblemDetailComp"
                  v-bind:taskDrawerOpen="ProDetailCompShow"
                  v-bind:modifyTaskRes="modifyTaskRes"
@@ -95,7 +95,7 @@
     </Drawer>
     <!---->
     <!--修改任务 编辑任务 任务 修改-->
-    <Drawer class="drawerScroll" title="问题修改" :closable="false" width="40%" v-model="ModifyQuestionVisible">
+    <Drawer class="drawerScroll" title="问题修改" :closable="false" width="750" v-model="ModifyQuestionVisible">
       <!-- 修改任务 编辑任务 引入组件 -->
       <component v-bind:is="compArr.ModifyQuestion"
                  v-bind:DrawerOpen="ModifyQuestionVisible"
@@ -119,7 +119,7 @@
       </component>
     </Drawer>
     <!--新增 添加计划或者任务 start-->
-    <Drawer class="drawerScroll" title="问题表单" :closable="false" width="40%" v-model="bgCoverShow">
+    <Drawer class="drawerScroll" title="问题表单" :closable="false" width="750" v-model="bgCoverShow">
       <component v-bind:is="compArr.CreatePlanOrTask"
                  v-bind:DrawerOpen="bgCoverShow"
                  fileFormId="CreatePlanTask"
