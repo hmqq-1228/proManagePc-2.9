@@ -1,16 +1,14 @@
 <template>
   <div class="TEST">
-    <!--<div class="box box1" v-on:mouseout="box1out">-->
-      <!--<div class="box box2" v-on:mouseout="box2out">-->
-        <!--<div class="box box3" v-on:mouseout="box3out"></div>-->
-      <!--</div>-->
-    <!--</div>-->
-    <!---->
-    <div class="box box1" v-on:mouseleave="box1leave">
-      <div class="box box2" v-on:mouseleave="box2leave">
-        <div class="box box3" v-on:mouseleave="box3leave"></div>
-      </div>
-    </div>
+    <el-date-picker
+      v-model="obj.timeValue"
+      type="datetime"
+      :picker-options="dateTimeOpt"
+      format="yyyy-MM-dd HH:mm:ss"
+      value-format="yyyy-MM-dd HH:mm:ss"
+      placeholder="选择日期时间">
+    </el-date-picker>
+    <button type="button" @click="ChangeOpt">ChangeOpt</button>
   </div>
 </template>
 
@@ -19,50 +17,31 @@ export default {
   name: 'TEST',
   data () {
     return {
-      msg: ''
+      msg: '',
+      timeValue: '',
+      obj: {
+        timeValue: ''
+      },
+      num: 5,
+      dateTimeOpt: {
+        disabledDate: function (currentDateTime) {
+          return false
+        }
+      }
     }
   },
   created () {
     // j
   },
   watch: {
+    timeValue: function (val, old) {
+      this.log('timeValue:', val)
+    }
   },
   methods: {
-    box1over: function () {
-      this.log('box1')
-    },
-    box2over: function () {
-      this.log('box2')
-    },
-    box3over: function () {
-      this.log('box3')
-    },
-    box1enter: function () {
-      this.log('enter:box1')
-    },
-    box2enter: function () {
-      this.log('enter:box2')
-    },
-    box3enter: function () {
-      this.log('enter:box3')
-    },
-    box1out: function () {
-      this.log('out:box1')
-    },
-    box2out: function () {
-      this.log('out:box2')
-    },
-    box3out: function () {
-      this.log('out:box3')
-    },
-    box1leave: function () {
-      this.log('leave:box1')
-    },
-    box2leave: function () {
-      this.log('leave:box2')
-    },
-    box3leave: function () {
-      this.log('leave:box3')
+    ChangeOpt: function () {
+      var that = this
+      that.$store.commit('setDateOption', {OptionObj: that.dateTimeOpt, startDate: '2019-04-10 00:00:00', endDate: '2019-04-25 00:00:00'})
     }
   }
 }

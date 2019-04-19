@@ -237,10 +237,14 @@
     <div class="devide">
       <div class="proTreeHeader">
         <div>详情</div>
-        <div v-if="listTree.length > 0" style="padding-right: 6px">
-           <el-button type="text" @click="slideTree" v-if="showName">展开</el-button>
-           <el-button type="text" @click="slideTree1" v-else>收缩</el-button>
-          <!-- <Button size="small" type="primary" style="width: 84px;" v-on:click="addNode(activeId)">+ 计划 / 任务</Button> -->
+        <div style="padding-right: 6px; display: flex">
+          <div style="margin-right: 15px;">
+            <el-button type="text" @click="showTree">树形结构</el-button>
+          </div>
+          <div v-if="listTree.length > 0">
+            <el-button type="text" @click="slideTree" v-if="showName">展开</el-button>
+            <el-button type="text" @click="slideTree1" v-else>收缩</el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -463,6 +467,31 @@
       <div class="menu">功能4</div>
       <div class="menu">功能5</div>
     </div>
+    <!--新增 抽屉 编辑计划 修改计划 start-->
+    <Drawer class="drawerScroll" title="编辑树形结构" :closable="false" width="50%" v-model="TreeStructureShow">
+      <component v-bind:is="compArr.NewTree"
+                 v-bind:treeNodeLevel="treeNodeLevel"
+                 v-bind:newTreeList="newTreeList">
+      </component>
+    </Drawer>
+    <!-- 节点拖动 时间选择 -->
+    <el-dialog title="提示" :visible.sync="timeDialogVisible" width="30%">
+      <div>
+        <!--<button type="button" @click="resettt">setddd</button>-->
+        <el-form ref="nodeDragTimeEdit" :model="nodeDragTimeEdit" label-width="80px">
+          <el-form-item label="开始时间">
+            <el-date-picker v-model="nodeDragTimeEdit.start" :picker-options="nodeDragOption" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择开始日期时间"></el-date-picker>
+          </el-form-item>
+          <el-form-item label="结束时间">
+            <el-date-picker v-model="nodeDragTimeEdit.finish" :picker-options="nodeDragOption" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择结束日期时间"></el-date-picker>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="DragTimeEditCancel">取 消</el-button>
+        <el-button type="primary" @click="DragTimeEditOk">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -481,6 +510,7 @@ import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 import tree from './CustomComp/tree.vue'
 import AddNewTask from './CustomComp/AddNewTask.vue'
 import addNewPlan from './CustomComp/addNewPlan.vue'
+import NewTree from './CustomComp/NewTree.vue'
 // DrawerComp
 export default {
   name: 'ProDetail',
@@ -498,11 +528,26 @@ export default {
     tree,
     AddNewTask,
     addNewPlan,
-    ProBaseInfo
+    ProBaseInfo,
+    NewTree
   },
   data () {
     return {
-      // refshPlan: false
+      nodeDragTimeEdit: {
+        start: '',
+        finish: ''
+      },
+      startlimit: this.$store.state.defaultParentStart,
+      // 节点
+      nodeDragOption: {
+        disabledDate: function (currentDateTime) {
+          return false
+        }
+      },
+      // timeDialogVisible: false,
+      // 节点级别
+      treeNodeLevel: 0,
+      TreeStructureShow: false,
       // 点击任务详情删除是否默认第一个
       isChangeActive: false,
       showName: false,
@@ -526,7 +571,8 @@ export default {
         TaskDetailComp: 'TaskDetailComp',
         PlanDetailComp: 'PlanDetailComp',
         AddNewTask: 'AddNewTask',
-        addNewPlan: 'addNewPlan'
+        addNewPlan: 'addNewPlan',
+        NewTree: 'NewTree'
       },
       // zh 树状展开收缩文字
       treeName: '收缩',
@@ -630,6 +676,7 @@ export default {
         content: '',
         attachmentId: ''
       },
+      newTreeList: [],
       listTree: [
         {
           id: 1,
@@ -798,6 +845,7 @@ export default {
     },
     planList: function (val, old) {
       var that = this
+      this.log('goods:planList==:', val)
       if (val) {
         that.FirstLevelPlanList = []
         for (var i = 0; i < val.length; i++) {
@@ -881,9 +929,71 @@ export default {
         }
       }
       return that.$store.state.slideMenu
+    },
+    timeDialogVisible: function () {
+      var that = this
+      // that.timeDialogVisibleShow = true
+      that.nodeDragTimeEdit.start = this.$store.state.defaultParentStart
+      that.nodeDragTimeEdit.finish = this.$store.state.defaultParentFinish
+      this.resettt()
+      // that.$store.commit('setDateOption', {OptionObj: that.nodeDragOption, startDate: that.nodeDragTimeEdit.start, endDate: that.nodeDragTimeEdit.finish})
+      return this.$store.state.timeDialogVisible
     }
   },
   methods: {
+    resettt: function () {
+      var that = this
+      setTimeout(function () {
+        that.$store.commit('setDateOption', {OptionObj: that.nodeDragOption, startDate: that.nodeDragTimeEdit.start, endDate: that.nodeDragTimeEdit.finish})
+      }, 1000)
+    },
+    DragTimeEditCancel: function () {
+      this.$store.state.timeDialogVisible = false
+      this.$store.state.dragResetDate = false
+      this.queryNewTree()
+    },
+    DragTimeEditOk: function () {
+      var that = this
+      // this.log('nodeDragTimeEdit.start:', this.nodeDragTimeEdit.start)
+      // this.log('nodeDragTimeEdit.finish:', this.nodeDragTimeEdit.finish)
+      if (that.nodeDragTimeEdit.start) {
+        this.$store.state.resetDragStart = that.nodeDragTimeEdit.start
+      } else {
+        this.$store.state.resetDragStart = this.$store.state.defaultParentStart
+      }
+      if (that.nodeDragTimeEdit.finish) {
+        this.$store.state.resetDragFinish = that.nodeDragTimeEdit.finish
+      } else {
+        this.$store.state.resetDragFinish = this.$store.state.defaultParentFinish
+      }
+      // this.$store.state.dragResetDate = true
+      this.$store.state.timeDialogVisible = false
+      var dragData = that.$store.state.currentDraggedData
+      var start = this.$store.state.resetDragStart
+      var finish = this.$store.state.resetDragFinish
+      // that.$store.state.currentDraggedData = {
+      //   draggedNodeId: data,
+      //   parentNodeId: newTreeItem.id,
+      //   insertIndex: 1
+      // }
+      that.ajax('/myProject/moveStructure', {id: dragData.draggedNodeId, parentId: dragData.parentNodeId, sortCode: dragData.insertIndex, startTime: start, endTime: finish}).then(res => {
+        that.log('moveStructure:', res)
+        if (res.code === 200) {
+          that.queryNewTree()
+          that.getTree()
+        }
+      })
+    },
+    // updateTree: function (targetId, parentId, nodeIndex, start, finish) {
+    //   var that = this
+    //   that.ajax('/myProject/moveStructure', {id: targetId, parentId: parentId, sortCode: nodeIndex, startTime: start, endTime: finish}).then(res => {
+    //     that.log('moveStructure:', res)
+    //   })
+    // },
+    showTree: function () {
+      this.TreeStructureShow = true
+      this.queryNewTree()
+    },
     toGoodsDetail2: function () {
       this.$router.push('/goodsDetail2')
     },
@@ -966,6 +1076,7 @@ export default {
     getTree () {
       let that = this
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.activeId }).then(res => {
+        this.log('getPlanAndTaskTree:', res)
         if (res.code === 200) {
           that.listTree = []
           that.treeName = '收缩'
@@ -975,6 +1086,35 @@ export default {
           })
         }
       })
+    },
+    queryNewTree (proDetRes) {
+      let that = this
+      that.ajax('/myProject/getProjectTree', { firstPlanId: that.firstPlanId }).then(res => {
+        if (res.code === 200) {
+          that.log('查询新树：', res)
+          that.newTreeList = []
+          res.data[0].type = 'rootPlan'
+          res.data[0].start = '2010-01-01 00:00:00'
+          res.data[0].finish = '2100-01-01 00:00:00'
+          // res.data[0].dateTimeFlag = 'native'
+          // that.checkDateTime(res.data[0].children, res.data[0].start, res.data[0].finish)
+          that.newTreeList = res.data
+          // that.TreeJsonDataName = JSON.stringify(that.newTreeList)
+        }
+      })
+    },
+    checkDateTime: function (childrenList, parentStart, parentFinish) {
+      if (childrenList.length > 0) {
+        var parentStartStamp = new Date(parentStart).getTime()
+        var parentFinishStamp = new Date(parentFinish).getTime()
+        for (var i = 0; i < childrenList.length; i++) {
+          var childStartDateStamp = new Date(childrenList[i].start).getTime()
+          var childFinishDateStamp = new Date(childrenList[i].finish).getTime()
+          if (childStartDateStamp < parentStartStamp || childFinishDateStamp > parentFinishStamp) {
+            childrenList[i].dateTimeFlag = 'over'
+          }
+        }
+      }
     },
     // zh展开树状结构
     slideTree () {
@@ -1084,6 +1224,7 @@ export default {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
         if (res.code === 200) {
+          this.log('getProjectDetail:', res)
           that.memberList = res.data.memberList
           that.proDetailMsg = res.data
           that.startPlanDate = res.data.startDate.split(' ')[0]

@@ -1,24 +1,29 @@
 <template>
   <div class="NewTreeBox" style="position: relative; display: block !important;">
+    <!--{{queryDragResetDate?'':''}}-->
     <div class="jiajian" @click="jiajianClick($event)"><span class="open">-</span></div>
     <div class="NewTree" v-bind:id="'parent_' + (newTreeList && newTreeList[0] && newTreeList[0].parentId?newTreeList[0].parentId: nextId)">
-      <div class="node" v-for="newTreeItem in newTreeList" :key="newTreeItem.id" :id="newTreeItem.id" draggable="true" @dragstart="drag($event)">
+      <div class="node" v-for="newTreeItem in newTreeList" :key="newTreeItem.id" :id="newTreeItem.id" draggable="true" @dragstart="dragstart($event, newTreeItem)">
         <div class="lineLeft" v-if="newTreeItem.type!=='rootPlan'"></div>
         <div class="nodeCnt">
           <div class="insertLine" :id="'line_' + newTreeItem.id">
             <div class="insertLineCnt"></div>
             <div class="arrowLeft"></div>
           </div>
-          <div class="insertLineCover" :id="'line_cover' + newTreeItem.id" @drop="drop($event, 'line', newTreeItem.id)" @dragover="allowDrop($event, 'line', newTreeItem.id)" @dragleave="dragLeave($event, 'line', newTreeItem.id)"></div>
+          <div class="insertLineCover" :id="'line_cover' + newTreeItem.id" @drop="drop($event, 'line', newTreeItem)" @dragover="allowDrop($event, 'line', newTreeItem.id, newTreeItem.parentId)" @dragleave="dragLeave($event, 'line', newTreeItem.id)"></div>
           <div class="nodeTitleBox">
-            <div v-if="newTreeItem.type!=='rootPlan'">---</div>
-            <div class="nodeTitle"
-                 v-bind:class="newTreeItem.type"
-                 :id="'title_' + newTreeItem.id"
-                 @drop="drop($event, 'title', newTreeItem.id)"
-                 @dragover="allowDrop($event, 'title')"
-                 @dragleave="dragLeave($event, 'title', newTreeItem.id)">{{treeNodeLevel}}:{{newTreeItem.name}}
+            <div style="display: flex">
+              <div v-if="newTreeItem.type!=='rootPlan'">---</div>
+              <!-- 级别 -->
+              <div class="nodeTitle"
+                   v-bind:class="newTreeItem.type"
+                   :id="'title_' + newTreeItem.id"
+                   @drop="drop($event, 'title', newTreeItem)"
+                   @dragover="allowDrop($event, 'title', newTreeItem.id)"
+                   @dragleave="dragLeave($event, 'title', newTreeItem.id)">{{newTreeItem.name}}
+              </div>
             </div>
+            <div class="nodeDateTime">{{newTreeItem.start}} 至 {{newTreeItem.finish}}</div>
           </div>
           <component v-show="newTreeItem.children.length>0"
                      v-bind:is="compArr.NewTree"
@@ -28,6 +33,7 @@
         </div>
       </div>
     </div>
+    <!---->
   </div>
 </template>
 
@@ -39,15 +45,16 @@ export default {
   components: {
     NewTree
   },
-  props: ['proId', 'firstPlanId', 'TreeNodeId', 'newTreeList', 'nextId', 'treeNodeLevel'],
+  props: ['newTreeList', 'nextId', 'treeNodeLevel'],
   data () {
     return {
       msg: '',
+      timeDialogVisible: false,
       compArr: {
         NewTree: 'NewTree'
       },
-      currentNodeId: '',
-      treeLevel: 0
+      treeLevel: 0,
+      currentDraggedData: {}
     }
   },
   created () {
@@ -58,23 +65,28 @@ export default {
   },
   watch: {
     newTreeList (val, old) {
-      this.log('newTreeList001:', val)
+      // this.log('newTreeList001:', val)
       if (val) {
-        this.log('newTreeList:', val)
-      }
-    },
-    firstPlanId (val, old) {
-      if (val) {
-        this.currentNodeId = val
-      }
-    },
-    TreeNodeId (val, old) {
-      if (val) {
-        this.currentNodeId = val
+        // this.log('newTreeList:', val)
       }
     }
   },
+  computed: {
+    // queryDragResetDate: function () {
+    //   var that = this
+    //   this.log(123456789)
+    //   if (this.$store.state.dragResetDate) {
+    //     var start = this.$store.state.resetDragStart
+    //     var finish = this.$store.state.resetDragFinish
+    //     this.updateTree(that.currentDraggedData.draggedNodeId, that.currentDraggedData.parentNodeId, that.currentDraggedData.insertIndex, start, finish)
+    //   }
+    //   return true
+    // }
+  },
   methods: {
+    onevent: function () {
+      this.log(1111)
+    },
     jiajianClick: function (e) {
       var obj = e.currentTarget
       if ($(obj).children().eq(0).hasClass('open')) {
@@ -90,45 +102,103 @@ export default {
     dragLeave: function (e, pos, id) {
       var obj = e.currentTarget
       if (pos === 'line') {
-        this.log('leave')
+        // this.log('leave')
         $('#line_' + id).removeClass('active')
       } else if (pos === 'title') {
         $(obj).removeClass('active')
       }
     },
-    allowDrop: function (ev, pos, id) {
+    allowDrop: function (ev, pos, id, parentId) {
       var obj = ev.currentTarget
-      // ev.stopPropagation()
-      ev.preventDefault()
       if (pos === 'title') {
-        this.log('是title')
-        $(obj).addClass('active')
+        if ((id.substr(0, 1) === 'P') || (id.substr(0, 1) === 'J' && this.$store.state.dragedElementId.substr(0, 1) === 'J')) {
+          $(obj).addClass('active')
+          ev.preventDefault()
+        }
       } else if (pos === 'line') {
-        $('#line_' + id).addClass('active')
+        if ((parentId.substr(0, 1) === 'P') || (parentId.substr(0, 1) === 'J' && this.$store.state.dragedElementId.substr(0, 1) === 'J')) {
+          ev.preventDefault()
+          $('#line_' + id).addClass('active')
+        }
       }
     },
-    drop: function (ev, pos, id) {
-      this.log('drop')
+    drop: function (ev, pos, newTreeItem) {
+      var that = this
       ev.preventDefault()
-      // ev.stopPropagation()
       var obj = ev.currentTarget
       var data = ev.dataTransfer.getData('Text')
-      var parNode = document.getElementById(data)
+      var targetStart = ev.dataTransfer.getData('start')
+      var targetFinish = ev.dataTransfer.getData('finish')
+      this.log('data:', data)
+      this.log('startDate:', targetStart)
+      this.log('finishDate:', targetFinish)
       $('.nodeTitle').removeClass('active')
       $('.insertLine').removeClass('active')
       if (pos === 'title') {
         $(obj).removeClass('active')
-        $(obj).parent().siblings('.NewTreeBox').css('display', 'block')
-        document.getElementById('parent_' + id).appendChild(parNode)
+        $(obj).parent().parent().siblings('.NewTreeBox').css('display', 'block')
+        // document.getElementById('parent_' + id).appendChild(parNode)
+        $('#parent_' + newTreeItem.id).prepend($('#' + data))
+        if (that.checkDateTime(newTreeItem.start, newTreeItem.finish, targetStart, targetFinish)) {
+          this.updateTree(data, newTreeItem.id, 1)
+        } else {
+          that.$store.state.currentDraggedData = {
+            draggedNodeId: data,
+            parentNodeId: newTreeItem.id,
+            insertIndex: 1
+          }
+        }
       } else if (pos === 'line') {
         $(obj).parent().siblings('.NewTreeBox').css('display', 'block')
-        $('#' + data).insertBefore($('#' + id))
+        $('#' + data).insertBefore($('#' + newTreeItem.id))
+        if (that.checkDateTime(newTreeItem.start, newTreeItem.finish, targetStart, targetFinish)) {
+          this.updateTree(data, newTreeItem.parentId, $(obj).parent().parent('.node').index())
+        }
       }
     },
-    drag: function (ev) {
-      this.log('drag')
+    checkDateTime: function (parentStart, parentFinish, targetStart, targetFinish) {
+      var that = this
+      var parentStartStamp = new Date(parentStart).getTime()
+      var parentFinishStamp = new Date(parentFinish).getTime()
+      var targetStartStamp = new Date(targetStart).getTime()
+      var targetFinishStamp = new Date(targetFinish).getTime()
+      if (targetStartStamp >= parentStartStamp && targetFinishStamp <= parentFinishStamp) {
+        this.log('时间合法')
+        return true
+      } else {
+        this.log('时间冲突')
+        that.$confirm('点击"确定"以继续，点击"取消"还原操作', '所拖动节点与当前父级节点时间范围冲突', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.$store.state.defaultParentStart = parentStart
+          that.$store.state.defaultParentFinish = parentFinish
+          that.$store.state.timeDialogVisible = true
+          // return true
+        }).catch(() => {
+          // return false
+        })
+        return false
+      }
+    },
+    updateTree: function (targetId, parentId, nodeIndex, start, finish) {
+      var that = this
+      that.ajax('/myProject/moveStructure', {id: targetId, parentId: parentId, sortCode: nodeIndex, startTime: start, endTime: finish}).then(res => {
+        that.log('moveStructure:', res)
+      })
+    },
+    dragstart: function (ev, nodeItem) {
+      ev.stopPropagation()
+      this.log('nodeItem:dragstart:', nodeItem)
       var obj = ev.currentTarget
       ev.dataTransfer.setData('Text', ev.target.id)
+      if (nodeItem) {
+        this.log(1111111)
+        ev.dataTransfer.setData('start', nodeItem.start)
+        ev.dataTransfer.setData('finish', nodeItem.finish)
+      }
+      this.$store.state.dragedElementId = ev.target.id
       $(obj).removeClass('active')
     }
   }
@@ -182,13 +252,21 @@ export default {
   .nodeCnt{
     position: relative;
     padding-top: 20px;
+    flex-grow: 1;
   }
   .node .NewTree{
     margin-left: 50px;
   }
   .nodeTitleBox{
     display: flex;
+    justify-content: space-between;
     _margin-bottom: 10px;
+  }
+  .nodeTitleBox:hover{
+    background: rgba(58,142,230,0.1);
+  }
+  .nodeDateTime{
+    padding-top: 5px;
   }
   .insertLine{
     position: absolute;
@@ -231,6 +309,8 @@ export default {
   }
   .nodeTitle{
     color: #666;
+    max-width: 240px;
+    box-sizing: border-box;
     position: relative;
     cursor: default;
     border: 2px solid #3a8ee6;

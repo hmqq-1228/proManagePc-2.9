@@ -787,6 +787,7 @@ export default {
     },
     planList: function (val, old) {
       var that = this
+      // this.log('planList---:', val)
       if (val) {
         that.FirstLevelPlanList = []
         for (var i = 0; i < val.length; i++) {
@@ -795,8 +796,7 @@ export default {
             planType: val[i].type === '1' ? '计划' : '任务',
             planStartDate: val[i].start.split(' ')[0],
             planFinishDate: val[i].finish.split(' ')[0],
-            planDateDur:
-              val[i].start.split(' ')[0] + ' 至 ' + val[i].finish.split(' ')[0],
+            planDateDur: val[i].start.split(' ')[0] + ' 至 ' + val[i].finish.split(' ')[0],
             planId: val[i].id,
             description: val[i].description ? val[i].description : ''
           }
@@ -969,6 +969,25 @@ export default {
       })
     },
     queryNewTree (proDetRes) {
+      let that = this
+      // that.log('firstPlanId:', that.firstPlanId)
+      that.ajax('/myProject/getProjectTree', { firstPlanId: that.firstPlanId }).then(res => {
+        if (res.code === 200) {
+          // that.log('查询新树：', res)
+          that.listTree = []
+          that.listTree = res.data
+          if (proDetRes) {
+            that.newTreeList = []
+            res.data[0].type = 'rootPlan'
+            that.newTreeList = res.data
+            // this.log('that.newTreeList:', that.newTreeList)
+            that.TreeJsonDataName = JSON.stringify(that.newTreeList)
+          }
+        }
+      })
+    },
+    // 备份
+    queryNewTreeNew (proDetRes) {
       let that = this
       // that.log('firstPlanId:', that.firstPlanId)
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.firstPlanId }).then(res => {

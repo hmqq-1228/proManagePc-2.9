@@ -4,6 +4,13 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  timeDialogVisible: false,
+  defaultParentStart: '',
+  defaultParentFinish: '',
+  resetDragStart: '',
+  resetDragFinish: '',
+  // dragResetDate: false,
+  currentDraggedData: {},
   editFlag: false,
   taskEdit: false,
   goPerfect: false,
@@ -13,6 +20,7 @@ const state = {
   menuRefresh: false,
   treeLevel: -1,
   uploadCount: 0,
+  dragedElementId: '',
   // 激活的导航索引
   activeNavIndex: 'group_0_0',
   count: 0,
@@ -77,6 +85,15 @@ const mutations = {
   // 设置侧边栏导航的激活
   setSlidNavActive: function (state, index) {
     // j
+  },
+  // Example: this.$store.commit('setDateOption', {OptionObj: that.dateTimeOpt, startDate: '2019-04-10 00:00:00', endDate: '2019-04-25 00:00:00'})
+  setDateOption: function (state, obj) {
+    obj.OptionObj.disabledDate = function (targetDateTime) {
+      var startTime = new Date(obj.startDate).getTime()
+      var endTime = new Date(obj.endDate).getTime()
+      var targetDateStamp = new Date(targetDateTime).getTime()
+      return targetDateStamp < startTime || targetDateStamp > endTime
+    }
   }
 }
 export default new Vuex.Store({
