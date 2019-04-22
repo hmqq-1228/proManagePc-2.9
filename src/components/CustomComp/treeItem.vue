@@ -1,33 +1,33 @@
 <template>
   <div v-if="menuData">
     <div :class="menuData.type==='task'?'menuTree':'planTree'" @click="showDetailPage(menuData)">
-    <div class="children-content" :class="menuData.type==='task'?'havBorder':''" style="margin-left:30px">
-          <div class="children-checked">
-            <i :class="{'el-icon-caret-right':!show,'el-icon-caret-bottom':show}" @click.stop="showTree" v-if="menuData.children&&menuData.children.length>0" style="margin-left:-10px"></i>
-            <span class="name" @click="showDetailPage(menuData)">{{menuData.name}}</span>
-            <span class="planTime" v-if="menuData.type==='plan'">
-              <img src="../../../static/img/data.png">
-              <span style="margin-left:10px">{{menuData.start}} - {{menuData.finish}}</span>
-            </span>
-            <div class="taskDesc" v-if="menuData.type==='task'">
-                 <div class="top">
-                   <span style="font-size:12px;float:left;margin-right: 15px"><Icon type="ios-person" size="24" style="color:#28558C;margin-top:-5px"/>&nbsp;{{menuData.userName}}</span>
-                   <span v-if="menuData.status!=='2'&&menuData.dayNum">
-                     <span class="residue" v-if="menuData.dayNum > 0" :class="{'number':menuData.dayNum>1}">剩余{{menuData.dayNum}}天</span>
-                     <span class="residue" v-else :class="{'number':menuData.dayNum>1}">逾期{{Math.abs(menuData.dayNum)}}天</span>
-                   </span>
-                   <!--<div class="createPeople" v-if="menuData.userName" :class="{'leftDay':menuData.status==='2'}">{{menuData.userName.substr(0, 1)}}</div>-->
+      <div class="children-content" :class="menuData.type==='task'?'havBorder':''" style="margin-left:30px">
+            <div class="children-checked">
+              <i :class="{'el-icon-caret-right':!show,'el-icon-caret-bottom':show}" @click.stop="showTree" v-if="menuData.children&&menuData.children.length>0" style="margin-left:-10px"></i>
+              <span class="name" @click="showDetailPage(menuData)">{{menuData.name}}</span>
+              <span class="planTime" v-if="menuData.type==='plan'">
+                <img src="../../../static/img/data.png">
+                <span style="margin-left:10px">{{menuData.start}} - {{menuData.finish}}</span>
+              </span>
+              <div class="taskDesc" v-if="menuData.type==='task'">
+                   <div class="top">
+                     <span style="font-size:12px;float:left;margin-right: 15px"><Icon type="ios-person" size="24" style="color:#28558C;margin-top:-5px"/>&nbsp;{{menuData.userName}}</span>
+                     <span v-if="menuData.status!=='2'&&menuData.dayNum">
+                       <span class="residue" v-if="menuData.dayNum > 0" :class="{'number':menuData.dayNum>1}">剩余{{menuData.dayNum}}天</span>
+                       <span class="residue" v-else :class="{'number':menuData.dayNum>1}">逾期{{Math.abs(menuData.dayNum)}}天</span>
+                     </span>
+                     <!--<div class="createPeople" v-if="menuData.userName" :class="{'leftDay':menuData.status==='2'}">{{menuData.userName.substr(0, 1)}}</div>-->
+                   </div>
+                 <div class="down" :class="{'leftDay':menuData.status==='2'}">
+                  <img src="../../../static/img/time.png">
+                  <span class="text">{{menuData.start}} - {{menuData.finish}}</span>
                  </div>
-               <div class="down" :class="{'leftDay':menuData.status==='2'}">
-                <img src="../../../static/img/time.png">
-                <span class="text">{{menuData.start}} - {{menuData.finish}}</span>
-               </div>
-            </div>
-            <div  v-if="menuData.type==='task'">
-              <div class="status" :class="{'noSure':menuData.status==='0','noFinish':menuData.status==='1','finish':menuData.status==='2','stop':menuData.status==='3','overdue':menuData.status==='4',}"><p>{{menuData.statusStr}}</p></div>
-            </div>
-           </div>
-    </div>
+              </div>
+              <div  v-if="menuData.type==='task'">
+                <div class="status" :class="{'noSure':menuData.status==='0','noFinish':menuData.status==='1','finish':menuData.status==='2','stop':menuData.status==='3','overdue':menuData.status==='4',}"><p>{{menuData.statusStr}}</p></div>
+              </div>
+             </div>
+      </div>
     </div>
   <div v-show="show" v-if="menuData.children&&menuData.children.length>0">
     <div class="children-list" v-for="(item,index) in menuData.children" :key="index">

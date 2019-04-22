@@ -1,43 +1,56 @@
 <template>
-  <div class="QuickCreateTaskComp">
+  <div class="CreateFeedback" v-loading="addLoading">
     <!---->
     <el-form :model="ruleForm" class="demo-ruleForm">
       <div class="paiTaskIptBox">
         <div class="paiTaskIptLeft">
-          <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-          <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入新建任务名称" /></div>
+          <div class="proBelong" style="padding-right: 10px;width: 310px;border-right: 1px dashed #ccc;display: flex">
+            <span style="font-size: 14px;width: 80px;line-height: 30px;">问题类型：</span>
+            <el-select v-model="projectBelong" @change="myTaskStyleChange($event)" placeholder="请选择问题反馈类型">
+              <el-option
+                v-for="item in options"
+                :key="item.typeCode"
+                :label="item.typeName"
+                :value="item.typeCode">
+              </el-option>
+            </el-select>
+          </div>
+          <div style="margin-left: 10px;width: 50%;display: flex;">
+            <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入问题反馈名称" /></div>
+          </div>
         </div>
         <div class="paiTaskIptRight">
-          <div class="paiTaskIptRightIcon" style="cursor: pointer" v-on:click="selectUser($event)"><i class="el-icon-edit-outline"></i></div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer;" v-on:click="selectUser($event)"><Icon size="22" type="ios-contact-outline" /></div>
           <div class="paiTaskIptRightCnt" v-on:click="selectUser($event)">
             <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
             <span v-if="userSelectVal.length > 0" v-for="user in userSelectVal" :key="user"> {{user.split('-')[0]}}</span>
             <span v-if="userSelectVal.length === 0">{{defImplementer.name}}</span>
           </div>
-          <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="selDateStart + ' 到 ' + selDateEnd" v-on:click="selectDate($event)"><i class="el-icon-date"></i></div>
+          <div class="paiTaskIptRightIcon" :title="selDateStart + ' 到 ' + selDateEnd" style="cursor: pointer;" v-on:click="selectDate($event)"><Icon size="22" type="ios-time-outline" /></div>
           <div class="paiTaskIptRightCnt" :title="selDateStart + ' 到 ' + selDateEnd" v-on:click="selectDate($event)">时间</div>
-          <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="'等级:' + levelValue" v-on:click="selectLevel($event)">
+          <div class="paiTaskIptRightIcon" style="cursor: pointer;" :title="'等级:' + levelValue" v-on:click="selectLevel($event)">
             <div style="width: 24px;height: 24px;padding-left: 4px;"><div class="levelNum">{{levelValue}}</div></div>
           </div>
         </div>
       </div>
       <!---->
-      <div class="taskRelation" v-if="taskRelationShow">
-        <div class="relationHeader">
-          <div class="proBelong">
-            <!--所属项目 <i class="el-icon-arrow-down"></i>-->
-            <el-select v-model="projectBelong" placeholder="请选择关联项目">
-              <el-option
-                v-for="item in options"
-                :key="item.projectUID"
-                :label="item.projectName"
-                :value="item.projectUID">
-              </el-option>
-            </el-select>
-          </div>
-        </div>
+      <div class="taskRelation">
+        <!--<div class="relationHeader">-->
+          <!--<div class="proBelong">-->
+            <!--<span style="font-size: 14px;">问题类型：</span>-->
+            <!--<el-select v-model="projectBelong" placeholder="请选择问题反馈类型">-->
+              <!--<el-option-->
+                <!--v-for="item in options"-->
+                <!--:key="item.projectUID"-->
+                <!--:label="item.projectName"-->
+                <!--:value="item.projectUID">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+          <!--</div>-->
+        <!--</div>-->
         <div class="relationIntro">
-          <textarea class="relationIntroArea" v-model="taskIntro" placeholder="请输入任务简介"></textarea>
+          <textarea class="relationIntroArea" v-model="taskIntro" placeholder="请输入问题简介"></textarea>
         </div>
       </div>
       <!---->
@@ -46,9 +59,9 @@
           <component v-bind:is="compArr.FileUploadComp" fileFormId="QuickCreateTask" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
         </div>
         <div class="moreAndSubbtn">
-          <div class="selectMoreInfo" v-on:click="moreClick()">
-            <i v-bind:class="moreIcon"></i><span style="margin-left: 6px;">{{moreText}}</span>
-          </div>
+          <!--<div class="selectMoreInfo" v-on:click="moreClick()">-->
+            <!--<i v-bind:class="moreIcon"></i><span style="margin-left: 6px;">{{moreText}}</span>-->
+          <!--</div>-->
           <div class="submitBtn" v-on:click="depSub()">
             <el-button type="primary">发布</el-button>
           </div>
@@ -110,7 +123,7 @@
 <script>
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 export default {
-  name: 'QuickCreateTaskComp',
+  name: 'CreateFeedback',
   components: {
     FileUploadComp
   },
@@ -120,6 +133,7 @@ export default {
         FileUploadComp: 'FileUploadComp'
       },
       ruleForm: {},
+      addLoading: false,
       // 选择时间
       selectDateDiaShow: false,
       // 任务级别
@@ -154,22 +168,19 @@ export default {
       taskRelationShow: false,
       defImplementerName: '李四',
       defImplementer: {
-        name: '张三',
-        id: ''
+        name: '夏梦娇',
+        id: 'ME86AAF7185C22EBC'
       },
       moreUserSelectPayload: {
         projectManager: ''
       },
       CommunityTaskPayload: {
-        parentId: '',
-        // projectUID: '',
-        // planId: '',
-        // taskId: '',
-        jobName: '',
+        typeCode: '',
+        questionName: '',
         description: '',
-        taskStartDate: '',
-        taskFinishDate: '',
-        jobLevel: '3',
+        queStartDate: '',
+        queFinishDate: '',
+        questionLevel: 3,
         // 附件id
         attachmentId: '',
         pStr: ''
@@ -177,15 +188,17 @@ export default {
     }
   },
   created () {
-    this.getUserInfo()
     this.getProBelong()
+    this.getDefultTime()
   },
   watch: {
-    projectBelong: function (newQuestion, oldQuestion) {
-      this.getProjectTime(newQuestion)
-    },
+    // projectBelong: function (val, oldQuestion) {
+    //   if (val) {
+    //     this.getProBelong(val)
+    //   }
+    // },
     levelValue: function (newQuestion, oldQuestion) {
-      this.CommunityTaskPayload.jobLevel = newQuestion.toString()
+      this.CommunityTaskPayload.questionLevel = newQuestion.toString()
     },
     // 监听人员选择 触发悬浮窗管理
     selectUserDiaShow: function (newQuestion, oldQuestion) {
@@ -202,6 +215,17 @@ export default {
     }
   },
   methods: {
+    myTaskStyleChange: function (e) {
+      var that = this
+      that.ajax('/question/getQuestionType', {typeCode: e}).then(res => {
+        if (res.code === 200) {
+          this.log('getAllProject222:', res)
+          // this.getProjectTime(this.projectBelong)
+          that.defImplementer.name = res.data[0].userName
+          that.defImplementer.id = res.data[0].userId
+        }
+      })
+    },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {
       var that = this
@@ -224,15 +248,15 @@ export default {
       this.FileUploadArr = obj
       this.log('getFileInfo:', obj)
     },
-    getUserInfo: function () {
-      var that = this
-      this.ajax('/myProject/getUserInfo', {}).then(res => {
-        if (res.code === 200) {
-          that.defImplementer.name = res.data.Name
-          that.defImplementer.id = res.data.ID
-        }
-      })
-    },
+    // getUserInfo: function () {
+    //   var that = this
+    //   this.ajax('/myProject/getUserInfo', {}).then(res => {
+    //     if (res.code === 200) {
+    //       that.defImplementer.name = res.data.Name
+    //       that.defImplementer.id = res.data.ID
+    //     }
+    //   })
+    // },
     // 选择时间
     selectDate: function (e) {
       // 所有的伸缩窗 隐藏
@@ -256,38 +280,44 @@ export default {
     // 获取所属项目
     getProBelong: function () {
       var that = this
-      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
+      that.ajax('/question/getQuestionType', {}).then(res => {
         if (res.code === 200) {
-          // this.log('getAllProject:', res)
-          this.projectBelong = res.data[0].projectUID
+          this.log('getAllProject:', res)
+          this.projectBelong = res.data[0].typeCode
+          that.myTaskStyleChange(that.projectBelong)
           this.options = res.data
-          this.getProjectTime(this.projectBelong)
+          // this.getProjectTime(this.projectBelong)
         }
       })
     },
-    getProjectTime: function (id) {
+    getDefultTime: function () {
       var that = this
-      that.ajax('/myProject/getProjectDetail', {projectUID: id}).then(res => {
-        if (res.code === 200) {
-          var st = res.data.startDate.split(' ')[0] + ' 00:00:00'
-          var et = res.data.endDate
-          var sT = new Date(st)
-          var eT = new Date(et)
-          that.disabledStarTime2 = sT.getTime()
-          that.disabledEndTime2 = eT.getTime()
-          that.pickerOptionsPlan.disabledDate = function (time) {
-            return time.getTime() < that.disabledStarTime2 || time.getTime() > that.disabledEndTime2
-          }
-          that.selDateStart = res.data.startDate
-          that.selDateEnd = res.data.endDate
-          that.CommunityTaskPayload.parentId = res.data.firstPlanId
-        } else {
-          that.$message({
-            message: res.msg
-          })
-        }
-      })
+      that.selDateStart = that.getNowTime()
+      that.selDateEnd = that.getLaterTime(604800000, that.selDateStart)
     },
+    // getProjectTime: function (id) {
+    //   var that = this
+    //   that.ajax('/myProject/getProjectDetail', {projectUID: id}).then(res => {
+    //     if (res.code === 200) {
+    //       var st = res.data.startDate.split(' ')[0] + ' 00:00:00'
+    //       var et = res.data.endDate
+    //       var sT = new Date(st)
+    //       var eT = new Date(et)
+    //       that.disabledStarTime2 = sT.getTime()
+    //       that.disabledEndTime2 = eT.getTime()
+    //       that.pickerOptionsPlan.disabledDate = function (time) {
+    //         return time.getTime() < that.disabledStarTime2 || time.getTime() > that.disabledEndTime2
+    //       }
+    //       that.selDateStart = res.data.startDate
+    //       that.selDateEnd = res.data.endDate
+    //       // that.CommunityTaskPayload.parentId = res.data.firstPlanId
+    //     } else {
+    //       that.$message({
+    //         message: res.msg
+    //       })
+    //     }
+    //   })
+    // },
     // 点击确定
     selectUserClick: function () {
       this.selectUserDiaShow = false
@@ -340,11 +370,11 @@ export default {
       if (that.moreText === '更多') {
         that.moreText = '收起'
         this.moreIcon = 'el-icon-arrow-up'
-        this.taskRelationShow = true
+        // this.taskRelationShow = true
       } else {
         that.moreText = '更多'
         this.moreIcon = 'el-icon-arrow-down'
-        this.taskRelationShow = false
+        // this.taskRelationShow = false
       }
     },
     // 更多
@@ -353,11 +383,11 @@ export default {
       if (that.moreText === '更多') {
         that.moreText = '收起'
         this.moreIcon = 'el-icon-arrow-up'
-        this.taskRelationShow = true
+        // this.taskRelationShow = true
       } else {
         that.moreText = '更多'
         this.moreIcon = 'el-icon-arrow-down'
-        this.taskRelationShow = false
+        // this.taskRelationShow = false
       }
     },
     // 鼠标离开 任务级别 div关闭
@@ -395,7 +425,6 @@ export default {
     // 创建任务 提交
     depSub: function () {
       var that = this
-      that.loading3 = true
       // 如果有任务名
       if (that.taskNameText) {
         // value9有值
@@ -414,21 +443,23 @@ export default {
         }
         that.CommunityTaskPayload.attachmentId = that.SetFileIdStr()
         that.CommunityTaskPayload.pStr = selectUserStr
-        that.CommunityTaskPayload.jobName = that.taskNameText
-        that.CommunityTaskPayload.taskStartDate = that.selDateStart
-        that.CommunityTaskPayload.taskFinishDate = that.selDateEnd
-        that.CommunityTaskPayload.projectUID = that.projectBelong
+        that.CommunityTaskPayload.questionName = that.taskNameText
+        that.CommunityTaskPayload.queStartDate = that.selDateStart
+        that.CommunityTaskPayload.queFinishDate = that.selDateEnd
+        that.CommunityTaskPayload.typeCode = that.projectBelong
         that.CommunityTaskPayload.description = that.taskIntro
         var st = new Date(that.selDateStart).getTime()
         var et = new Date(that.selDateEnd).getTime()
-        if (st <= et) {
-          that.ajax('/myTask/addTask', that.CommunityTaskPayload).then(res => {
+        if (st < et) {
+          that.addLoading = true
+          that.ajax('/question/addQuestion', that.CommunityTaskPayload).then(res => {
             that.$emit('ActionResThrow', {res: res, actionName: 'addCommunityTask'})
             if (res.code === 200) {
               that.IsClear = true
+              that.addLoading = false
               // that.isRecall = that.isRecall + 1
               that.$message({
-                message: '任务创建成功',
+                message: '问题创建成功',
                 type: 'success'
               })
               // that.queryMyTaskView()
@@ -439,16 +470,16 @@ export default {
                 message: res.msg,
                 type: 'warning'
               })
+              that.addLoading = false
             }
-            that.loading3 = false
           })
         } else {
           that.$message.warning('时间选择不合理')
-          that.loading3 = false
+          that.addLoading = false
         }
       } else {
         that.$message({
-          message: '请填写任务名',
+          message: '请填写问题名称',
           type: 'warning'
         })
         that.loading3 = false
@@ -457,7 +488,7 @@ export default {
     // 派任务（发动态）清空表单
     clearDynamicsForm: function () {
       this.taskNameText = ''
-      this.CommunityTaskPayload.jobName = ''
+      this.CommunityTaskPayload.questionName = ''
       // this.selDateStart = this.startTimeFirst
       // this.CommunityTaskPayload.startTime = this.startTimeFirst
       // this.selDateEnd = this.endTimeFirst
@@ -479,23 +510,25 @@ export default {
     display: flex;
     margin-top: 10px;
     justify-content: space-between;
-    padding: 10px 5px;
+    padding: 6px 5px;
     border: 1px solid #dcdfe6;
     padding-left: 8px;
   }
   .paiTaskIptLeft{
-    width: 250px;
     display: flex;
     flex-grow: 1;
   }
   .paiTaskIptIcon{
     width: 20px;
+    color: #1687d9;
     font-size: 18px;
     margin-right: 6px;
+    line-height: 28px;
   }
   .paiTaskIptWrap{
     width: 100%;
-    line-height: 27px;
+    line-height: 28px;
+    font-size: 14px;
   }
   .paiTaskIptWrap input{
     width: 100%;
@@ -516,7 +549,7 @@ export default {
   .paiTaskIptRightCnt{
     cursor: pointer;
     margin-right: 10px;
-    line-height: 25px;
+    line-height: 28px;
   }
   .taskRelation{
     border: 1px solid #a9b8bf;
@@ -524,12 +557,12 @@ export default {
   }
   .relationHeader{
     display: flex;
-    padding: 10px;
+    padding: 6px 10px;
     border-bottom: 1px solid #a9b8bf;
   }
   .relationIntroArea{
     width: 100%;
-    height: 100px;
+    height: 80px;
     border: none;
     padding: 10px;
     box-sizing: border-box;

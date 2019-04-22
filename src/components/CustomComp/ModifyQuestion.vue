@@ -1,13 +1,13 @@
 <template>
-  <div class="ModifyTask">
+  <div class="ModifyQuestion">
     <div class="planTaskBox">
       <el-form ref="modifyTask" :model="detailTaskform" :rules="modifyTaskRules" label-width="80px">
-        <el-form-item label="任务名称" prop="jobName" maxlength="100" width="100">
-          <el-input class="planNameIpt" v-model="detailTaskform.jobName"></el-input>
+        <el-form-item label="问题名称" prop="jobName" maxlength="100" width="100">
+          <el-input class="planNameIpt" v-model="detailTaskform.questionName"></el-input>
         </el-form-item>
-        <el-form-item label="任务级别" prop="jobLevel" maxlength="100" width="100">
+        <el-form-item label="问题级别" prop="jobLevel" maxlength="100" width="100">
           <div class="ratestar" style="padding-top: 6px;">
-            <el-rate v-model="detailTaskform.jobLevel" v-on:change="levelChange($event)"></el-rate>
+            <el-rate v-model="detailTaskform.questionLevel" v-on:change="levelChange($event)"></el-rate>
           </div>
         </el-form-item>
         <el-form-item label="开始时间" prop="taskStartDate">
@@ -16,26 +16,26 @@
                             format="yyyy-MM-dd HH:mm:ss"
                             value-format="yyyy-MM-dd HH:mm:ss"
                             placeholder="选择日期"
-                            v-model="detailTaskform.taskStartDate"
+                            v-model="detailTaskform.queStartDate"
                             :picker-options="pickerOptionsTaskSt"
             ></el-date-picker>
           </el-col>
         </el-form-item>
-        <el-form-item label="结束时间" prop="taskFinishDate">
+        <el-form-item label="完成时间" prop="taskFinishDate">
           <el-col :span="24">
             <el-date-picker type="datetime" style="width: 100%"
                             format="yyyy-MM-dd HH:mm:ss"
                             value-format="yyyy-MM-dd HH:mm:ss"
                             placeholder="选择日期"
-                            v-model="detailTaskform.taskFinishDate"
+                            v-model="detailTaskform.queFinishDate"
                             :picker-options="pickerOptionsTaskEt"
             ></el-date-picker>
           </el-col>
         </el-form-item>
-        <el-form-item label="任务描述" maxlength="100" width="100">
+        <el-form-item label="问题描述" maxlength="100" width="100">
           <el-input class="planNameIpt" type="textarea" style="resize:none;" :rows="2" v-model="detailTaskform.description"></el-input>
         </el-form-item>
-        <el-form-item label="任务附件">
+        <el-form-item label="问题附件">
           <component v-bind:is="compArr.FileUploadComp" v-bind:FileDataList="taskFileList" fileFormId="ModifyTask" v-bind:clearInfo="IsClear" v-on:FilePreEmit="GetFilePreData" v-on:FileDataEmit="GetFileInfo"></component>
         </el-form-item>
         <div style="text-align: center">
@@ -50,7 +50,7 @@
 <script>
 import FileUploadComp from '../FileUploadComp.vue'
 export default {
-  name: 'ModifyTask',
+  name: 'ModifyQuestion',
   components: {
     FileUploadComp
   },
@@ -70,32 +70,32 @@ export default {
       // 新建 修改任务
       detailTaskform: {
         id: '',
-        jobName: '',
-        jobLevel: 2,
-        taskStartDate: '2019-03-10 00:00:00',
-        taskFinishDate: '2019-05-10 00:00:00',
+        questionName: '',
+        questionLevel: 2,
+        queStartDate: '2019-03-10 00:00:00',
+        queFinishDate: '2019-05-10 00:00:00',
         description: ''
       },
       editTaskPayload: {
         id: '1',
-        jobName: '',
-        jobLevel: 1,
-        taskStartDate: '',
-        taskFinishDate: '',
+        questionName: '',
+        questionLevel: 1,
+        queStartDate: '',
+        queFinishDate: '',
         description: ''
       },
       // 新建 修改任务
       modifyTaskRules: {
-        jobName: [
+        questionName: [
           { required: true, message: '请输入任务名称', trigger: 'blur' }
         ],
-        jobLevel: [
+        questionLevel: [
           { required: true, message: '请选择任务等级', trigger: 'change' }
         ],
-        taskStartDate: [
+        queStartDate: [
           { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
         ],
-        taskFinishDate: [
+        queFinishDate: [
           { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
         ]
       }
@@ -103,12 +103,13 @@ export default {
   },
   watch: {
     nodeId (val, old) {
-      // this.log('nodeId:', val)
+      console.log('nodeId:', val)
       if (val) {
         this.getPlanTaskDetail()
       }
     },
     DrawerOpen (val, old) {
+      console.log('nodeId3333333:', this.nodeId)
       if (val) {
         this.getPlanTaskDetail()
       }
@@ -138,22 +139,33 @@ export default {
     },
     getPlanTaskDetail () {
       var that = this
-      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-        that.detailTaskform.jobName = res.data.jobName
-        that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
-        that.detailTaskform.taskStartDate = res.data.taskStartDate
-        that.detailTaskform.taskFinishDate = res.data.taskFinishDate
+      that.ajax('/question/getDetailById', {id: that.nodeId}).then(res => {
+        that.detailTaskform.questionName = res.data.questionName
+        that.detailTaskform.questionLevel = parseInt(res.data.questionLevel)
+        that.detailTaskform.queStartDate = res.data.queStartDate
+        that.detailTaskform.queFinishDate = res.data.queFinishDate
         that.detailTaskform.description = res.data.description
         that.taskFileList = []
-        var minStart = new Date(res.data.taskStartDate.split(' ')[0] + ' 00:00:00').getTime()
-        var minEnt = new Date(res.data.taskFinishDate).getTime()
-        var maxStart = new Date(res.data.parentSTime.split(' ')[0] + ' 00:00:00').getTime()
-        var maxEnd = new Date(res.data.parentETime).getTime()
-        that.pickerOptionsTaskSt.disabledDate = function (time) {
-          return time.getTime() < maxStart || time.getTime() > minStart
-        }
-        that.pickerOptionsTaskEt.disabledDate = function (time) {
-          return time.getTime() > maxEnd || time.getTime() < minEnt
+        if (res.data.parentSTime) {
+          var minStart = new Date(res.data.queStartDate.split(' ')[0] + ' 00:00:00').getTime()
+          var minEnt = new Date(res.data.queFinishDate.split(' ')[0] + ' 00:00:00').getTime()
+          var maxStart = new Date(res.data.parentSTime.split(' ')[0] + ' 00:00:00').getTime()
+          var maxEnd = new Date(res.data.parentETime.split(' ')[0] + ' 00:00:00').getTime()
+          that.pickerOptionsTaskSt.disabledDate = function (time) {
+            return time.getTime() < maxStart || time.getTime() > minStart
+          }
+          that.pickerOptionsTaskEt.disabledDate = function (time) {
+            return time.getTime() > maxEnd || time.getTime() < minEnt
+          }
+        } else if (!res.data.parentSTime) {
+          var Start = new Date(res.data.queStartDate.split(' ')[0] + ' 00:00:00').getTime()
+          var Ent = new Date(res.data.queFinishDate.split(' ')[0] + ' 00:00:00').getTime()
+          that.pickerOptionsTaskSt.disabledDate = function (time) {
+            return time.getTime() > Start
+          }
+          that.pickerOptionsTaskEt.disabledDate = function (time) {
+            return time.getTime() < Ent
+          }
         }
         var fileListArr = []
         for (var i = 0; res.data.fileList && i < res.data.fileList.length; i++) {
@@ -187,16 +199,16 @@ export default {
         if (valid) {
           that.loadingEdit = true
           that.editTaskPayload.id = that.nodeId
-          that.editTaskPayload.jobLevel = that.detailTaskform.jobLevel
-          that.editTaskPayload.jobName = that.detailTaskform.jobName
-          that.editTaskPayload.taskStartDate = that.detailTaskform.taskStartDate
-          that.editTaskPayload.taskFinishDate = that.detailTaskform.taskFinishDate
+          that.editTaskPayload.questionLevel = that.detailTaskform.questionLevel
+          that.editTaskPayload.questionName = that.detailTaskform.questionName
+          that.editTaskPayload.queStartDate = that.detailTaskform.queStartDate
+          that.editTaskPayload.queFinishDate = that.detailTaskform.queFinishDate
           that.editTaskPayload.description = that.detailTaskform.description
           that.editTaskPayload.attachmentId = that.SetFileIdStr()
-          var st = new Date(that.detailTaskform.taskStartDate).getTime()
-          var et = new Date(that.detailTaskform.taskFinishDate).getTime()
+          var st = new Date(that.detailTaskform.queStartDate).getTime()
+          var et = new Date(that.detailTaskform.queFinishDate).getTime()
           if (st < et) {
-            that.ajax('/myTask/editTask', that.editTaskPayload).then(res => {
+            that.ajax('/question/editQuestion', that.editTaskPayload).then(res => {
               // that.log('editTask:', res)
               that.$emit('ModifyTaskCallback', res)
               // that.$emit('ModifyTaskCallback', res)

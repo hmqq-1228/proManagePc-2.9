@@ -1,10 +1,11 @@
 <template>
   <div class="MyTaskNew">
+    <div>{{slideMenu?'':''}}</div>
     <div class="contentTop" v-loading="loading3">
       <div class="paiTaskTitTab">
-        <div class="paiTask pai active">新建任务</div>
+        <div class="paiTask pai active" style="font-weight: bold;font-size: 14px;">提出问题</div>
       </div>
-      <component v-bind:is="compArr.QuickCreateTaskComp" fileFormId="QuickCreateTaskComp" v-on:ActionResThrow="ActionResThrowFuc"></component>
+      <component v-bind:is="compArr.CreateFeedback" fileFormId="QuickCreateTaskComp" v-on:ActionResThrow="ActionResThrowFuc"></component>
     </div>
     <div class="searchItem">
       <div>
@@ -29,38 +30,38 @@
       </div>
       <div>
         <el-select v-model="optionsValue3" placeholder="请选择" @change="taskOfProject($event)">
-          <el-option label="全部项目" value=""></el-option>
+          <el-option label="全部类型" value=""></el-option>
           <el-option
             v-for="item in projectList"
-            :key="item.projectUID"
-            :label="item.projectName"
-            :value="item.projectName">
+            :key="item.typeCode"
+            :label="item.typeName"
+            :value="item.typeCode">
           </el-option>
         </el-select>
       </div>
       <div>
         <el-input placeholder="请输入搜索内容" v-model="input3">
-          <el-button type="primary" slot="prepend">任务搜索</el-button>
+          <el-button type="primary" slot="prepend">问题搜索</el-button>
           <!--<template slot="prepend" style="background-color: #fff;">任务搜索</template>-->
         </el-input>
       </div>
     </div>
     <!---->
     <div class="taskBox" style="box-sizing: border-box;">
-      <div class="taskList" v-for="(myTask, index) in myTaskList" :key="index" @click="toDetail(myTask.uid)" style="cursor: pointer;">
+      <div class="taskList" v-if="myTaskList.length > 0" v-for="(myTask, index) in myTaskList" :key="index" @click="toDetail(myTask.id)" style="cursor: pointer;">
         <div class="taskItem">
-          <div><span style="font-size: 16px;color: #409EFF;">{{myTask.jobName}}</span></div>
-          <div class="taskName"><Icon type="md-ribbon" size="20"/>{{myTask.projectName}}</div>
+          <div><span style="font-size: 16px;color: #409EFF;">{{myTask.questionName}}</span></div>
+          <div class="taskName"><Icon type="ios-flag" color="#fd8e6b" size="20"/>{{myTask.typeName}}</div>
         </div>
         <div class="taskMsg">
           <div><Icon type="md-contact" size="20"/><span style="padding-left: 8px;">{{myTask.userName}}</span></div>
           <div style="line-height: 20px;">
             <Icon type="md-alarm" size="18"/>
-            <span style="padding-left: 8px;float: right;margin-top: 2px;">{{myTask.taskStartDate.split(' ')[0]}} - {{myTask.taskFinishDate.split(' ')[0]}}</span>
+            <span style="padding-left: 8px;float: right;margin-top: 2px;">{{myTask.queStartDate.split(' ')[0]}} - {{myTask.queFinishDate.split(' ')[0]}}</span>
           </div>
           <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum < 0 && myTask.status != '2'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(myTask.dayNum)}}</span> 天</div>
           <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum >= 0 && myTask.status != '2'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{myTask.dayNum}}</span> 天</div>
-          <div style="text-align: right;margin-top: 4px;font-size: 12px;color: #3a8ee6;font-weight: bold;" v-if="myTask.status === '2'">任务已完成</div>
+          <div style="text-align: right;margin-top: 4px;font-size: 12px;color: #3a8ee6;font-weight: bold;" v-if="myTask.status === '2'">问题已解决</div>
         </div>
         <div v-bind:class="'taskTag'+ myTask.status">{{myTask.statusStr}}</div>
       </div>
@@ -79,25 +80,26 @@
     </div>
     <!---->
     <!-- Part05 start 抽屉 任务详情 -->
-    <Drawer title="任务详情" class="drawerScroll" :closable="false" width="750" v-model="TaskDetailCompShow">
-      <component v-bind:is="compArr.TaskDetailComp"
-                 v-bind:taskDrawerOpen="TaskDetailCompShow"
+    <Drawer title="反馈详情" class="drawerScroll" :closable="false" width="750" v-model="ProDetailCompShow">
+      <component v-bind:is="compArr.ProblemDetailComp"
+                 v-bind:taskDrawerOpen="ProDetailCompShow"
                  v-bind:modifyTaskRes="modifyTaskRes"
                  v-on:FilePreEmit="GetFilePreData"
                  v-on:toPlanDetail="toPlanDetailFuc"
                  v-on:showEditForm="showEditFormFuc"
                  v-on:ActionResThrow="ActionResThrowFuc"
                  v-on:TaskDelCallback="TaskDelCallbackFuc"
+                 v-on:TaskDelCallbackChild="TaskDelCallbackChildFuc"
                  :nodeId="currentNodeId">
       </component>
     </Drawer>
     <!---->
     <!--修改任务 编辑任务 任务 修改-->
-    <Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">
+    <Drawer class="drawerScroll" title="问题修改" :closable="false" width="40%" v-model="ModifyQuestionVisible">
       <!-- 修改任务 编辑任务 引入组件 -->
-      <component v-bind:is="compArr.ModifyTask"
-                 v-bind:DrawerOpen="modifyTaskVisible"
-                 fileFormId="ModifyTask"
+      <component v-bind:is="compArr.ModifyQuestion"
+                 v-bind:DrawerOpen="ModifyQuestionVisible"
+                 fileFormId="ModifyQuestion"
                  v-on:FilePreEmit="GetFilePreData"
                  v-on:ModifyTaskCallback="ModifyTaskCallbackFuc"
                  v-on:ShutCompEmit="ShutCompEmitFuc"
@@ -106,7 +108,7 @@
     </Drawer>
     <!---->
     <!-- Part06 start 抽屉 计划详情 -->
-    <Drawer title="计划详情" class="drawerScroll" :closable="false" width="750" v-model="value444">
+    <Drawer title="问题详情" class="drawerScroll" :closable="false" width="750" v-model="value444">
       <component v-bind:is="compArr.PlanDetailComp"
                  v-bind:taskDrawerOpen="value444"
                  :nodeId="currentNodeId"
@@ -117,7 +119,7 @@
       </component>
     </Drawer>
     <!--新增 添加计划或者任务 start-->
-    <Drawer class="drawerScroll" title="计划表单" :closable="false" width="40%" v-model="bgCoverShow">
+    <Drawer class="drawerScroll" title="问题表单" :closable="false" width="40%" v-model="bgCoverShow">
       <component v-bind:is="compArr.CreatePlanOrTask"
                  v-bind:DrawerOpen="bgCoverShow"
                  fileFormId="CreatePlanTask"
@@ -133,29 +135,29 @@
 </template>
 
 <script>
-import ModifyTask from './CustomComp/ModifyTask.vue'
+import ModifyQuestion from './CustomComp/ModifyQuestion.vue'
 import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
-import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
+import ProblemDetailComp from './CustomComp/ProblemDetailComp.vue'
 import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
-import QuickCreateTaskComp from './CustomComp/QuickCreateTaskComp.vue'
+import CreateFeedback from './CustomComp/CreateFeedback.vue'
 // ModifyTask
 export default {
-  name: 'MyTaskNew',
+  name: 'ProblemFeedback',
   components: {
-    ModifyTask,
+    ModifyQuestion,
     PlanDetailComp,
-    TaskDetailComp,
+    ProblemDetailComp,
     CreatePlanOrTask,
-    QuickCreateTaskComp
+    CreateFeedback
   },
   data () {
     return {
       compArr: {
-        ModifyTask: 'ModifyTask',
+        ModifyQuestion: 'ModifyQuestion',
         PlanDetailComp: 'PlanDetailComp',
-        TaskDetailComp: 'TaskDetailComp',
+        ProblemDetailComp: 'ProblemDetailComp',
         CreatePlanOrTask: 'CreatePlanOrTask',
-        QuickCreateTaskComp: 'QuickCreateTaskComp'
+        CreateFeedback: 'CreateFeedback'
       },
       // 详情
       modifyTaskRes: '',
@@ -191,33 +193,32 @@ export default {
       // 分类检索
       optionsTask: [{
         value: '2',
-        label: '我负责的任务'
-      }, {
+        label: '我负责的问题'
+      },
+      {
         value: '3',
-        label: '我发起的任务'
-      }, {
+        label: '我提出的问题'
+      },
+      {
         value: '4',
-        label: '@我的任务'
+        label: '@我的问题'
       }],
       optionsValue: '2',
       optionsTask2: [{
         value: '',
-        label: '全部任务'
-      }, {
-        value: 'today',
-        label: '今日任务'
-      }, {
-        value: 'overtime',
-        label: '逾期任务'
+        label: '全部状态'
       }, {
         value: 'unstart',
-        label: '未开始任务'
+        label: '未开始'
       }, {
         value: 'unfinish',
-        label: '进行中任务'
+        label: '进行中'
       }, {
         value: 'finish',
-        label: '已完成任务'
+        label: '已完成'
+      }, {
+        value: 'overtime',
+        label: '已逾期'
       }],
       optionsValue2: '',
       optionsValue3: '',
@@ -225,20 +226,20 @@ export default {
       myTaskViewPayload: {
         pageNum: 1,
         pageSize: '8',
-        projectName: '',
-        jobName: '',
-        taskSource: '2',
-        sType: ''
+        status: '',
+        questionName: '',
+        typeSource: '2',
+        typeCode: ''
       },
       // 默认指派
       input3: '',
       myTaskList: [],
       totalRowNum: 0,
       // 详情
-      TaskDetailCompShow: false,
+      ProDetailCompShow: false,
       currentNodeId: '',
       // 修改任务
-      modifyTaskVisible: false,
+      ModifyQuestionVisible: false,
       // 预览
       commentPreviewUrl1: '',
       // 预览
@@ -247,35 +248,50 @@ export default {
       value444: false,
       // addNode 表单
       activeNameBgCover: 'first',
-      bgCoverShow: false
+      bgCoverShow: false,
+      typeCode: ''
     }
   },
   created () {
-    var that = this
-    // this.log('url参数:', this.$route.params.TaskId)
-    if (that.$route.params.TaskId) {
-      that.$store.state.taskEdit = true
-      that.taskId = that.$route.params.TaskId
-      this.toDetail(that.$route.params.TaskId)
+    if (this.$route.params.ProbId) {
+      this.$store.state.taskEdit = true
+      this.taskId = this.$route.params.ProbId
+      this.toDetail(this.$route.params.ProbId)
     }
     this.queryMyTaskView()
-    this.queryMyProjectList()
+    this.queryProblemType()
+  },
+  computed: {
+    slideMenu: function () {
+      var that = this
+      // this.log()
+      // this.log('url地址：', window.location.href)
+      if (that.$store.state.slideMenu.length > 0) {
+        for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
+          if (that.$store.state.slideMenu[i].projectType === '问题反馈') {
+            that.$store.state.activeNavIndex = 'general_' + i
+            localStorage.setItem('generalMenuActive', '问题反馈')
+          }
+        }
+      }
+      return that.$store.state.slideMenu
+    }
   },
   watch: {
     // optionsValue3: function (newValue, oldValue) {
-    //   this.myTaskViewPayload.projectName = newValue
-    //   this.queryMyTaskView()
-    // }
+    //   this.typeCode = newValue
+    //   this.queryProblemType()
+    // },
     input3: function (newValue, oldValue) {
-      this.myTaskViewPayload.jobName = newValue
+      this.myTaskViewPayload.questionName = newValue
       this.myTaskViewPayload.pageNum = 1
       this.queryMyTaskView()
     }
   },
   methods: {
-    queryMyProjectList () {
+    queryProblemType () {
       var that = this
-      this.ajax('/myProject/getAllProjectByUser', {}).then(res => {
+      this.ajax('/question/getQuestionType', {}).then(res => {
         // this.log('选择所属项目:', res)
         if (res.code === 200) {
           that.projectList = res.data
@@ -285,26 +301,26 @@ export default {
     myTaskStyleChange: function (e) {
       var that = this
       that.myTaskViewPayload.pageNum = 1
-      that.myTaskViewPayload.taskSource = e
+      that.myTaskViewPayload.typeSource = e
       that.queryMyTaskView()
     },
     taskTypeState: function (e) {
       var that = this
       that.myTaskViewPayload.pageNum = 1
-      that.myTaskViewPayload.sType = e
+      that.myTaskViewPayload.status = e
       that.queryMyTaskView()
     },
     taskOfProject: function (e) {
       var that = this
       that.myTaskViewPayload.pageNum = 1
-      that.myTaskViewPayload.projectName = e
+      that.myTaskViewPayload.typeCode = e
       that.queryMyTaskView()
     },
     queryMyTaskView () {
       var that = this
-      this.ajax('/myTask/myTaskView', that.myTaskViewPayload).then(res => {
+      this.ajax('/question/getQuestionList', that.myTaskViewPayload).then(res => {
         if (res.code === 200) {
-          // that.log('myTaskView:', res)
+          that.log('myTaskView:', res)
           that.myTaskList = res.data.list
           that.totalRowNum = res.data.totalRow
         }
@@ -317,7 +333,7 @@ export default {
     },
     toDetail: function (id) {
       this.currentNodeId = id
-      this.TaskDetailCompShow = true
+      this.ProDetailCompShow = true
     },
     // 任务详情组件
     // 附件 附件预览
@@ -336,12 +352,12 @@ export default {
       var that = this
       that.currentNodeId = id
       that.value444 = true
-      that.TaskDetailCompShow = false
+      that.ProDetailCompShow = false
     },
     showEditFormFuc: function (id) {
       var that = this
       that.currentNodeId = id
-      that.modifyTaskVisible = true
+      that.ModifyQuestionVisible = true
     },
     ActionResThrowFuc: function (obj) {
       var that = this
@@ -349,7 +365,7 @@ export default {
         switch (obj.actionName) {
           case 'transferTask':
             // 任务移交
-            that.TaskDetailCompShow = false
+            that.ProDetailCompShow = false
             that.queryMyTaskView(that.activeId)
             break
           case 'addCommunityTask':
@@ -381,7 +397,22 @@ export default {
       var that = this
       if (res.code === 200) {
         that.queryMyTaskView()
-        that.TaskDetailCompShow = false
+        that.ProDetailCompShow = false
+        that.$message({
+          message: '删除成功！',
+          type: 'success'
+        })
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    TaskDelCallbackChildFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.queryMyTaskView()
         that.$message({
           message: '删除成功！',
           type: 'success'
@@ -398,7 +429,7 @@ export default {
       var that = this
       if (res.code === 200) {
         that.$store.state.taskEdit = true
-        that.modifyTaskVisible = false
+        that.ModifyQuestionVisible = false
         that.queryMyTaskView()
         that.$message({
           message: '修改成功！',
@@ -414,6 +445,7 @@ export default {
     // 组件内点击了关闭 父组件执行关闭子组件操作
     ShutCompEmitFuc: function (res) {
       this[res] = false
+      this.ModifyQuestionVisible = false
     },
     // 计划 计划删除 返回结果处理
     PlanDelCallbackFuc: function (res) {
@@ -436,7 +468,7 @@ export default {
       var that = this
       that.currentNodeId = id
       that.value444 = false
-      that.TaskDetailCompShow = true
+      that.ProDetailCompShow = true
     },
     addChildMsgFuc: function (data) {
       this.addNode(data.id, data.type)
@@ -583,14 +615,14 @@ export default {
     right: -32px;
     color: #fff;
   }
-  .showImg > img{
-    width: 100%;
-  }
   .noDate{
     height: 100px;
     line-height: 100px;
     text-align: center;
     color: #999;
     font-size: 14px;
+  }
+  .showImg > img{
+    width: 100%;
   }
 </style>

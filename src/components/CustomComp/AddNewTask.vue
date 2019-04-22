@@ -58,9 +58,11 @@
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
               <span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>
             </div>
-            <div class="paiTaskIptRightIcon" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
-            <div class="paiTaskIptRightCnt" v-on:click="selectDate2($event)">时间</div>
-            <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div>
+            <div class="paiTaskIptRightIcon" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
+            <div class="paiTaskIptRightCnt" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)">时间</div>
+            <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="'等级:' + levelValue2" v-on:click="selectLevel2($event)">
+              <div style="width: 24px;height: 24px;padding-left: 4px;"><div class="levelNum">{{levelValue2}}</div></div>
+            </div>
           </div>
         </div>
         <div class="taskRelation" v-if="taskRelationShow2">
@@ -617,5 +619,17 @@ export default {
   }
   .selectDateItem{
     margin-top: 20px;
+  }
+  .levelNum{
+    margin-top: 4px;
+    width: 20px;
+    text-align: center;
+    height: 20px;
+    color: chocolate;
+    line-height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
   }
 </style>

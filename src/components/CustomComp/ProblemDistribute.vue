@@ -1,23 +1,23 @@
 <template>
   <!--任务派发 任务分解 创建动态 折叠表单-->
-  <div class="TaskDistribute">
+  <div class="ProblemDistribute">
     <div style="position: relative;width: 100%;">
       <div v-loading="loading32">
         <div class="paiTaskIptBox" style="position: relative;">
-     <!--      <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+          <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
             <div class="selectUserIpt">
               <el-select v-model="taskForm2.value9" multiple filterable remote style="width: 100%;"
                          :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
                          :remote-method="remoteMethod2" :loading="loading22">
                 <el-option v-for="item in options42" :key="item.ID" :label="item.Name + ' (' + item.jName + ')'"
-                           :value="item.Name + '(' + item.jName + ')' + '-' + item.ID">
+                           :value="item.Name + '-' + item.ID">
                 </el-option>
               </el-select>
             </div>
             <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
             <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
-          </div> -->
-          <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">
+          </div>
+          <div class="selectDateDialog2"  style="right: 0;top: 0;z-index: 999;" v-if="selectDateDiaShow2">
             <div class="selectDateBox">
               <div class="selectDateItem">
                 <el-date-picker
@@ -43,41 +43,57 @@
               <el-button v-on:click="selectDateOk2()">确定</el-button>
             </div>
           </div>
-         <!--  <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight2 + 'px', top: taskLevelTop2 + 'px', left: taskLevelLeft2 + 'px'}" v-on:mouseleave="rateMouseLeave2()">
+          <div class="depTaskLevel2" v-bind:style="{ height: taskLevelHeight2 + 'px', top: taskLevelTop2 + 'px', left: taskLevelLeft2 + 'px'}" v-on:mouseleave="rateMouseLeave2()">
             <div class="rateBox">
               <el-rate v-model="levelValue2"></el-rate>
             </div>
-          </div> -->
+          </div>
           <div class="paiTaskIptLeft">
-            <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" v-on:blur="iptBlur2()" type="text" :placeholder="defaultText" /></div>
+            <div class="proBelong" style="padding-right: 10px;border-right: 1px dashed #ccc;display: flex">
+              <el-select v-model="projectBelong" @change="myTaskStyleChange($event)" placeholder="请选择问题反馈类型">
+                <el-option
+                  v-for="item in options"
+                  :key="item.typeCode"
+                  :label="item.typeName"
+                  :value="item.typeCode">
+                </el-option>
+              </el-select>
+            </div>
+            <div style="margin-left: 10px;width: 100%;display: flex;">
+              <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+              <div class="paiTaskIptWrap"><input v-on:focus="inputFocus2()" v-model="taskNameText2" type="text" placeholder="请输入问题反馈名称" /></div>
+            </div>
           </div>
           <div class="paiTaskIptRight">
-            <!-- <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div> -->
-            <!-- <div class="paiTaskIptRightCnt" style="max-width: 140px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" v-on:click="selectUser2($event)">
+            <div class="paiTaskIptRightIcon" style="cursor: pointer" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
+            <div class="paiTaskIptRightCnt" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
               <span v-if="taskForm2.value9.length === 0">{{defImplementer.name}}</span>
-            </div> -->
-            <div class="paiTaskIptRightIcon" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
-            <div class="paiTaskIptRightCnt" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)">时间</div>
-            <!-- <div class="paiTaskIptRightIcon" v-on:click="selectLevel2($event)"><i class="el-icon-bell"></i></div> -->
+            </div>
+            <div class="paiTaskIptRightIcon" :title="selDateStart2 + ' 到 '+ selDateEnd2" style="cursor: pointer" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
+            <div class="paiTaskIptRightCnt" :title="selDateStart2 + ' 到 '+ selDateEnd2" v-on:click="selectDate2($event)">时间</div>
+            <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="'等级:' + levelValue2" v-on:click="selectLevel2($event)">
+              <div style="width: 24px;height: 24px;padding-left: 4px;"><div class="levelNum">{{levelValue2}}</div></div>
+            </div>
           </div>
         </div>
         <div class="taskRelation" v-if="taskRelationShow2">
           <div class="relationIntro">
-            <textarea class="relationIntroArea" v-model="taskIntro2" :placeholder="defaultDetail"></textarea>
+            <textarea class="relationIntroArea" v-model="taskIntro2" placeholder="请输入问题简介"></textarea>
           </div>
         </div>
         <div class="taskFileUpload">
           <div class="fileUploadCao">
             <div class="selectLeft">
-             <!--  <component v-bind:is="compArr.FileUploadComp" fileFormId="TaskDistribute" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component> -->
+              <!-- 任务分解 -->
+              <component v-bind:is="compArr.FileUploadComp" fileFormId="TaskDistribute2" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
             </div>
             <div class="selectRight2">
               <div class="selectMoreInfo" v-on:click="moreClick2()">
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
-              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">创建</i-button></div>
+              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">分解</i-button></div>
+              <div class="submitBtn" v-on:click="cancelDevide()"><i-button :disabled="cancelBtn">取消</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>
@@ -90,22 +106,8 @@
 <script>
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 export default {
-  name: 'addNewPlan',
-  // props: ['nodeId','defaultText','defaultDetail'],
-  props: {
-    nodeId: {
-      type: String,
-      default: ''
-    },
-    defaultText: {
-      type: String,
-      default: '请输入任务名称'
-    },
-    defaultDetail: {
-      type: String,
-      default: '请输入任务简介'
-    }
-  },
+  name: 'ProblemDistribute',
+  props: ['nodeId', 'TaskDistributeShow', 'cancelBtnShow'],
   components: {
     FileUploadComp
   },
@@ -113,6 +115,7 @@ export default {
     return {
       // 取消按钮禁用
       cancelBtn: false,
+      projectBelong: '',
       // 引入组件
       compArr: {
         FileUploadComp: 'FileUploadComp'
@@ -121,7 +124,7 @@ export default {
       IsClear: false,
       // 附件上传 组件 接收到的组件数组 新组件
       FileUploadArr: [],
-      toShowDevided: false,
+      // toShowDevided: false,
       loading32: false,
       selectUserDiaShow2: false,
       // 任务分解
@@ -142,14 +145,15 @@ export default {
         projectManager: ''
       },
       options42: [],
+      options: [],
       selectDateDiaShow2: false,
       selDateStart2: '',
       pickerOptions3: {},
       selDateEnd2: '',
       levelValue2: 3,
       defImplementer: {
-        name: '张三',
-        id: ''
+        name: this.$store.state.userName,
+        id: this.$store.state.userId
       },
       taskRelationShow2: false,
       taskIntro2: '',
@@ -163,30 +167,30 @@ export default {
       fileList2: [],
       // 任务开始
       CommunityTaskPayload2: {
-        parentPlanId: '',
+        // projectUID: '1',
+        parentId: '1',
+        pStr: '',
         attachmentId: '',
         description: '',
-        jobName: '',
-        jobLevel: 3,
-        taskStartDate: '',
-        taskFinishDate: '',
-        users: '',
-        userId: ''
-      },
-      planData: {
-        parentId: '',
-        name: '',
-        start: '',
-        finish: '',
-        description: '',
-        userId: ''
+        questionName: '',
+        questionLevel: 3,
+        queStartDate: '',
+        queFinishDate: '',
+        userId: '',
+        _jfinal_token: '',
+        userName: ''
       }
     }
   },
   watch: {
-    TaskDistributeShow (val, old) {
+    TaskDistributeShow: function (val, old) {
+      this.log('val:', val)
+      this.log('old:', old)
       if (val) {
-        this.toShowDevided = val
+        this.log('55555555', this.nodeId)
+        // this.toShowDevided = val
+        this.getPlanTaskDetail()
+        this.getProBelong()
       }
     },
     cancelBtnShow: function (val, oV) {
@@ -194,10 +198,6 @@ export default {
       if (val) {
         this.cancelBtn = true
       }
-    },
-    levelValue2: function (newQuestion, oldQuestion) {
-      console.log('newQuestion', newQuestion)
-      this.CommunityTaskPayload2.jobLevel = newQuestion.toString()
     }
   },
   // computed: {
@@ -208,19 +208,40 @@ export default {
   //     return this.$store.state.userName
   //   }
   // },
-  created: function () {
-    this.getDefultTime()
-  },
   methods: {
-    getDefultTime () {
+    myTaskStyleChange: function (e) {
       var that = this
-      that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
+      that.ajax('/question/getQuestionType', {typeCode: e}).then(res => {
         if (res.code === 200) {
-          console.log('ashfcvasjfvjaskj:', res)
-          that.selDateStart2 = res.data.start
-          that.selDateEnd2 = res.data.finish
-          var st = res.data.start.split(' ')[0] + ' 00:00:00'
-          var et = res.data.finish
+          this.log('getAllProject222:', res)
+          // this.getProjectTime(this.projectBelong)
+          that.defImplementer.name = res.data[0].userName
+          that.defImplementer.id = res.data[0].userId
+        }
+      })
+    },
+    getProBelong: function () {
+      var that = this
+      that.ajax('/question/getQuestionType', {}).then(res => {
+        if (res.code === 200) {
+          this.log('getAllProject:', res)
+          this.options = res.data
+          // this.getProjectTime(this.projectBelong)
+        }
+      })
+    },
+    getPlanTaskDetail () {
+      var that = this
+      that.ajax('/question/getDetailById', {id: that.nodeId}).then(res => {
+        if (res.code === 200) {
+          that.selDateStart2 = res.data.queStartDate
+          that.selDateEnd2 = res.data.queFinishDate
+          this.projectBelong = res.data.typeCode
+          that.myTaskStyleChange(that.projectBelong)
+          // that.defImplementer.name = res.data.userName
+          // that.defImplementer.id = res.data.userId
+          var st = res.data.queStartDate.split(' ')[0] + ' 00:00:00'
+          var et = res.data.queFinishDate
           var sT = new Date(st)
           var eT = new Date(et)
           var disabledStarTime = sT.getTime()
@@ -293,16 +314,15 @@ export default {
     },
     inputFocus2: function () {
       var that = this
-      that.getDefultTime()
       // this.taskRelationShow2 = true
       if (that.moreText2 === '更多') {
         that.moreText2 = '收起'
-        that.moreIcon2 = 'el-icon-arrow-up'
-        that.taskRelationShow2 = true
+        this.moreIcon2 = 'el-icon-arrow-up'
+        this.taskRelationShow2 = true
       } else {
         that.moreText2 = '更多'
-        that.moreIcon2 = 'el-icon-arrow-down'
-        that.taskRelationShow2 = false
+        this.moreIcon2 = 'el-icon-arrow-down'
+        this.taskRelationShow2 = false
       }
     },
     iptBlur2: function () {
@@ -320,10 +340,7 @@ export default {
     },
     selectDate2: function (e) {
       // 所有的伸缩窗 隐藏
-      var that = this
-      if (!that.selDateStart2 || !that.selDateEnd2) {
-        that.getDefultTime()
-      }
+      this.getPlanTaskDetail()
       this.transitionManage2('', true)
       if (e) {
         var obj = e.currentTarget
@@ -353,28 +370,8 @@ export default {
         this.taskRelationShow2 = false
       }
     },
-    // depSub: function () {
-    //   var that = this
-    //   that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {
-    //     if (res.code === 200) {
-    //       that.selDateStart2 = res.data.start
-    //       that.selDateEnd2 = res.data.finish
-    //       var st = res.data.start.split(' ')[0] + ' 00:00:00'
-    //       var et = res.data.finish
-    //       var sT = new Date(st)
-    //       var eT = new Date(et)
-    //       var disabledStarTime = sT.getTime()
-    //       var disabledEndTime = eT.getTime()
-    //       that.pickerOptions3.disabledDate = function (time) {
-    //         return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
-    //       }
-    //       that.depSub2()
-    //     }
-    //   })
-    // },
     depSub2: function () {
       var that = this
-      that.loading32 = true
       var fileStr = ''
       for (var j = 0; j < this.fileList2.length; j++) {
         if (j === that.fileList2.length - 1) {
@@ -386,6 +383,7 @@ export default {
       // 如果有任务名
       if (that.taskNameText2) {
         // value9有值
+        that.loading32 = true
         var selectUserStr = ''
         if (that.taskForm2.value9.length > 0) {
           for (var i = 0; i < that.taskForm2.value9.length; i++) {
@@ -399,25 +397,28 @@ export default {
           // value9没有值，取默认
           selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
-        that.planData.parentPlanId = that.nodeId
-        // that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
-        // that.CommunityTaskPayload2.users = selectUserStr
-        that.planData.name = that.taskNameText2
-        that.planData.start = that.selDateStart2
-        that.planData.finish = that.selDateEnd2
-        that.planData.description = that.taskIntro2
-        // that.CommunityTaskPayload2._jfinal_token = that.token
-        that.ajax('/myProject/addPlan', that.planData).then(res => {
-          that.$emit('TaskDistributeCallback', res)
+        // that.CommunityTaskPayload2.projectUID = that.$store.state.proId
+        that.CommunityTaskPayload2.parentId = that.nodeId
+        that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()
+        that.CommunityTaskPayload2.pStr = selectUserStr
+        that.CommunityTaskPayload2.questionName = that.taskNameText2
+        that.CommunityTaskPayload2.queStartDate = that.selDateStart2
+        that.CommunityTaskPayload2.queFinishDate = that.selDateEnd2
+        that.CommunityTaskPayload2.questionLevel = that.levelValue2
+        that.CommunityTaskPayload2.description = that.taskIntro2
+        that.CommunityTaskPayload2.typeCode = that.projectBelong
+        that.CommunityTaskPayload2._jfinal_token = that.token
+        that.log('attachmentId:', that.CommunityTaskPayload2.attachmentId)
+        that.ajax('/question/addQuestion', that.CommunityTaskPayload2).then(res => {
+          that.$emit('TaskDistributeCallback', res, that.nodeId)
           if (res.code === 200) {
-            that.selDateStart2 = ''
-            that.selDateEnd2 = ''
             that.isRecall2 = that.isRecall2 + 1
             that.IsClear = true
             that.$message({
-              message: '任务创建成功',
+              message: '问题分解成功',
               type: 'success'
             })
+            that.loading32 = false
             // that.toDetail()
             // that.selectProjectId()
             // that.getHistoryList()
@@ -428,12 +429,12 @@ export default {
               message: res.msg,
               type: 'warning'
             })
+            that.loading32 = false
           }
-          that.loading32 = false
         })
       } else {
         that.$message({
-          message: '请填写名称',
+          message: '请填写问题名称',
           type: 'warning'
         })
         that.loading32 = false
@@ -442,16 +443,16 @@ export default {
     cancelDevide: function () {
       var that = this
       that.taskRelationShow2 = false
-      that.toShowDevided = false
+      // that.toShowDevided = false
       that.$emit('DistributeFormVisible', false)
       that.clearDynamicsForm2()
     },
     clearDynamicsForm2: function () {
       this.taskNameText2 = ''
       this.fileList2 = []
-      this.CommunityTaskPayload2.jobName = ''
-      this.CommunityTaskPayload2.taskStartDate = ''
-      this.CommunityTaskPayload2.taskFinishDate = ''
+      this.CommunityTaskPayload2.questionName = ''
+      this.CommunityTaskPayload2.queStartDate = ''
+      this.CommunityTaskPayload2.queFinishDate = ''
       this.taskIntro2 = ''
       this.CommunityTaskPayload2.description = ''
       this.attachmentId2 = ''
@@ -489,7 +490,7 @@ export default {
     display: flex;
     margin-top: 10px;
     justify-content: space-between;
-    padding: 10px 5px;
+    padding: 5px;
     border: 1px solid #dcdfe6;
     padding-left: 8px;
   }
@@ -500,12 +501,15 @@ export default {
   }
   .paiTaskIptIcon{
     width: 20px;
+    color: #409EFF;
     font-size: 18px;
     margin-right: 6px;
+    line-height: 28px;
   }
   .paiTaskIptWrap{
     width: 100%;
-    line-height: 27px;
+    line-height: 28px;
+    font-size: 14px;
   }
   .paiTaskIptWrap input{
     width: 100%;
@@ -550,10 +554,10 @@ export default {
     text-align: center;
     position: fixed;
     overflow: hidden;
-    z-index: 300;
     margin-top: -1px;
     background-color: #fff;
     transition: height 0.3s;
+    z-index:2;
   }
   .rateBox{
     padding: 12px;
@@ -596,7 +600,6 @@ export default {
     padding: 0px 20px 20px 20px;
     background-color: #fff;
     position: absolute;
-    z-index: 200;
     border-radius: 6px;
     box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
   }
@@ -605,9 +608,9 @@ export default {
     padding: 20px 10px;
     background-color: #fff;
     position: absolute;
-    z-index: 200;
     border-radius: 6px;
     box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+    z-index:2
   }
   .selectUserBtn{
     text-align: center;
@@ -615,5 +618,17 @@ export default {
   }
   .selectDateItem{
     margin-top: 20px;
+  }
+  .levelNum{
+    margin-top: 4px;
+    width: 20px;
+    text-align: center;
+    height: 20px;
+    color: chocolate;
+    line-height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
   }
 </style>

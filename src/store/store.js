@@ -9,6 +9,7 @@ const state = {
   defaultParentFinish: '',
   resetDragStart: '',
   resetDragFinish: '',
+  nodeDragRefresh: false,
   // dragResetDate: false,
   currentDraggedData: {},
   editFlag: false,

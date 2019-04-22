@@ -13,7 +13,7 @@
       <!--<span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>-->
       <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index">
         <span style="color: #333" @click="FilePreEmitFuc(file.previewUrl, file.fileName, file.attachmentId)">{{index+1}}、{{file.fileName}}</span>
-        <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>
+        <div style="color: #999;display: inline-block;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>;&nbsp;&nbsp;
       </span>
     </div>
   </div>
@@ -84,6 +84,7 @@ export default {
       }).then(() => {
         that.ajax('/file/deleteFile', {attachmentId: id}).then(res => {
           // this.log('选择所属项目:', res)
+          // that.$emit('uploadFileDel', res)
           if (res.code === 200) {
             that.$message.success('删除成功！')
             for (var i = 0; i < that.fileListComment.length; i++) {

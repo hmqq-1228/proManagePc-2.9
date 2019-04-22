@@ -153,6 +153,12 @@ export default {
         $('#' + data).insertBefore($('#' + newTreeItem.id))
         if (that.checkDateTime(newTreeItem.start, newTreeItem.finish, targetStart, targetFinish)) {
           this.updateTree(data, newTreeItem.parentId, $(obj).parent().parent('.node').index())
+        } else {
+          that.$store.state.currentDraggedData = {
+            draggedNodeId: data,
+            parentNodeId: newTreeItem.parentId,
+            insertIndex: $(obj).parent().parent('.node').index()
+          }
         }
       }
     },
@@ -177,7 +183,8 @@ export default {
           that.$store.state.timeDialogVisible = true
           // return true
         }).catch(() => {
-          // return false
+          // 通知父组件刷新
+          that.$store.state.nodeDragRefresh = true
         })
         return false
       }

@@ -26,12 +26,13 @@ import ProDetail from '@/components/ProDetail'
 import TestUpload from '@/components/TestUpload'
 import CompUse from '@/components/CompUse'
 import goodsDetail2 from '@/components/goodsDetail2'
+import ProblemFeedback from '@/components/ProblemFeedback'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
-    /**
+    /** ProblemFeedback
      *  ===================================================== ZhangH
      */
     {
@@ -68,11 +69,6 @@ export default new Router({
       component: MyTask
     },
     {
-      path: '/MyTask/:TaskId',
-      name: 'MyTaskArgs',
-      component: MyTask
-    },
-    {
       path: '/MyDep',
       name: 'MyDep',
       component: MyDep
@@ -86,6 +82,16 @@ export default new Router({
       path: '/ProDetail2',
       name: 'ProDetail2',
       component: ProDetail2
+    },
+    {
+      path: '/ProblemFeedback',
+      name: 'ProblemFeedback',
+      component: ProblemFeedback
+    },
+    {
+      path: '/ProblemFeedback/:ProbId',
+      name: 'ProblemFeedback2',
+      component: ProblemFeedback
     },
     /**
      *  ===================================================== DongG
@@ -123,6 +129,11 @@ export default new Router({
     {
       path: '/MyTaskNew',
       name: 'MyTaskNew',
+      component: MyTaskNew
+    },
+    {
+      path: '/MyTaskNew/:TaskId',
+      name: 'MyTaskNew2',
       component: MyTaskNew
     },
     {
