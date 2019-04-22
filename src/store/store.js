@@ -18,7 +18,7 @@ const state = {
   userId: '',
   userName: '',
   userLoginInfo: '',
-  debug: true,
+  debug: false,
   proId: '',
   navType: '',
   goodType: '',

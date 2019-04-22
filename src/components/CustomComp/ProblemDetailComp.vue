@@ -47,7 +47,7 @@
         <!--<span style="font-size: 14px;color: #888;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>-->
       <!--</div>-->
       <div class="cannetProject">
-        <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>反馈类型:</span></div>
+        <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>问题类型:</span></div>
         <div style="display: inline-block;">{{taskBasicMsg.typeName}}</div>
       </div>
       <div class="cannetProject">
