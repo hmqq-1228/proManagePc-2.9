@@ -2,7 +2,7 @@
   <div class="ProDetail goodsDetail" style="position: relative;margin-top: 15px;">
     <!--<div @click="ttttttt()"><button>TTTTTTT</button></div>-->
     <div>{{goPerfect?'':''}}</div>
-    <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
+    <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}} {{nodeDragRefresh?'':''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
     <div class="fileModel" v-if="showFileModel">
       <div style="text-align: center;height: 30px;line-height: 30px;color: #999;border-bottom: 1px solid #f1f1f1">共<span style="color: chocolate;font-size: 16px;font-weight: bold;">{{proDetailMsg.fileList.length}}</span> 个附件
@@ -178,7 +178,7 @@
       </div>
       <!-- 一级计划 项目计划 start -->
       <div class="planList">
-        <div class="planName" v-on:click="toGoodsDetail2">
+        <div class="planName">
         <!--<div class="planName">-->
           <!-- 项
           <br>目
@@ -488,7 +488,7 @@
       </component>
     </Drawer>
     <!-- 节点拖动 时间选择 -->
-    <el-dialog title="提示" :visible.sync="timeDialogVisible" width="30%">
+    <el-dialog title="提示: 编辑时间" :visible.sync="timeDialogVisible" width="30%">
       <div>
         <!--<button type="button" @click="resettt">setddd</button>-->
         <el-form ref="nodeDragTimeEdit" :model="nodeDragTimeEdit" label-width="80px">
@@ -827,14 +827,15 @@ export default {
     }
   },
   watch: {
-    nodeDragRefresh: function (val, old) {
-      if (val) {
-        this.log('val:', val)
-        this.newTreeList = []
-        this.$store.state.nodeDragRefresh = false
-        this.queryNewTree()
-      }
-    },
+    // nodeDragRefresh: function (val, old) {
+    //   this.log('watch:nodeDragRefresh:', val)
+    //   if (val) {
+    //     this.log('watch:nodeDragRefresh:', val)
+    //     this.newTreeList = []
+    //     this.$store.state.nodeDragRefresh = false
+    //     this.queryNewTree()
+    //   }
+    // },
     proId: function (val, oVal) {
       var that = this
       // this.currentProId = val
@@ -923,6 +924,9 @@ export default {
         this.getPeople()
       }
     }
+    // nodeDragRefresh: function (val, old) {
+    //   this.log('watch:nodeDragRefresh:', val)
+    // }
   },
   computed: {
     slideMenuGroup: function () {
@@ -994,6 +998,15 @@ export default {
       return this.$store.state.timeDialogVisible
     },
     nodeDragRefresh: function () {
+      var that = this
+      if (that.$store.state.nodeDragRefresh) {
+        this.log('watch:nodeDragRefresh:', this.$store.state.nodeDragRefresh)
+        that.newTreeList = []
+        this.queryNewTree()
+        this.getTree()
+        this.queryProDetail()
+        that.$store.state.nodeDragRefresh = false
+      }
       return this.$store.state.nodeDragRefresh
     }
   },
@@ -1171,9 +1184,6 @@ export default {
           this.$refs['re'].focus()
         }, 200)
       }
-    },
-    toGoodsDetail2: function () {
-      this.$router.push('/goodsDetail2')
     },
     // 测试右键
     rightKey: function (e) {

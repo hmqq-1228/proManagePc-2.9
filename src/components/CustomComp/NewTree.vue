@@ -1,7 +1,8 @@
 <template>
   <div class="NewTreeBox" style="position: relative; display: block !important;">
     <!--{{queryDragResetDate?'':''}}-->
-    <div class="jiajian" @click="jiajianClick($event)"><span class="open">-</span></div>
+    <!--<div class="jiajian" v-if="treeNodeLevel!==0" @click="jiajianClick($event)"><span class="open">-</span></div>-->
+    <div class="jiajian" v-if="treeNodeLevel!==0" @click="jiajianClick($event)"><Icon class="open" type="ios-add-circle-outline" /></div>
     <div class="NewTree" v-bind:id="'parent_' + (newTreeList && newTreeList[0] && newTreeList[0].parentId?newTreeList[0].parentId: nextId)">
       <div class="node" v-for="newTreeItem in newTreeList" :key="newTreeItem.id" :id="newTreeItem.id" draggable="true" @dragstart="dragstart($event, newTreeItem)">
         <div class="lineLeft" v-if="newTreeItem.type!=='rootPlan'"></div>
@@ -13,7 +14,7 @@
           <div class="insertLineCover" :id="'line_cover' + newTreeItem.id" @drop="drop($event, 'line', newTreeItem)" @dragover="allowDrop($event, 'line', newTreeItem.id, newTreeItem.parentId)" @dragleave="dragLeave($event, 'line', newTreeItem.id)"></div>
           <div class="nodeTitleBox">
             <div style="display: flex">
-              <div v-if="newTreeItem.type!=='rootPlan'">---</div>
+              <div v-if="newTreeItem.type!=='rootPlan'"><div style="border-bottom: 1px solid #ccc; width: 20px; height: 12px;"></div></div>
               <!-- 级别 -->
               <div class="nodeTitle"
                    v-bind:class="newTreeItem.type"
@@ -23,7 +24,7 @@
                    @dragleave="dragLeave($event, 'title', newTreeItem.id)">{{newTreeItem.name}}
               </div>
             </div>
-            <div class="nodeDateTime">{{newTreeItem.start}} 至 {{newTreeItem.finish}}</div>
+            <div class="nodeDateTime" v-if="treeNodeLevel!==0">{{newTreeItem.start}} 至 {{newTreeItem.finish}}</div>
           </div>
           <component v-show="newTreeItem.children.length>0"
                      v-bind:is="compArr.NewTree"
@@ -62,12 +63,18 @@ export default {
     this.treeLevel = this.$store.state.treeLevel
     // this.log('男儿当自强：', this.TreeJsonData)
     // this.queryProDetail()
+    // this.log('created:', this.treeNodeLevel)
   },
   watch: {
     newTreeList (val, old) {
       // this.log('newTreeList001:', val)
       if (val) {
-        // this.log('newTreeList:', val)
+        // this.log('newTreeList2222222222222:')
+      }
+    },
+    treeNodeLevel (val, old) {
+      if (val) {
+        // this.log('treeNodeLevel:111111111111111')
       }
     }
   },
@@ -88,15 +95,29 @@ export default {
       this.log(1111)
     },
     jiajianClick: function (e) {
+      this.log(11111111111)
       var obj = e.currentTarget
       if ($(obj).children().eq(0).hasClass('open')) {
         $(obj).children().eq(0).removeClass('open').addClass('close')
-        $(obj).siblings('.NewTree').css('height', 16 + 'px')
-        $(obj).children().eq(0).text('+')
+        $(obj).siblings('.NewTree').css('height', 15 + 'px')
+        // $(obj).children().eq(0).text('+')
       } else {
         $(obj).children().eq(0).removeClass('close').addClass('open')
         $(obj).siblings('.NewTree').css('height', 'auto')
-        $(obj).children().eq(0).text('-')
+        // $(obj).children().eq(0).text('-')
+      }
+    },
+    jiajianClick2: function (e) {
+      this.log(11111111111)
+      var obj = e.currentTarget
+      if ($(obj).hasClass('open')) {
+        $(obj).removeClass('open').addClass('close')
+        $(obj).parent().siblings('.NewTree').css('height', 14 + 'px')
+        // $(obj).children().eq(0).text('+')
+      } else {
+        $(obj).removeClass('close').addClass('open')
+        $(obj).parent().siblings('.NewTree').css('height', 'auto')
+        // $(obj).children().eq(0).text('-')
       }
     },
     dragLeave: function (e, pos, id) {
@@ -110,15 +131,20 @@ export default {
     },
     allowDrop: function (ev, pos, id, parentId) {
       var obj = ev.currentTarget
-      if (pos === 'title') {
-        if ((id.substr(0, 1) === 'P') || (id.substr(0, 1) === 'J' && this.$store.state.dragedElementId.substr(0, 1) === 'J')) {
-          $(obj).addClass('active')
-          ev.preventDefault()
-        }
-      } else if (pos === 'line') {
-        if ((parentId.substr(0, 1) === 'P') || (parentId.substr(0, 1) === 'J' && this.$store.state.dragedElementId.substr(0, 1) === 'J')) {
-          ev.preventDefault()
-          $('#line_' + id).addClass('active')
+      if ($('#title_' + id).parents('#parent_' + this.$store.state.dragedElementId).length > 0) {
+        // 不可以将父级拖放为子级的子级
+      } else {
+        // this.log('11111111111')
+        if (pos === 'title') {
+          if ((id.substr(0, 1) === 'P') || (id.substr(0, 1) === 'J' && this.$store.state.dragedElementId.substr(0, 1) === 'J')) {
+            $(obj).addClass('active')
+            ev.preventDefault()
+          }
+        } else if (pos === 'line') {
+          if ((parentId.substr(0, 1) === 'P') || (parentId.substr(0, 1) === 'J' && this.$store.state.dragedElementId.substr(0, 1) === 'J')) {
+            ev.preventDefault()
+            $('#line_' + id).addClass('active')
+          }
         }
       }
     },
@@ -135,17 +161,18 @@ export default {
       $('.nodeTitle').removeClass('active')
       $('.insertLine').removeClass('active')
       if (pos === 'title') {
-        $(obj).removeClass('active')
-        $(obj).parent().parent().siblings('.NewTreeBox').css('display', 'block')
-        // document.getElementById('parent_' + id).appendChild(parNode)
-        $('#parent_' + newTreeItem.id).prepend($('#' + data))
-        if (that.checkDateTime(newTreeItem.start, newTreeItem.finish, targetStart, targetFinish)) {
-          this.updateTree(data, newTreeItem.id, 1)
-        } else {
-          that.$store.state.currentDraggedData = {
-            draggedNodeId: data,
-            parentNodeId: newTreeItem.id,
-            insertIndex: 1
+        if (data !== newTreeItem.id) {
+          $(obj).removeClass('active')
+          $(obj).parent().parent().siblings('.NewTreeBox').css('display', 'block')
+          $('#parent_' + newTreeItem.id).prepend($('#' + data))
+          if (that.checkDateTime(newTreeItem.start, newTreeItem.finish, targetStart, targetFinish)) {
+            this.updateTree(data, newTreeItem.id, 1)
+          } else {
+            that.$store.state.currentDraggedData = {
+              draggedNodeId: data,
+              parentNodeId: newTreeItem.id,
+              insertIndex: 1
+            }
           }
         }
       } else if (pos === 'line') {
@@ -192,16 +219,16 @@ export default {
     updateTree: function (targetId, parentId, nodeIndex, start, finish) {
       var that = this
       that.ajax('/myProject/moveStructure', {id: targetId, parentId: parentId, sortCode: nodeIndex, startTime: start, endTime: finish}).then(res => {
-        that.log('moveStructure:', res)
+        // that.log('88888888:', res)
+        that.$store.state.nodeDragRefresh = true
       })
     },
     dragstart: function (ev, nodeItem) {
       ev.stopPropagation()
-      this.log('nodeItem:dragstart:', nodeItem)
+      this.log('targetId:', ev.target.id)
       var obj = ev.currentTarget
       ev.dataTransfer.setData('Text', ev.target.id)
       if (nodeItem) {
-        this.log(1111111)
         ev.dataTransfer.setData('start', nodeItem.start)
         ev.dataTransfer.setData('finish', nodeItem.finish)
       }
@@ -216,23 +243,31 @@ export default {
   .jiajian{
     position: absolute;
     left: 44px;
-    top: 3px;
-    width: 13px;
-    height: 13px;
+    top: 1px;
+    font-size: 15px;
+    width: 16px;
+    height: 14px;
     color: #ccc;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    z-index: 999;
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 8px;*/
     background-color: #fff;
   }
   .jiajian:hover{
     cursor: default ;
     color: #aaa;
-    border: 1px solid #aaa;
+    /*border: 1px solid #aaa;*/
   }
-  .jiajian span{
+  .jiajian i{
     position: absolute;
-    left: 2px;
-    top: -3px;
+    left: 0px;
+    top: 0px;
+  }
+  .jiajian i.open:before{
+    content: "\F290";
+  }
+  .jiajian i.close:before{
+    content: "\F100";
   }
   .NewTreeCompWrap>.NewTreeBox>.jiajian{
     display: none;
@@ -254,12 +289,13 @@ export default {
     border-left: 1px solid #ccc;
   }
   .node:last-child>.lineLeft{
-    height: 30px;
+    height: 32px;
   }
   .nodeCnt{
     position: relative;
     padding-top: 20px;
     flex-grow: 1;
+    margin-left: -1px;
   }
   .node .NewTree{
     margin-left: 50px;
@@ -315,6 +351,7 @@ export default {
     transform: rotate(45deg);
   }
   .nodeTitle{
+    min-width: 50px;
     color: #666;
     max-width: 240px;
     box-sizing: border-box;
