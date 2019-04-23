@@ -34,6 +34,7 @@
                 :value="item.projectUID">
               </el-option>
             </el-select>
+            <span style="color:red" v-if="options.length===0">&nbsp;&nbsp;请新建一个项目</span>
           </div>
         </div>
         <div class="relationIntro">
@@ -49,8 +50,8 @@
           <div class="selectMoreInfo" v-on:click="moreClick()">
             <i v-bind:class="moreIcon"></i><span style="margin-left: 6px;">{{moreText}}</span>
           </div>
-          <div class="submitBtn" v-on:click="depSub()">
-            <el-button type="primary">发布</el-button>
+          <div class="submitBtn">
+            <el-button type="primary" :disabled="options.length===0" v-on:click="depSub()">发布</el-button>
           </div>
         </div>
       </div>
@@ -116,6 +117,7 @@ export default {
   },
   data () {
     return {
+      isTrue: false,
       compArr: {
         FileUploadComp: 'FileUploadComp'
       },
@@ -252,13 +254,14 @@ export default {
     // 选择时间确定
     selectDateOk: function () {
       this.selectDateDiaShow = false
+      this.selectDateDiaShow = false
     },
     // 获取所属项目
     getProBelong: function () {
       var that = this
       that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         if (res.code === 200) {
-          // this.log('getAllProject:', res)
+          this.log('getAllProject:', res)
           this.projectBelong = res.data[0].projectUID
           this.options = res.data
           this.getProjectTime(this.projectBelong)
