@@ -383,7 +383,7 @@ export default {
         that.searchPeople = ''
         if (that.items.show) {
           setTimeout(() => {
-            that.$refs['re'].focus()
+            that.$refs.re[0].focus()
           }, 200)
         }
       } else {
@@ -478,7 +478,7 @@ export default {
       that.searchPeople = ''
       if (item.show) {
         setTimeout(() => {
-          that.$refs['re'].focus()
+          that.$refs.re[0].focus()
         }, 200)
       }
     },
@@ -494,7 +494,6 @@ export default {
       let before = content1.substring(0, that.position)
       let after = content2.substring(that.position)
       that.textareaVal = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
-      console.log(that.peopleList)
     },
     // 获取默认的人员
     getPeople () {
@@ -728,7 +727,6 @@ export default {
       }
     },
     handleSelect (item) {
-      // console.log(item.userId)
       this.Mid = item.userId
     },
     responseBtn: function (item, index) {

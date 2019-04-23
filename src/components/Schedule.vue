@@ -833,12 +833,15 @@ export default {
           that.monGrids.forEach((item, index) => {
             that.arrList.forEach((items, idx) => {
               let n, g
+              // 判断n为休息日的下标
               if (items === 1) {
                 n = idx
               }
+              // 判断g为节假日的下标
               if (items === 2) {
                 g = idx
               }
+              // 判断日历中下标为n+前面没有日期的个数
               if (index === n + that.weekDay) {
                 item.isRest = 1
               } else if (index === g + that.weekDay) {
