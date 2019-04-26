@@ -14,6 +14,7 @@ import MyTask from '@/components/MyTask'
 import MyPro3 from '@/components/MyPro3'
 import GoodsManage from '@/components/GoodsManage'
 import ProDetail2 from '@/components/ProDetail2'
+import ProblemFeedback from '@/components/ProblemFeedback'
 /**
  *  ==================================================================== DongG
  */
@@ -26,7 +27,7 @@ import ProDetail from '@/components/ProDetail'
 import TestUpload from '@/components/TestUpload'
 import CompUse from '@/components/CompUse'
 import goodsDetail2 from '@/components/goodsDetail2'
-import ProblemFeedback from '@/components/ProblemFeedback'
+import page404 from '@/components/page404'
 
 Vue.use(Router)
 
@@ -145,6 +146,11 @@ export default new Router({
       path: '/goodsDetail2',
       name: 'goodsDetail2',
       component: goodsDetail2
+    },
+    {
+      path: '/page404',
+      name: 'page404',
+      component: page404
     }
   ]
 })

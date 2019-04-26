@@ -1,10 +1,18 @@
 <template>
   <div class="NewTreeBox" style="position: relative; display: block !important;">
+    <div class="editKK" v-if="treeNodeLevel===0">
+      <span style="margin-right: 10px;">{{onOffStatusT===1?statusMsg:''}}</span>
+      <span>{{leftTimeText}}</span>
+      <Button class="editKKBtn" :disabled="editBtnDis" @click="setEditKK">{{editKKBtnText}}</Button>
+      <Icon size="24" style="color: #3a8ee6" type="ios-refresh" @click="queryEditKKState" />
+      <!--<Icon size="24" style="color: #3a8ee6" type="ios-refresh-circle" @click="queryEditKKState2" />-->
+      <!--<Icon size="24" style="color: #3a8ee6" type="ios-refresh-circle-outline" @click="clearAllInterval" />-->
+    </div>
     <!--{{queryDragResetDate?'':''}}-->
     <!--<div class="jiajian" v-if="treeNodeLevel!==0" @click="jiajianClick($event)"><span class="open">-</span></div>-->
     <div class="jiajian" v-if="treeNodeLevel!==0" @click="jiajianClick($event)"><Icon class="open" type="ios-add-circle-outline" /></div>
     <div class="NewTree" v-bind:id="'parent_' + (newTreeList && newTreeList[0] && newTreeList[0].parentId?newTreeList[0].parentId: nextId)">
-      <div class="node" v-for="newTreeItem in newTreeList" :key="newTreeItem.id" :id="newTreeItem.id" draggable="true" @dragstart="dragstart($event, newTreeItem)">
+      <div class="node" v-for="newTreeItem in newTreeList" :key="newTreeItem.id" :id="newTreeItem.id" :draggable="onOffStatusT===2" @dragstart="dragstart($event, newTreeItem)">
         <div class="lineLeft" v-if="newTreeItem.type!=='rootPlan'"></div>
         <div class="nodeCnt">
           <div class="insertLine" :id="'line_' + newTreeItem.id">
@@ -12,7 +20,7 @@
             <div class="arrowLeft"></div>
           </div>
           <div class="insertLineCover" :id="'line_cover' + newTreeItem.id" @drop="drop($event, 'line', newTreeItem)" @dragover="allowDrop($event, 'line', newTreeItem.id, newTreeItem.parentId)" @dragleave="dragLeave($event, 'line', newTreeItem.id)"></div>
-          <div class="nodeTitleBox">
+          <div class="nodeTitleBox" v-on:click="huoquTest($event)">
             <div style="display: flex">
               <div v-if="newTreeItem.type!=='rootPlan'"><div style="border-bottom: 1px solid #ccc; width: 20px; height: 12px;"></div></div>
               <!-- 级别 -->
@@ -24,11 +32,35 @@
                    @dragleave="dragLeave($event, 'title', newTreeItem.id)">{{newTreeItem.name}}
               </div>
             </div>
-            <div class="nodeDateTime" v-if="treeNodeLevel!==0">{{newTreeItem.start}} 至 {{newTreeItem.finish}}</div>
+            <!--<div class="nodeDateTime" v-if="treeNodeLevel!==0">{{newTreeItem.start}} 至 {{newTreeItem.finish}}</div>-->
+            <div class="nodeDateTime" v-if="treeNodeLevel!==0">
+              <el-date-picker
+                v-model="newTreeItem.start"
+                type="datetime"
+                :clearable="false"
+                :readonly="onOffStatusT!==2"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                @focus="dragDateEditFocus($event, newTreeItem)"
+                @change="startChange($event, newTreeItem, 'start')"
+                :picker-options="DragDateEditOption"
+                placeholder="选择日期时间">
+              </el-date-picker>至
+              <el-date-picker
+                v-model="newTreeItem.finish"
+                type="datetime"
+                :clearable="false"
+                :readonly="onOffStatusT!==2"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                @change="startChange($event, newTreeItem, 'finish')"
+                placeholder="选择日期时间">
+              </el-date-picker>
+            </div>
           </div>
           <component v-show="newTreeItem.children.length>0"
                      v-bind:is="compArr.NewTree"
-                     :nextId="newTreeItem.id"
+                     v-bind:nextId="newTreeItem.id"
+                     v-bind:proId="proId"
+                     v-bind:onOffStatusT="onOffStatusT"
                      v-bind:treeNodeLevel="treeNodeLevel + 1"
                      v-bind:newTreeList="newTreeItem.children"></component>
         </div>
@@ -46,16 +78,27 @@ export default {
   components: {
     NewTree
   },
-  props: ['newTreeList', 'nextId', 'treeNodeLevel'],
+  props: ['proId', 'newTreeList', 'nextId', 'treeNodeLevel', 'DrawerOpen', 'onOffStatusT'],
   data () {
     return {
       msg: '',
+      statusMsg: '',
+      leftTimeText: '',
+      editBtnDis: false,
+      editKKBtnText: '编辑',
+      onOffStatus: 0,
       timeDialogVisible: false,
       compArr: {
         NewTree: 'NewTree'
       },
       treeLevel: 0,
-      currentDraggedData: {}
+      currentDraggedData: {},
+      newTreeItemstart: '2019-01-01 10:10:10',
+      DragDateEditOption: {
+        disabledDate: function (currentDateTime) {
+          return false
+        }
+      }
     }
   },
   created () {
@@ -66,6 +109,14 @@ export default {
     // this.log('created:', this.treeNodeLevel)
   },
   watch: {
+    onOffStatusT (val, old) {
+      this.log('onOffStatusT:', val)
+    },
+    DrawerOpen (val, old) {
+      if (val) {
+        this.queryEditKKState()
+      }
+    },
     newTreeList (val, old) {
       // this.log('newTreeList001:', val)
       if (val) {
@@ -91,11 +142,126 @@ export default {
     // }
   },
   methods: {
+    clearAllInterval: function () {
+      // var that = this
+      for (var i = 0; i < 100; i++) {
+        // that.log(i)
+        window.setClockNum = null
+        window.clearInterval(i)
+      }
+    },
+    setClock: function (seconds) {
+      var that = this
+      // seconds = 125
+      if (window.setClockNum) {
+        this.log('setclock:', window.setClockNum)
+      } else {
+        window.leftTime = seconds
+        window.setClockNum = window.setInterval(function () {
+          // that.log(123)
+          var mo = 0
+          if (window.leftTime > 60) {
+            window.leftTime = window.leftTime - 60
+            mo = Math.ceil(window.leftTime / 60)
+            that.leftTimeText = '剩余' + mo + '分钟'
+          } else {
+            that.leftTimeText = ''
+            window.clearInterval(window.setClockNum)
+            window.setClockNum = null
+            that.queryEditKKState()
+          }
+        }, 60000)
+        // this.log('window.setClockNum:', window.setClockNum)
+      }
+    },
+    queryEditKKState2: function () {
+      // var that = this
+      // this.log('window.setClockNum:', window.setClockNum)
+      // that.ajax('/myProject/getOnOffStatus', {projectId: that.proId}).then(res => {
+      //   that.log('查看剩余:', res.data.second / 60)
+      // })
+    },
+    queryEditKKState: function () {
+      var that = this
+      that.ajax('/myProject/getOnOffStatus', {projectId: that.proId}).then(res => {
+        // that.log('88888888:', res)
+        that.log('查询开关状态:', res.data.second / 60)
+        if (res.code === 200) {
+          that.onOffStatus = res.data.onOffStatus
+          that.statusMsg = res.data.statusMsg
+          // that.lefttime = 600 second
+          // that.setClock(600)
+          this.$emit('onOffStatusEmit', res.data.onOffStatus)
+          if (res.data.onOffStatus === 0) {
+            that.editBtnDis = false
+            that.editKKBtnText = '编辑'
+          } else if (res.data.onOffStatus === 1) {
+            that.editBtnDis = true
+            that.editKKBtnText = '编辑'
+          } else if (res.data.onOffStatus === 2) {
+            if (res.data.second > 60) {
+              var mo = Math.ceil(res.data.second / 60)
+              that.leftTimeText = '剩余' + mo + '分钟'
+            } else if (res.data.second > 0 && res.data.second <= 60) {
+              that.leftTimeText = '剩余' + res.data.second + '秒'
+            } else {
+              this.log('5555555555555')
+              that.leftTimeText = ''
+              window.clearInterval(window.setClockNum)
+              window.setClockNum = null
+              that.queryEditKKState()
+            }
+            that.setClock(res.data.second)
+            that.editBtnDis = false
+            that.editKKBtnText = '结束'
+          }
+        }
+        // that.$store.state.nodeDragRefresh = true
+      })
+    },
+    setEditKK: function () {
+      var that = this
+      var editstatus = false
+      if (that.onOffStatus === 0) {
+        // 打开
+        editstatus = true
+      } else if (that.onOffStatus === 2) {
+        // 关闭
+        that.leftTimeText = ''
+        window.clearInterval(window.setClockNum)
+        window.setClockNum = null
+        that.clearAllInterval()
+        editstatus = false
+      } else {
+        editstatus = false
+      }
+      that.ajax('/myProject/onOffMove', {status: editstatus, projectId: that.proId}).then(res => {
+        // that.log('88888888:', res)
+        that.log('设置开关状态:', res)
+        if (res.code === 200) {
+          this.queryEditKKState()
+        }
+        // that.$store.state.nodeDragRefresh = true
+      })
+    },
+    huoquTest: function (e) {
+      // this.log(111222333)
+      var obj = e.currentTarget
+      this.log($(obj).parent().parent().index())
+      this.$store.state.currentNodeIndex = $(obj).parent().parent().index()
+      // this.log('lalala:', $(obj).parent().parent().index())
+    },
+    dragDateEditFocus: function (ev, newTreeItem) {
+      var that = this
+      setTimeout(function () {
+        that.$store.commit('setDateOption', {OptionObj: that.DragDateEditOption, startDate: newTreeItem.parentStartTime, endDate: newTreeItem.parentFinishTime})
+      }, 1000)
+    },
     onevent: function () {
       this.log(1111)
     },
     jiajianClick: function (e) {
-      this.log(11111111111)
+      // this.log(11111111111)
       var obj = e.currentTarget
       if ($(obj).children().eq(0).hasClass('open')) {
         $(obj).children().eq(0).removeClass('open').addClass('close')
@@ -108,7 +274,7 @@ export default {
       }
     },
     jiajianClick2: function (e) {
-      this.log(11111111111)
+      // this.log(11111111111)
       var obj = e.currentTarget
       if ($(obj).hasClass('open')) {
         $(obj).removeClass('open').addClass('close')
@@ -196,7 +362,7 @@ export default {
       var targetStartStamp = new Date(targetStart).getTime()
       var targetFinishStamp = new Date(targetFinish).getTime()
       if (targetStartStamp >= parentStartStamp && targetFinishStamp <= parentFinishStamp) {
-        this.log('时间合法')
+        // this.log('时间合法')
         return true
       } else {
         this.log('时间冲突')
@@ -218,14 +384,14 @@ export default {
     },
     updateTree: function (targetId, parentId, nodeIndex, start, finish) {
       var that = this
-      that.ajax('/myProject/moveStructure', {id: targetId, parentId: parentId, sortCode: nodeIndex, startTime: start, endTime: finish}).then(res => {
+      that.ajax('/myProject/moveStructure', {id: targetId, parentId: parentId, sortCode: nodeIndex, startTime: start, endTime: finish, projectId: that.proId}).then(res => {
         // that.log('88888888:', res)
         that.$store.state.nodeDragRefresh = true
       })
     },
     dragstart: function (ev, nodeItem) {
       ev.stopPropagation()
-      this.log('targetId:', ev.target.id)
+      // this.log('targetId:', ev.target.id)
       var obj = ev.currentTarget
       ev.dataTransfer.setData('Text', ev.target.id)
       if (nodeItem) {
@@ -234,6 +400,23 @@ export default {
       }
       this.$store.state.dragedElementId = ev.target.id
       $(obj).removeClass('active')
+    },
+    startChange: function (timestr, newTreeItem, type) {
+      var that = this
+      this.$confirm('点击"确定"以继续，点击"取消"还原操作', '此次编辑会同步更新节点下所有子级时间', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if (type === 'start') {
+          that.updateTree(newTreeItem.id, newTreeItem.parentId, that.$store.state.currentNodeIndex + 1, timestr, newTreeItem.finish)
+        } else {
+          that.updateTree(newTreeItem.id, newTreeItem.parentId, that.$store.state.currentNodeIndex + 1, newTreeItem.start, timestr)
+        }
+      }).catch(() => {
+        // 通知父组件刷新
+        that.$store.state.nodeDragRefresh = true
+      })
     }
   }
 }
@@ -309,7 +492,7 @@ export default {
     background: rgba(58,142,230,0.1);
   }
   .nodeDateTime{
-    padding-top: 5px;
+    padding-top: 3px;
   }
   .insertLine{
     position: absolute;
@@ -360,6 +543,9 @@ export default {
     border: 2px solid #3a8ee6;
     border-radius: 4px;
     padding: 2px 5px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .nodeTitle.rootPlan{
     font-size: 16px;
@@ -371,7 +557,7 @@ export default {
     /**/
   }
   .nodeTitle.task{
-    border: 2px solid #FFD04B;
+    border: 2px solid #4fc08d;
     /*color: rgb(255, 208, 75) #FFD04B chocolate*/
   }
   .nodeTitle.active{
@@ -392,5 +578,13 @@ export default {
     height: 25px;
     line-height: 25px;
     padding: 0 10px;
+  }
+  .el-input--suffix .el-input__inner{
+    padding-right: 0;
+  }
+  .editKK{
+    position: fixed;
+    right: 20px;
+    top: 10px;
   }
 </style>

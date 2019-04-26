@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import store from '@/store/store.js'
-// import router from '@/router'
+import router from '@/router'
 const install = function (Vue, options) {
   Vue.prototype.ajax = function (actionName, postData) {
     var baseurl
@@ -29,9 +29,12 @@ const install = function (Vue, options) {
       crossDomain: true,
       data: postData,
       success: function (data) {
+        // router.push('/page404')
         if (data.code === 201) {
           // alert('ajax:' + data.code)
           // store._mutations.ddLogin[0]()
+        } else if (data.code === 404) {
+          router.push('/page404')
         }
       }
     })
