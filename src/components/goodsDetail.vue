@@ -1169,6 +1169,10 @@ export default {
           that.listTree.forEach((item, index) => {
             item['show'] = true
           })
+        } else {
+          if (that.activeId !== '') {
+            that.$message.error(res.msg)
+          }
         }
       })
     },

@@ -75,6 +75,33 @@ export default {
 </script>
 
 <style>
+.tree {
+  background: #fff;
+  padding: 5px;
+  font-size: 14px;
+}
+.tree-first {
+  border-bottom:1px dashed #ccc;
+  /*padding-bottom: 10px;
+  padding-top: 10px;*/
+}
+.tree-first i {
+  color:#ccc;
+  cursor: pointer;
+}
+.tree-first .active {
+  transform:rotate(90deg);
+}
+.tree-second {
+  margin-left: 0px;
+  /*border-left:5px solid #f2f2f2;*/
+  list-style: none;
+  transition: all 1s;
+  overflow: hidden
+}
+.tree-first .menuTree:last-child {
+  /*border-bottom: none;*/
+}
 .tree-second {
   margin-left: 30px;
   /*border-left:5px solid #f2f2f2;*/

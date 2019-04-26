@@ -4,6 +4,8 @@ import Router from 'vue-router'
  *  ==================================================================== ZhangH
  */
 import goodsDetail from '@/components/goodsDetail'
+// 商品档案详情
+import goodsfileDetail from '@/components/goodsfileDetail'
 import HelloWorld from '@/components/HelloWorld'
 import Wellcome from '@/components/Wellcome'
 /**
@@ -40,6 +42,12 @@ export default new Router({
       path: '/goodsDetail',
       name: 'goodsDetail',
       component: goodsDetail
+    },
+    // 商品档案详情
+    {
+      path: '/goodsfileDetail',
+      name: 'goodsfileDetail',
+      component: goodsfileDetail
     },
     // {
     //   path: '/goodsDetail/:proId',
