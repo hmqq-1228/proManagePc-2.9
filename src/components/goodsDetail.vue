@@ -483,12 +483,15 @@
     <!--新增 抽屉 编辑计划 修改计划 start-->
     <Drawer class="drawerScroll" title="编辑树形结构" :closable="false" width="50%" v-model="TreeStructureShow">
       <component v-bind:is="compArr.NewTree"
+                 v-bind:proId="proId"
+                 v-bind:onOffStatusT="onOffStatus"
+                 v-bind:DrawerOpen="TreeStructureShow"
                  v-bind:treeNodeLevel="treeNodeLevel"
-                 v-bind:newTreeList="newTreeList">
+                 v-bind:newTreeList="newTreeList" v-on:onOffStatusEmit="onOffStatusFuc">
       </component>
     </Drawer>
     <!-- 节点拖动 时间选择 -->
-    <el-dialog title="提示: 编辑时间" :visible.sync="timeDialogVisible" width="30%">
+    <el-dialog title="提示: 此次编辑会同步更新节点下所有子级时间" :visible.sync="timeDialogVisible" width="30%">
       <div>
         <!--<button type="button" @click="resettt">setddd</button>-->
         <el-form ref="nodeDragTimeEdit" :model="nodeDragTimeEdit" label-width="80px">
@@ -546,6 +549,7 @@ export default {
   },
   data () {
     return {
+      onOffStatus: -1,
       // 光标位置
       position: 0,
       // 搜索组织架构人员
@@ -705,118 +709,7 @@ export default {
         memberList: []
       },
       newTreeList: [],
-      listTree: [
-        {
-          id: 1,
-          name: '一级菜单',
-          type: 'plan',
-          children: [{
-            id: 2,
-            name: '二级菜单',
-            type: 'plan',
-            children: [{
-              id: 3,
-              name: '三级菜单',
-              type: 'task'
-            },
-            {
-              id: 4,
-              name: '三级菜单',
-              type: 'plan'
-            },
-            {
-              id: 5,
-              name: '三级菜单',
-              type: 'task'
-            }]
-          },
-          {
-            id: 6,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 7,
-            name: '二级菜单',
-            type: 'task'
-          }]
-        },
-        {
-          id: 2,
-          name: '一级菜单',
-          type: 'task',
-          children: [{
-            id: 8,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 9,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 10,
-            name: '二级菜单',
-            type: 'task',
-            children: [{
-              id: 11,
-              name: '三级菜单',
-              type: 'task',
-              children: [{
-                id: 12,
-                name: '四级菜单',
-                type: 'task',
-                children: [{
-                  id: 13,
-                  name: '五级菜单',
-                  type: 'task'
-                }]
-              },
-              {
-                id: 13,
-                name: '四级菜单',
-                type: 'task'
-              },
-              {
-                id: 14,
-                name: '四级菜单',
-                type: 'task'
-              }]
-            },
-            {
-              id: 15,
-              name: '三级菜单',
-              type: 'task'
-            },
-            {
-              id: 16,
-              name: '三级菜单',
-              type: 'task'
-            }]
-          }]
-        },
-        {
-          id: 3,
-          name: '一级菜单',
-          type: 'task',
-          children: [{
-            id: 1.1,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 1.2,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 1.3,
-            name: '二级菜单',
-            type: 'task'
-          }]
-        }
-      ]
+      listTree: []
     }
   },
   created: function () {
@@ -1018,6 +911,9 @@ export default {
     }
   },
   methods: {
+    onOffStatusFuc: function (obj) {
+      this.onOffStatus = obj
+    },
     resettt: function () {
       var that = this
       setTimeout(function () {
@@ -1027,6 +923,7 @@ export default {
     DragTimeEditCancel: function () {
       this.$store.state.timeDialogVisible = false
       this.$store.state.dragResetDate = false
+      this.newTreeList = []
       this.queryNewTree()
     },
     DragTimeEditOk: function () {
@@ -1411,6 +1308,7 @@ export default {
       // console.log(1111111111111111111)
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
+        that.log('getProjectDetail:', res)
         if (res.code === 200) {
           this.log('getProjectDetail:', res)
           that.memberList = res.data.memberList

@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  currentNodeIndex: 0,
   timeDialogVisible: false,
   defaultParentStart: '',
   defaultParentFinish: '',
@@ -28,7 +29,7 @@ const state = {
   userId: '',
   userName: '',
   userLoginInfo: '',
-  debug: false,
+  debug: true,
   proId: '',
   navType: '',
   goodType: '',

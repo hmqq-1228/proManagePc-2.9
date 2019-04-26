@@ -437,4 +437,19 @@ padding: 8px 20px;
   .goods .el-dialog__body{
     padding-top: 0;
   }
+  .NewTreeBox .el-input--suffix .el-input__inner{
+    padding-right: 0;
+  }
+  .NewTreeBox .el-date-editor.el-input, .el-date-editor.el-input__inner{
+    width: 175px;
+  }
+  .NewTreeBox .el-input__inner{
+    height: auto;
+    line-height: normal;
+    border: none;
+    background-color: transparent;
+  }
+  .NewTreeBox .el-input__icon{
+    line-height: normal;
+  }
 </style>
