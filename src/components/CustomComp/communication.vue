@@ -165,7 +165,7 @@ export default {
       var that = this
       that.ajax('/comment/getGoodsComment', {
         spuId: 'SPU00001',
-        pageSize: 10,
+        pageSize: 5,
         pageNum: that.pageN
       }).then(res => {
         if (res.code === 200) {

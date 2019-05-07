@@ -33,6 +33,7 @@ const state = {
   userLoginInfo: '',
   debug: true,
   proId: '',
+  spuId: '',
   navType: '',
   goodType: '',
   goodCode: '',

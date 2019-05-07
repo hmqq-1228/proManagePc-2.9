@@ -8,55 +8,46 @@
       </el-input>
     </div>
     <div class="serTag">
-      <div class="goodType">
-        <div class="goodName" @click="bbbb()">商品品牌:</div>
-        <div class="goodBox">
-          <div v-bind:class="tag.styleFlag === true ? 'active': ''" v-for="(tag, index) in level_0" @click="secondType($event, tag.categoryName, tag.code, tag.type)" v-bind:key="index">{{tag.categoryName}}</div>
-          <!--<div @click="secondType($event, '可优比', 'KUB', '0')">可优比</div>-->
-          <!--<div @click="secondType($event, '蒂爱', 'DI', '0')">蒂爱</div>-->
+      <div class="wrap">
+        <div class="label">商品品牌:</div>
+        <div class="content">
+          <div class="cntItem brand" :class="'c_' + item.code"  @click="btnClick($event, item.code, 'brand')" v-for="item in pinpaiLevel" :key="item.code">{{item.categoryName}}</div>
         </div>
       </div>
-      <div class="goodType" v-if="level_1.length > 0">
-        <div class="goodName">一级类目:</div>
-        <div class="goodBox">
-          <div v-for="(tag, index) in level_1" v-bind:key="index" v-bind:class="tag.styleFlag === true ? 'active': ''" @click="secondType($event, tag.categoryName, tag.code, tag.type)">{{tag.categoryName}}</div>
+      <div class="wrap" v-show="firstLevel.length > 0">
+        <div class="label">一级类目:</div>
+        <div class="content">
+          <div class="cntItem firstLevel" :class="'c_' + item.code" @click="btnClick($event, item.code, item.typeName)" v-for="item in firstLevel" :key="item.code">{{item.categoryName}}</div>
         </div>
       </div>
-      <div class="goodType" v-if="level_2.length > 0">
-        <div class="goodName">二级类目:</div>
-        <div class="goodBox">
-          <div v-for="(tag, index) in level_2" v-bind:key="index" v-bind:class="tag.styleFlag === true ? 'active': ''" @click="secondType($event, tag.categoryName, tag.code, tag.type)">{{tag.categoryName}}</div>
+      <div class="wrap" v-show="secondLevel.length > 0">
+        <div class="label">二级类目:</div>
+        <div class="content">
+          <div class="cntItem secondLevel" :class="'c_' + item.code" @click="btnClick($event, item.code, item.typeName)" v-for="item in secondLevel" :key="item.code">{{item.categoryName}}</div>
         </div>
       </div>
-      <div class="goodType"  v-if="level_3.length > 0">
-        <div class="goodName">三级类目:</div>
-        <div class="goodBox">
-          <div v-for="(tag, index) in level_3" v-bind:key="index" v-bind:class="tag.styleFlag === true ? 'active': ''" @click="secondType($event, tag.categoryName, tag.code, tag.type)">{{tag.categoryName}}</div>
+      <div class="wrap" v-show="thirdLevel.length > 0">
+        <div class="label">三级类目:</div>
+        <div class="content">
+          <div class="cntItem thirdLevel" :class="'c_' + item.code" @click="btnClick($event, item.code, item.typeName)" v-for="item in thirdLevel" :key="item.code">{{item.categoryName}}</div>
         </div>
       </div>
-      <div class="goodType" v-if="level_4.length > 0">
-        <div class="goodName">四级类目:</div>
-        <div class="goodBox">
-          <div v-for="(tag, index) in level_4" v-bind:key="index" v-bind:class="tag.styleFlag === true ? 'active': ''" @click="secondType($event, tag.categoryName, tag.code, tag.type)">{{tag.categoryName}}</div>
+      <div class="wrap" v-show="fourLevel.length > 0">
+        <div class="label">四级类目:</div>
+        <div class="content">
+          <div class="cntItem fourLevel" :class="'c_' + item.code" @click="btnClick($event, item.code, item.typeName)" v-for="item in fourLevel" :key="item.code">{{item.categoryName}}</div>
         </div>
       </div>
-      <!--<div class="goodType">-->
-        <!--<div class="goodName">商品进度:</div>-->
-        <!--<div class="goodBox">-->
-          <!--<div class="active" @click="selectGoodState($event, ' ')">全部</div>-->
-          <!--<div @click="selectGoodState($event, '1')">立项中</div>-->
-          <!--<div @click="selectGoodState($event, '2')">研发中</div>-->
-          <!--<div @click="selectGoodState($event, '3')">生产中</div>-->
-          <!--<div @click="selectGoodState($event, '4')">已上市</div>-->
-          <!--<div @click="selectGoodState($event, '5')">销售中</div>-->
-          <!--<div @click="selectGoodState($event, '6')">反馈</div>-->
-        <!--</div>-->
-      <!--</div>-->
       <div class="goodType">
         <div class="goodName" style="line-height: 32px;">成 本 价:</div>
         <div>
           <Input v-model="value1" prefix="logo-yen" placeholder="输入金额" style="width: 120px" /> ---
           <Input v-model="value2" prefix="logo-yen" placeholder="输入金额" style="width: 120px" />
+        </div>
+        <div style="margin-left: 20px;" v-if="permission">
+          <Select v-model="OptionModel" style="width:200px">
+            <Option v-for="item in OptionList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
         </div>
       </div>
     </div>
@@ -74,7 +65,7 @@
     <div class="goodList">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
         <div class="goodItemCon">
-          <div class="goodImg" @click="toGoodsManage(good.spuGoodsId)">
+          <div class="goodImg" @click="toGoodsManage(good.spuId)">
             <div style="position: relative;" class="goodImg2 showIcon" v-if="good.attachment[0]">
               <img :src="good.activeImgUrl" alt="">
               <div class="showImageIcon" @click="showGoodsManage($event, good.activeImgUrl)"><Icon size="16" type="ios-expand" /></div>
@@ -89,7 +80,7 @@
             </div>
             <div class="active" v-if="good.attachment.length === 0"><img src="../../static/img/defult.png" alt=""></div>
           </div>
-          <div class="goodInfo" @click="toGoodsManage(good.spuGoodsId)">
+          <div class="goodInfo" @click="toGoodsManage(good.spuId)">
             <div>编码: <span v-if="good.spuCode">{{good.spuCode}}</span><span v-if="!good.spuCode" style="color: #999;font-size: 12px;">无编码</span></div>
             <div class="goodTypeName" :title="good.spuName">品名: <span v-if="good.spuName">{{good.spuName}}</span><span v-if="!good.spuName" style="color: #999;font-size: 12px;">未命名</span></div>
             <div>分类: <span v-if="good.brandName">{{good.brandName}}</span><span v-if="!good.brandName" style="color: #999;font-size: 12px;">未分类</span></div>
@@ -129,6 +120,25 @@ export default {
       value1: '',
       value2: '',
       num: 0,
+      msg: '',
+      permission: false,
+      OptionModel: '',
+      OptionList: [
+        {
+          label: '全部商品',
+          value: '1'
+        },
+        {
+          label: '我负责的',
+          value: '0'
+        }
+      ],
+      pinpaiLevel: [],
+      firstLevel: [],
+      secondLevel: [],
+      thirdLevel: [],
+      fourLevel: [],
+      codeArr: [],
       goodsImgUrl: '',
       currentPage: 1,
       dialogVisible: false,
@@ -138,12 +148,6 @@ export default {
       goodList: [],
       setRouterArr: [],
       routerList2: [],
-      level_0: [],
-      level_1: [],
-      level_2: [],
-      level_3: [],
-      level_4: [],
-      level_5: [],
       goodNextTags: [],
       goodListTotal: 0,
       getGoodList: {
@@ -155,7 +159,8 @@ export default {
         categoryType: '',
         startCostPrice: '',
         endCostPrice: '',
-        categoryStr: ''
+        categoryStr: '',
+        permission: ''
       }
     }
   },
@@ -171,6 +176,17 @@ export default {
         that.getGoodList.startCostPrice = val
         that.getGoodsList()
       }
+    },
+    OptionModel: function (val, oV) {
+      var that = this
+      if (val) {
+        that.getGoodList.permission = val
+        that.getGoodsList()
+      }
+    },
+    num (val, old) {
+      var that = this
+      this.routerFuc(that.$store.state.codeArr, 'ini')
     },
     value2: function (val, oV) {
       var that = this
@@ -203,126 +219,27 @@ export default {
   created: function () {
     var that = this
     // 默认查询分类
-    that.getGoodsList()
-    that.getBrandType()
-    // that.getRouterStore(that.num)
+    console.log('codeArr', that.$store.state.codeArr)
+    that.codeArr = that.$store.state.codeArr
+    var codeStr = ''
+    for (var i = 0; i < that.codeArr.length; i++) {
+      var dou = i < (that.codeArr.length - 1) ? ',' : ''
+      codeStr = codeStr + that.codeArr[i].code + dou
+    }
+    this.iniBtn()
+    that.getGoodsList(codeStr)
+    that.getPermission()
   },
   methods: {
-    getBrandType: function () {
+    getPermission: function () {
       var that = this
-      this.ajax('/archives/getBrandType', {}).then(res => {
-        that.log('选择所属项目:', res)
+      that.ajax('/archives/getPermission', {}).then(res => {
         if (res.code === 200) {
-          that.level_0 = res.data.brandType
-          for (var i = 0; i < that.level_0.length; i++) {
-            if (that.level_0[i].categoryName === '全部') {
-              that.level_0[i].styleFlag = true
-            } else {
-              that.level_0[i].styleFlag = false
-              that.level_0[i].type = that.level_0[i].code
-            }
-          }
+          console.log('getPermission', res)
+          that.permission = res.data
         }
       })
     },
-    // aaaa: function (level) {
-    //   var that = this
-    //   that.getDefultNavType(level.categoryName, level.categoryType, level.code)
-    // },
-    // getRouterStore: function (num) {
-    //   var that = this
-    //   var routerListArr = JSON.parse(localStorage.getItem('setRouter'))
-    //   if (routerListArr) {
-    //     if (that.num < routerListArr.length) {
-    //       that.aaaa(routerListArr[num])
-    //     }
-    //   }
-    // },
-    bbbb: function () {
-      this.$router.push('/GoodsArchives2')
-    },
-    // getDefultNavType: function (name, type, code) {
-    //   var that = this
-    //   that.currentPage = 1
-    //   that.getGoodList.pageNum = 1
-    //   var codeLen = ''
-    //   that.$store.state.goodCode = code
-    //   that.$store.state.goodType = type
-    //   if (code.length >= 2) {
-    //     if (name === '全部') {
-    //       if (code.length === 1) {
-    //         codeLen = 'level_1'
-    //       } else if (code.length === 2) {
-    //         codeLen = 'level_2'
-    //       } else if (code.length === 4) {
-    //         codeLen = 'level_3'
-    //       } else if (code.length === 6) {
-    //         codeLen = 'level_4'
-    //       }
-    //     } else {
-    //       codeLen = 'level_' + (code.length / 2)
-    //     }
-    //   } else if (code === '') {
-    //     codeLen = 'level_0'
-    //   } else {
-    //     if (code.length === 1 && name === '全部') {
-    //       codeLen = 'level_1'
-    //     } else {
-    //       codeLen = 'level_0'
-    //     }
-    //   }
-    //   if (code === '') {
-    //     that.level_1 = []
-    //     that.level_2 = []
-    //     that.level_3 = []
-    //     that.level_4 = []
-    //   } else if (code.length / 2 === 1) {
-    //     that.level_3 = []
-    //     that.level_4 = []
-    //   } else if (code.length / 2 === 2) {
-    //     that.level_4 = []
-    //   } else if (code.length / 2 < 1) {
-    //     that.level_2 = []
-    //     that.level_3 = []
-    //     that.level_4 = []
-    //   }
-    //   for (var j = 0; j < that[codeLen].length; j++) {
-    //     if (that[codeLen][j].code === code) {
-    //       that[codeLen][j].styleFlag = true
-    //     } else {
-    //       that[codeLen][j].styleFlag = false
-    //     }
-    //   }
-    //   if (name !== '全部') {
-    //     if (code === '1') {
-    //       code = '0'
-    //     }
-    //     that.ajax('/goods/getDownByCategory', {code: code, categoryType: type}).then(res => {
-    //       if (res.code === 200) {
-    //         if (res.data.length > 1) {
-    //           var level = 'level_' + res.data[1].code.length / 2
-    //           for (var i = 0; i < res.data.length; i++) {
-    //             if (res.data[i].code === code) {
-    //               res.data[i].styleFlag = true
-    //             } else {
-    //               res.data[i].styleFlag = false
-    //             }
-    //           }
-    //           that[level] = res.data
-    //         }
-    //         this.getGoodsList(type, code)
-    //         // that.getRouterStore()
-    //         that.num++
-    //         var routerListArr = JSON.parse(localStorage.getItem('setRouter'))
-    //         if (that.num < routerListArr.length) {
-    //           that.getRouterStore(that.num)
-    //         }
-    //       }
-    //     })
-    //   } else if (name === '全部') {
-    //     that.getGoodsList(type, code)
-    //   }
-    // },
     addImgWide: function () {
       if (this.imgWide < 90) {
         this.imgWide = this.imgWide + 10
@@ -344,8 +261,8 @@ export default {
     },
     toGoodsManage: function (goodId) {
       if (goodId) {
-        this.$store.state.proId = goodId
-        this.$router.push('/goodsDetail')
+        this.$store.state.spuId = goodId
+        this.$router.push('/goodsfileDetail')
       }
     },
     // 切换 预览图片
@@ -359,19 +276,11 @@ export default {
       that.goodList = []
       that.goodList = newGoodList
     },
-    //  商品状态查询
-    selectGoodState: function (e, str) {
-      var that = this
-      var obj = e.target
-      $(obj).addClass('active').siblings().removeClass('active')
-      that.getGoodList.developProgress = str
-      that.getGoodsList()
-    },
     // 查询商品列表
     getGoodsList: function (code) {
       var that = this
       if (code) {
-        that.getGoodList.categoryStr = that.$store.state.goodCode
+        that.getGoodList.categoryStr = code
         that.ajax('/archives/getGoodsList', that.getGoodList).then(res => {
           if (res.code === 200) {
             that.goodList = res.data.list
@@ -406,100 +315,96 @@ export default {
       that.getGoodsList()
     },
     // 第二级到第四级查询
-    secondType: function (e, name, code, type) {
+    routerFuc: function (arr, isIni) {
       var that = this
-      if (type) {
-        that.$store.state.goodType = type
-      }
-      if (code.length >= 2) {
-        that.$store.state.goodCode = that.$store.state.goodType + ',' + code
-      } else {
-        that.$store.state.goodCode = code
-      }
-      that.currentPage = 1
-      that.getGoodList.pageNum = 1
-      var codeLen = ''
-      if (code.length >= 2) {
-        if (name === '全部') {
-          if (code.length === 1) {
-            codeLen = 'level_1'
-          } else if (code.length === 2) {
-            codeLen = 'level_2'
-          } else if (code.length === 4) {
-            codeLen = 'level_3'
-          } else if (code.length === 6) {
-            codeLen = 'level_4'
-          }
-        } else {
-          codeLen = 'level_' + (code.length / 2)
+      that.actionEmit(arr[that.num].code, isIni)
+    },
+    actionEmit: function (codeStr, isIni) {
+      var that = this
+      that.ajax('/archives/getDownByCategory', {categoryStr: codeStr}).then(res => {
+        switch (res.data[0].typeName) {
+          case '一级类目':
+            that.firstLevel = res.data
+            that.secondLevel = []
+            that.thirdLevel = []
+            that.fourLevel = []
+            $('.firstLevel').removeClass('active')
+            break
+          case '二级类目':
+            that.secondLevel = res.data
+            that.thirdLevel = []
+            that.fourLevel = []
+            $('.secondLevel').removeClass('active')
+            break
+          case '三级类目':
+            that.thirdLevel = res.data
+            that.fourLevel = []
+            $('.thirdLevel').removeClass('active')
+            break
+          case '四级类目':
+            that.fourLevel = res.data
+            $('.fourLevel').removeClass('active')
+            break
+          default:
+            that.log('case null')
         }
-      } else if (code === '') {
-        codeLen = 'level_0'
-        that.getGoodList.categoryStr = ''
-        that.$store.state.goodCode = ''
-      } else {
-        if (code.length === 1 && name === '全部') {
-          codeLen = 'level_1'
-        } else {
-          codeLen = 'level_0'
+        if (isIni === 'ini' && that.num < (that.$store.state.codeArr.length - 1)) {
+          that.num = that.num + 1
         }
-      }
-      if (code === '') {
-        that.level_1 = []
-        that.level_2 = []
-        that.level_3 = []
-        that.level_4 = []
-      } else if (code.length / 2 === 1) {
-        that.level_3 = []
-        that.level_4 = []
-      } else if (code.length / 2 === 2) {
-        that.level_4 = []
-      } else if (code.length / 2 < 1) {
-        that.level_2 = []
-        that.level_3 = []
-        that.level_4 = []
-      }
-      for (var j = 0; j < that[codeLen].length; j++) {
-        if (that[codeLen][j].code === code) {
-          that[codeLen][j].styleFlag = true
-        } else {
-          that[codeLen][j].styleFlag = false
-        }
-      }
-      if (name !== '全部') {
-        if (code === '1') {
-          code = '0'
-        }
-        var FileIdStr = that.$store.state.goodCode
-        // for (var i = 0; i < that.setRouterArr.length; i++) {
-        //   var splitIcon = ','
-        //   if (i === that.setRouterArr.length - 1) {
-        //     splitIcon = ''
-        //   }
-        //   FileIdStr = FileIdStr + that.setRouterArr[i].code + splitIcon
-        // }
-        // // that.setRouterArr = []
-        // console.log('setRouterArr', FileIdStr)
-        // that.$store.state.goodCode = FileIdStr
-        that.ajax('/archives/getDownByCategory', {categoryStr: FileIdStr}).then(res => {
-          if (res.code === 200) {
-            if (res.data.length > 1) {
-              var level = 'level_' + res.data[1].code.length / 2
-              for (var i = 0; i < res.data.length; i++) {
-                if (res.data[i].code === code) {
-                  res.data[i].styleFlag = true
-                } else {
-                  res.data[i].styleFlag = false
-                }
-              }
-              that[level] = res.data
+        if (that.num === (that.$store.state.codeArr.length - 1) && isIni === 'ini') {
+          that.log(123)
+          setTimeout(function () {
+            var cc = that.$store.state.codeArr
+            for (var r = 0; r < cc.length; r++) {
+              $('.c_' + cc[r].code).addClass('active').siblings().removeClass('active')
             }
-            this.getGoodsList(code)
+          }, 200)
+        }
+      })
+    },
+    iniBtn: function () {
+      var that = this
+      that.ajax('/archives/getBrandType', {}).then(res => {
+        if (res.code === 200) {
+          this.pinpaiLevel = res.data.brandType
+          if (this.$store.state.codeArr.length > 0) {
+            that.routerFuc(this.$store.state.codeArr, 'ini')
           }
-        })
-      } else if (name === '全部') {
-        that.getGoodsList(code)
+        }
+      })
+    },
+    btnClick: function (e, code, type) {
+      var that = this
+      var obj = e.currentTarget
+      $(obj).addClass('active').siblings().removeClass('active')
+      if (code) {
+        var isthat = false
+        var tindex = -1
+        for (var t = 0; t < that.codeArr.length; t++) {
+          if (that.codeArr[t].type === type) {
+            isthat = true
+            tindex = t
+            break
+          }
+        }
+        var dataobj = {
+          code: code,
+          type: type
+        }
+        if (isthat) {
+          that.codeArr.splice(tindex, that.codeArr.length, dataobj)
+        } else {
+          that.codeArr.push(dataobj)
+        }
+        that.$store.state.codeArr = that.codeArr
       }
+      var codeStr = ''
+      for (var i = 0; i < that.codeArr.length; i++) {
+        var dou = i < (that.codeArr.length - 1) ? ',' : ''
+        codeStr = codeStr + that.codeArr[i].code + dou
+      }
+      that.actionEmit(codeStr)
+      that.getGoodsList(codeStr)
     }
   }
 }
@@ -514,7 +419,6 @@ export default {
   }
   .goodBox .active{
     color: #fff;
-    pointer-events: none;
     background-color: #34c5be;
   }
   .goodName{
@@ -671,4 +575,34 @@ export default {
   /*.showImageIcon.showIcon{*/
     /*display: block;*/
   /*}*/
+  .wrap{
+    display: flex;
+    padding: 0 10px;
+  }
+  .label{
+    padding-top: 10px;
+    font-size: 14px;
+    color: #777;
+  }
+  .content{
+    display: flex;
+    height: 22px;
+    margin-top: 10px;
+    line-height: 22px;
+  }
+  .content div{
+    font-size: 12px;
+    padding: 0 12px;
+    height: 22px;
+    line-height: 22px;
+    color: #999;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: #f5f8fa;
+  }
+  .content div.active{
+    color: #fff;
+    background-color: #34c5be;
+  }
 </style>
