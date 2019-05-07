@@ -11,6 +11,7 @@ import router from './router'
 import $ from 'jquery'
 import ajax from './assets/ajax/ajax.js'
 Vue.config.productionTip = false
+Vue.prototype.$Bus = new Vue()
 Vue.use(ElementUI)
 Vue.use(iView)
 Vue.use(ajax)

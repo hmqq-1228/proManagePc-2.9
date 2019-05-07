@@ -4,6 +4,8 @@ import Router from 'vue-router'
  *  ==================================================================== ZhangH
  */
 import goodsDetail from '@/components/goodsDetail'
+// 商品档案详情
+import goodsfileDetail from '@/components/goodsfileDetail'
 import HelloWorld from '@/components/HelloWorld'
 import Wellcome from '@/components/Wellcome'
 /**
@@ -30,7 +32,7 @@ import TestUpload from '@/components/TestUpload'
 import CompUse from '@/components/CompUse'
 import goodsDetail2 from '@/components/goodsDetail2'
 import page404 from '@/components/page404'
-
+import TTEST from '@/components/TTEST'
 Vue.use(Router)
 
 export default new Router({
@@ -42,6 +44,12 @@ export default new Router({
       path: '/goodsDetail',
       name: 'goodsDetail',
       component: goodsDetail
+    },
+    // 商品档案详情
+    {
+      path: '/goodsfileDetail',
+      name: 'goodsfileDetail',
+      component: goodsfileDetail
     },
     // {
     //   path: '/goodsDetail/:proId',
@@ -163,6 +171,11 @@ export default new Router({
       path: '/page404',
       name: 'page404',
       component: page404
+    },
+    {
+      path: '/TTEST',
+      name: 'TTEST',
+      component: TTEST
     }
   ]
 })

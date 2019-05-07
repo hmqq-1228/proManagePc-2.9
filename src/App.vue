@@ -145,10 +145,7 @@ export default {
       })
     },
     testUpload: function () {
-      this.count++
-      if (this.count === 5) {
-        this.$router.push('/TestUpload')
-      }
+      this.$router.push('/TTEST')
     },
     toMenu: function (menuName) {
       var that = this

@@ -108,4 +108,149 @@ export default {
   .leftDay {
     margin-left: 100px !important;
   }
+.tree-second {
+  margin-left: 30px;
+  /*border-left:5px solid #f2f2f2;*/
+  list-style: none;
+  transition: all 1s;
+}
+.menuTree {
+  height: 65px;
+  border-bottom: 1px solid #f2f2f2;
+  overflow: hidden;
+  cursor: pointer;
+}
+.menuTree:hover {
+  background: #E3FBE3;
+}
+.planTree {
+  cursor: pointer;
+}
+.planTree:hover {
+  background: #E3FBE3;
+}
+.havBorder {
+  border-left:3px solid #2D9CFF;
+}
+.children-list {
+  list-style: none;
+}
+.children-list:last-child {
+  border-bottom: none;
+}
+.children-content {
+  margin-top: 15px;
+  line-height: 35px;
+  /*height: 50px;*/
+}
+.children-content .active {
+  margin-left: 0px;
+}
+/*.children-content:first-child{
+      margin-top: 20px;
+}*/
+/*.children-content:hover {
+  background: #E3FBE3;
+}*/
+.children-checked {
+  /*float:left;*/
+  margin-left: 10px;
+  /*margin-top: 15px;*/
+  /*overflow: hidden;*/
+  position: relative;
+}
+.children-checked .name{
+  cursor: pointer;
+}
+.planTime {
+  float:right;
+  padding-right:50px;
+}
+.planTime img {
+  width: 15px;
+}
+.taskDesc {
+  float:right;
+  padding-right:50px;
+  height: 55px;
+  margin-top: -12px;
+}
+.taskDesc .top {
+  margin-left: 269px;
+  display: inline-block;
+}
+.taskDesc .top .residue {
+  color:red;
+  font-size: 10px;
+  float:left;
+  /*margin-left: 5px;*/
+  /*margin-top: -10px;*/
+}
+.taskDesc .top .number {
+  color:#2d8cf0;
+}
+.taskDesc .top .createPeople {
+  float:left;
+  width: 30px;
+  height: 30px;
+  border-radius: 100px;
+  background: #F5B168;
+  color:#fff;
+  text-align: center;
+  line-height: 30px;
+  font-size: 12px;
+  margin-left: 10px;
+  margin-top: -10px;
+}
+.taskDesc .taskTime {
+  float:left;
+  margin-top: 20px
+}
+.taskDesc .down {
+  margin-top: -20px;
+  margin-left: 154px;
+  text-align: right;
+  /*margin-top:5px;
+  width: 200px;*/
+}
+.taskDesc .down img {
+  /*margin-top: 8px;*/
+  /*float:left;*/
+  width: 18px;
+}
+.taskDesc .text {
+  margin-left:5px;
+}
+.children-checked .status {
+  position: absolute;
+  right:-16px;
+  top:-6px;
+  width: 72px;
+  height: 18px;
+  background: #FFC20B;
+  color:#fff;
+  line-height: 18px;
+  /*font-size: 10px;*/
+  text-align: center;
+  transform: rotate(45deg);
+}
+.children-checked .status p {
+  /*transform: scale(0.7);*/
+  font-size: 10px;
+}
+.children-checked .noSure {
+  background: #FFC20B;
+}
+.children-checked .noFinish {
+  background: #13ce66;
+}
+.children-checked .finish {
+  background: #3a8ee6;
+}
+.children-checked .stop {
+  background: red;
+}
+.children-checked .overdue {
+  background: #aaa;
+}
 </style>
