@@ -191,19 +191,8 @@ export default {
       selDateStart: '',
       selDateEnd: '',
       // 分类检索
-      optionsTask: [{
-        value: '2',
-        label: '我负责的问题'
-      },
-      {
-        value: '3',
-        label: '我提出的问题'
-      },
-      {
-        value: '4',
-        label: '@我的问题'
-      }],
-      optionsValue: '2',
+      optionsTask: [],
+      optionsValue: '',
       optionsTask2: [{
         value: '',
         label: '全部状态'
@@ -219,6 +208,9 @@ export default {
       }, {
         value: '4',
         label: '已逾期'
+      }, {
+        value: '3',
+        label: '已暂停'
       }],
       optionsValue2: '',
       optionsValue3: '',
@@ -228,7 +220,7 @@ export default {
         pageSize: '8',
         status: '',
         questionName: '',
-        typeSource: '2',
+        typeSource: '',
         typeCode: ''
       },
       // 默认指派
@@ -258,8 +250,8 @@ export default {
       this.taskId = this.$route.params.ProbId
       this.toDetail(this.$route.params.ProbId)
     }
-    this.queryMyTaskView()
     this.queryProblemType()
+    this.getQuestionTypeSource()
   },
   computed: {
     slideMenu: function () {
@@ -295,6 +287,19 @@ export default {
         // this.log('选择所属项目:', res)
         if (res.code === 200) {
           that.projectList = res.data
+        }
+      })
+    },
+    getQuestionTypeSource () {
+      var that = this
+      this.ajax('/question/getQuestionTypeSource', {}).then(res => {
+        // this.log('选择所属项目:', res)
+        console.log('optionsTask', that.optionsTask)
+        if (res.code === 200) {
+          that.optionsTask = res.data
+          that.optionsValue = res.data[0].value
+          that.myTaskViewPayload.typeSource = res.data[0].value
+          that.queryMyTaskView()
         }
       })
     },
@@ -597,6 +602,18 @@ export default {
     width: 100px;
     font-size: 12px;
     background-color: #3a8ee6;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 8px;
+    right: -32px;
+    color: #fff;
+  }
+  .taskTag3{
+    height: 20px;
+    text-align: center;
+    width: 100px;
+    font-size: 12px;
+    background-color: #e97474;
     transform: rotate(45deg);
     position: absolute;
     top: 8px;

@@ -90,13 +90,14 @@
                </i-input>
              </div>
              <div class="leftName">
-               <i>*</i>&nbsp;&nbsp;<span style="margin-right: -1em;letter-spacing:1em">颜色</span>：
+               <span style="float: left"><i>*</i>&nbsp;&nbsp;<span style="margin-right: -1em;letter-spacing:1em">颜色</span>：</span>
                <!--<i-input placeholder="请输入" style="width: 140px" v-model="item.color" type="color" @on-enter="submit(item.color, 'color', item)">-->
                  <!--<Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.color, 'color', item)"/>-->
                <!--</i-input>-->
-               <input type="color" style="width: 120px" v-model="item.color" v-if="!isChina(item.color)">
-               <input type="color" value="#ffffff"  style="width: 120px;border: none" v-else>
-               <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.color, 'color', item)"/>
+               <!--<input type="color" style="width: 120px" v-model="item.color" v-if="!isChina(item.color)">-->
+               <!--<input type="color" value="#ffffff" v-model="item.color" style="width: 120px;border: none" v-else>-->
+               <el-color-picker v-model="item.color" style="width: 120px;float: left"></el-color-picker>
+               <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer;float:left;margin-left: 10px;margin-top: 5px" @click="submit(item.color, 'color', item)"/>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -2em;letter-spacing:2em">规格</span>：
@@ -248,7 +249,12 @@
      </el-dialog>
    </div>
 </template>
-
+<style>
+  .skuInfo .el-color-picker__trigger {
+    width: 120px;
+    height: 30px;
+  }
+</style>
 <script>
 import upload from '../CustomComp/FileUploadComp.vue'
 export default {
@@ -313,7 +319,8 @@ export default {
       status: 0, // 开环状态
       tip: '',
       time: '',
-      pageSize: 10
+      pageSize: 10,
+      spuId: this.$store.state.spuId
     }
   },
   components: {
@@ -328,11 +335,26 @@ export default {
   methods: {
     // 判断颜色是否为汉字
     isChina (s) {
-      var index = escape(s).indexOf('%u')
-      if (index < 0) {
-        return false
+      if (s) {
+      //   var index = escape(s).indexOf('%u')
+      //   if (index < 0) {
+      //     console.log(1111111111111)
+      //     return false
+      //   } else {
+      //     console.log(111111122222222221)
+      //     return true
+      //   }
+      // } else {
+      //   return false
+      // }
+        var patrn = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi
+        if (!patrn.exec(s)) {
+          return false
+        } else {
+          return true
+        }
       } else {
-        return true
+        return false
       }
     },
     // 翻页
@@ -350,7 +372,7 @@ export default {
       return name === 0 ? '否' : '是'
     },
     getOnOffStatus () {
-      this.ajax('/myProject/getOnOffStatus', {projectId: 'SPU00001'}).then(res => {
+      this.ajax('/myProject/getOnOffStatus', {projectId: this.spuId}).then(res => {
         if (res.code === 200) {
           this.status = res.data.onOffStatus
           this.tip = res.data.statusMsg
@@ -390,7 +412,7 @@ export default {
         if (res.code === 200) {
           this.$message.success(res.msg)
           $('.ivu-input').blur()
-          this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: 'SPU00001', skuCode: this.searchCode}).then(res => {
+          this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
           })
         } else {
           this.$message.error(res.msg)
@@ -404,7 +426,7 @@ export default {
     },
     // 获取sku列表数据
     getList () {
-      this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: 'SPU00001', skuCode: this.searchCode}).then(res => {
+      this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
         this.skuList = res.data.list
         this.total = res.data.totalRow
         this.skuList.forEach((item, index) => {
@@ -445,7 +467,7 @@ export default {
       item.isEdit = false
       item.show = false
       this.$set(this.skuList, index, item)
-      this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: 'SPU00001', skuCode: this.searchCode}).then(res => {
+      this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
         res.data.list.forEach((items, idx) => {
           if (index === idx) {
             item = items
@@ -488,7 +510,7 @@ export default {
         if (res.code === 200) {
           this.$message.success(res.msg)
           this.IsClear = true
-          this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: 'SPU00001', skuCode: this.searchCode}).then(res => {
+          this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
             res.data.list.forEach((items, idx) => {
               if (index === idx) {
                 console.log(item)

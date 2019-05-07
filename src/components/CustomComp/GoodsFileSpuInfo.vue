@@ -670,7 +670,7 @@ export default {
       // 类目 4 保修单位
       baoxiudwVal: 'KUB售后',
       // 临时数据
-      spuId: 'SPU00001',
+      spuId: this.$store.state.spuId,
       ExtraSpuInfoId: '',
       dropdownShow: false,
       customM: 'custom',
@@ -692,6 +692,7 @@ export default {
     }
   },
   created () {
+    console.log('suiD', this.spuId)
     // spu基础信息
     this.querySpuBaseInfo()
     // spu附属信息

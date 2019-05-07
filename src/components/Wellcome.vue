@@ -66,6 +66,8 @@ export default {
           this.$router.push('/MyPro')
         } else if (proName === '商品管理') {
           this.$router.push('/GoodsManage')
+        } else if (proName === '商品档案') {
+          this.$router.push('/GoodsArchives')
         } else if (proName === '问题反馈') {
           this.$router.push('/ProblemFeedback')
         } else {

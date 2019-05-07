@@ -53,7 +53,7 @@
             </span>
               </Timeline-item>
             </Timeline>
-            <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
+            <div class="noComment" v-if="commentList.length === 0" style="overflow-y: scroll; height: 400px;">还没有人发言呦~</div>
           </div>
           <div style="text-align: center" v-if="commentList.length>0">
             <Page
@@ -130,7 +130,7 @@ export default {
       },
       filUrl: '/file/uploadGoodsFileAjax',
       DrawerMember: false,
-      proId: 'SPU00001',
+      proId: this.$store.state.spuId,
       DrawerMemberShow: false,
       groupId: '1'
     }
@@ -157,7 +157,7 @@ export default {
     addMarkInfo () {
       var that = this
       that.loadingRe = true
-      that.addProjectCommentPayload.contentId = 'SPU00001'
+      that.addProjectCommentPayload.contentId = this.$store.state.spuId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
       if (that.commitComent) {
@@ -185,8 +185,8 @@ export default {
     getHistoryCont () {
       var that = this
       that.ajax('/comment/getGoodsComment', {
-        spuId: 'SPU00001',
-        pageSize: 10,
+        spuId: this.$store.state.spuId,
+        pageSize: 5,
         pageNum: that.pageN
       }).then(res => {
         if (res.code === 200) {
@@ -291,5 +291,9 @@ export default {
   margin-top: 10px;
   margin-right: 10px;
   width: 18px;
+}
+.noComment {
+  text-align: center;
+  line-height: 300px;
 }
 </style>
