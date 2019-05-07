@@ -55,6 +55,13 @@ export default {
   created () {
     this.$store.state.uploadCount = this.$store.state.uploadCount + 1
     this.lalala = 'lala_' + this.$store.state.uploadCount
+    // this.$Bus.$on('proFileList', list => {
+    //   this.log('FileDataList:', list)
+    //   this.fileListComment = list
+    //   if (list.length >= 5) {
+    //     this.commentDis = true
+    //   }
+    // })
   },
   watch: {
     FileDataList (val, old) {

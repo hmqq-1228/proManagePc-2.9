@@ -172,7 +172,8 @@
             <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
               <p class="content" v-if="com.showName">附件:
                 <span style="display: inline-block"> {{com.showName}}</span>
-                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePre(com.previewUrl, com.showName)">预览</span>
+                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="
+                (com.previewUrl, com.showName)">预览</span>
                 <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
               </p>
             </span>

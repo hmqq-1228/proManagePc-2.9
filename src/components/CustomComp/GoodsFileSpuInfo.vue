@@ -562,7 +562,7 @@
       </div>
     </div>
     <!-- spu沟通记录 -->
-    <div class="communication">沟通记录</div>
+    <!--<div class="communication">沟通记录</div>-->
   </div>
 </template>
 
