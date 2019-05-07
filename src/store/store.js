@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  codeArr: [],
   currentNodeIndex: 0,
   timeDialogVisible: false,
   defaultParentStart: '',

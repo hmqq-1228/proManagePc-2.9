@@ -1,22 +1,22 @@
 <template>
-   <div class="goodsfileDetail">
-      <div class="top">
-         <!--SPU信息-->
-         <div class="spuInfo">
-
-         </div>
-         <!--沟通-->
-         <div class="communication">
-
-         </div>
-      </div>
-     <!--SKU信息-->
-     <div class="down"></div>
-   </div>
+  <div class="goodsfileDetail">
+    <!--顶部面包屑-->
+    <div class="goodsFileBread">贝豪产品库>>可优比>>玩教>>手抓类</div>
+    <div class="top">
+      <!--SPU信息-->
+      <GoodsFileSpuInfo></GoodsFileSpuInfo>
+    </div>
+   <!--SKU信息-->
+   <div class="down"></div>
+  </div>
 </template>
 
 <script>
+import GoodsFileSpuInfo from './CustomComp/GoodsFileSpuInfo.vue'
 export default {
+  components: {
+    GoodsFileSpuInfo
+  },
   name: 'goods'
 }
 </script>
@@ -25,21 +25,14 @@ export default {
    .goodsfileDetail .top {
       width: 100%;
       /*height:600px;*/
-      background: #a989c7;
-   }
-   .goodsfileDetail .top .spuInfo {
-      width: 70%;
-      height: 100%;
-      /*background:pink;*/
-      float: left;
-   }
-   .goodsfileDetail .top .communication {
-      width:30%;
-      height: 100%;
-      /*background: #eee;*/
-      float: right;
+      /*background: #a989c7;*/
    }
    .goodsfileDetail .down {
       width:100%;
    }
+  /*面包屑*/
+  .goodsFileBread{
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+  }
 </style>
