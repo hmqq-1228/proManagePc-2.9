@@ -93,7 +93,7 @@
     </Drawer>
     <!---->
     <!--修改任务 编辑任务 任务 修改-->
-    <Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">
+    <Drawer class="drawerScroll" title="修改任务" :closable="false" width="750" v-model="modifyTaskVisible">
       <!-- 修改任务 编辑任务 引入组件 -->
       <component v-bind:is="compArr.ModifyTask"
                  v-bind:DrawerOpen="modifyTaskVisible"
@@ -218,6 +218,9 @@ export default {
       }, {
         value: 'finish',
         label: '已完成任务'
+      }, {
+        value: 'pause',
+        label: '已暂停任务'
       }],
       optionsValue2: '',
       optionsValue3: '',
@@ -565,6 +568,18 @@ export default {
     width: 100px;
     font-size: 12px;
     background-color: #3a8ee6;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 8px;
+    right: -32px;
+    color: #fff;
+  }
+  .taskTag3{
+    height: 20px;
+    text-align: center;
+    width: 100px;
+    font-size: 12px;
+    background-color: #e97474;
     transform: rotate(45deg);
     position: absolute;
     top: 8px;

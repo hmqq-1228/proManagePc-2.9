@@ -15,6 +15,8 @@ import MyDep from '@/components/MyDep'
 import MyTask from '@/components/MyTask'
 import MyPro3 from '@/components/MyPro3'
 import GoodsManage from '@/components/GoodsManage'
+import GoodsArchives from '@/components/GoodsArchives'
+import GoodsArchives2 from '@/components/GoodsArchives2'
 import ProDetail2 from '@/components/ProDetail2'
 import ProblemFeedback from '@/components/ProblemFeedback'
 /**
@@ -47,6 +49,11 @@ export default new Router({
     {
       path: '/goodsfileDetail',
       name: 'goodsfileDetail',
+      component: goodsfileDetail
+    },
+    {
+      path: '/goodsfileDetail/:spuId',
+      name: 'goodsfileDetail1',
       component: goodsfileDetail
     },
     // {
@@ -96,6 +103,16 @@ export default new Router({
       path: '/ProblemFeedback',
       name: 'ProblemFeedback',
       component: ProblemFeedback
+    },
+    {
+      path: '/GoodsArchives',
+      name: 'GoodsArchives',
+      component: GoodsArchives
+    },
+    {
+      path: '/GoodsArchives2',
+      name: 'GoodsArchives2',
+      component: GoodsArchives2
     },
     {
       path: '/ProblemFeedback/:ProbId',

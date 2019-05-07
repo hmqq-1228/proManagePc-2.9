@@ -55,6 +55,8 @@ const install = function (Vue, options) {
     for (var i = 0; i < store.state.fileFormat.length; i++) {
       if (store.state.fileFormat[i] === geshi) {
         isImg = true
+      } else {
+        isImg = false
       }
     }
     return isImg
