@@ -268,4 +268,7 @@ export default {
   margin-right: 10px;
   width: 18px;
 }
+  .showImg img {
+    width: 100%;
+  }
 </style>
