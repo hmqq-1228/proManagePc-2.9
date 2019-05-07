@@ -929,7 +929,8 @@ export default {
         that.log('getSpuBasic:', res)
         if (res.code === 200) {
           that.FileUploadArr = []
-          for (var r = 0; r < res.data.attachmentList.length; r++) {
+          for (var r = 0; r < res.data.attachmentList.length && res.data.attachmentList.length > 0; r++) {
+            that.log('9999:', res.data.attachmentList[r].id)
             var imgobj = {
               attachmentId: res.data.attachmentList[r].id,
               fileName: res.data.attachmentList[r].showName,
@@ -938,8 +939,10 @@ export default {
             that.FileUploadArr.push(imgobj)
           }
           that.spuBaseImgList = res.data.attachmentList
-          that.currentPreId = res.data.attachmentList[0].id
-          that.bigPreImg = res.data.attachmentList[0].previewUrl
+          if (res.data.attachmentList.length > 0) {
+            that.currentPreId = res.data.attachmentList[0].id
+            that.bigPreImg = res.data.attachmentList[0].previewUrl
+          }
           that.editFlag = res.data.editFlag
           // that.FileUploadArr = res.data.attachmentList
           // that.baseInfoEditStatus = res.data.editFlag

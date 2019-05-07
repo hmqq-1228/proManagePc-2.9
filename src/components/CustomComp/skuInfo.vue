@@ -54,26 +54,29 @@
            <div class="right" v-show="item.isEdit">
              <div class="leftName">
                <i style="color:red;font-size: 16px">*</i>&nbsp;&nbsp;<span>年份</span>：
-               <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.yearDigital" @on-enter="submit(item.yearDigital, 'yearDigital', item, index)">
+               <!--type="number" dd -->
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.yearDigital" @on-enter="submit(item.yearDigital, 'yearDigital', item, index)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.yearDigital, 'yearDigital', item, index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>零售价</span>：
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.retailPrice" @on-enter="submit(item.retailPrice, 'retailPrice', item)">
+               <!--type="number" dd -->
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.retailPrice" @on-enter="submit(item.retailPrice, 'retailPrice', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.retailPrice, 'retailPrice', item)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>吊牌价</span>：
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.tagPrice" @on-enter="submit(item.tagPrice, 'tagPrice', item)">
+               <!--type="number" dd -->
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.tagPrice" @on-enter="submit(item.tagPrice, 'tagPrice', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.tagPrice, 'tagPrice', item)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>固定成本</span>：
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.costPrice" @on-enter="submit(item.costPrice, 'costPrice', item)">
+               <!--type="number" dd -->
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.costPrice" @on-enter="submit(item.costPrice, 'costPrice', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.costPrice, 'costPrice', item)"/>
                </i-input>
              </div>
