@@ -3,11 +3,13 @@
       <!--<button @click="testData">TEST</button>-->
       <div>{{taskEdit?'':''}}</div>
       <div class="slidTop">
-        <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
+        <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" style="float: left;margin-top: 6px;" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
-        <div style="display: flex;justify-content: space-between">
-          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-          <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+        <div>
+          <div style="display: flex;justify-content: space-between" v-if="taskBasicMsg.status !== '3'">
+            <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+            <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          </div>
         </div>
       </div>
       <div class="taskMsg">
@@ -19,6 +21,7 @@
           <div v-if="taskBasicMsg.status === '0'"><img src="../../../static/img/unstart.png" alt=""></div>
           <div v-if="taskBasicMsg.status === '1'"><img src="../../../static/img/doing.png" alt=""></div>
           <div v-if="taskBasicMsg.status === '2'"><img src="../../../static/img/finish.png" alt=""></div>
+          <div v-if="taskBasicMsg.status === '3'"><img src="../../../static/img/stope.png" alt=""></div>
         </div>
       </div>
       <div class="taskTime">
@@ -71,15 +74,21 @@
         </div>
         <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
       </div>
+    <div v-if="taskBasicMsg.status !== '3' ">
       <div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">
         <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
         <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
+        <Button type="info" v-if="taskBasicMsg.timeoutButton === 1" style="margin-right: 20px;" @click="stopeTask(taskBasicMsg.uid)">任务暂停</Button>
         <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
         <Button type="info" @click="taskToDevided(taskBasicMsg.uid)">任务分解</Button>
       </div>
       <div class="cannetProject" v-if="taskBasicMsg.isRestart">
         <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
       </div>
+    </div>
+    <div class="cannetProject" v-if="taskBasicMsg.status === '3' ">
+      <Button type="info" v-if="taskBasicMsg.timeoutButton === 2"  style="margin-right: 20px;" @click="startTaskstoped(taskBasicMsg.uid)">任务开启</Button>
+    </div>
       <!-- 任务分解 引入组件-->
     <!--v-bind:TaskDistributeShow="toShowDevided"-->
     <!--v-bind:TaskDistributeShow="rilegou" tetstt -->
@@ -237,6 +246,26 @@
         </div>
       </div>
     </div>
+    <!--<el-dialog-->
+      <!--title="任务开启"-->
+      <!--:visible.sync="projectStopeVisible2"-->
+      <!--width="350px"-->
+      <!--style="margin-top: 10%;"-->
+      <!--center>-->
+      <!--<span style="font-size: 15px;">确定开任务目且修改时间吗？</span>-->
+      <!--<span slot="footer" class="dialog-footer">-->
+        <!--<el-button type="primary" @click="startTaskOnly()">开启不修改时间</el-button>-->
+        <!--<el-button type="primary" @click="startEditTask()">开启修改时间</el-button>-->
+      <!--</span>-->
+    <!--</el-dialog>-->
+    <div class="stopeModel" v-if="projectStopeVisible2">
+      <div class="stopeTitle">任务开启</div>
+      <div class="modelCon">确定开任务目且修改时间吗?</div>
+      <div>
+        <el-button type="primary" @click="startTaskOnly()">开启不修改时间</el-button>
+        <el-button type="primary" @click="startEditTask()">开启修改时间</el-button>
+      </div>
+    </div>
     <!--<Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">-->
       <!--&lt;!&ndash; 修改任务 编辑任务 引入组件 &ndash;&gt;-->
       <!--<component v-bind:is="compArr.ModifyTask" v-bind:DrawerOpen="modifyTaskVisible" fileFormId="ModifyTask" v-on:FilePreEmit="GetFilePreData" v-on:ModifyTaskCallback="ModifyTaskCallbackFuc" :nodeId="currentNodeId"></component>-->
@@ -266,12 +295,14 @@ export default {
       // @组织架构是否出现
       selectUserDiaShow2: false,
       rid: '',
+      stopeId: '',
       taskIdEdit: '',
       IsClear: false,
       loading2: false,
       showDrawer: false,
       butnDisabled: true,
       butnDisabledF: false,
+      projectStopeVisible2: false,
       selDateEnd2: '',
       selDateStart2: '',
       taskBasicMsg: '',
@@ -363,6 +394,7 @@ export default {
         that.concelTransfer()
         that.showDrawer = false
         that.taskFinishedVisible = false
+        that.projectStopeVisible2 = false
       }
     },
     commitComent: function (val, oVal) {
@@ -406,6 +438,15 @@ export default {
       }
     }
   },
+  // created: function () {
+  //   $('.TaskDetailComp').click(function () {
+  //     $('.stopeModel').hide()
+  //     return false
+  //   })
+  //   $('.stopeModel').click(function () {
+  //     return false
+  //   })
+  // },
   methods: {
     getPosition (element) {
       let cursorPos = 0
@@ -424,9 +465,15 @@ export default {
     // 点击任意区域弹窗消失
     hidePanel (event) {
       let sp2 = document.querySelector('.peopleList')
+      let sp3 = document.querySelector('.stopeModel')
       if (sp2) {
         if (!sp2.contains(event.target)) {
           this.selectUserDiaShow2 = false
+        }
+      }
+      if (sp3) {
+        if (!sp3.contains(event.target)) {
+          this.projectStopeVisible2 = false
         }
       }
     },
@@ -801,6 +848,58 @@ export default {
         })
       })
     },
+    // 暂停任务
+    stopeTask: function (id) {
+      var that = this
+      // console.log('id', id)
+      that.$confirm('确定后将暂停此任务，确定暂停？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/myTask/timeoutTask', {taskId: id}).then(res => {
+          that.$emit('ActionResThrow', {res: res, actionName: 'startTask'})
+          if (res.code === 200) {
+            that.log('dealTask:', res)
+            that.toDetail(id)
+            // that.selectProjectId()
+            that.getHistoryList()
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消开始'
+        })
+      })
+    },
+    // 暂停开启
+    startTaskstoped: function (id) {
+      var that = this
+      that.stopeId = id
+      that.projectStopeVisible2 = true
+    },
+    startTaskOnly: function () {
+      var that = this
+      that.ajax('/myTask/timeonTask', {taskId: that.stopeId}).then(res => {
+        that.$emit('ActionResThrow', {res: res, actionName: 'startTask'})
+        if (res.code === 200) {
+          that.log('dealTask:', res)
+          that.toDetail(that.stopeId)
+          // that.selectProjectId()
+          that.getHistoryList()
+          that.projectStopeVisible2 = false
+        } else {
+          that.$message.warning(res.msg)
+        }
+      })
+    },
+    startEditTask: function () {
+      var that = this
+      that.projectStopeVisible2 = false
+      that.startTaskOnly(that.nodeId)
+      that.$emit('showEditForm', that.nodeId)
+    },
     taskToDevided: function (id) {
       var that = this
       that.toShowDevided2 = true
@@ -1045,6 +1144,9 @@ export default {
   }
 </style>
 <style scoped>
+  .TaskDetailComp{
+    position: relative;
+  }
   .slidTop{
     height: 40px;
     line-height: 40px;
@@ -1065,6 +1167,9 @@ export default {
   }
   .topState2{
     color: #27CF97;
+  }
+  .topState3{
+    color: #e97474;
   }
   .taskMsg{
     background-color: #f5f8fa;
@@ -1383,5 +1488,27 @@ export default {
   {
     from {transform: rotate(0deg)}
     to {transform: rotate(360deg)}
+  }
+  .stopeModel{
+    height: 150px;
+    width: 300px;
+    position: absolute;
+    text-align: center;
+    top: 20%;
+    left: 25%;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.2);
+    z-index: 999999;
+  }
+  .stopeTitle{
+    color: #fff;
+    font-size: 16px;
+  }
+  .modelCon{
+    height: 60px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 60px;
   }
 </style>

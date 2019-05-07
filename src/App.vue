@@ -157,6 +157,10 @@ export default {
           localStorage.setItem('generalMenuActive', '商品管理')
           that.$router.push('/GoodsManage')
           break
+        case '商品档案':
+          localStorage.setItem('generalMenuActive', '商品档案')
+          that.$router.push('/GoodsArchives')
+          break
         case '我的项目':
           localStorage.setItem('generalMenuActive', '我的项目')
           that.$router.push('/MyPro')
@@ -197,6 +201,9 @@ export default {
               //   break
               case '商品管理':
                 res.data[i].icon = 'md-cart'
+                break
+              case '商品档案':
+                res.data[i].icon = 'ios-create'
                 break
               case '我的动态':
                 res.data[i].icon = 'md-chatboxes'
@@ -261,6 +268,8 @@ export default {
           this.$router.push('/MyPro')
         } else if (proName === '商品管理') {
           this.$router.push('/GoodsManage')
+        } else if (proName === '商品档案') {
+          this.$router.push('/GoodsArchives')
         } else if (proName === '问题反馈') {
           this.$router.push('/ProblemFeedback')
         } else {
@@ -412,16 +421,19 @@ padding: 8px 20px;
 .line .el-radio-button--mini .el-radio-button__inner{
   padding: 5px 10px;
 }
-  .goods .el-pagination.is-background .el-pager li:not(.disabled).active{
+  .goods .el-pagination.is-background .el-pager li:not(.disabled).active,.GoodsArchives .el-pagination.is-background .el-pager li:not(.disabled).active{
     background-color: #34c5be;
   }
-  .goods .el-radio-button__orig-radio:checked+.el-radio-button__inner{
+  .goods .el-radio-button__orig-radio:checked+.el-radio-button__inner,.GoodsArchives .el-radio-button__orig-radio:checked+.el-radio-button__inner{
     background-color: #34c5be;
     border-color: #34c5be;
   }
-  .goods .el-input.is-active .el-input__inner, .el-input__inner:focus{
+  .goods .el-input.is-active .el-input__inner, .el-input__inner:focus,.GoodsArchives .el-input.is-active .el-input__inner, .el-input__inner:focus{
     border-color: #34c5be;
   }
+  /*.goods .el-radio-button__inner:hover,.GoodsArchives .el-radio-button__inner:hover{*/
+    /*color: #34c5be;*/
+  /*}*/
   .contentTop .el-button{
     padding: 7px 14px;
   }
@@ -451,5 +463,8 @@ padding: 8px 20px;
   }
   .NewTreeBox .el-input__icon{
     line-height: normal;
+  }
+  .GoodsArchives .ivu-input-prefix i, .ivu-input-suffix i{
+    font-size: 14px;
   }
 </style>

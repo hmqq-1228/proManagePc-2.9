@@ -165,7 +165,12 @@ export default {
   },
   watch: {
     ProBaseInfoShow (val, old) {
-      this.queryProDetail()
+      var that = this
+      if (val) {
+        // console.log('id', this.proId)
+        that.$store.state.proId = that.proId
+        this.queryProDetail()
+      }
     },
     proDetailMsg: function (newVal, oldVal) {
       var that = this
@@ -205,6 +210,8 @@ export default {
         if (res.code === 200) {
           // that.memberList = res.data.memberList
           that.proDetailMsg = res.data
+          that.Mid = res.data.projectManagerID
+          that.formValidate.proManager = res.data.projectManager
           // that.startPlanDate = res.data.startDate.split(' ')[0]
           // that.endPlanDate = res.data.endDate.split(' ')[0]
           // that.planList = res.data.planOrJobList

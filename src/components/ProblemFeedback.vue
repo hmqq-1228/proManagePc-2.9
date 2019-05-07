@@ -208,6 +208,9 @@ export default {
       }, {
         value: '4',
         label: '已逾期'
+      }, {
+        value: '3',
+        label: '已暂停'
       }],
       optionsValue2: '',
       optionsValue3: '',
@@ -599,6 +602,18 @@ export default {
     width: 100px;
     font-size: 12px;
     background-color: #3a8ee6;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 8px;
+    right: -32px;
+    color: #fff;
+  }
+  .taskTag3{
+    height: 20px;
+    text-align: center;
+    width: 100px;
+    font-size: 12px;
+    background-color: #e97474;
     transform: rotate(45deg);
     position: absolute;
     top: 8px;

@@ -15,6 +15,7 @@ const state = {
   currentDraggedData: {},
   editFlag: false,
   taskEdit: false,
+  stopeFlag: false,
   goPerfect: false,
   refshPlan: false,
   slideMenuGroup: [],

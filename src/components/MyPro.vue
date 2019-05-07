@@ -47,7 +47,9 @@
               </i-circle>
             </div>
             <div style="text-align: right; padding-right: 30px;">
-              <Button size="small" style="margin-left: 15px;" @click="responsePro(item.projectUID)">回复</Button>
+              <Button size="small" v-if="item.timeoutButton === 1" style="margin-left: 15px;" @click="stopePro(item.projectUID)">暂停</Button>
+              <Button size="small" v-if="item.timeoutButton === 2" style="margin-left: 15px;" @click="startPro(item.projectUID)">开启</Button>
+              <Button size="small" @click="responsePro(item.projectUID)">回复</Button>
               <Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID, item.projectType)">删除</Button>
             </div>
             <div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
@@ -57,24 +59,40 @@
           <div style="width:165px; margin: 0 auto; margin-top: 50px;"><img src="../../static/img/nodata.png" /></div>
           <div style="text-align: center; color: #666; margin-top: 15px; font-size: 14px;">暂无数据</div>
         </div>
-        <!--<div class="cntItem">-->
-          <!--<div class="cntItemLeft">-->
-            <!--<div class="proTit">项目名称: 贝豪集团2019战略项目规划</div>-->
-            <!--<div class="proPrincipals">负责人: 张三</div>-->
-            <!--<div class="proDuration">2019-02-25 至 2019-02-28</div>-->
-          <!--</div>-->
-          <!--<div class="cntItemRight">-->
-            <!--<div class="proType"><span>剩余时间: 3天</span><span>项目类型: 集团项目</span></div>-->
-            <!--<div class="proPregress">-->
-              <!--<i-circle :percent="80" :size="70">-->
-                <!--<span class="demo-Circle-inner" style="font-size:24px">80%</span>-->
-              <!--</i-circle>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
       </div>
     </div>
+    <el-dialog
+      title="项目暂停"
+      :visible.sync="projectStopeVisible"
+      width="350px"
+      center>
+      <span style="font-size: 15px;">请选择您要暂停项目的方式</span>
+      <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="stopeProject(stopeId, '1')">只暂停项目</el-button>
+    <el-button type="primary" @click="stopeProject(stopeId, '2')">暂停项目和任务</el-button>
+  </span>
+    </el-dialog>
+    <el-dialog
+      title="项目开启"
+      :visible.sync="projectStopeVisible2"
+      width="350px"
+      center>
+      <span style="font-size: 15px;">确定开启项目且修改时间吗？</span>
+      <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="startProject(stopeId)">开启不修改时间</el-button>
+    <el-button type="primary" @click="startEditProject()">开启修改时间</el-button>
+  </span>
+    </el-dialog>
     <!--新建项目 对话框-->
+    <Drawer title="基本信息" width="740" :closable="false" v-model="DrawerBaseEdit">
+      <component v-bind:is="compArr.ProBaseInfo"
+                 fileFormId="stopeBaseInfoEdit"
+                 v-on:FilePreEmit="GetFilePreData"
+                 v-bind:ProBaseInfoShow="DrawerBaseEdit"
+                 v-on:ProBaseInfoCallback="ProBaseInfoFuc"
+                 :proId="stopeId">
+      </component>
+    </Drawer>
     <div>
       <Modal v-model="newAddDialog" title="新建项目" width="620" @on-ok="ok" @on-cancel="cancel">
         <div style="padding-bottom: 10px;">
@@ -296,11 +314,13 @@
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import FileUploadComp from './FileUploadComp.vue'
 import goodsInfo from './CustomComp/goodsInfo.vue'
+import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 export default {
   name: 'MyPro',
   components: {
     FileUploadComp,
     CommentLogs,
+    ProBaseInfo,
     goodsInfo
   },
   data () {
@@ -328,7 +348,11 @@ export default {
       dialogShowImg1: false,
       // 加载转圈
       createProLoading: false,
+      projectStopeVisible: false,
+      projectStopeVisible2: false,
+      stopeId: '',
       // shi
+      DrawerBaseEdit: false,
       pageN: 1,
       // 附件上传 是否让子组件清空文件
       IsClear: false,
@@ -341,6 +365,7 @@ export default {
       compArr: {
         CommentLogs: 'CommentLogs',
         FileUploadComp: 'FileUploadComp',
+        ProBaseInfo: 'ProBaseInfo',
         goodsInfo: 'goodsInfo'
       },
       // 新建项目 表单
@@ -902,6 +927,49 @@ export default {
         }
       })
     },
+    // 暂停项目
+    stopePro: function (pId) {
+      var that = this
+      that.projectStopeVisible = true
+      that.stopeId = pId
+    },
+    stopeProject: function (id, type) {
+      var that = this
+      this.ajax('/myProject/timeoutProject', {projectId: id, projectOnly: type}).then(res => {
+        if (res.code === 200) {
+          that.queryMyProjectView()
+          that.$message.success(res.msg)
+          that.projectStopeVisible = false
+        } else {
+          that.$message.warning(res.msg)
+          that.projectStopeVisible = false
+        }
+      })
+    },
+    // 开启项目
+    startPro: function (pId) {
+      var that = this
+      that.projectStopeVisible2 = true
+      that.stopeId = pId
+    },
+    startProject: function (id) {
+      var that = this
+      that.ajax('/myProject/timeonProject', {projectId: id}).then(res => {
+        if (res.code === 200) {
+          that.queryMyProjectView()
+          that.$message.success('项目已开启')
+          that.projectStopeVisible2 = false
+        } else {
+          that.$message.warning(res.msg)
+          that.projectStopeVisible2 = false
+        }
+      })
+    },
+    startEditProject: function () {
+      var that = this
+      that.DrawerBaseEdit = true
+      that.projectStopeVisible2 = false
+    },
     // 新增搜索项目
     searchPro: function (iptName) {
       this.log('iptName:', iptName)
@@ -951,6 +1019,9 @@ export default {
             } else if (res.data.list[i].state === '3') {
               res.data.list[i].tagStyle = 'finished'
               res.data.list[i].statusInfo = '已完成'
+            } else if (res.data.list[i].state === '4') {
+              res.data.list[i].tagStyle = 'stoped'
+              res.data.list[i].statusInfo = '已暂停'
             }
           }
           that.projectViewData = res.data.list
@@ -1166,6 +1237,20 @@ export default {
     jumpInfo () {
       this.$router.push('/goodsDetail')
     },
+    ProBaseInfoFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.$Message.success('修改成功!')
+        that.DrawerBaseEdit = false
+        that.startProject(that.stopeId)
+        // that.queryMyProjectView()
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
     // 商品上传成功后续
     ProBaseInfoCallbackFuc (res) {
       var that = this
@@ -1365,6 +1450,9 @@ export default {
   .taskStateBiao.finished{
     background-color: #3a8ee6;
   }
+.taskStateBiao.stoped{
+  background-color: #e97474;
+}
   /*新建模板*/
   .cartHover:hover{
     background-color: #f5f8f8;
