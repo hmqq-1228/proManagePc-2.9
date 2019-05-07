@@ -1,6 +1,6 @@
 <template>
     <div class="communications">
-      <div class="title">沟通</div>
+      <div class="title" @click="member">沟通</div>
       <div style="padding: 15px">
         <div class="el-textarea" v-loading="loadingRe">
           <!--enctype="multipart/form-data"-->
@@ -69,25 +69,42 @@
       <!-- 图片预览 -->
       <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
         <div class="showImg">
-          <img v-bind:src="commentPreviewUrl1" alt>
+          <img v-bind:src="commentPreviewUrl1" alt style="width: 100%">
         </div>
       </el-dialog>
+      <Drawer
+        title="成员管理"
+        width="740"
+        :closable="false"
+        v-model="DrawerMember"
+        v-loading="DrawerMemberShow"
+      >
+        <component
+          v-bind:is="compArr.member"
+          v-bind:proId="proId"
+          v-bind:groupId="groupId"
+          v-bind:DrawerMemberShow="DrawerMember"
+        ></component>
+      </Drawer>
     </div>
 </template>
 
 <script>
 import FileUploadComp from './FileUploadComp.vue'
 import CommentLogs from './CommentLogs.vue'
+import member from './members.vue'
 export default {
   components: {
     FileUploadComp,
-    CommentLogs
+    CommentLogs,
+    member
   },
   data () {
     return {
       compArr: {
         FileUploadComp,
-        CommentLogs
+        CommentLogs,
+        member
       },
       // 图片预览地址
       commentPreviewUrl1: '',
@@ -111,7 +128,11 @@ export default {
         attachmentId: '',
         contentId: ''
       },
-      filUrl: '/file/uploadGoodsFileAjax'
+      filUrl: '/file/uploadGoodsFileAjax',
+      DrawerMember: false,
+      proId: 'SPU00001',
+      DrawerMemberShow: false,
+      groupId: '1'
     }
   },
   watch: {
@@ -221,6 +242,9 @@ export default {
       }
       that.FileUploadArr = []
       return FileIdStr
+    },
+    member () {
+      this.DrawerMember = true
     }
   }
 }

@@ -1,8 +1,8 @@
 <template>
-   <div class="skuInfo" v-if="skuList.length>0">
-     <Input prefix="ios-search" placeholder="按SKU编码搜索" style="width:  300px" v-model="searchCode" v-on:input="search"/>
-     <div>
-       <div class="sku" v-for="(item,index) in skuList" :key="index">
+   <div class="skuInfo">
+     <Input prefix="ios-search" placeholder="按SKU编码搜索" style="width:  300px;margin-top: 15px" v-model="searchCode" v-on:input="search" clearable />
+     <div style="margin-top: -15px">
+       <div class="sku" v-for="(item,index) in skuList" :key="index" v-if="skuList.length>0">
          <div class="sku-list">
            <div class="left">
               <div class="skuCode">
@@ -55,25 +55,25 @@
              <div class="leftName">
                <i style="color:red;font-size: 16px">*</i>&nbsp;&nbsp;<span>年份</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.yearDigital" @on-enter="submit(item.yearDigital, 'yearDigital', item, index)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.yearDigital" @on-enter="submit(item.yearDigital, 'yearDigital', item, index)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.yearDigital, 'yearDigital', item, index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>零售价</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.retailPrice" @on-enter="submit(item.retailPrice, 'retailPrice', item)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.retailPrice" @on-enter="submit(item.retailPrice, 'retailPrice', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.retailPrice, 'retailPrice', item)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>吊牌价</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.tagPrice" @on-enter="submit(item.tagPrice, 'tagPrice', item)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.tagPrice" @on-enter="submit(item.tagPrice, 'tagPrice', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.tagPrice, 'tagPrice', item)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>固定成本</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.costPrice" @on-enter="submit(item.costPrice, 'costPrice', item)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.costPrice" @on-enter="submit(item.costPrice, 'costPrice', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.costPrice, 'costPrice', item)"/>
                </i-input>
              </div>
@@ -159,19 +159,19 @@
              </div>
              <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">高（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.hight" v-if="item.isEdit" @on-enter="submit(item.hight, 'hight', item)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.hight" v-if="item.isEdit" @on-enter="submit(item.hight, 'hight', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.hight, 'hight', item)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">长（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.length" v-if="item.isEdit" @on-enter="submit(item.length, 'length', item)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.length" v-if="item.isEdit" @on-enter="submit(item.length, 'length', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.length, 'length', item)"/>
                </i-input>
              </div>
              <div class="sku-info"><span>宽（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.width" v-if="item.isEdit" @on-enter="submit(item.width, 'width', item)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.width" v-if="item.isEdit" @on-enter="submit(item.width, 'width', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.width, 'width', item)"/>
                </i-input>
              </div>
@@ -234,17 +234,18 @@
              <span></span>
            </div>
          </div>
-         <!-- 图片预览 -->
-         <el-dialog title="图片预览" :visible.sync="dialogShowImg">
-           <div class="showImg">
-             <img :src="imgUrl" alt style="width: 100%;height: 100%">
-           </div>
-         </el-dialog>
        </div>
        <div style="width: 100%;height: 50px;float: left;text-align: center" v-if="skuList.length>0">
          <Page :total="total" :page-size="pageSize" show-elevator style="margin: 0 auto;" size="small" @on-change="changePage"/>
        </div>
+       <div class="listNone" v-if="skuList.length===0">暂无相关的SKU信息</div>
      </div>
+     <!-- 图片预览 -->
+     <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+       <div class="showImg">
+         <img :src="imgUrl" alt style="width: 100%">
+       </div>
+     </el-dialog>
    </div>
 </template>
 
@@ -519,6 +520,7 @@ export default {
 <style scoped>
   .skuInfo {
     float: left;
+    width: 100%;
   }
   .skuInfo .sku {
     width: 100%;
@@ -657,5 +659,13 @@ export default {
     position: absolute;
     left: -13px;
     bottom: -15px;
+  }
+  .skuInfo .listNone {
+    width: 100%;
+    height: 200px;
+    text-align: center;
+    line-height: 150px;
+    color:#ccc;
+    float: left;
   }
 </style>
