@@ -7,17 +7,40 @@
          </div>
          <!--沟通-->
          <div class="communication">
-
+            <communication></communication>
          </div>
       </div>
      <!--SKU信息-->
-     <div class="down"></div>
+     <div class="down">
+       <sku :slideData = 'SlideData.priceSegment'></sku>
+     </div>
    </div>
 </template>
 
 <script>
+import sku from './CustomComp/skuInfo'
+import communication from './CustomComp/communication'
 export default {
-  name: 'goods'
+  name: 'goods',
+  data () {
+    return {
+      SlideData: {}
+    }
+  },
+  components: {
+    sku,
+    communication
+  },
+  created () {
+    this.getSlideData()
+  },
+  methods: {
+    getSlideData () {
+      this.ajax('/archives/getOptionType', {}).then(res => {
+        this.SlideData = res.data
+      })
+    }
+  }
 }
 </script>
 
@@ -25,7 +48,8 @@ export default {
    .goodsfileDetail .top {
       width: 100%;
       /*height:600px;*/
-      background: #a989c7;
+      /*background: #a989c7;*/
+     float: left;
    }
    .goodsfileDetail .top .spuInfo {
       width: 70%;
@@ -34,7 +58,7 @@ export default {
       float: left;
    }
    .goodsfileDetail .top .communication {
-      width:30%;
+      width:500px;
       height: 100%;
       /*background: #eee;*/
       float: right;
