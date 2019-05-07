@@ -219,7 +219,6 @@ export default {
   created: function () {
     var that = this
     // 默认查询分类
-    console.log('codeArr', that.$store.state.codeArr)
     that.codeArr = that.$store.state.codeArr
     var codeStr = ''
     for (var i = 0; i < that.codeArr.length; i++) {
@@ -235,7 +234,6 @@ export default {
       var that = this
       that.ajax('/archives/getPermission', {}).then(res => {
         if (res.code === 200) {
-          console.log('getPermission', res)
           that.permission = res.data
         }
       })
@@ -262,7 +260,7 @@ export default {
     toGoodsManage: function (goodId) {
       if (goodId) {
         this.$store.state.spuId = goodId
-        this.$router.push('/goodsfileDetail')
+        this.$router.push('/goodsfileDetail/' + goodId)
       }
     },
     // 切换 预览图片
