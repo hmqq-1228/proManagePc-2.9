@@ -53,7 +53,7 @@ export default new Router({
     },
     {
       path: '/goodsfileDetail/:spuId',
-      name: 'goodsfileDetail',
+      name: 'goodsfileDetail1',
       component: goodsfileDetail
     },
     // {

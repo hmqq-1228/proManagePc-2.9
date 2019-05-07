@@ -44,7 +44,7 @@
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -1em;letter-spacing:1em">颜色</span>：
                <!--type="color"-->
-               <input type="color" placeholder="请输入" style="width: 70px;outline: none" v-model="item.color" disabled="true" v-if="!isChina(item.color)">
+               <input type="color" placeholder="请输入" style="width: 70px;outline: none" v-model="item.color" disabled="true" v-if="item.color.indexOf('#') != -1">
                <span v-else>{{item.color}}</span>
              </div>
              <div class="leftName">
@@ -320,7 +320,7 @@ export default {
       tip: '',
       time: '',
       pageSize: 10,
-      spuId: this.$store.state.spuId
+      spuId: this.$route.params.spuId
     }
   },
   components: {
@@ -335,7 +335,6 @@ export default {
   methods: {
     // 判断颜色是否为汉字
     isChina (s) {
-      if (s) {
       //   var index = escape(s).indexOf('%u')
       //   if (index < 0) {
       //     console.log(1111111111111)
@@ -347,20 +346,16 @@ export default {
       // } else {
       //   return false
       // }
-        var patrn = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi
-        if (!patrn.exec(s)) {
-          return false
-        } else {
-          return true
-        }
-      } else {
+      var patrn = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi
+      if (!patrn.exec(s)) {
         return false
+      } else {
+        return true
       }
     },
     // 翻页
     changePage (val) {
       this.pageNum = val
-      console.log(val)
       this.getList()
     },
     // 搜索
@@ -383,8 +378,6 @@ export default {
     },
     setTime (time) {
       let that = this
-      console.log(1)
-      console.log(time)
       let setClockNum = setInterval(function () {
         var mo = 0
 
@@ -392,7 +385,6 @@ export default {
           time = time - 60
           mo = Math.ceil(time / 60)
           that.time = '剩余' + mo + '分钟'
-          console.log(mo)
         } else {
           that.time = ''
           window.clearInterval(setClockNum)
@@ -497,7 +489,6 @@ export default {
         }
         FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
       }
-      console.log(that.FileUploadArr)
       that.FileUploadArr = []
       return FileIdStr
     },
@@ -513,7 +504,6 @@ export default {
           this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
             res.data.list.forEach((items, idx) => {
               if (index === idx) {
-                console.log(item)
                 item.attachmentList = items.attachmentList
                 // items.proFileList = []
                 // let fileListArr = []

@@ -40,7 +40,7 @@
             <!--:commentList="taskLogs"-->
           <!--&gt;</component>-->
           <div class="timeLine">
-            <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: scroll; height: 375px;">
+            <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 375px;">
               <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
                 <p class="time">{{comment.createDate}}</p>
                 <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
@@ -53,13 +53,13 @@
             </span>
               </Timeline-item>
             </Timeline>
-            <div class="noComment" v-if="commentList.length === 0" style="overflow-y: scroll; height: 400px;">还没有人发言呦~</div>
+            <div class="noComment" v-if="commentList.length === 0" style="height: 400px;">还没有人发言呦~</div>
           </div>
           <div style="text-align: center" v-if="commentList.length>0">
             <Page
               :total="commentTotalNum"
               size="small"
-              :page-size="10"
+              :page-size="5"
               show-total
               @on-change="commentPageChange($event)"
             ></Page>
@@ -130,7 +130,7 @@ export default {
       },
       filUrl: '/file/uploadGoodsFileAjax',
       DrawerMember: false,
-      proId: this.$store.state.spuId,
+      proId: this.$route.params.spuId,
       DrawerMemberShow: false,
       groupId: '1'
     }
@@ -157,7 +157,7 @@ export default {
     addMarkInfo () {
       var that = this
       that.loadingRe = true
-      that.addProjectCommentPayload.contentId = this.$store.state.spuId
+      that.addProjectCommentPayload.contentId = this.$route.params.spuId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
       if (that.commitComent) {
@@ -185,7 +185,7 @@ export default {
     getHistoryCont () {
       var that = this
       that.ajax('/comment/getGoodsComment', {
-        spuId: this.$store.state.spuId,
+        spuId: this.$route.params.spuId,
         pageSize: 5,
         pageNum: that.pageN
       }).then(res => {
