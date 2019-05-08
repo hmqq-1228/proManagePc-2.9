@@ -1,8 +1,8 @@
 <template>
-   <div class="skuInfo" v-if="skuList.length>0">
-     <Input prefix="ios-search" placeholder="按SKU编码搜索" style="width:  300px" v-model="searchCode" v-on:input="search"/>
-     <div>
-       <div class="sku" v-for="(item,index) in skuList" :key="index">
+   <div class="skuInfo">
+     <Input prefix="ios-search" placeholder="按SKU编码搜索" style="width:  300px;margin-top: 15px" v-model="searchCode" v-on:input="search" clearable />
+     <div style="margin-top: -15px">
+       <div class="sku" v-for="(item,index) in skuList" :key="index" v-if="skuList.length>0">
          <div class="sku-list">
            <div class="left">
               <div class="skuCode">
@@ -44,7 +44,7 @@
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -1em;letter-spacing:1em">颜色</span>：
                <!--type="color"-->
-               <input type="color" placeholder="请输入" style="width: 70px;outline: none" v-model="item.color" disabled="true" v-if="!isChina(item.color)">
+               <input type="color" placeholder="请输入" style="width: 70px;outline: none" v-model="item.color" disabled="true" v-if="item.color.indexOf('#') != -1">
                <span v-else>{{item.color}}</span>
              </div>
              <div class="leftName">
@@ -54,25 +54,28 @@
            <div class="right" v-show="item.isEdit">
              <div class="leftName">
                <i style="color:red;font-size: 16px">*</i>&nbsp;&nbsp;<span>年份</span>：
-               <!--type="number"-->
+               <!--type="number" dd -->
                <i-input placeholder="请输入" style="width: 140px" v-model="item.yearDigital" @on-enter="submit(item.yearDigital, 'yearDigital', item, index)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.yearDigital, 'yearDigital', item, index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>零售价</span>：
+               <!--type="number" dd -->
                <i-input placeholder="请输入" style="width: 140px" v-model="item.retailPrice" @on-enter="submit(item.retailPrice, 'retailPrice', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.retailPrice, 'retailPrice', item)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>吊牌价</span>：
+               <!--type="number" dd -->
                <i-input placeholder="请输入" style="width: 140px" v-model="item.tagPrice" @on-enter="submit(item.tagPrice, 'tagPrice', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.tagPrice, 'tagPrice', item)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>固定成本</span>：
+               <!--type="number" dd -->
                <i-input placeholder="请输入" style="width: 140px" v-model="item.costPrice" @on-enter="submit(item.costPrice, 'costPrice', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.costPrice, 'costPrice', item)"/>
                </i-input>
@@ -90,13 +93,14 @@
                </i-input>
              </div>
              <div class="leftName">
-               <i>*</i>&nbsp;&nbsp;<span style="margin-right: -1em;letter-spacing:1em">颜色</span>：
+               <span style="float: left"><i>*</i>&nbsp;&nbsp;<span style="margin-right: -1em;letter-spacing:1em">颜色</span>：</span>
                <!--<i-input placeholder="请输入" style="width: 140px" v-model="item.color" type="color" @on-enter="submit(item.color, 'color', item)">-->
                  <!--<Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.color, 'color', item)"/>-->
                <!--</i-input>-->
-               <input type="color" style="width: 120px" v-model="item.color" v-if="!isChina(item.color)">
-               <input type="color" value="#ffffff"  style="width: 120px;border: none" v-else>
-               <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.color, 'color', item)"/>
+               <!--<input type="color" style="width: 120px" v-model="item.color" v-if="!isChina(item.color)">-->
+               <!--<input type="color" value="#ffffff" v-model="item.color" style="width: 120px;border: none" v-else>-->
+               <el-color-picker v-model="item.color" style="width: 120px;float: left"></el-color-picker>
+               <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer;float:left;margin-left: 10px;margin-top: 5px" @click="submit(item.color, 'color', item)"/>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -2em;letter-spacing:2em">规格</span>：
@@ -159,19 +163,19 @@
              </div>
              <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">高（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.hight" v-if="item.isEdit" @on-enter="submit(item.hight, 'hight', item)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.hight" v-if="item.isEdit" @on-enter="submit(item.hight, 'hight', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.hight, 'hight', item)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">长（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.length" v-if="item.isEdit" @on-enter="submit(item.length, 'length', item)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.length" v-if="item.isEdit" @on-enter="submit(item.length, 'length', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.length, 'length', item)"/>
                </i-input>
              </div>
              <div class="sku-info"><span>宽（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.width" v-if="item.isEdit" @on-enter="submit(item.width, 'width', item)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.width" v-if="item.isEdit" @on-enter="submit(item.width, 'width', item)">
                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.width, 'width', item)"/>
                </i-input>
              </div>
@@ -234,20 +238,26 @@
              <span></span>
            </div>
          </div>
-         <!-- 图片预览 -->
-         <el-dialog title="图片预览" :visible.sync="dialogShowImg">
-           <div class="showImg">
-             <img :src="imgUrl" alt style="width: 100%;height: 100%">
-           </div>
-         </el-dialog>
        </div>
        <div style="width: 100%;height: 50px;float: left;text-align: center" v-if="skuList.length>0">
          <Page :total="total" :page-size="pageSize" show-elevator style="margin: 0 auto;" size="small" @on-change="changePage"/>
        </div>
+       <div class="listNone" v-if="skuList.length===0">暂无相关的SKU信息</div>
      </div>
+     <!-- 图片预览 -->
+     <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+       <div class="showImg">
+         <img :src="imgUrl" alt style="width: 100%">
+       </div>
+     </el-dialog>
    </div>
 </template>
-
+<style>
+  .skuInfo .el-color-picker__trigger {
+    width: 120px;
+    height: 30px;
+  }
+</style>
 <script>
 import upload from '../CustomComp/FileUploadComp.vue'
 export default {
@@ -312,7 +322,8 @@ export default {
       status: 0, // 开环状态
       tip: '',
       time: '',
-      pageSize: 10
+      pageSize: 10,
+      spuId: this.$route.params.spuId
     }
   },
   components: {
@@ -327,8 +338,19 @@ export default {
   methods: {
     // 判断颜色是否为汉字
     isChina (s) {
-      var index = escape(s).indexOf('%u')
-      if (index < 0) {
+      //   var index = escape(s).indexOf('%u')
+      //   if (index < 0) {
+      //     console.log(1111111111111)
+      //     return false
+      //   } else {
+      //     console.log(111111122222222221)
+      //     return true
+      //   }
+      // } else {
+      //   return false
+      // }
+      var patrn = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi
+      if (!patrn.exec(s)) {
         return false
       } else {
         return true
@@ -337,7 +359,6 @@ export default {
     // 翻页
     changePage (val) {
       this.pageNum = val
-      console.log(val)
       this.getList()
     },
     // 搜索
@@ -349,7 +370,7 @@ export default {
       return name === 0 ? '否' : '是'
     },
     getOnOffStatus () {
-      this.ajax('/myProject/getOnOffStatus', {projectId: 'SPU00001'}).then(res => {
+      this.ajax('/myProject/getOnOffStatus', {projectId: this.spuId}).then(res => {
         if (res.code === 200) {
           this.status = res.data.onOffStatus
           this.tip = res.data.statusMsg
@@ -360,8 +381,6 @@ export default {
     },
     setTime (time) {
       let that = this
-      console.log(1)
-      console.log(time)
       let setClockNum = setInterval(function () {
         var mo = 0
 
@@ -369,7 +388,6 @@ export default {
           time = time - 60
           mo = Math.ceil(time / 60)
           that.time = '剩余' + mo + '分钟'
-          console.log(mo)
         } else {
           that.time = ''
           window.clearInterval(setClockNum)
@@ -389,7 +407,7 @@ export default {
         if (res.code === 200) {
           this.$message.success(res.msg)
           $('.ivu-input').blur()
-          this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: 'SPU00001', skuCode: this.searchCode}).then(res => {
+          this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
           })
         } else {
           this.$message.error(res.msg)
@@ -403,7 +421,7 @@ export default {
     },
     // 获取sku列表数据
     getList () {
-      this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: 'SPU00001', skuCode: this.searchCode}).then(res => {
+      this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
         this.skuList = res.data.list
         this.total = res.data.totalRow
         this.skuList.forEach((item, index) => {
@@ -444,7 +462,7 @@ export default {
       item.isEdit = false
       item.show = false
       this.$set(this.skuList, index, item)
-      this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: 'SPU00001', skuCode: this.searchCode}).then(res => {
+      this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
         res.data.list.forEach((items, idx) => {
           if (index === idx) {
             item = items
@@ -474,7 +492,6 @@ export default {
         }
         FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
       }
-      console.log(that.FileUploadArr)
       that.FileUploadArr = []
       return FileIdStr
     },
@@ -487,10 +504,9 @@ export default {
         if (res.code === 200) {
           this.$message.success(res.msg)
           this.IsClear = true
-          this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: 'SPU00001', skuCode: this.searchCode}).then(res => {
+          this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
             res.data.list.forEach((items, idx) => {
               if (index === idx) {
-                console.log(item)
                 item.attachmentList = items.attachmentList
                 // items.proFileList = []
                 // let fileListArr = []
@@ -519,6 +535,7 @@ export default {
 <style scoped>
   .skuInfo {
     float: left;
+    width: 100%;
   }
   .skuInfo .sku {
     width: 100%;
@@ -657,5 +674,13 @@ export default {
     position: absolute;
     left: -13px;
     bottom: -15px;
+  }
+  .skuInfo .listNone {
+    width: 100%;
+    height: 200px;
+    text-align: center;
+    line-height: 150px;
+    color:#ccc;
+    float: left;
   }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="communications">
-      <div class="title">沟通</div>
+      <div class="title" @click="member">沟通</div>
       <div style="padding: 15px">
         <div class="el-textarea" v-loading="loadingRe">
           <!--enctype="multipart/form-data"-->
@@ -40,7 +40,7 @@
             <!--:commentList="taskLogs"-->
           <!--&gt;</component>-->
           <div class="timeLine">
-            <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: scroll; height: 375px;">
+            <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 375px;">
               <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
                 <p class="time">{{comment.createDate}}</p>
                 <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
@@ -53,13 +53,13 @@
             </span>
               </Timeline-item>
             </Timeline>
-            <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
+            <div class="noComment" v-if="commentList.length === 0" style="height: 400px;">还没有人发言呦~</div>
           </div>
           <div style="text-align: center" v-if="commentList.length>0">
             <Page
               :total="commentTotalNum"
               size="small"
-              :page-size="10"
+              :page-size="5"
               show-total
               @on-change="commentPageChange($event)"
             ></Page>
@@ -69,25 +69,42 @@
       <!-- 图片预览 -->
       <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
         <div class="showImg">
-          <img v-bind:src="commentPreviewUrl1" alt>
+          <img v-bind:src="commentPreviewUrl1" alt style="width: 100%">
         </div>
       </el-dialog>
+      <Drawer
+        title="成员管理"
+        width="740"
+        :closable="false"
+        v-model="DrawerMember"
+        v-loading="DrawerMemberShow"
+      >
+        <component
+          v-bind:is="compArr.member"
+          v-bind:proId="proId"
+          v-bind:groupId="groupId"
+          v-bind:DrawerMemberShow="DrawerMember"
+        ></component>
+      </Drawer>
     </div>
 </template>
 
 <script>
 import FileUploadComp from './FileUploadComp.vue'
 import CommentLogs from './CommentLogs.vue'
+import member from './members.vue'
 export default {
   components: {
     FileUploadComp,
-    CommentLogs
+    CommentLogs,
+    member
   },
   data () {
     return {
       compArr: {
         FileUploadComp,
-        CommentLogs
+        CommentLogs,
+        member
       },
       // 图片预览地址
       commentPreviewUrl1: '',
@@ -111,7 +128,11 @@ export default {
         attachmentId: '',
         contentId: ''
       },
-      filUrl: '/file/uploadGoodsFileAjax'
+      filUrl: '/file/uploadGoodsFileAjax',
+      DrawerMember: false,
+      proId: this.$route.params.spuId,
+      DrawerMemberShow: false,
+      groupId: '1'
     }
   },
   watch: {
@@ -136,7 +157,7 @@ export default {
     addMarkInfo () {
       var that = this
       that.loadingRe = true
-      that.addProjectCommentPayload.contentId = 'SPU00001'
+      that.addProjectCommentPayload.contentId = this.$route.params.spuId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
       if (that.commitComent) {
@@ -164,7 +185,7 @@ export default {
     getHistoryCont () {
       var that = this
       that.ajax('/comment/getGoodsComment', {
-        spuId: 'SPU00001',
+        spuId: this.$route.params.spuId,
         pageSize: 5,
         pageNum: that.pageN
       }).then(res => {
@@ -221,6 +242,9 @@ export default {
       }
       that.FileUploadArr = []
       return FileIdStr
+    },
+    member () {
+      this.DrawerMember = true
     }
   }
 }
@@ -268,7 +292,8 @@ export default {
   margin-right: 10px;
   width: 18px;
 }
-  .showImg img {
-    width: 100%;
-  }
+.noComment {
+  text-align: center;
+  line-height: 300px;
+}
 </style>

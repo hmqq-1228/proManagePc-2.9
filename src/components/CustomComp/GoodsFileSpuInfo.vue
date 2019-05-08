@@ -6,14 +6,27 @@
       <div class="spuInfo base" v-bind:class="baseEdit">
         <!-- spu 基本信息 预览图 -->
         <div class="spuInfoItem ImgPre">
-          <div class="ImgPrePrimary"><img src="../../../static/img/papa.jpg" /></div>
-          <div class="ImgPreList">
-            <div class="ImgPreListItem"><img src="../../../static/img/papa.jpg" /></div>
-            <div class="ImgPreListItem"><img src="../../../static/img/papa.jpg" /></div>
-            <div class="ImgPreListItem"><img src="../../../static/img/papa.jpg" /></div>
-            <div class="ImgPreListItem"><img src="../../../static/img/papa.jpg" /></div>
-            <div class="ImgPreListItem"><img src="../../../static/img/papa.jpg" /></div>
+          <div class="ImgPrePrimary">
+            <!--../../../static/img/papa.jpg-->
+            <img :src="bigPreImg" />
           </div>
+          <div class="ImgPreList">
+            <div class="ImgPreListItem" v-for="(imgItem, index) in spuBaseImgList" v-bind:key="imgItem.previewUrl + '_' + index" v-on:click="smallPreClick($event, imgItem.previewUrl, imgItem.id)">
+              <img :src="imgItem.previewUrl" />
+            </div>
+          </div>
+          <div class="ImgPreEditBox" v-if="baseInfoEditStatus">
+            <div class="ImgPreEditAdd">
+              <Icon type="md-add" />
+              <div class="spuBaseInfoUpload">
+                <component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+              </div>
+            </div>
+            <div class="ImgPreEditAdd" v-on:click="removePreImg()"><Icon type="md-remove" /></div>
+          </div>
+          <!--<div class="spuBaseInfoUpload">-->
+            <!--<component v-bind:is="compArr.FileUploadComp" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
+          <!--</div>-->
         </div>
         <!-- spu 基本信息 商品名称 品牌名称 spu编码 -->
         <div class="spuInfoItem">
@@ -38,12 +51,12 @@
           <div class="spuInfoCnt">
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">品牌名称:</div>
-            <div class="spuInfoName" style="width: 187px; position: relative;">
+            <div class="spuInfoName select">
               <Select v-model="pinpaiNameVal" v-show="baseInfoEditStatus">
                 <Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="baseInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="baseInfoEditStatus" @click="editExtraSpuInfo({brandCode: pinpaiNameVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
               <!--<Dropdown :trigger="customM" :visible="dropdownShow">-->
                 <!--<span style="font-size: 12px; color: #515a6e">{{pinpaiNameVal}}</span>-->
@@ -94,7 +107,7 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">品牌代码:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="pinpaiCodeVal" :readonly="!baseInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="pinpaiCodeVal" :readonly="true" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="baseInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -123,8 +136,16 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel" style="text-align: justify">类目</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="classifyNameVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Cascader v-show="classifyInfoEditStatus" :data="options" @on-change="changeTree" trigger="hover" v-model="categoryCodeList"></Cascader>
+              <!--@on-change="changeTree"-->
+              <!--<Select v-model="classifyNameVal" v-show="classifyInfoEditStatus">-->
+                <!--<Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>-->
+              <!--</Select>-->
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({categoryName: categoryCodeVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="classifyNameVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -134,8 +155,14 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">物料类别</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="objClassifyNameVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Select v-model="objClassifyNameVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in materialType" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({materialCode: objClassifyNameVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="objClassifyNameVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -156,9 +183,15 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">适用人群</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="renqunNameVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Select v-model="renqunNameVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in intendedFor" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({intendedFor: renqunNameVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="renqunNameVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+                <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
             <!--<span class="spuInfoName">男/女孩通用</span>-->
@@ -167,9 +200,15 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">商品角色</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="goodsRoleNameVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Select v-model="goodsRoleNameVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in goodsRole" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({goodsRole: goodsRoleNameVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="goodsRoleNameVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+                <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
             <!--<span class="spuInfoName">S</span>-->
@@ -271,23 +310,18 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">使用阶段</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="jieduanVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Select v-model="jieduanVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in usageStage" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({usageStage: jieduanVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="jieduanVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
             <!--<span class="spuInfoName">0-6岁</span>-->
-          </div>
-          <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
-            <div class="spuInfoLabel">适用场景</div>
-            <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="changjingVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
-                <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
-              </i-input>
-            </div>
-            <!--<span class="spuInfoName">玩教场景</span>-->
           </div>
           <!--从采购复制-->
           <div class="spuInfoCnt">
@@ -305,8 +339,14 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">是否专利</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="zhuanliVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Select v-model="zhuanliVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in zhuanliOption" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({patents: zhuanliVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="zhuanliVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -338,12 +378,36 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">是否保修</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="baoxiuVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Select v-model="baoxiuVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in baoxiuOption" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({rapair: baoxiuVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="baoxiuVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
             <!--<span class="spuInfoName">否</span>-->
+          </div>
+          <!---->
+          <div class="spuInfoCnt">
+            <div class="requiredFlag">*</div>
+            <div class="spuInfoLabel">适用场景</div>
+            <div style="padding-top: 5px;">:</div>
+            <div class="spuInfoName select">
+              <Select v-model="changjingValArr" multiple v-show="classifyInfoEditStatus">
+                <Option v-for="brand in changjingArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({scene: changCodeVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="changjingVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+                <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
+              </i-input>
+            </div>
+            <!--<span class="spuInfoName">玩教场景</span>-->
           </div>
           <!---->
         </div>
@@ -355,7 +419,7 @@
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
               <i-input class="iptTest" v-model="classifyCodeVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
-                <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({categoryCode: classifyCodeVal})" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
             <!--<span class="spuInfoName">SL</span>-->
@@ -386,8 +450,14 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">风格</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="fenggeVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Select v-model="fenggeVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in desStyle" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({style: fenggeVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="fenggeVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -458,7 +528,13 @@
             <div class="spuInfoLabel">商品等级</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="dengjiVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+              <Select v-model="dengjiVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in goodsLevel" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({level: dengjiVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="dengjiVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -479,8 +555,14 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">季节</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="jijieVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Select v-model="jijieVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in season" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({season: jijieVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="jijieVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -490,8 +572,14 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">是否赠品</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="zengpinVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
+            <div class="spuInfoName select">
+              <Select v-model="zengpinVal" v-show="classifyInfoEditStatus">
+                <Option v-for="brand in zengArr" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+              </Select>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({giveaway: zengpinVal})" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="zengpinVal" :readonly="!classifyInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -567,10 +655,24 @@
 </template>
 
 <script>
+import FileUploadComp from '././FileUploadComp.vue'
 export default {
   name: 'GoodsFileSpuInfo',
+  components: {
+    FileUploadComp
+  },
   data () {
     return {
+      filUrl: '/file/uploadGoodsFileAjax',
+      FileUploadArr: [],
+      IsClear: false,
+      // 引入组件
+      compArr: {
+        FileUploadComp: 'FileUploadComp'
+      },
+      bigPreImg: '',
+      currentPreId: '',
+      spuBaseImgList: [],
       classifyEdit: 'readonly',
       classifyInfoEditStatus: false,
       classifyEditBtnText: '编辑',
@@ -594,7 +696,8 @@ export default {
       // 基本信息 负责人
       managerNameVal: '张三（XX事业部经理）',
       // 类目 所属类目
-      classifyNameVal: '玩教-学步类-帕帕类',
+      categoryCodeList: [],
+      classifyNameVal: '',
       // 类目 物料类别
       objClassifyNameVal: '成品',
       // 类目 系列
@@ -674,7 +777,50 @@ export default {
       ExtraSpuInfoId: '',
       dropdownShow: false,
       customM: 'custom',
-      brandTypeArr: []
+      brandTypeArr: [],
+      materialType: [],
+      intendedFor: [],
+      goodsRole: [],
+      usageStage: [],
+      zhuanliOption: [
+        {
+          dictCode: 0,
+          dictName: '否'
+        },
+        {
+          dictCode: 1,
+          dictName: '是'
+        }
+      ],
+      baoxiuOption: [
+        {
+          dictCode: 0,
+          dictName: '否'
+        },
+        {
+          dictCode: 1,
+          dictName: '是'
+        }
+      ],
+      zengArr: [
+        {
+          dictCode: 0,
+          dictName: '否'
+        },
+        {
+          dictCode: 1,
+          dictName: '是'
+        }
+      ],
+      changjingValArr: [],
+      changjingArr: [],
+      changCodeVal: '',
+      desStyle: [],
+      goodsLevel: [],
+      season: [],
+      options: [],
+      values: [],
+      categoryCodeVal: ''
     }
   },
   watch: {
@@ -689,6 +835,23 @@ export default {
       // this.classifyInfoEditStatus = !this.classifyInfoEditStatus
       this.classifyEditBtnText = newval ? '结束' : '编辑'
       this.classifyEdit = newval ? 'classifyEdit' : 'readonly'
+    },
+    classifyNameVal (val, old) {
+      this.log('classifyNameVal:', val)
+    },
+    changjingValArr (val, old) {
+      this.log('适用场景：', val)
+      var str = ''
+      if (val.length > 0) {
+        for (var i = 0; i < val.length; i++) {
+          var dou = ','
+          if (i === (val.length - 1)) {
+            dou = ''
+          }
+          str = str + val[i] + dou
+        }
+        this.changCodeVal = str
+      }
     }
   },
   created () {
@@ -699,6 +862,8 @@ export default {
     this.queryExtraSpuInfo()
     // 查询下来选择
     this.queryOptionType()
+    // 查询类目 树结构
+    this.queryClassifyTree()
   },
   methods: {
     baseEditBtn: function () {
@@ -712,12 +877,74 @@ export default {
       this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
       this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
     },
+    removePreImg: function () {
+      var that = this
+      // this.bigPreImg = preUrl
+      // this.currentPreId = currentPreId
+      var targetPreIndex = -1
+      for (var t = 0; t < that.FileUploadArr.length; t++) {
+        if (this.currentPreId === that.FileUploadArr[t].attachmentId) {
+          targetPreIndex = t
+        }
+      }
+      if (targetPreIndex >= 0) {
+        that.FileUploadArr.splice(targetPreIndex, 1)
+        that.editBaseSpuInfo({attachmentId: that.SetFileIdStr()})
+      }
+    },
+    // 拼接附件上传的id为字符串
+    SetFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.FileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.FileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
+      }
+      that.FileUploadArr = []
+      return FileIdStr
+    },
+    // 获取附件上传组件发来的附件信息 新组件
+    GetFileInfo (obj) {
+      var that = this
+      if (obj) {
+        this.IsClear = false
+      }
+      this.FileUploadArr = this.FileUploadArr.concat(obj)
+      // this.FileUploadArr = obj
+      this.log('上传：', obj)
+      this.editBaseSpuInfo({attachmentId: that.SetFileIdStr()})
+    },
+    smallPreClick: function (e, preUrl, currentPreId) {
+      var obj = e.currentTarget
+      $(obj).addClass('active').siblings().removeClass('active')
+      this.bigPreImg = preUrl
+      this.currentPreId = currentPreId
+    },
     querySpuBaseInfo: function () {
       var that = this
       this.ajax('/archives/getSpuBasic', {spuId: that.spuId}).then(res => {
         that.log('getSpuBasic:', res)
         if (res.code === 200) {
+          that.FileUploadArr = []
+          for (var r = 0; r < res.data.attachmentList.length && res.data.attachmentList.length > 0; r++) {
+            that.log('9999:', res.data.attachmentList[r].id)
+            var imgobj = {
+              attachmentId: res.data.attachmentList[r].id,
+              fileName: res.data.attachmentList[r].showName,
+              previewUrl: res.data.attachmentList[r].previewUrl
+            }
+            that.FileUploadArr.push(imgobj)
+          }
+          that.spuBaseImgList = res.data.attachmentList
+          if (res.data.attachmentList.length > 0) {
+            that.currentPreId = res.data.attachmentList[0].id
+            that.bigPreImg = res.data.attachmentList[0].previewUrl
+          }
           that.editFlag = res.data.editFlag
+          // that.FileUploadArr = res.data.attachmentList
           // that.baseInfoEditStatus = res.data.editFlag
           // that.customM = that.baseInfoEditStatus ? 'click' : 'custom'
           that.goodsNameVal = res.data.spuName
@@ -730,13 +957,35 @@ export default {
         }
       })
     },
+    // 选择类目
+    changeTree (val) {
+      this.categoryCodeVal = val[val.length - 1]
+    },
+    // goods/getGoodsClassifyTree
+    queryClassifyTree: function () {
+      var that = this
+      this.ajax('/goods/getGoodsClassifyTree', {}).then(res => {
+        that.log('getGoodsClassifyTree:', res)
+        if (res.code === 200) {
+          this.options = res.data
+        }
+      })
+    },
     queryOptionType: function () {
       var that = this
       this.ajax('/archives/getOptionType', {}).then(res => {
         if (res.code === 200) {
           that.brandTypeArr = res.data.brandType
+          that.materialType = res.data.materialType
+          that.intendedFor = res.data.intendedFor
+          that.goodsRole = res.data.goodsRole
+          that.usageStage = res.data.usageStage
+          that.desStyle = res.data.style
+          that.goodsLevel = res.data.goodsLevel
+          that.season = res.data.season
+          that.changjingArr = res.data.scene
         }
-        that.log('getOptionType:', res)
+        that.log('getOptionType：1:', res)
       })
     },
     queryExtraSpuInfo: function () {
@@ -748,6 +997,8 @@ export default {
           that.ExtraEditFlag = res.data.editFlag
           // that.classifyInfoEditStatus = res.data.editFlag
           // 类目 所属类目
+          that.log('请求：', res.data.categoryNameMsg)
+          that.categoryCodeList = res.data.categoryCodeList
           that.classifyNameVal = res.data.categoryNameMsg
           // 类目 物料类别
           that.objClassifyNameVal = res.data.materialType
@@ -837,8 +1088,12 @@ export default {
     editBaseSpuInfo: function (obj) {
       var that = this
       obj.spuId = that.spuId
+      this.log('8888:', obj)
       this.ajax('/archives/editSpuBasic', JSON.stringify(obj)).then(res => {
-        that.log('editSpuInfo:', res)
+        that.log('editSpuBasic:', res)
+        if (res.code === 200) {
+          that.querySpuBaseInfo()
+        }
       })
     }
   }
@@ -879,6 +1134,7 @@ export default {
   .ImgPrePrimary{
     width: 150px;
     height: 150px;
+    background-color: #eee;
   }
   .ImgPreList{
     display: flex;
@@ -886,9 +1142,13 @@ export default {
     justify-content: center;
   }
   .ImgPreListItem{
+    border: 1px solid #ccc;
     width: 20px;
     height: 20px;
     margin-right: 5px;
+  }
+  .ImgPreListItem.active{
+    border: 1px solid #333;
   }
   .ImgPreListItem:last-child{
     margin-right: 0;
@@ -896,6 +1156,41 @@ export default {
   .spuInfoItem.ImgPre{
     margin-right: 20px;
     padding-top: 0;
+    position: relative;
+  }
+  .ImgPreEditBox{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    justify-content: right;
+  }
+  .ImgPreEditBox>div{
+    width: 18px;
+    height: 18px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 18px;
+    background: rgba(0,0,0, 0.2);
+    padding: 0px;
+    margin-left: 5px;
+    border-radius: 8px;
+  }
+  .ImgPreEditBox>div>i{
+    margin-left: 2px;
+  }
+  .ImgPreEditAdd{
+    position: relative;
+    overflow: hidden;
+  }
+  .spuBaseInfoUpload{
+    width: 100%;
+    height: 50px;
+    opacity: 0;
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: rgba(0,0,0,0.2);
   }
   .spuInfoItem{
     padding-top: 10px;
@@ -921,6 +1216,11 @@ export default {
     margin-left: 5px;
     font-weight: bold;
   }
+  .base .spuInfoName.select{
+    width: 187px;
+    position: relative;
+    /*flex-grow: 1;*/
+  }
   .classify .spuInfoLabel{
     width: 63px;
     padding-top: 6px;
@@ -935,6 +1235,11 @@ export default {
   .classify .spuInfoName{
     width: 150px;
     margin-left: 5px;
+    /*flex-grow: 1;*/
+  }
+  .classify .spuInfoName.select{
+    width: 150px;
+    position: relative;
     /*flex-grow: 1;*/
   }
   .spuInfoCnt{
@@ -957,7 +1262,7 @@ export default {
     margin-left: 5px;
     padding-top: 3px;
   }
-  .spuInfoName{
+  .classify .spuInfoName.select{
     /*display: inline-block;*/
     /*overflow:hidden;*/
     /*text-overflow:ellipsis;*/
