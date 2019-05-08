@@ -7,8 +7,8 @@
            <div class="left">
               <div class="skuCode">
                 <i style="color:red;font-size: 16px">*</i>&nbsp;&nbsp;<span>SKU</span>: <span v-if="!item.isEdit">{{item.skuCode}}</span>
-                <i-input placeholder="请输入" style="width: 140px" v-model="item.skuCode" v-if="item.isEdit" @on-enter="submit(item.skuCode, 'skuCode', item)">
-                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.skuCode, 'skuCode', item)"/>
+                <i-input placeholder="请输入" style="width: 140px" v-model="item.skuCode" v-if="item.isEdit" @on-enter="submit(item.skuCode, 'skuCode', item)" v-on:input="detection($event,'skuCode',index)">
+                  <Icon type="ios-arrow-dropdown-circle" slot="suffix" :id="'skuCode-'+ index" style="color:#808695;font-size: 20px" @click="submit(item.skuCode, 'skuCode', item, index)"/>
                 </i-input>
               </div>
               <div class="imgBox" v-show="!item.isEdit">
@@ -22,7 +22,7 @@
                </div>
              </div>
            </div>
-           <div class="right" v-show="!item.isEdit">
+           <div class="right" v-if="!item.isEdit">
               <div class="leftName">
                 <i style="color:red;font-size: 16px">*</i>&nbsp;&nbsp;<span>年份</span>：{{item.yearDigital}}
               </div>
@@ -44,52 +44,54 @@
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -1em;letter-spacing:1em">颜色</span>：
                <!--type="color"-->
-               <input type="color" placeholder="请输入" style="width: 70px;outline: none" v-model="item.color" disabled="true" v-if="item.color.indexOf('#') != -1">
-               <span v-else>{{item.color}}</span>
+               <span v-if="item.color">
+                 <input type="color" placeholder="请输入" style="width: 70px;outline: none" v-model="item.color" disabled="true" v-if="item.color.indexOf('#') != -1">
+                 <span v-else>{{item.color}}</span>
+               </span>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -2em;letter-spacing:2em">规格</span>：{{item.standards}}
              </div>
            </div>
-           <div class="right" v-show="item.isEdit">
+           <div class="right" v-if="item.isEdit">
              <div class="leftName">
                <i style="color:red;font-size: 16px">*</i>&nbsp;&nbsp;<span>年份</span>：
                <!--type="number" dd -->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.yearDigital" @on-enter="submit(item.yearDigital, 'yearDigital', item, index)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.yearDigital, 'yearDigital', item, index)"/>
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.yearDigital" @on-enter="submit(item.yearDigital, 'yearDigital', item, index)" v-on:input="detection($event,'yearDigital',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'yearDigital-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.yearDigital, 'yearDigital', item, index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>零售价</span>：
                <!--type="number" dd -->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.retailPrice" @on-enter="submit(item.retailPrice, 'retailPrice', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.retailPrice, 'retailPrice', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.retailPrice" @on-enter="submit(item.retailPrice, 'retailPrice', item)" v-on:input="detection($event,'retailPrice',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'retailPrice-'+ index" slot="suffix" style="color:#808695;font-size: 20px;" @click="submit(item.retailPrice, 'retailPrice', item, index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>吊牌价</span>：
                <!--type="number" dd -->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.tagPrice" @on-enter="submit(item.tagPrice, 'tagPrice', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.tagPrice, 'tagPrice', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.tagPrice" @on-enter="submit(item.tagPrice, 'tagPrice', item)" v-on:input="detection($event,'tagPrice',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'tagPrice-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.tagPrice, 'tagPrice', item, index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>固定成本</span>：
                <!--type="number" dd -->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.costPrice" @on-enter="submit(item.costPrice, 'costPrice', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.costPrice, 'costPrice', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.costPrice" @on-enter="submit(item.costPrice, 'costPrice', item)" v-on:input="detection($event,'costPrice',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'costPrice-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.costPrice, 'costPrice', item,index)"/>
                </i-input>
              </div>
              <div class="leftName" style="width: 260px;margin-right: 25px">
                <i style="color:red;font-size: 16px">*</i>&nbsp;&nbsp;<span>第三方SKU编码</span>：
-               <i-input placeholder="请输入" style="width: 120px" v-model="item.thirdSkuCode" @on-enter="submit(item.thirdSkuCode, 'thirdSkuCode', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.thirdSkuCode, 'thirdSkuCode', item)"/>
+               <i-input placeholder="请输入" style="width: 120px" v-model="item.thirdSkuCode" @on-enter="submit(item.thirdSkuCode, 'thirdSkuCode', item)" v-on:input="detection($event,'thirdSkuCode',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'thirdSkuCode-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.thirdSkuCode, 'thirdSkuCode', item,index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -1em;letter-spacing:1em">条码</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.barCode" @on-enter="submit(item.barCode, 'barCode', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.barCode, 'barCode', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.barCode" @on-enter="submit(item.barCode, 'barCode', item)" v-on:input="detection($event,'barCode',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'barCode-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.barCode, 'barCode', item,index)"/>
                </i-input>
              </div>
              <div class="leftName">
@@ -99,13 +101,13 @@
                <!--</i-input>-->
                <!--<input type="color" style="width: 120px" v-model="item.color" v-if="!isChina(item.color)">-->
                <!--<input type="color" value="#ffffff" v-model="item.color" style="width: 120px;border: none" v-else>-->
-               <el-color-picker v-model="item.color" style="width: 120px;float: left"></el-color-picker>
-               <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer;float:left;margin-left: 10px;margin-top: 5px" @click="submit(item.color, 'color', item)"/>
+               <el-color-picker v-model="item.color" style="width: 120px;float: left" @change="changeColor($event,'color',index)"></el-color-picker>
+               <Icon type="ios-arrow-dropdown-circle" :id="'color-'+ index" slot="suffix" style="color:#808695;font-size: 20px;cursor: pointer;float:left;margin-left: 10px;margin-top: 5px" @click="submit(item.color, 'color', item,index)"/>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -2em;letter-spacing:2em">规格</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.standards" @on-enter="submit(item.standards, 'standards', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.standards, 'standards', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.standards" @on-enter="submit(item.standards, 'standards', item)" v-on:input="detection($event,'standards',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'standards-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.standards, 'standards', item,index)"/>
                </i-input>
              </div>
            </div>
@@ -131,115 +133,119 @@
            </div>
            <div class="detail-left" v-if="item.isEdit">
              <div class="sku-info" style="width: 260px;margin-right: 40px;"><i>*</i>&nbsp;&nbsp;<span>零售价的价格段</span>：
-               <Select v-model="item.priceSegment" style="width: 100px" filterable >
+               <Select v-model="item.priceSegment" style="width: 100px" filterable @on-change="changeValue($event,'priceSegment',index)">
                  <Option v-for="item in slideData" :value="item.dictCode" :key="item.dictCode">{{ item.dictName }}</Option>
                </Select>
-               <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.priceSegment, 'priceSegment', item)"/>
+               <Icon type="ios-arrow-dropdown-circle" :id="'priceSegment-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.priceSegment, 'priceSegment', item,index)"/>
              </div>
              <div class="sku-info"><span style="margin-right: -0.3em;letter-spacing:0.3em">税率（%）</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.taxRate" v-if="item.isEdit" type="number" @on-enter="submit(item.taxRate, 'taxRate', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.taxRate, 'taxRate', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.taxRate" type="number" @on-enter="submit(item.taxRate, 'taxRate', item)" v-on:input="detection($event,'taxRate',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'taxRate-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.taxRate, 'taxRate', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.4em;letter-spacing:0.4em">附加功能</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.otherFunctions" v-if="item.isEdit" @on-enter="submit(item.otherFunctions, 'otherFunctions', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.otherFunctions, 'otherFunctions', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.otherFunctions" @on-enter="submit(item.otherFunctions, 'otherFunctions', item)" v-on:input="detection($event,'otherFunctions',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'otherFunctions-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.otherFunctions, 'otherFunctions', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span  style="margin-right: -3.1em;letter-spacing:3.1em">成分</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.component" v-if="item.isEdit" @on-enter="submit(item.component, 'component', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.component, 'component', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.component"  @on-enter="submit(item.component, 'component', item)" v-on:input="detection($event,'component',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'component-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.component, 'component', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -2.5em;letter-spacing:2.5em">口味</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.flavor" v-if="item.isEdit" @on-enter="submit(item.flavor, 'flavor', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.flavor, 'flavor', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.flavor" @on-enter="submit(item.flavor, 'flavor', item)" v-on:input="detection($event,'flavor',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'flavor-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.flavor, 'flavor', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -4.3em;letter-spacing:4.3em">气味</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.smell" v-if="item.isEdit" @on-enter="submit(item.smell, 'smell', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.smell, 'smell', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.smell"  @on-enter="submit(item.smell, 'smell', item)" v-on:input="detection($event,'smell',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'smell-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.smell, 'smell', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">高（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.hight" v-if="item.isEdit" @on-enter="submit(item.hight, 'hight', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.hight, 'hight', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.hight"  @on-enter="submit(item.hight, 'hight', item)" v-on:input="detection($event,'hight',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'hight-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.hight, 'hight', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">长（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.length" v-if="item.isEdit" @on-enter="submit(item.length, 'length', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.length, 'length', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.length"  @on-enter="submit(item.length, 'length', item)" v-on:input="detection($event,'length',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'length-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.length, 'length', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span>宽（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.width" v-if="item.isEdit" @on-enter="submit(item.width, 'width', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.width, 'width', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.width" @on-enter="submit(item.width, 'width', item)" v-on:input="detection($event,'width',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'width-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.width, 'width', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -4.3em;letter-spacing:4.3em">体积</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.volume" v-if="item.isEdit" @click="on-enter(item.volume, 'volume', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.volume, 'volume', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.volume" v-if="item.isEdit" @click="on-enter(item.volume, 'volume', item)" v-on:input="detection($event,'volume',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'volume-'+ index"  slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.volume, 'volume', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span>毛重（kg）</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.weight" v-if="item.isEdit" type="number" @on-enter="submit(item.weight, 'weight', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.weight, 'weight', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.weight" v-if="item.isEdit" type="number" @on-enter="submit(item.weight, 'weight', item)" v-on:input="detection($event,'weight',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'weight-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.weight, 'weight', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span>抛重（kg）</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.throwWeight" v-if="item.isEdit" type="number" @on-enter="submit(item.throwWeight, 'throwWeight', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.throwWeight, 'throwWeight', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.throwWeight" v-if="item.isEdit" type="number" @on-enter="submit(item.throwWeight, 'throwWeight', item)" v-on:input="detection($event,'throwWeight',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'throwWeight-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.throwWeight, 'throwWeight', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span>是否计抛</span>：
-               <Select v-model="item.throwCalculation" style="width: 120px">
+               <Select v-model="item.throwCalculation" style="width: 120px" @on-change="changeValue($event,'throwCalculation',index)">
                  <Option v-for="item in throwCalculation" :value="item.value" :key="item.value">{{ item.label }}</Option>
                </Select>
-               <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.throwCalculation, 'throwCalculation', item)"/>
+               <Icon type="ios-arrow-dropdown-circle" :id="'throwCalculation-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.throwCalculation, 'throwCalculation', item,index)"/>
              </div>
              <div class="sku-info" style="width:260px;margin-right: 45px;"><span>PCS（包装）</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.pack" v-if="item.isEdit" @on-enter="submit(item.pack, 'pack', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.pack, 'pack', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.pack" @on-enter="submit(item.pack, 'pack', item)" v-on:input="detection($event,'pack',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'pack-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.pack, 'pack', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.35em;letter-spacing:0.35em">中包规格</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.middleStandards" v-if="item.isEdit" @on-enter="submit(item.middleStandards, 'middleStandards', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.middleStandards, 'middleStandards', item)"/>
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.middleStandards" @on-enter="submit(item.middleStandards, 'middleStandards', item)" v-on:input="detection($event,'middleStandards',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'middleStandards-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.middleStandards, 'middleStandards', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info" style="width:296px;margin-right:0px "><span>外箱尺寸（长*宽*高cm）</span>：
-               <i-input placeholder="请输入" style="width: 120px" v-model="item.outerBoxSize" v-if="item.isEdit" @on-enter="submit(item.outerBoxSize, 'outerBoxSize', item)">
-                 <Icon type="ios-arrow-dropdown-circle" slot="suffix" style="color:#5C6B77;font-size: 20px;cursor: pointer" @click="submit(item.outerBoxSize, 'outerBoxSize', item)"/>
+               <i-input placeholder="请输入" style="width: 120px" v-model="item.outerBoxSize" @on-enter="submit(item.outerBoxSize, 'outerBoxSize', item,index)" v-on:input="detection($event,'outerBoxSize',index)">
+                 <Icon type="ios-arrow-dropdown-circle" :id="'outerBoxSize-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.outerBoxSize, 'outerBoxSize', item,index)"/>
                </i-input>
              </div>
            </div>
            <div class="detail-right" v-if="item.editFlag">
              <!--<span style="position: absolute;bottom:45px;right:110px;">{{time}}</span>-->
-             <el-button type="primary" size="small" style="position: absolute;bottom:40px;right:40px;" v-if="!item.isEdit" @click="edit(item, index)">编辑</el-button>
-             <el-button size="small" v-if="item.isEdit"  style="position: absolute;bottom:40px;right:40px;" @click="finish(item, index)">结束</el-button>
+             <el-button type="primary" size="small" style="position: absolute;bottom:40px;right:40px;" v-if="!item.isEdit" @click.stop="edit(item, index)">编辑</el-button>
+             <el-button size="small" v-if="item.isEdit"  style="position: absolute;bottom:40px;right:40px;" @click.stop="finish(item, index)">结束</el-button>
              <!--<el-button type="info" plain disabled size="small" v-if="">信息按钮</el-button>-->
              <!--<p style="position: absolute;bottom:10px;right:40px;">{{tip}}</p>-->
              <div v-show="item.isEdit">
-                 <upload  v-bind:FileDataList="item.proFileList"  v-bind:clearInfo="item.IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl" style="margin-left: 0px;float: left;" fileFormId="skuInfo"></upload>
-                 <Button  style="position: absolute;right:10px;top:10px;" shape="circle" @click="submitFile(item, index)">提交图片</Button>
+                 <upload  v-bind:FileDataList="item.proFileList"  v-bind:clearInfo="item.IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl" style="margin-left: 0px;float: left;" fileFormId="skuInfo" :buttonStr="buttonStr" :selectType="selectType"></upload>
+                 <Button  style="position: absolute;right:10px;top:10px;" shape="circle" @click.stop="submitFile(item, index)">提交图片</Button>
              </div>
            </div>
          </div>
          <div class="drop">
-           <!--<i :class="{'el-icon-caret-top':item.show,'el-icon-caret-bottom':!item.show}"></i>-->
-           <!--<el-button type="primary" size="small" style="float: right;margin-right: 60px;margin-top: 10px;" v-if="item.show" @click.stop="edit">编辑</el-button>-->
-           <div class="triangle-down" v-if="!item.show" @click="slidedown(item,index)">
-             <span></span>
+           <!--<div class="triangle-down" v-if="!item.show" @click="slidedown(item,index)">-->
+             <!--<span></span>-->
+           <!--</div>-->
+           <!--<div class="triangle-up" v-if="item.show" @click="slideup(item,index)">-->
+             <!--<span></span>-->
+           <!--</div>-->
+           <div class="dropDown" @click="slidedown(item,index)" v-if="!item.show">
+             <i class="el-icon-arrow-down"></i>展开
            </div>
-           <div class="triangle-up" v-if="item.show" @click="slideup(item,index)">
-             <span></span>
+           <div class="dropUp" @click="slideup(item,index)" v-if="item.show">
+             <i class="el-icon-arrow-up"></i>收缩
            </div>
          </div>
        </div>
-       <div style="width: 100%;height: 50px;float: left;text-align: center" v-if="skuList.length>0">
+       <div style="width: 100%;height: 50px;float: left;text-align: center;margin-top: 15px" v-if="skuList.length>0">
          <Page :total="total" :page-size="pageSize" show-elevator style="margin: 0 auto;" size="small" @on-change="changePage"/>
        </div>
        <div class="listNone" v-if="skuList.length===0">暂无相关的SKU信息</div>
@@ -265,6 +271,8 @@ export default {
   props: ['slideData'],
   data () {
     return {
+      buttonStr: '选择图片',
+      selectType: '图片',
       FileUploadArr: [],
       // 附件上传 回显
       proFileList: [],
@@ -336,25 +344,16 @@ export default {
   watch: {
   },
   methods: {
-    // 判断颜色是否为汉字
-    isChina (s) {
-      //   var index = escape(s).indexOf('%u')
-      //   if (index < 0) {
-      //     console.log(1111111111111)
-      //     return false
-      //   } else {
-      //     console.log(111111122222222221)
-      //     return true
-      //   }
-      // } else {
-      //   return false
-      // }
-      var patrn = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi
-      if (!patrn.exec(s)) {
-        return false
-      } else {
-        return true
-      }
+    detection (val, name, index) {
+      $('#' + name + '-' + index).css({color: '#2d8cf0', cursor: 'pointer'})
+    },
+    // 改变颜色
+    changeColor (e, name, index) {
+      $('#' + name + '-' + index).css({color: '#2d8cf0', cursor: 'pointer'})
+    },
+    changeValue (e, name, index) {
+      console.log(111)
+      $('#' + name + '-' + index).css({color: '#2d8cf0', cursor: 'pointer'})
     },
     // 翻页
     changePage (val) {
@@ -406,6 +405,7 @@ export default {
       this.ajax('/archives/editSku', JSON.stringify(obj)).then(res => {
         if (res.code === 200) {
           this.$message.success(res.msg)
+          $('#' + parameter + '-' + index).css({color: '#808695', cursor: 'Default'})
           $('.ivu-input').blur()
           this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
           })
@@ -654,6 +654,32 @@ export default {
     position: absolute;
     left: -13px;
     top: -15px;
+  }
+  .skuInfo .drop .dropDown {
+    width: 50px;
+    height: 25px;
+    border: 1px solid #ccc;
+    border-top:none;
+    margin: -1px auto;
+    background:#fff;
+    line-height: 25px;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .skuInfo .drop .dropUp {
+    width: 50px;
+    height: 25px;
+    border: 1px solid #ccc;
+    border-top:#FAFAFA;
+    margin: -1px auto;
+    background:#fff;
+    line-height: 25px;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+    position: relative;
+    z-index: 5;
   }
   .skuInfo .drop .triangle-up {
     width: 0;
