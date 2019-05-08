@@ -45,7 +45,7 @@
             <div class="spuInfoLabel">品牌名称:</div>
             <div class="spuInfoName select">
               <Select v-model="pinpaiNameVal" v-show="baseInfoEditStatus">
-                <Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+                <Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({brandCode: pinpaiNameVal})" type="md-checkmark-circle" slot="suffix" />
@@ -275,7 +275,7 @@
             <div class="spuInfoLabel">物料代码</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="wuliaoCodeVal" :readonly="!classifyInfoEditStatus" placeholder="请输入物料代码" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="wuliaoCodeVal" :readonly="classifyInfoEditStatus" placeholder="请输入物料代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -309,7 +309,7 @@
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
               <Select v-model="jieduanVal" v-show="classifyInfoEditStatus">
-                <Option v-for="brand in usageStage" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+                <Option v-for="brand in usageStage" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({usageStage: jieduanVal})" type="md-checkmark-circle" slot="suffix" />
@@ -338,7 +338,7 @@
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
               <Select v-model="zhuanliVal" v-show="classifyInfoEditStatus">
-                <Option v-for="brand in zhuanliOption" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+                <Option v-for="brand in zhuanliOption" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({patents: zhuanliVal})" type="md-checkmark-circle" slot="suffix" />
@@ -377,7 +377,7 @@
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
               <Select v-model="baoxiuVal" v-show="classifyInfoEditStatus">
-                <Option v-for="brand in baoxiuOption" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+                <Option v-for="brand in baoxiuOption" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({rapair: baoxiuVal})" type="md-checkmark-circle" slot="suffix" />
@@ -449,7 +449,7 @@
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
               <Select v-model="fenggeVal" v-show="classifyInfoEditStatus">
-                <Option v-for="brand in desStyle" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+                <Option v-for="brand in desStyle" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({style: fenggeVal})" type="md-checkmark-circle" slot="suffix" />
@@ -526,7 +526,7 @@
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
               <Select v-model="dengjiVal" v-show="classifyInfoEditStatus">
-                <Option v-for="brand in goodsLevel" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+                <Option v-for="brand in goodsLevel" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({level: dengjiVal})" type="md-checkmark-circle" slot="suffix" />
@@ -554,7 +554,7 @@
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
               <Select v-model="jijieVal" v-show="classifyInfoEditStatus">
-                <Option v-for="brand in season" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+                <Option v-for="brand in season" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({season: jijieVal})" type="md-checkmark-circle" slot="suffix" />
@@ -571,7 +571,7 @@
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
               <Select v-model="zengpinVal" v-show="classifyInfoEditStatus">
-                <Option v-for="brand in zengArr" :key="brand.dictCode" :value="brand.dictName">{{ brand.dictName }}</Option>
+                <Option v-for="brand in zengArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({giveaway: zengpinVal})" type="md-checkmark-circle" slot="suffix" />
@@ -1012,12 +1012,11 @@ export default {
     querySpuBaseInfo: function () {
       var that = this
       this.ajax('/archives/getSpuBasic', {spuId: that.spuId}).then(res => {
-        that.log('getSpuBasic:', res)
+        // that.log('getSpuBasic:', res)
         if (res.code === 200) {
           that.FileUploadArr = []
           for (var r = 0; r < res.data.attachmentList.length && res.data.attachmentList.length > 0; r++) {
             var offsetObj = that.getImgOffset(res.data.attachmentList[r].previewUrl, 150)
-            that.log('偏移量对象：', offsetObj)
             res.data.attachmentList[r].marginTop = offsetObj.top
             res.data.attachmentList[r].marginLeft = offsetObj.left
             var imgobj = {
@@ -1173,6 +1172,12 @@ export default {
       this.log('obj:', obj)
       this.ajax('/archives/editSpuInfo', JSON.stringify(obj)).then(res => {
         that.log('editSpuInfo:', res)
+        if (res.code === 200) {
+          that.$Message.success('保存成功')
+          that.queryExtraSpuInfo()
+        } else {
+          that.$Message.success(res.msg)
+        }
       })
     },
     editBaseSpuInfo: function (obj) {
@@ -1182,7 +1187,10 @@ export default {
       this.ajax('/archives/editSpuBasic', JSON.stringify(obj)).then(res => {
         that.log('editSpuBasic:', res)
         if (res.code === 200) {
+          that.$Message.success('保存成功')
           that.querySpuBaseInfo()
+        } else {
+          that.$Message.success(res.msg)
         }
       })
     }
@@ -1243,7 +1251,7 @@ export default {
     display: flex;
     padding: 10px;
     border: 1px solid #ddd;
-    background-color: #f5f5f8;
+    background-color: #f5f8fa;
   }
   .ImgPrePrimary{
     width: 150px;
