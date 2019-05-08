@@ -10,7 +10,10 @@
     <div class="serTag">
       <div class="wrap">
         <div class="label">商品品牌:</div>
-        <div class="content">
+        <div class="content" v-if="codeArr.length === 0">
+          <div class="cntItem brand" :class="'c_' + item.code === 'c_' ? 'active' : ''"  @click="btnClick($event, item.code, 'brand')" v-for="item in pinpaiLevel" :key="item.code">{{item.categoryName}}</div>
+        </div>
+        <div class="content" v-if="codeArr.length > 0">
           <div class="cntItem brand" :class="'c_' + item.code"  @click="btnClick($event, item.code, 'brand')" v-for="item in pinpaiLevel" :key="item.code">{{item.categoryName}}</div>
         </div>
       </div>
@@ -367,6 +370,14 @@ export default {
           this.pinpaiLevel = res.data.brandType
           if (this.$store.state.codeArr.length > 0) {
             that.routerFuc(this.$store.state.codeArr, 'ini')
+            // $('.c_').removeClass('active')
+          } else if (this.$store.state.codeArr.length === 0) {
+            // console.log(111111111)
+            // for (var i = 0; i < res.data.brandType.length; i++) {
+            //   if (res.data.brandType[i].code === '') {
+            // $('.c_').addClass('active')
+            //   }
+            // }
           }
         }
       })
