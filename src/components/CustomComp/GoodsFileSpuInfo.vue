@@ -44,11 +44,11 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">品牌名称:</div>
             <div class="spuInfoName select">
-              <Select v-model="pinpaiNameVal" v-show="baseInfoEditStatus" @on-change="changeValue($event,'pinpaiNameVal')">
+              <Select v-model="pinpaiCodeVal" v-show="baseInfoEditStatus" @on-change="changeValue($event,'pinpaiNameVal')">
                 <Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="baseInfoEditStatus" id="pinpaiNameVal" @click="editBaseSpuInfo({brandCode: pinpaiNameVal},'pinpaiNameVal')" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="baseInfoEditStatus" id="pinpaiNameVal" @click="editBaseSpuInfo({brandCode: pinpaiCodeVal},'pinpaiNameVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <!--<Dropdown :trigger="customM" :visible="dropdownShow">-->
                 <!--<span style="font-size: 12px; color: #515a6e">{{pinpaiNameVal}}</span>-->
@@ -139,9 +139,9 @@
             <div class="spuInfoLabel" style="text-align: justify">类目</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Cascader v-show="classifyInfoEditStatus" :data="options" @on-change="changeTree" trigger="hover" v-model="categoryCodeList"></Cascader>
+              <Cascader v-show="classifyInfoEditStatus" :data="options" @on-change="changeTree($event,'categoryCodeList')" trigger="hover" v-model="categoryCodeList"></Cascader>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({categoryName: categoryCodeVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="categoryCodeList" @click="editExtraSpuInfo({categoryName: categoryCodeVal},'categoryCodeList')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="classifyNameVal" :readonly="!classifyInfoEditStatus" placeholder="请选择类目" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -153,11 +153,11 @@
             <div class="spuInfoLabel">物料类别</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="objClassifyCodeVal" v-show="classifyInfoEditStatus">
+              <Select v-model="objClassifyCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'objClassifyCodeVal')">
                 <Option v-for="brand in materialType" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({materialCode: objClassifyCodeVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="objClassifyCodeVal" @click="editExtraSpuInfo({materialCode: objClassifyCodeVal},'objClassifyCodeVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="objClassifyNameVal" :readonly="!classifyInfoEditStatus" placeholder="请选择物料类别" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -181,11 +181,11 @@
             <div class="spuInfoLabel">适用人群</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="renqunCodeVal" v-show="classifyInfoEditStatus">
+              <Select v-model="renqunCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'renqunCodeVal')">
                 <Option v-for="brand in intendedFor" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({intendedFor: renqunCodeVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="renqunCodeVal" @click="editExtraSpuInfo({intendedFor: renqunCodeVal},'renqunCodeVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="renqunNameVal" :readonly="!classifyInfoEditStatus" placeholder="请选择适用人群" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -198,11 +198,11 @@
             <div class="spuInfoLabel">商品角色</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="goodsRoleNameVal" v-show="classifyInfoEditStatus">
+              <Select v-model="goodsRoleNameVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'goodsRoleNameVal')">
                 <Option v-for="brand in goodsRole" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({goodsRole: goodsRoleNameVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="goodsRoleNameVal" @click="editExtraSpuInfo({goodsRole: goodsRoleNameVal},'goodsRoleNameVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="goodsRoleNameVal" :readonly="!classifyInfoEditStatus" placeholder="请选择商品角色" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -337,11 +337,11 @@
             <div class="spuInfoLabel">是否专利</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="zhuanliVal" v-show="classifyInfoEditStatus">
+              <Select v-model="zhuanliVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'zhuanliVal')">
                 <Option v-for="brand in zhuanliOption" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({patents: zhuanliVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="zhuanliVal" @click="editExtraSpuInfo({patents: zhuanliVal},'zhuanliVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="patentName" :readonly="!classifyInfoEditStatus" placeholder="请选择是否专利" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -376,11 +376,11 @@
             <div class="spuInfoLabel">是否保修</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="baoxiuVal" v-show="classifyInfoEditStatus">
+              <Select v-model="baoxiuVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'baoxiuVal')">
                 <Option v-for="brand in baoxiuOption" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({rapair: baoxiuVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="baoxiuVal" @click="editExtraSpuInfo({rapair: baoxiuVal},'baoxiuVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="rapairName" :readonly="!classifyInfoEditStatus" placeholder="请选择是否保修" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -394,11 +394,11 @@
             <div class="spuInfoLabel">适用场景</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="changjingValArr" multiple v-show="classifyInfoEditStatus">
+              <Select v-model="changjingValArr" multiple v-show="classifyInfoEditStatus" @on-change="changeValue($event,'changjingValArr')">
                 <Option v-for="brand in changjingArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({scene: changCodeVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="changjingValArr" @click="editExtraSpuInfo({scene: changCodeVal},'changjingValArr')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="changjingVal" :readonly="!classifyInfoEditStatus" placeholder="请选择适用场景" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -448,11 +448,11 @@
             <div class="spuInfoLabel">风格</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="fenggeCodeVal" v-show="classifyInfoEditStatus">
+              <Select v-model="fenggeCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'fenggeCodeVal')">
                 <Option v-for="brand in desStyle" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({style: fenggeCodeVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="fenggeCodeVal" @click="editExtraSpuInfo({style: fenggeCodeVal},'fenggeCodeVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="fenggeVal" :readonly="!classifyInfoEditStatus" placeholder="请输入所属风格" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -553,11 +553,11 @@
             <div class="spuInfoLabel">季节</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="jijieCodeVal" v-show="classifyInfoEditStatus">
+              <Select v-model="jijieCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'jijieCodeVal')">
                 <Option v-for="brand in season" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({season: jijieCodeVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="jijieCodeVal" @click="editExtraSpuInfo({season: jijieCodeVal},'jijieCodeVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="jijieVal" :readonly="!classifyInfoEditStatus" placeholder="请选择季节" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -570,11 +570,11 @@
             <div class="spuInfoLabel">是否赠品</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="zengpinVal" v-show="classifyInfoEditStatus">
+              <Select v-model="zengpinVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'zengpinVal')">
                 <Option v-for="brand in zengArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({giveaway: zengpinVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" id="zengpinVal" @click="editExtraSpuInfo({giveaway: zengpinVal},'zengpinVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="giveawayName" :readonly="!classifyInfoEditStatus" placeholder="请选择是否赠品" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -1067,8 +1067,9 @@ export default {
       })
     },
     // 选择类目
-    changeTree (val) {
+    changeTree (val, name) {
       this.categoryCodeVal = val[val.length - 1]
+      $('#' + name).css('color', '#2d8cf0')
     },
     // goods/getGoodsClassifyTree
     queryClassifyTree: function () {
