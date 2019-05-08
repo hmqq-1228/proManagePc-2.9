@@ -22,7 +22,6 @@
                 <el-menu
                   :collapse-transition="false"
                   :collapse="isCollapse"
-                  :default-active="activeNavIndex"
                   class="el-menu-vertical-demo"
                   @select="generalSelect"
                   background-color="#2f64a5"
