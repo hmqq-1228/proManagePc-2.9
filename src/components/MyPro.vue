@@ -23,6 +23,7 @@
           <TabPane label="进行中" name="2"></TabPane>
           <TabPane label="已完成" name="3"></TabPane>
           <TabPane label="未开始" name="0"></TabPane>
+          <TabPane label="已暂停" name="4"></TabPane>
         </Tabs>
       </div>
       <div class="content">

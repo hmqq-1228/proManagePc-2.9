@@ -58,11 +58,11 @@
         <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.parentTaskName" @click="toDetail(taskBasicMsg.parentTaskID)">{{taskBasicMsg.parentTaskName}}</div>
         <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级任务</div>
       </div>
-    <div class="cannetProject">
-      <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
-      <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.planName" @click="toPlanDetail(taskBasicMsg.planUID)">{{taskBasicMsg.planName}}</div>
-      <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.planName">无父级计划</div>
-    </div>
+      <div class="cannetProject">
+        <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
+        <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.planName" @click="toPlanDetail(taskBasicMsg.planUID)">{{taskBasicMsg.planName}}</div>
+        <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.planName">无父级计划</div>
+      </div>
       <div class="cannetProjectFile">
         <div style="display: inline-block"><img src="../../../static/img/fujian.png" alt=""><span>任务附件:</span></div>
         <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
@@ -74,21 +74,21 @@
         </div>
         <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
       </div>
-    <div v-if="taskBasicMsg.status !== '3' ">
-      <div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">
-        <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
-        <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
-        <Button type="info" v-if="taskBasicMsg.timeoutButton === 1" style="margin-right: 20px;" @click="stopeTask(taskBasicMsg.uid)">任务暂停</Button>
-        <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
-        <Button type="info" @click="taskToDevided(taskBasicMsg.uid)">任务分解</Button>
+      <div v-if="taskBasicMsg.status !== '3' ">
+        <div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">
+          <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
+          <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
+          <Button type="info" v-if="taskBasicMsg.timeoutButton === 1" style="margin-right: 20px;" @click="stopeTask(taskBasicMsg.uid)">任务暂停</Button>
+          <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
+          <Button type="info" @click=" (taskBasicMsg.uid)">任务分解</Button>
+        </div>
+        <div class="cannetProject" v-if="taskBasicMsg.isRestart">
+          <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
+        </div>
       </div>
-      <div class="cannetProject" v-if="taskBasicMsg.isRestart">
-        <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
+      <div class="cannetProject" v-if="taskBasicMsg.status === '3' ">
+        <Button type="info" v-if="taskBasicMsg.timeoutButton === 2"  style="margin-right: 20px;" @click="startTaskstoped(taskBasicMsg.uid)">任务开启</Button>
       </div>
-    </div>
-    <div class="cannetProject" v-if="taskBasicMsg.status === '3' ">
-      <Button type="info" v-if="taskBasicMsg.timeoutButton === 2"  style="margin-right: 20px;" @click="startTaskstoped(taskBasicMsg.uid)">任务开启</Button>
-    </div>
       <!-- 任务分解 引入组件-->
     <!--v-bind:TaskDistributeShow="toShowDevided"-->
     <!--v-bind:TaskDistributeShow="rilegou" tetstt -->
@@ -261,7 +261,7 @@
     <!--</el-dialog>-->
     <div class="stopeModel" v-if="projectStopeVisible2">
       <div class="stopeTitle">任务开启</div>
-      <div class="modelCon">确定开任务目且修改时间吗?</div>
+      <div class="modelCon">确定开启任务且修改时间吗?</div>
       <div>
         <el-button type="primary" @click="startTaskOnly()">开启不修改时间</el-button>
         <el-button type="primary" @click="startEditTask()">开启修改时间</el-button>
