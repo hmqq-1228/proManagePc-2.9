@@ -44,7 +44,7 @@
           <Input v-model="value1" prefix="logo-yen" placeholder="输入金额" style="width: 120px" /> ---
           <Input v-model="value2" prefix="logo-yen" placeholder="输入金额" style="width: 120px" />
         </div>
-        <div style="margin-left: 20px;" v-if="permission">
+        <div style="margin-left: 20px;">
           <Select v-model="OptionModel" style="width:200px">
             <Option v-for="item in OptionList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
@@ -121,18 +121,9 @@ export default {
       value2: '',
       num: 0,
       msg: '',
-      permission: false,
+      permission: [],
       OptionModel: '',
-      OptionList: [
-        {
-          label: '全部商品',
-          value: '1'
-        },
-        {
-          label: '我负责的',
-          value: '0'
-        }
-      ],
+      OptionList: [],
       pinpaiLevel: [],
       firstLevel: [],
       secondLevel: [],
@@ -225,6 +216,7 @@ export default {
       var dou = i < (that.codeArr.length - 1) ? ',' : ''
       codeStr = codeStr + that.codeArr[i].code + dou
     }
+    console.log('codeStr', codeStr)
     this.iniBtn()
     that.getGoodsList(codeStr)
     that.getPermission()
@@ -234,7 +226,9 @@ export default {
       var that = this
       that.ajax('/archives/getPermission', {}).then(res => {
         if (res.code === 200) {
-          that.permission = res.data
+          that.OptionList = res.data
+          that.OptionModel = res.data[0].value
+          console.log('permission', res)
         }
       })
     },
@@ -291,7 +285,13 @@ export default {
           }
         })
       } else {
-        that.getGoodList.categoryStr = that.$store.state.goodCode
+        that.codeArr = that.$store.state.codeArr
+        var codeStr = ''
+        for (var i = 0; i < that.codeArr.length; i++) {
+          var dou = i < (that.codeArr.length - 1) ? ',' : ''
+          codeStr = codeStr + that.codeArr[i].code + dou
+        }
+        that.getGoodList.categoryStr = codeStr
         that.ajax('/archives/getGoodsList', that.getGoodList).then(res => {
           if (res.code === 200) {
             that.goodList = res.data.list
@@ -355,6 +355,7 @@ export default {
             var cc = that.$store.state.codeArr
             for (var r = 0; r < cc.length; r++) {
               $('.c_' + cc[r].code).addClass('active').siblings().removeClass('active')
+              // $('.c_').removeClass('active')
             }
           }, 200)
         }
@@ -367,6 +368,11 @@ export default {
           this.pinpaiLevel = res.data.brandType
           if (this.$store.state.codeArr.length > 0) {
             that.routerFuc(this.$store.state.codeArr, 'ini')
+            $('.c_').removeClass('active')
+          } else if (this.$store.state.codeArr.length === 0) {
+            setTimeout(function () {
+              $('.c_').addClass('active')
+            }, 200)
           }
         }
       })
