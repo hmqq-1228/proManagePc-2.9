@@ -44,11 +44,11 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">品牌名称:</div>
             <div class="spuInfoName select">
-              <Select v-model="pinpaiNameVal" v-show="baseInfoEditStatus">
+              <Select v-model="pinpaiCodeVal" v-show="baseInfoEditStatus">
                 <Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({brandCode: pinpaiNameVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({brandCode: pinpaiCodeVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
               <!--<Dropdown :trigger="customM" :visible="dropdownShow">-->
                 <!--<span style="font-size: 12px; color: #515a6e">{{pinpaiNameVal}}</span>-->
@@ -153,11 +153,11 @@
             <div class="spuInfoLabel">物料类别</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="objClassifyNameVal" v-show="classifyInfoEditStatus">
+              <Select v-model="objClassifyCodeVal" v-show="classifyInfoEditStatus">
                 <Option v-for="brand in materialType" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({materialCode: objClassifyNameVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({materialCode: objClassifyCodeVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="objClassifyNameVal" :readonly="!classifyInfoEditStatus" placeholder="请选择物料类别" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -181,11 +181,11 @@
             <div class="spuInfoLabel">适用人群</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="renqunNameVal" v-show="classifyInfoEditStatus">
+              <Select v-model="renqunCodeVal" v-show="classifyInfoEditStatus">
                 <Option v-for="brand in intendedFor" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({intendedFor: renqunNameVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({intendedFor: renqunCodeVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="renqunNameVal" :readonly="!classifyInfoEditStatus" placeholder="请选择适用人群" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -308,11 +308,11 @@
             <div class="spuInfoLabel">使用阶段</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="jieduanVal" v-show="classifyInfoEditStatus">
+              <Select v-model="jieduanCodeVal" v-show="classifyInfoEditStatus">
                 <Option v-for="brand in usageStage" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({usageStage: jieduanVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({usageStage: jieduanCodeVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="jieduanVal" :readonly="!classifyInfoEditStatus" placeholder="请选择使用阶段" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -343,7 +343,7 @@
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({patents: zhuanliVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
-              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="zhuanliVal" :readonly="!classifyInfoEditStatus" placeholder="请选择是否专利" style="max-width: 250px" >
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="patentName" :readonly="!classifyInfoEditStatus" placeholder="请选择是否专利" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -382,7 +382,7 @@
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({rapair: baoxiuVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
-              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="baoxiuVal" :readonly="!classifyInfoEditStatus" placeholder="请选择是否保修" style="max-width: 250px" >
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="rapairName" :readonly="!classifyInfoEditStatus" placeholder="请选择是否保修" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -448,11 +448,11 @@
             <div class="spuInfoLabel">风格</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="fenggeVal" v-show="classifyInfoEditStatus">
+              <Select v-model="fenggeCodeVal" v-show="classifyInfoEditStatus">
                 <Option v-for="brand in desStyle" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({style: fenggeVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({style: fenggeCodeVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="fenggeVal" :readonly="!classifyInfoEditStatus" placeholder="请输入所属风格" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -553,11 +553,11 @@
             <div class="spuInfoLabel">季节</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="jijieVal" v-show="classifyInfoEditStatus">
+              <Select v-model="jijieCodeVal" v-show="classifyInfoEditStatus">
                 <Option v-for="brand in season" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({season: jijieVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({season: jijieCodeVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="jijieVal" :readonly="!classifyInfoEditStatus" placeholder="请选择季节" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -576,7 +576,7 @@
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({giveaway: zengpinVal})" type="md-checkmark-circle" slot="suffix" />
               </div>
-              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="zengpinVal" :readonly="!classifyInfoEditStatus" placeholder="请选择是否赠品" style="max-width: 250px" >
+              <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="giveawayName" :readonly="!classifyInfoEditStatus" placeholder="请选择是否赠品" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -709,6 +709,7 @@ export default {
       goodsNameVal: 'KUB可优比梦幻世界XPE爬爬垫',
       // 基本信息 品牌名称
       pinpaiNameVal: 'KUB可优比',
+      pinpaiCodeVal: '',
       // 基本信息 产品小组
       groupNameVal: '学爬健身组',
       // 基本信息 小组ID
@@ -718,7 +719,7 @@ export default {
       // 基本信息 商品ID
       goodsIdVal: '2019514536',
       // 基本信息 品牌代码
-      pinpaiCodeVal: 'KUB',
+      // pinpaiCodeVal: 'KUB',
       // 基本信息 负责人
       managerNameVal: '张三（XX事业部经理）',
       // 类目 所属类目
@@ -726,10 +727,12 @@ export default {
       classifyNameVal: '',
       // 类目 物料类别
       objClassifyNameVal: '成品',
+      objClassifyCodeVal: '',
       // 类目 系列
       xilieNameVal: '梦幻世界',
       // 类目 适用人群
       renqunNameVal: '男/女孩通用',
+      renqunCodeVal: '',
       // 类目 商品角色
       goodsRoleNameVal: 'S',
       // 类目 采购员
@@ -750,18 +753,21 @@ export default {
       designEleVal: '花朵',
       // 类目 使用阶段
       jieduanVal: '0-6岁',
+      jieduanCodeVal: '',
       // 类目 适用场景
       changjingVal: '玩教场景',
       // 类目 采购组
       caigouGroupVal: '李四采购组',
       // 类目 是否专利
       zhuanliVal: '是',
+      patentName: '',
       // 类目 生产周期
       zhouqiVal: '是',
       // 类目 配色设计师
       colorDesignerVal: '王五',
       // 类目 3 是否保修
       baoxiuVal: '是',
+      rapairName: '否',
       // 类目 3 类目编码
       classifyCodeVal: 'SL',
       // 类目 3 单位
@@ -770,6 +776,7 @@ export default {
       zaoxingVal: '长方形',
       // 类目 3 风格
       fenggeVal: '可爱',
+      fenggeCodeVal: '',
       // 类目 3 执行标准
       zhixingVal: '可爱',
       // 类目 3 供应商名称
@@ -786,8 +793,10 @@ export default {
       zuchengVal: '爬行垫',
       // 类目 4 季节
       jijieVal: '四季',
+      jijieCodeVal: '',
       // 类目 4 是否赠品
       zengpinVal: '商品',
+      giveawayName: '',
       // 类目 4 安全类型
       anquanLxVal: '3',
       // 类目 4 产地
@@ -1041,6 +1050,7 @@ export default {
           that.spuBaseImgList = res.data.attachmentList
           that.editFlag = res.data.editFlag
           that.goodsNameVal = res.data.spuName
+          that.pinpaiCodeVal = res.data.brandCode
           that.pinpaiNameVal = res.data.brandName
           that.groupNameVal = res.data.groupName
           that.groupId = res.data.groupId
@@ -1097,12 +1107,15 @@ export default {
           that.classifyNameVal = res.data.categoryNameMsg
           // 类目 物料类别
           that.objClassifyNameVal = res.data.materialType
+          that.objClassifyCodeVal = res.data.materialCode
           // 类目 系列
           that.xilieNameVal = res.data.series
           // 类目 适用人群
           that.renqunNameVal = res.data.intendedForMsg
+          that.renqunCodeVal = res.data.intendedFor
           // 类目 商品角色
           that.goodsRoleNameVal = res.data.goodsRole
+          // that.goodsRoleNameVal = res.data.goodsRoleMsg
           // 类目 采购员
           that.caigouNameVal = res.data.buyer
           // 类目 产品认证
@@ -1121,18 +1134,21 @@ export default {
           that.designEleVal = res.data.element
           // 类目 使用阶段
           that.jieduanVal = res.data.usageStageMsg
+          that.jieduanCodeVal = res.data.usageStage
           // 类目 适用场景
           that.changjingVal = res.data.sceneMsg
           // 类目 采购组
           that.caigouGroupVal = res.data.buyerGroup
           // 类目 是否专利
           that.zhuanliVal = res.data.patents
+          that.patentName = res.data.patents === 0 ? '否' : '是'
           // 类目 生产周期
           that.zhouqiVal = res.data.productCycle
           // 类目 配色设计师
           that.colorDesignerVal = res.data.colorDesigner
           // 类目 3 是否保修
           that.baoxiuVal = res.data.rapair
+          that.rapairName = res.data.rapair === 0 ? '否' : '是'
           // 类目 3 类目编码
           that.classifyCodeVal = res.data.categoryCode
           // 类目 3 单位
@@ -1141,6 +1157,7 @@ export default {
           that.zaoxingVal = res.data.shape
           // 类目 3 风格
           that.fenggeVal = res.data.styleMsg
+          that.fenggeCodeVal = res.data.style
           // 类目 3 执行标准
           that.zhixingVal = res.data.standard
           // 类目 3 供应商名称
@@ -1157,8 +1174,10 @@ export default {
           that.zuchengVal = res.data.makeup
           // 类目 4 季节
           that.jijieVal = res.data.seasonMsg
+          that.jijieCodeVal = res.data.season
           // 类目 4 是否赠品
           that.zengpinVal = res.data.giveaway
+          that.giveawayName = res.data.giveaway === 0 ? '否' : '是'
           // 类目 4 安全类型
           that.anquanLxVal = res.data.safetyType
           // 类目 4 产地
