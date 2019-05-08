@@ -44,11 +44,11 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">品牌名称:</div>
             <div class="spuInfoName select">
-              <Select v-model="pinpaiCodeVal" v-show="baseInfoEditStatus">
+              <Select v-model="pinpaiNameVal" v-show="baseInfoEditStatus" @on-change="changeValue($event,'pinpaiNameVal')">
                 <Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({brandCode: pinpaiCodeVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" v-show="baseInfoEditStatus" id="pinpaiNameVal" @click="editBaseSpuInfo({brandCode: pinpaiNameVal},'pinpaiNameVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <!--<Dropdown :trigger="customM" :visible="dropdownShow">-->
                 <!--<span style="font-size: 12px; color: #515a6e">{{pinpaiNameVal}}</span>-->
@@ -916,6 +916,10 @@ export default {
       $('#' + textVal).css('color', '#2d8cf0')
       // this.log($(obj).attr('class'))
       // this.log('textValChange:', textVal)
+    },
+    // 改变下拉框
+    changeValue (e, name) {
+      $('#' + name).css('color', '#2d8cf0')
     },
     member () {
       this.DrawerMember = true
