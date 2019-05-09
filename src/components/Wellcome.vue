@@ -54,6 +54,12 @@ export default {
           this.$store.state.navType = n
           this.$router.push('/goodsDetail')
         }
+      } else if (proType === '商品管理') {
+        if (proName === '档案管理') {
+          this.$router.push('/GoodsArchives')
+        } else if (proName === '研发管理') {
+          this.$router.push('/GoodsManage')
+        }
       } else {
         // this.log('getProjectDetail：', '没走集团战略')
         if (proName === '我的日程') {

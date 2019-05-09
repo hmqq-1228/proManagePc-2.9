@@ -17,6 +17,7 @@
             </div>
           </div>
           <div class="hhhhhh" style="height: 100%; overflow: hidden;">
+            <!--:default-active="activeNavIndex"-->
             <el-row :style="{paddingRright: '10px', height: '100%', width: Width, overflowY: scrollY}">
               <el-col>
                 <el-menu
@@ -35,6 +36,15 @@
                     </template>
                     <el-menu-item-group>
                       <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="'group_' + index + '_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
+                    </el-menu-item-group>
+                  </el-submenu>
+                  <el-submenu v-for="(name, index5) in slideMenuGroup2" :index="'up_' + index5" v-bind:key="'up_' + index5">
+                    <template slot="title">
+                      <Icon style="color: #ddd" size="18" type="md-cart" />
+                      <span>{{name.projectType}}</span>
+                    </template>
+                    <el-menu-item-group>
+                      <el-menu-item v-for="(nameItem, index3) in name.projectList" :index="'up_' + index5 + '_' + index3" v-bind:key="index3" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectType)" v-bind:title="nameItem.projectType">{{nameItem.projectType}}</el-menu-item>
                     </el-menu-item-group>
                   </el-submenu>
                   <!--侧边栏 非集团战略-->
@@ -68,6 +78,7 @@ export default {
       scrollY: 'auto',
       // 侧边栏 集团战略
       slideMenuGroup: [],
+      slideMenuGroup2: [],
       // 非集团战略的侧边栏
       slideMenu: [],
       proId: '',
@@ -188,6 +199,7 @@ export default {
         // this.log('请求侧边栏:', res)
         if (res.code === 200) {
           that.slideMenuGroup = []
+          that.slideMenuGroup2 = []
           that.slideMenu = []
           for (var i = 0; i < res.data.length; i++) {
             // 设置图标
@@ -224,10 +236,13 @@ export default {
             }
             if (res.data[i].projectType === '集团战略') {
               that.slideMenuGroup.push(res.data[i])
+            } else if (res.data[i].projectType === '商品管理') {
+              that.slideMenuGroup2.push(res.data[i])
             } else {
               that.slideMenu.push(res.data[i])
             }
           }
+          console.log('slideMenuGroup2', that.slideMenuGroup2)
           that.$store.state.slideMenuGroup = that.slideMenuGroup
           that.$store.state.slideMenu = that.slideMenu
           if (localStorage.getItem('generalMenuActive') !== '集团战略') {
@@ -252,6 +267,14 @@ export default {
           this.$store.state.proId = id
           this.$store.state.navType = n
           this.$router.push('/goodsDetail')
+        }
+      } else if (proType === '商品管理') {
+        localStorage.setItem('generalMenuActive', '商品管理')
+        console.log(id, n, proType, proName)
+        if (proName === '档案管理') {
+          this.$router.push('/GoodsArchives')
+        } else if (proName === '研发管理') {
+          this.$router.push('/GoodsManage')
         }
       } else {
         if (proName === '我的日程') {
