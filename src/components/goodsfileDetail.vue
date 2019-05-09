@@ -1,6 +1,6 @@
 <template>
   <div class="goodsfileDetail">
-    <div class="goodsFileBread">贝豪产品库>>可优比>>玩教>>手抓类</div>
+    <!--<div class="goodsFileBread">贝豪产品库>>可优比>>玩教>>手抓类</div>-->
     <div class="top">
       <div class="spuInfoLeft">
         <GoodsFileSpuInfo></GoodsFileSpuInfo>

@@ -33,7 +33,7 @@
         <div class="spuInfoItem">
           <div class="spuInfoCnt">
             <div class="requiredFlag">*</div>
-            <div class="spuInfoLabel">商品名称:</div>
+            <div class="spuInfoLabel" v-on:click="testFileList">商品名称:</div>
             <div class="spuInfoName">
               <i-input class="iptTest" v-model="goodsNameVal" v-on:input="textValChange('goodsNameVal')" :readonly="!baseInfoEditStatus" placeholder="请输入商品名称" style="max-width: 250px" >
                 <Icon class="haha" id="goodsNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({spuName: goodsNameVal}, 'goodsNameVal')" type="md-checkmark-circle" slot="suffix" />
@@ -68,6 +68,7 @@
             <div class="spuInfoName manager">
               <el-autocomplete style=""
                                v-model="managerNameVal"
+                               v-on:input="textValChange('managerNameVal')"
                                :readonly="!baseInfoEditStatus"
                                :fetch-suggestions="querySearchAsync"
                                placeholder="请输入负责人姓名"
@@ -75,7 +76,7 @@
                                @select="handleSelect"
               ></el-autocomplete>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({managerId: Mid})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" id="managerNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({managerId: Mid}, 'managerNameVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <!--<i-input class="iptTest" v-model="managerNameVal" :readonly="!baseInfoEditStatus" placeholder="请输入品牌代码" style="max-width: 250px" >-->
                 <!--<Icon class="haha" v-show="baseInfoEditStatus" type="md-checkmark-circle" slot="suffix" />-->
@@ -122,7 +123,8 @@
               <i-input class="iptTest" v-model="groupNameVal" v-on:input="textValChange('groupNameVal')" :readonly="!baseInfoEditStatus" placeholder="请输入小组名称" style="max-width: 250px" >
                 <Icon class="haha" id="groupNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({groupName: groupNameVal}, 'groupNameVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
-              <div class="jiagou" v-show="groupId && baseInfoEditStatus" @click="member">组织架构</div>
+              <div class="jiagouInfo" v-show="!groupId && baseInfoEditStatus">请先创建产品小组</div>
+              <div class="jiagou" v-show="groupId && baseInfoEditStatus" @click="member">成员管理</div>
             </div>
           </div>
         </div>
@@ -275,7 +277,7 @@
             <div class="spuInfoLabel">物料代码</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="wuliaoCodeVal" :readonly="classifyInfoEditStatus" placeholder="请输入物料代码" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="wuliaoCodeVal" :readonly="true" placeholder="请输入物料代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -692,7 +694,7 @@ export default {
         member: 'member',
         FileUploadComp: 'FileUploadComp'
       },
-      bigPreImg: '',
+      bigPreImg: 'https://ityp.baho.cn:8094/images/defult.png',
       currentPreId: '',
       bigPreOffsetTop: 0,
       bigPreOffsetLeft: 0,
@@ -860,7 +862,7 @@ export default {
   },
   watch: {
     managerNameVal (val, old) {
-      this.log('kkkkk:', val)
+      // this.log('kkkkk:', val)
     },
     baseInfoEditStatus (newval, oldval) {
       this.baseEditBtnText = newval ? '结束' : '编辑'
@@ -875,10 +877,10 @@ export default {
       this.classifyEdit = newval ? 'classifyEdit' : 'readonly'
     },
     classifyNameVal (val, old) {
-      this.log('classifyNameVal:', val)
+      // this.log('classifyNameVal:', val)
     },
     changjingValArr (val, old) {
-      this.log('适用场景：', val)
+      // this.log('适用场景：', val)
       var str = ''
       if (val.length > 0) {
         for (var i = 0; i < val.length; i++) {
@@ -891,6 +893,12 @@ export default {
         this.changCodeVal = str
       }
     },
+    spuBaseImgList (val, old) {
+      if (val.length === 0) {
+        this.bigPreImg = 'https://ityp.baho.cn:8094/images/defult.png'
+        this.currentPreId = ''
+      }
+    },
     FileUploadArr (val, old) {
       if (val.length >= 5) {
         this.addIcon = false
@@ -900,7 +908,7 @@ export default {
     }
   },
   created () {
-    this.log('suiD', this.spuId)
+    // this.log('suiD', this.spuId)
     // spu基础信息
     this.querySpuBaseInfo()
     // spu附属信息
@@ -911,6 +919,13 @@ export default {
     this.queryClassifyTree()
   },
   methods: {
+    testFileList: function () {
+      // FileUploadArr
+      this.log('spuBaseImgList:', this.spuBaseImgList)
+      this.log('FileUploadArr:', this.FileUploadArr)
+      this.log('currentPreId:', this.currentPreId)
+      this.log('bigPreImg:', this.bigPreImg)
+    },
     textValChange: function (textVal, e) {
       // var obj = e.currentTarget
       $('#' + textVal).css('color', '#2d8cf0')
@@ -926,7 +941,7 @@ export default {
     },
     // 新建 人员选择
     handleSelect (item) {
-      console.log('hhhhh:', item)
+      // console.log('hhhhh:', item)
       this.Mid = item.userId
     },
     // 新建 搜索选择项目负责人
@@ -935,7 +950,7 @@ export default {
       if (queryString) {
         that.autoCompleteNamesPayload.projectManager = queryString
         this.ajax('/myProject/autoCompleteNames', that.autoCompleteNamesPayload).then(res => {
-          that.log('autoCompleteNames:', res)
+          // that.log('autoCompleteNames:', res)
           if (res.code === 200) {
             var dddarr = []
             if (res.data.length > 0) {
@@ -999,12 +1014,13 @@ export default {
     // 获取附件上传组件发来的附件信息 新组件
     GetFileInfo (obj) {
       var that = this
+      that.log('获取到返回:', obj)
       if (obj) {
-        this.IsClear = false
+        this.IsClear = true
       }
       this.FileUploadArr = this.FileUploadArr.concat(obj)
       // this.FileUploadArr = obj
-      this.log('上传：', obj)
+      // this.log('上传：', obj)
       this.editBaseSpuInfo({attachmentId: that.SetFileIdStr()})
     },
     smallPreClick: function (e, preUrl, currentPreId, allData) {
@@ -1035,6 +1051,8 @@ export default {
         that.log('getSpuBasic:', res)
         if (res.code === 200) {
           that.FileUploadArr = []
+          this.IsClear = false
+          that.log('FileUploadArr清空了')
           for (var r = 0; r < res.data.attachmentList.length && res.data.attachmentList.length > 0; r++) {
             var offsetObj = that.getImgOffset(res.data.attachmentList[r].previewUrl, 150)
             res.data.attachmentList[r].marginTop = offsetObj.top
@@ -1044,8 +1062,10 @@ export default {
               fileName: res.data.attachmentList[r].showName,
               previewUrl: res.data.attachmentList[r].previewUrl
             }
+            that.log('走for循环')
             that.FileUploadArr.push(imgobj)
           }
+          that.log('for循环结束')
           if (res.data.attachmentList.length > 0) {
             that.currentPreId = res.data.attachmentList[0].id
             that.bigPreImg = res.data.attachmentList[0].previewUrl
@@ -1074,9 +1094,9 @@ export default {
     },
     // goods/getGoodsClassifyTree
     queryClassifyTree: function () {
-      var that = this
+      // var that = this
       this.ajax('/goods/getGoodsClassifyTree', {}).then(res => {
-        that.log('getGoodsClassifyTree:', res)
+        // that.log('getGoodsClassifyTree:', res)
         if (res.code === 200) {
           this.options = res.data
         }
@@ -1096,19 +1116,19 @@ export default {
           that.season = res.data.season
           that.changjingArr = res.data.scene
         }
-        that.log('getOptionType：1:', res)
+        // that.log('getOptionType：1:', res)
       })
     },
     queryExtraSpuInfo: function () {
       var that = this
       this.ajax('/archives/getSpuInfo', {spuId: that.spuId}).then(res => {
-        that.log('getSpuInfo:', res)
+        // that.log('getSpuInfo:', res)
         if (res.code === 200) {
           that.ExtraSpuInfoId = res.data.id
           that.ExtraEditFlag = res.data.editFlag
           // that.classifyInfoEditStatus = res.data.editFlag
           // 类目 所属类目
-          that.log('请求：', res.data.categoryNameMsg)
+          // that.log('请求：', res.data.categoryNameMsg)
           that.categoryCodeList = res.data.categoryCodeList
           that.classifyNameVal = res.data.categoryNameMsg
           // 类目 物料类别
@@ -1200,9 +1220,9 @@ export default {
     editExtraSpuInfo: function (obj, flag) {
       var that = this
       obj.spuInfoId = that.ExtraSpuInfoId
-      this.log('obj:', obj)
+      // this.log('obj:', obj)
       this.ajax('/archives/editSpuInfo', JSON.stringify(obj)).then(res => {
-        that.log('editSpuInfo:', res)
+        // that.log('editSpuInfo:', res)
         if (res.code === 200) {
           that.$Message.success('保存成功')
           $('#' + flag).css('color', '#808695')
@@ -1215,9 +1235,8 @@ export default {
     editBaseSpuInfo: function (obj, flag) {
       var that = this
       obj.spuId = that.spuId
-      this.log('8888:', obj)
       this.ajax('/archives/editSpuBasic', JSON.stringify(obj)).then(res => {
-        that.log('editSpuBasic:', res)
+        // that.log('editSpuBasic:', res)
         if (res.code === 200) {
           that.$Message.success('保存成功')
           $('#' + flag).css('color', '#808695')
@@ -1270,6 +1289,9 @@ export default {
   }
   .jiagou{
     position: absolute; right: -65px; top: 5px; color: #3a8ee6; font-size: 14px;
+  }
+  .jiagouInfo{
+    position: absolute; left: 8px; top: 35px; color: #ffb400; font-size: 12px;
   }
   /*.haha{*/
     /*display: none;*/

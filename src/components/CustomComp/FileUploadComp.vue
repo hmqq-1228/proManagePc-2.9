@@ -114,7 +114,7 @@ export default {
       }
     },
     delUploadFileComment: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -131,7 +131,7 @@ export default {
               }
             }
             that.fileListCommentLen = that.fileListComment.length
-            console.log('edit', that.fileListComment)
+            // console.log('edit', that.fileListComment)
             $('#myfile2').val('')
           }
         })
@@ -144,7 +144,7 @@ export default {
       that.loading21 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#' + that.lalala)[0])
-      this.log(456)
+      // this.log(456)
       if (formData) {
         $.ajax({
           type: 'post',
@@ -160,7 +160,7 @@ export default {
         }).then(function (data) {
           that.log('upload:', data)
           if (data.code === 200) {
-            that.log('uploadFileAjax:', data)
+            // that.log('uploadFileAjax:', data)
             // that.attachmentId2 = data.data.attachmentId
             var obj = {
               attachmentId: data.data.attachmentId,
@@ -175,7 +175,7 @@ export default {
               message: '文件' + data.msg
             })
             that.loading21 = false
-            that.log('fileListComment:', that.fileListComment)
+            // that.log('fileListComment:', that.fileListComment)
             that.$emit('FileDataEmit', that.fileListComment)
           } else if (data.code === 300) {
             that.$message({

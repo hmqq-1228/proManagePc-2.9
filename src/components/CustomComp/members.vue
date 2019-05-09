@@ -18,7 +18,7 @@
     <div class="memberTable">
       <div class="memTblTitle">
         <div class="tblTitItem">角色</div>
-        <div class="tblTitItem">姓名</div>
+        <div class="tblTitItem" style="width: 250px;">姓名</div>
         <!--<div class="tblTitItem">查看</div>-->
         <div class="tblTitItem">编辑</div>
         <div class="tblTitItem" title="清空全部" style="color: #409EFF;cursor: pointer;" v-on:click="delMember(0)">清空</div>
@@ -26,7 +26,7 @@
       <div class="memTblList" v-loading="loadingMan">
         <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userId">
           <div class="memListItem">{{mem.roleStr}}</div>
-          <div class="memListItem">{{mem.userName}}</div>
+          <div class="memListItem overList" style="width: 250px;"><a href="javascript:void(0);" :title="mem.userName" style="color:#333">{{mem.userName}}</a></div>
           <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
           <div class="memListItem"><Checkbox v-bind:value="mem.auth === '2'" @on-change="checkBoxChangeEdit($event, mem.id)"></Checkbox></div>
           <div class="memListItem" style="cursor: pointer;"  v-on:click="delMember(mem.id)">x</div>
@@ -365,6 +365,11 @@ export default {
   .memListItem{
     width: 20%;
     line-height: 32px;
+  }
+  .overList {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .organizationalBox{
     display: flex;
