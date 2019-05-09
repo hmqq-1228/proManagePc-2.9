@@ -1051,6 +1051,7 @@ export default {
         that.log('getSpuBasic:', res)
         if (res.code === 200) {
           that.FileUploadArr = []
+          this.IsClear = false
           that.log('FileUploadArr清空了')
           for (var r = 0; r < res.data.attachmentList.length && res.data.attachmentList.length > 0; r++) {
             var offsetObj = that.getImgOffset(res.data.attachmentList[r].previewUrl, 150)
