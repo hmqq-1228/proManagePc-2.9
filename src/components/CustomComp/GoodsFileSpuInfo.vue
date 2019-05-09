@@ -277,7 +277,7 @@
             <div class="spuInfoLabel">物料代码</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="wuliaoCodeVal" :readonly="classifyInfoEditStatus" placeholder="请输入物料代码" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="wuliaoCodeVal" :readonly="true" placeholder="请输入物料代码" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -694,7 +694,7 @@ export default {
         member: 'member',
         FileUploadComp: 'FileUploadComp'
       },
-      bigPreImg: '../../../static/img/defult.png',
+      bigPreImg: 'https://ityp.baho.cn:8094/images/defult.png',
       currentPreId: '',
       bigPreOffsetTop: 0,
       bigPreOffsetLeft: 0,
@@ -895,7 +895,7 @@ export default {
     },
     spuBaseImgList (val, old) {
       if (val.length === 0) {
-        this.bigPreImg = '../../../static/img/defult.png'
+        this.bigPreImg = 'https://ityp.baho.cn:8094/images/defult.png'
         this.currentPreId = ''
       }
     },
