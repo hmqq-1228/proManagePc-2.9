@@ -525,11 +525,11 @@
             <div class="spuInfoLabel">商品等级</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="dengjiVal" v-show="classifyInfoEditStatus">
+              <Select v-model="dengjiVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'dengjiVal')">
                 <Option v-for="brand in goodsLevel" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({level: dengjiVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" id="dengjiVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({level: dengjiVal}, 'dengjiVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="dengjiVal" :readonly="!classifyInfoEditStatus" placeholder="请选择商品等级" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
