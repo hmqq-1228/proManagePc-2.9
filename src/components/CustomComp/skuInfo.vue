@@ -50,7 +50,7 @@
                </span>
              </div>
              <div class="leftName">
-               <i>*</i>&nbsp;&nbsp;<span style="margin-right: -2em;letter-spacing:2em">规格</span>：{{item.standards}}
+               <i>*</i>&nbsp;&nbsp;<span style="margin-right: -2em;letter-spacing:2em">规格</span>：<a href="javascript:void(0);" :title="item.standards" style="color: #333">{{item.standards}}</a>
              </div>
            </div>
            <div class="right" v-if="item.isEdit">
@@ -116,8 +116,8 @@
            <div class="detail-left" v-if="!item.isEdit">
                <div class="sku-info"><i>*</i>&nbsp;&nbsp;<span>零售价的价格段</span>：{{item.priceSegmentMsg}}</div>
                <div class="sku-info"><span style="margin-right: -0.3em;letter-spacing:0.3em">税率（%）</span>：{{item.taxRate}}</div>
-               <div class="sku-info"><span style="margin-right: -0.4em;letter-spacing:0.4em">附加功能</span>：{{item.otherFunctions}}</div>
-               <div class="sku-info"><span style="margin-right: -3.1em;letter-spacing:3.1em">成分</span>：{{item.component}}</div>
+               <div class="sku-info"><span style="margin-right: -0.4em;letter-spacing:0.4em">附加功能</span>：<a href="javascript:void(0);" :title="item.otherFunctions">{{item.otherFunctions}}</a></div>
+               <div class="sku-info"><span style="margin-right: -3.1em;letter-spacing:3.1em">成分</span>：<a href="javascript:void(0);" :title="item.component">{{item.component}}</a></div>
                <div class="sku-info"><span style="margin-right: -2.5em;letter-spacing:2.5em">口味</span>：{{item.flavor}}</div>
                <div class="sku-info"><span style="margin-right: -4.3em;letter-spacing:4.3em">气味</span>：{{item.smell}}</div>
                <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">高（cm）</span>：{{item.hight}}</div>
@@ -127,9 +127,9 @@
                <div class="sku-info"><span>毛重（kg）</span>：{{item.weight}}</div>
                <div class="sku-info"><span>抛重（kg）</span>：{{item.throwWeight}}</div>
                <div class="sku-info"><span>是否计抛</span>：{{behind(item.throwCalculation)}}</div>
-               <div class="sku-info"><span>PCS（包装）</span>：{{item.pack}}</div>
-               <div class="sku-info"><span style="margin-right: -0.35em;letter-spacing:0.35em">中包规格</span>：{{item.middleStandards}}</div>
-               <div class="sku-info"><span>外箱尺寸（长*宽*高cm）</span>：{{item.outerBoxSize}}</div>
+               <div class="sku-info"><span>PCS（包装）</span>：<a href="javascript:void(0);" :title="item.pack">{{item.pack}}</a></div>
+               <div class="sku-info"><span style="margin-right: -0.35em;letter-spacing:0.35em">中包规格</span>：<a href="javascript:void(0);" :title="item.middleStandards">{{item.middleStandards}}</a></div>
+               <div class="sku-info"><span>外箱尺寸（长*宽*高cm）</span>：<a href="javascript:void(0);" :title="item.outerBoxSize">{{item.outerBoxSize}}</a></div>
            </div>
            <div class="detail-left" v-if="item.isEdit">
              <div class="sku-info" style="width: 260px;margin-right: 40px;"><i>*</i>&nbsp;&nbsp;<span>零售价的价格段</span>：
@@ -404,13 +404,13 @@ export default {
       obj[parameter] = name
       this.ajax('/archives/editSku', JSON.stringify(obj)).then(res => {
         if (res.code === 200) {
-          this.$message.success(res.msg)
+          this.$Message.success(res.msg)
           $('#' + parameter + '-' + index).css({color: '#808695', cursor: 'Default'})
           $('.ivu-input').blur()
           this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
           })
         } else {
-          this.$message.error(res.msg)
+          this.$Message.error(res.msg)
         }
       })
     },
@@ -625,6 +625,13 @@ export default {
     height: 40px;
     margin-right: 50px;
     margin-bottom: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .skuInfo .sku-detail .sku-info a {
+    list-style: none;
+    color:#333;
   }
   .skuInfo .sku-info i{
      color:red;
