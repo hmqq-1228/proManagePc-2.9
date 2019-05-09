@@ -401,6 +401,13 @@ export default {
           that.codeArr.push(dataobj)
         }
         that.$store.state.codeArr = that.codeArr
+      } else if (code === '') {
+        that.codeArr = []
+        that.firstLevel = []
+        that.secondLevel = []
+        that.thirdLevel = []
+        that.fourLevel = []
+        that.$store.state.codeArr = that.codeArr
       }
       var codeStr = ''
       for (var i = 0; i < that.codeArr.length; i++) {
