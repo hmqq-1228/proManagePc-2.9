@@ -5,6 +5,12 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const state = {
   codeArr: [],
+  sortType: '1',
+  goodsName: '',
+  permission: '',
+  endCostPrice: '',
+  sortTypeName: '创建时间',
+  startCostPrice: '',
   currentNodeIndex: 0,
   timeDialogVisible: false,
   defaultParentStart: '',

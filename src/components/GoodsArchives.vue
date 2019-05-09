@@ -117,8 +117,8 @@ export default {
   data () {
     return {
       imgWide: 50,
-      value1: '',
-      value2: '',
+      value1: this.$store.state.startCostPrice,
+      value2: this.$store.state.endCostPrice,
       num: 0,
       msg: '',
       permission: [],
@@ -133,8 +133,8 @@ export default {
       goodsImgUrl: '',
       currentPage: 1,
       dialogVisible: false,
-      inputVal: '',
-      radioVal: '创建时间',
+      inputVal: this.$store.state.goodsName,
+      radioVal: this.$store.state.sortTypeName,
       goodTags: [],
       goodList: [],
       setRouterArr: [],
@@ -145,11 +145,11 @@ export default {
         pageNum: 1,
         pageSize: 12,
         status: '',
-        goodsName: '',
-        sortType: '1',
+        goodsName: this.$store.state.goodsName,
+        sortType: this.$store.state.sortType,
         categoryType: '',
-        startCostPrice: '',
-        endCostPrice: '',
+        startCostPrice: this.$store.state.startCostPrice,
+        endCostPrice: this.$store.state.endCostPrice,
         categoryStr: '',
         permission: ''
       }
@@ -165,6 +165,7 @@ export default {
       var that = this
       if (val) {
         that.getGoodList.startCostPrice = val
+        that.$store.state.startCostPrice = val
         that.getGoodsList()
       }
     },
@@ -172,6 +173,7 @@ export default {
       var that = this
       if (val) {
         that.getGoodList.pageNum = 1
+        that.$store.state.permission = val
         that.getGoodList.permission = val
         that.getGoodsList()
       }
@@ -184,12 +186,14 @@ export default {
       var that = this
       if (val) {
         that.getGoodList.endCostPrice = val
+        that.$store.state.endCostPrice = val
         that.getGoodsList()
       }
     },
     // 监听搜索值
     inputVal: function (val, oV) {
       var that = this
+      that.$store.state.goodsName = val
       that.getGoodList.goodsName = val
       that.getGoodsList()
     },
@@ -197,13 +201,19 @@ export default {
     radioVal: function (val, oV) {
       var that = this
       if (val === '创建时间') {
+        that.$store.state.sortTypeName = '创建时间'
         that.getGoodList.sortType = '1'
+        that.$store.state.sortType = '1'
         that.getGoodsList()
       } else if (val === '商品年份') {
+        that.$store.state.sortTypeName = '商品年份'
         that.getGoodList.sortType = '2'
+        that.$store.state.sortType = '2'
         that.getGoodsList()
       } else if (val === '爆品等级') {
+        that.$store.state.sortTypeName = '爆品等级'
         that.getGoodList.sortType = '3'
+        that.$store.state.sortType = '3'
         that.getGoodsList()
       }
     }
@@ -225,10 +235,15 @@ export default {
   methods: {
     getPermission: function () {
       var that = this
+      console.log('that.$store.state.permission', that.$store.state.permission)
       that.ajax('/archives/getPermission', {}).then(res => {
         if (res.code === 200) {
           that.OptionList = res.data
-          that.OptionModel = res.data[0].value
+          if (that.$store.state.permission) {
+            that.OptionModel = that.$store.state.permission
+          } else {
+            that.OptionModel = res.data[0].value
+          }
         }
       })
     },
