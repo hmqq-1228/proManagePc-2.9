@@ -166,7 +166,7 @@
             <!--<span class="spuInfoName">成品</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">系列</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -212,7 +212,7 @@
           </div>
           <!--从采购复制-->
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">采购员</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -223,7 +223,7 @@
             <!--<span class="spuInfoName">张三三</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">产品认证</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -234,7 +234,7 @@
             <!--<span class="spuInfoName">ISO</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">起订量</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -245,7 +245,7 @@
             <!--<span class="spuInfoName">1000</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">设计组</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -256,7 +256,7 @@
             <!--<span class="spuInfoName">暴风设计</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">保质期</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -293,7 +293,7 @@
             <!--<span class="spuInfoName">XPE</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">设计元素</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -308,11 +308,11 @@
             <div class="spuInfoLabel">使用阶段</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="jieduanCodeVal" v-show="classifyInfoEditStatus">
+              <Select v-model="jieduanCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'jieduanCodeVal')">
                 <Option v-for="brand in usageStage" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({usageStage: jieduanCodeVal})" type="md-checkmark-circle" slot="suffix" />
+                <Icon class="haha" id="jieduanCodeVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({usageStage: jieduanCodeVal}, 'jieduanCodeVal')" type="md-checkmark-circle" slot="suffix" />
               </div>
               <i-input class="iptTest" v-show="!classifyInfoEditStatus" v-model="jieduanVal" :readonly="!classifyInfoEditStatus" placeholder="请选择使用阶段" style="max-width: 250px" >
                 <Icon class="haha" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" />
@@ -322,7 +322,7 @@
           </div>
           <!--从采购复制-->
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">采购组</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -333,7 +333,7 @@
             <!--<span class="spuInfoName">李四采购组</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">是否专利</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
@@ -350,7 +350,7 @@
             <!--<span class="spuInfoName">是</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">生产周期</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -361,7 +361,7 @@
             <!--<span class="spuInfoName">3个月</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel moreWords">配色设计师</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -372,7 +372,7 @@
             <!--<span class="spuInfoName">王五</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">是否保修</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
@@ -390,7 +390,7 @@
           </div>
           <!---->
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">适用场景</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
@@ -433,7 +433,7 @@
             <!--<span class="spuInfoName">件</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">造型</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -462,7 +462,7 @@
           </div>
           <!--从采购复制-->
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">执行标准</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -473,7 +473,7 @@
             <!--<span class="spuInfoName">SL</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel moreWords">供应商名称</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -484,7 +484,7 @@
             <!--<span class="spuInfoName">KUB可优比</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">备货周期</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -495,7 +495,7 @@
             <!--<div class="spuInfoName">3个月</div>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel moreWords">包装设计师</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -506,7 +506,7 @@
             <!--<span class="spuInfoName">赵六</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">保修期</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -524,7 +524,7 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">商品等级</div>
             <div style="padding-top: 5px;">:</div>
-            <div class="spuInfoName">
+            <div class="spuInfoName select">
               <Select v-model="dengjiVal" v-show="classifyInfoEditStatus">
                 <Option v-for="brand in goodsLevel" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
@@ -538,7 +538,7 @@
             <!--<span class="spuInfoName">3</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">产品组成</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -584,7 +584,7 @@
           </div>
           <!--从采购复制-->
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">安全类型</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -595,7 +595,7 @@
             <!--<span class="spuInfoName">3</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">产地</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -606,7 +606,7 @@
             <!--<span class="spuInfoName">安吉</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">安全库存</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -617,7 +617,7 @@
             <!--<span class="spuInfoName">1000</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel moreWords">结构设计师</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -628,7 +628,7 @@
             <!--<span class="spuInfoName">王二</span>-->
           </div>
           <div class="spuInfoCnt">
-            <div class="requiredFlag">*</div>
+            <div class="requiredFlag"></div>
             <div class="spuInfoLabel">保修单位</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
@@ -681,7 +681,7 @@ export default {
       DrawerMemberShow: false,
       Mid: '',
       autoCompleteNamesPayload: {
-        managerNameVal: ''
+        projectManager: ''
       },
       addIcon: true,
       filUrl: '/file/uploadGoodsFileAjax',
@@ -933,8 +933,9 @@ export default {
     querySearchAsync (queryString, cb) {
       var that = this
       if (queryString) {
-        that.autoCompleteNamesPayload.managerNameVal = queryString
+        that.autoCompleteNamesPayload.projectManager = queryString
         this.ajax('/myProject/autoCompleteNames', that.autoCompleteNamesPayload).then(res => {
+          that.log('autoCompleteNames:', res)
           if (res.code === 200) {
             var dddarr = []
             if (res.data.length > 0) {
@@ -1417,6 +1418,7 @@ export default {
   }
   .requiredFlag{
     color: red;
+    width: 6px;
     padding-top: 8px;
   }
   .spuInfoLabel,.requiredFlag{
