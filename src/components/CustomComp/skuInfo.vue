@@ -7,7 +7,7 @@
            <div class="left">
               <div class="skuCode">
                 <i style="color:red;font-size: 16px">*</i>&nbsp;&nbsp;<span>SKU</span>: <span v-if="!item.isEdit">{{item.skuCode}}</span>
-                <i-input placeholder="请输入" style="width: 140px" v-model="item.skuCode" v-if="item.isEdit" @on-enter="submit(item.skuCode, 'skuCode', item)" v-on:input="detection($event,'skuCode',index)">
+                <i-input placeholder="请输入" style="width: 140px" v-model="item.skuCode" v-if="item.isEdit" @on-enter="submit(item.skuCode, 'skuCode', item,index)" v-on:input="detection($event,'skuCode',index)">
                   <Icon type="ios-arrow-dropdown-circle" slot="suffix" :id="'skuCode-'+ index" style="color:#808695;font-size: 20px" @click="submit(item.skuCode, 'skuCode', item, index)"/>
                 </i-input>
               </div>
@@ -50,7 +50,7 @@
                </span>
              </div>
              <div class="leftName">
-               <i>*</i>&nbsp;&nbsp;<span style="margin-right: -2em;letter-spacing:2em">规格</span>：{{item.standards}}
+               <i>*</i>&nbsp;&nbsp;<span style="margin-right: -2em;letter-spacing:2em">规格</span>：<a href="javascript:void(0);" :title="item.standards" style="color: #333">{{item.standards}}</a>
              </div>
            </div>
            <div class="right" v-if="item.isEdit">
@@ -64,33 +64,33 @@
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>零售价</span>：
                <!--type="number" dd -->
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.retailPrice" @on-enter="submit(item.retailPrice, 'retailPrice', item)" v-on:input="detection($event,'retailPrice',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.retailPrice" @on-enter="submit(item.retailPrice, 'retailPrice', item,index)" v-on:input="detection($event,'retailPrice',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'retailPrice-'+ index" slot="suffix" style="color:#808695;font-size: 20px;" @click="submit(item.retailPrice, 'retailPrice', item, index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>吊牌价</span>：
                <!--type="number" dd -->
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.tagPrice" @on-enter="submit(item.tagPrice, 'tagPrice', item)" v-on:input="detection($event,'tagPrice',index)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.tagPrice" @on-enter="submit(item.tagPrice, 'tagPrice', item,index)" v-on:input="detection($event,'tagPrice',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'tagPrice-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.tagPrice, 'tagPrice', item, index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span>固定成本</span>：
                <!--type="number" dd -->
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.costPrice" @on-enter="submit(item.costPrice, 'costPrice', item)" v-on:input="detection($event,'costPrice',index)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.costPrice" @on-enter="submit(item.costPrice, 'costPrice', item,index)" v-on:input="detection($event,'costPrice',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'costPrice-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.costPrice, 'costPrice', item,index)"/>
                </i-input>
              </div>
              <div class="leftName" style="width: 260px;margin-right: 25px">
                <i style="color:red;font-size: 16px">*</i>&nbsp;&nbsp;<span>第三方SKU编码</span>：
-               <i-input placeholder="请输入" style="width: 120px" v-model="item.thirdSkuCode" @on-enter="submit(item.thirdSkuCode, 'thirdSkuCode', item)" v-on:input="detection($event,'thirdSkuCode',index)">
+               <i-input placeholder="请输入" style="width: 120px" v-model="item.thirdSkuCode" @on-enter="submit(item.thirdSkuCode, 'thirdSkuCode', item,index)" v-on:input="detection($event,'thirdSkuCode',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'thirdSkuCode-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.thirdSkuCode, 'thirdSkuCode', item,index)"/>
                </i-input>
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -1em;letter-spacing:1em">条码</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.barCode" @on-enter="submit(item.barCode, 'barCode', item)" v-on:input="detection($event,'barCode',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.barCode" @on-enter="submit(item.barCode, 'barCode', item,index)" v-on:input="detection($event,'barCode',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'barCode-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.barCode, 'barCode', item,index)"/>
                </i-input>
              </div>
@@ -106,7 +106,7 @@
              </div>
              <div class="leftName">
                <i>*</i>&nbsp;&nbsp;<span style="margin-right: -2em;letter-spacing:2em">规格</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.standards" @on-enter="submit(item.standards, 'standards', item)" v-on:input="detection($event,'standards',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.standards" @on-enter="submit(item.standards, 'standards', item,index)" v-on:input="detection($event,'standards',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'standards-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.standards, 'standards', item,index)"/>
                </i-input>
              </div>
@@ -116,8 +116,8 @@
            <div class="detail-left" v-if="!item.isEdit">
                <div class="sku-info"><i>*</i>&nbsp;&nbsp;<span>零售价的价格段</span>：{{item.priceSegmentMsg}}</div>
                <div class="sku-info"><span style="margin-right: -0.3em;letter-spacing:0.3em">税率（%）</span>：{{item.taxRate}}</div>
-               <div class="sku-info"><span style="margin-right: -0.4em;letter-spacing:0.4em">附加功能</span>：{{item.otherFunctions}}</div>
-               <div class="sku-info"><span style="margin-right: -3.1em;letter-spacing:3.1em">成分</span>：{{item.component}}</div>
+               <div class="sku-info"><span style="margin-right: -0.4em;letter-spacing:0.4em">附加功能</span>：<a href="javascript:void(0);" :title="item.otherFunctions">{{item.otherFunctions}}</a></div>
+               <div class="sku-info"><span style="margin-right: -3.1em;letter-spacing:3.1em">成分</span>：<a href="javascript:void(0);" :title="item.component">{{item.component}}</a></div>
                <div class="sku-info"><span style="margin-right: -2.5em;letter-spacing:2.5em">口味</span>：{{item.flavor}}</div>
                <div class="sku-info"><span style="margin-right: -4.3em;letter-spacing:4.3em">气味</span>：{{item.smell}}</div>
                <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">高（cm）</span>：{{item.hight}}</div>
@@ -127,9 +127,9 @@
                <div class="sku-info"><span>毛重（kg）</span>：{{item.weight}}</div>
                <div class="sku-info"><span>抛重（kg）</span>：{{item.throwWeight}}</div>
                <div class="sku-info"><span>是否计抛</span>：{{behind(item.throwCalculation)}}</div>
-               <div class="sku-info"><span>PCS（包装）</span>：{{item.pack}}</div>
-               <div class="sku-info"><span style="margin-right: -0.35em;letter-spacing:0.35em">中包规格</span>：{{item.middleStandards}}</div>
-               <div class="sku-info"><span>外箱尺寸（长*宽*高cm）</span>：{{item.outerBoxSize}}</div>
+               <div class="sku-info"><span>PCS（包装）</span>：<a href="javascript:void(0);" :title="item.pack">{{item.pack}}</a></div>
+               <div class="sku-info"><span style="margin-right: -0.35em;letter-spacing:0.35em">中包规格</span>：<a href="javascript:void(0);" :title="item.middleStandards">{{item.middleStandards}}</a></div>
+               <div class="sku-info"><span>外箱尺寸（长*宽*高cm）</span>：<a href="javascript:void(0);" :title="item.outerBoxSize">{{item.outerBoxSize}}</a></div>
            </div>
            <div class="detail-left" v-if="item.isEdit">
              <div class="sku-info" style="width: 260px;margin-right: 40px;"><i>*</i>&nbsp;&nbsp;<span>零售价的价格段</span>：
@@ -139,60 +139,60 @@
                <Icon type="ios-arrow-dropdown-circle" :id="'priceSegment-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.priceSegment, 'priceSegment', item,index)"/>
              </div>
              <div class="sku-info"><span style="margin-right: -0.3em;letter-spacing:0.3em">税率（%）</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.taxRate" type="number" @on-enter="submit(item.taxRate, 'taxRate', item)" v-on:input="detection($event,'taxRate',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.taxRate" type="number" @on-enter="submit(item.taxRate, 'taxRate', item,index)" v-on:input="detection($event,'taxRate',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'taxRate-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.taxRate, 'taxRate', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.4em;letter-spacing:0.4em">附加功能</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.otherFunctions" @on-enter="submit(item.otherFunctions, 'otherFunctions', item)" v-on:input="detection($event,'otherFunctions',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.otherFunctions" @on-enter="submit(item.otherFunctions, 'otherFunctions', item,index)" v-on:input="detection($event,'otherFunctions',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'otherFunctions-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.otherFunctions, 'otherFunctions', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span  style="margin-right: -3.1em;letter-spacing:3.1em">成分</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.component"  @on-enter="submit(item.component, 'component', item)" v-on:input="detection($event,'component',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.component"  @on-enter="submit(item.component, 'component', item,index)" v-on:input="detection($event,'component',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'component-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.component, 'component', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -2.5em;letter-spacing:2.5em">口味</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.flavor" @on-enter="submit(item.flavor, 'flavor', item)" v-on:input="detection($event,'flavor',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.flavor" @on-enter="submit(item.flavor, 'flavor', item,index)" v-on:input="detection($event,'flavor',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'flavor-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.flavor, 'flavor', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -4.3em;letter-spacing:4.3em">气味</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.smell"  @on-enter="submit(item.smell, 'smell', item)" v-on:input="detection($event,'smell',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.smell"  @on-enter="submit(item.smell, 'smell', item,index)" v-on:input="detection($event,'smell',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'smell-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.smell, 'smell', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">高（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.hight"  @on-enter="submit(item.hight, 'hight', item)" v-on:input="detection($event,'hight',index)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.hight"  @on-enter="submit(item.hight, 'hight', item,index)" v-on:input="detection($event,'hight',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'hight-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.hight, 'hight', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.2em;letter-spacing:0.2em">长（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.length"  @on-enter="submit(item.length, 'length', item)" v-on:input="detection($event,'length',index)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.length"  @on-enter="submit(item.length, 'length', item,index)" v-on:input="detection($event,'length',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'length-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.length, 'length', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span>宽（cm）</span>：
                <!--type="number"-->
-               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.width" @on-enter="submit(item.width, 'width', item)" v-on:input="detection($event,'width',index)">
+               <i-input placeholder="请输入" style="width: 140px" type="number" v-model="item.width" @on-enter="submit(item.width, 'width', item,index)" v-on:input="detection($event,'width',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'width-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.width, 'width', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -4.3em;letter-spacing:4.3em">体积</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.volume" v-if="item.isEdit" @click="on-enter(item.volume, 'volume', item)" v-on:input="detection($event,'volume',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.volume" v-if="item.isEdit" @click="on-enter(item.volume, 'volume', item,index)" v-on:input="detection($event,'volume',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'volume-'+ index"  slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.volume, 'volume', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span>毛重（kg）</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.weight" v-if="item.isEdit" type="number" @on-enter="submit(item.weight, 'weight', item)" v-on:input="detection($event,'weight',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.weight" v-if="item.isEdit" type="number" @on-enter="submit(item.weight, 'weight', item,index)" v-on:input="detection($event,'weight',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'weight-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.weight, 'weight', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span>抛重（kg）</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.throwWeight" v-if="item.isEdit" type="number" @on-enter="submit(item.throwWeight, 'throwWeight', item)" v-on:input="detection($event,'throwWeight',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.throwWeight" v-if="item.isEdit" type="number" @on-enter="submit(item.throwWeight, 'throwWeight', item,index)" v-on:input="detection($event,'throwWeight',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'throwWeight-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.throwWeight, 'throwWeight', item,index)"/>
                </i-input>
              </div>
@@ -203,12 +203,12 @@
                <Icon type="ios-arrow-dropdown-circle" :id="'throwCalculation-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.throwCalculation, 'throwCalculation', item,index)"/>
              </div>
              <div class="sku-info" style="width:260px;margin-right: 45px;"><span>PCS（包装）</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.pack" @on-enter="submit(item.pack, 'pack', item)" v-on:input="detection($event,'pack',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.pack" @on-enter="submit(item.pack, 'pack', item,index)" v-on:input="detection($event,'pack',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'pack-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.pack, 'pack', item,index)"/>
                </i-input>
              </div>
              <div class="sku-info"><span style="margin-right: -0.35em;letter-spacing:0.35em">中包规格</span>：
-               <i-input placeholder="请输入" style="width: 140px" v-model="item.middleStandards" @on-enter="submit(item.middleStandards, 'middleStandards', item)" v-on:input="detection($event,'middleStandards',index)">
+               <i-input placeholder="请输入" style="width: 140px" v-model="item.middleStandards" @on-enter="submit(item.middleStandards, 'middleStandards', item,index)" v-on:input="detection($event,'middleStandards',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'middleStandards-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.middleStandards, 'middleStandards', item,index)"/>
                </i-input>
              </div>
@@ -404,13 +404,13 @@ export default {
       obj[parameter] = name
       this.ajax('/archives/editSku', JSON.stringify(obj)).then(res => {
         if (res.code === 200) {
-          this.$message.success(res.msg)
+          this.$Message.success(res.msg)
           $('#' + parameter + '-' + index).css({color: '#808695', cursor: 'Default'})
           $('.ivu-input').blur()
           this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
           })
         } else {
-          this.$message.error(res.msg)
+          this.$Message.error(res.msg)
         }
       })
     },
@@ -625,6 +625,13 @@ export default {
     height: 40px;
     margin-right: 50px;
     margin-bottom: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .skuInfo .sku-detail .sku-info a {
+    list-style: none;
+    color:#333;
   }
   .skuInfo .sku-info i{
      color:red;

@@ -1,20 +1,20 @@
 <template>
-   <div class="goodsfileDetail">
-   <div class="goodsFileBread">贝豪产品库>>可优比>>玩教>>手抓类</div>
-      <div class="top">
-         <div class="spuInfoLeft">
-           <GoodsFileSpuInfo></GoodsFileSpuInfo>
-         </div>
-         <!--沟通-->
-         <div class="communication">
-            <communication></communication>
-         </div>
+  <div class="goodsfileDetail">
+    <div class="goodsFileBread">贝豪产品库>>可优比>>玩教>>手抓类</div>
+    <div class="top">
+      <div class="spuInfoLeft">
+        <GoodsFileSpuInfo></GoodsFileSpuInfo>
       </div>
-     <!--SKU信息-->
-     <div class="down">
-       <sku :slideData = 'SlideData.priceSegment'></sku>
-     </div>
-   </div>
+      <!--沟通-->
+      <div class="communication">
+        <communication></communication>
+      </div>
+    </div>
+    <!--SKU信息-->
+    <div class="down">
+      <sku :slideData = 'SlideData.priceSegment'></sku>
+    </div>
+  </div>
 </template>
 
 <script>
