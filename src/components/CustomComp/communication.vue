@@ -43,7 +43,7 @@
             <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 375px;">
               <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
                 <p class="time">{{comment.createDate}}</p>
-                <p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
+                <p class="content"  v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
                 <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
               <p class="content" v-if="com.showName">附件:
                 <span style="display: inline-block"> {{com.showName}}</span>
@@ -295,5 +295,12 @@ export default {
 .noComment {
   text-align: center;
   line-height: 300px;
+}
+.content{
+  padding-left: 5px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 </style>
