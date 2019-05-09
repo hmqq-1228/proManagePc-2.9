@@ -6,7 +6,7 @@
       <div class="spuInfo base" v-bind:class="baseEdit">
         <!-- spu 基本信息 预览图 -->
         <div class="spuInfoItem ImgPre">
-          <div class="ImgPrePrimary">
+          <div class="ImgPrePrimary" @click="bigPre">
             <!--{{bigPreOffsetTop}}-->
             <!--../../../static/img/papa.jpg-->
             <img :src="bigPreImg" v-bind:style="{marginTop: bigPreOffsetTop + 'px'}" />
@@ -417,8 +417,8 @@
             <div class="spuInfoLabel">类目编码</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="classifyCodeVal" :readonly="true" placeholder="请输入类目编码" style="max-width: 250px" >
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({categoryCode: classifyCodeVal})" type="md-checkmark-circle" slot="suffix" />
+              <i-input class="iptTest" v-model="classifyCodeVal" v-on:on-keydown="textValChange('classifyCodeVal',{categoryCode: classifyCodeVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入类目编码" style="max-width: 250px" >
+                <Icon class="haha" id="classifyCodeVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({categoryCode: classifyCodeVal},'classifyCodeVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
             <!--<span class="spuInfoName">SL</span>-->
@@ -663,6 +663,13 @@
         v-bind:DrawerMemberShow="DrawerMember"
       ></component>
     </Drawer>
+    <!---->
+    <!-- 图片预览 -->
+    <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+      <div class="showImg">
+        <img :src="bigPreImg" alt style="width: 100%">
+      </div>
+    </el-dialog>
     <!--<div class="communication">沟通记录</div>-->
   </div>
 </template>
@@ -683,6 +690,8 @@ export default {
   },
   data () {
     return {
+      imgUrl: '',
+      dialogShowImg: false,
       DrawerMember: false,
       proId: this.$route.params.spuId,
       DrawerMemberShow: false,
@@ -924,6 +933,9 @@ export default {
     this.queryClassifyTree()
   },
   methods: {
+    bigPre: function () {
+      this.dialogShowImg = true
+    },
     testFileList: function () {
       // FileUploadArr
       this.log('spuBaseImgList:', this.spuBaseImgList)
