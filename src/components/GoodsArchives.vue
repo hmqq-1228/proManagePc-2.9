@@ -171,6 +171,7 @@ export default {
     OptionModel: function (val, oV) {
       var that = this
       if (val) {
+        that.getGoodList.pageNum = 1
         that.getGoodList.permission = val
         that.getGoodsList()
       }
@@ -228,7 +229,6 @@ export default {
         if (res.code === 200) {
           that.OptionList = res.data
           that.OptionModel = res.data[0].value
-          console.log('permission', res)
         }
       })
     },
@@ -320,44 +320,46 @@ export default {
     actionEmit: function (codeStr, isIni) {
       var that = this
       that.ajax('/archives/getDownByCategory', {categoryStr: codeStr}).then(res => {
-        switch (res.data[0].typeName) {
-          case '一级类目':
-            that.firstLevel = res.data
-            that.secondLevel = []
-            that.thirdLevel = []
-            that.fourLevel = []
-            $('.firstLevel').removeClass('active')
-            break
-          case '二级类目':
-            that.secondLevel = res.data
-            that.thirdLevel = []
-            that.fourLevel = []
-            $('.secondLevel').removeClass('active')
-            break
-          case '三级类目':
-            that.thirdLevel = res.data
-            that.fourLevel = []
-            $('.thirdLevel').removeClass('active')
-            break
-          case '四级类目':
-            that.fourLevel = res.data
-            $('.fourLevel').removeClass('active')
-            break
-          default:
-            that.log('case null')
-        }
-        if (isIni === 'ini' && that.num < (that.$store.state.codeArr.length - 1)) {
-          that.num = that.num + 1
-        }
-        if (that.num === (that.$store.state.codeArr.length - 1) && isIni === 'ini') {
-          that.log(123)
-          setTimeout(function () {
-            var cc = that.$store.state.codeArr
-            for (var r = 0; r < cc.length; r++) {
-              $('.c_' + cc[r].code).addClass('active').siblings().removeClass('active')
-              // $('.c_').removeClass('active')
-            }
-          }, 200)
+        if (res.code === 200) {
+          switch (res.data[0].typeName) {
+            case '一级类目':
+              that.firstLevel = res.data
+              that.secondLevel = []
+              that.thirdLevel = []
+              that.fourLevel = []
+              $('.firstLevel').removeClass('active')
+              break
+            case '二级类目':
+              that.secondLevel = res.data
+              that.thirdLevel = []
+              that.fourLevel = []
+              $('.secondLevel').removeClass('active')
+              break
+            case '三级类目':
+              that.thirdLevel = res.data
+              that.fourLevel = []
+              $('.thirdLevel').removeClass('active')
+              break
+            case '四级类目':
+              that.fourLevel = res.data
+              $('.fourLevel').removeClass('active')
+              break
+            default:
+              that.log('case null')
+          }
+          if (isIni === 'ini' && that.num < (that.$store.state.codeArr.length - 1)) {
+            that.num = that.num + 1
+          }
+          if (that.num === (that.$store.state.codeArr.length - 1) && isIni === 'ini') {
+            that.log(123)
+            setTimeout(function () {
+              var cc = that.$store.state.codeArr
+              for (var r = 0; r < cc.length; r++) {
+                $('.c_' + cc[r].code).addClass('active').siblings().removeClass('active')
+                // $('.c_').removeClass('active')
+              }
+            }, 200)
+          }
         }
       })
     },
