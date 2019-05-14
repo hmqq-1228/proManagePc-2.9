@@ -1,10 +1,12 @@
 <template>
     <div class="communications">
-      <div class="title" @click="member">沟通</div>
-      <div style="padding: 15px">
-        <div class="el-textarea" v-loading="loadingRe">
-          <!--enctype="multipart/form-data"-->
-          <form id="uploadFile">
+      <Tabs type="card">
+        <TabPane label="沟通">
+          <!--<div class="title">沟通</div>-->
+          <div style="padding:0 15px 15px 15px">
+            <div class="el-textarea" v-loading="loadingRe">
+              <!--enctype="multipart/form-data"-->
+              <form id="uploadFile">
             <textarea
               name="content"
               class="el-textarea__inner"
@@ -12,60 +14,82 @@
               type="text"
               v-model="commitComent"
             ></textarea>
-            <div class="hisFileUplBox">
-              <div style="display: inline-block">
-                <!-- 引入 附件上传 组件 -->
-                <component
-                  v-bind:is="compArr.FileUploadComp"
-                  fileFormId="HistoryFileUpl"
-                  v-on:FilePreEmit="GetFilePreData"
-                  v-bind:clearInfo="IsClear"
-                  v-on:FileDataEmit="GetFileInfo"
-                  :filUrl="filUrl"
-                ></component>
-              </div>
-              <div>
-                <i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button>
-              </div>
+                <div class="hisFileUplBox">
+                  <div style="display: inline-block">
+                    <!-- 引入 附件上传 组件 -->
+                    <component
+                      v-bind:is="compArr.FileUploadComp"
+                      fileFormId="HistoryFileUpl"
+                      v-on:FilePreEmit="GetFilePreData"
+                      v-bind:clearInfo="IsClear"
+                      v-on:FileDataEmit="GetFileInfo"
+                      :filUrl="filUrl"
+                    ></component>
+                  </div>
+                  <div>
+                    <i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button>
+                  </div>
+                </div>
+              </form>
             </div>
-          </form>
-        </div>
-        <!--操作记录 历史记录-->
-        <div class="discription lis" style="margin-top: 15px;">
-          <!-- 历史记录 评论 引入组件-->
-          <!--<component-->
-            <!--v-bind:is="compArr.CommentLogs"-->
-            <!--fileFormId="CommentLogs"-->
-            <!--v-on:FilePreEmit="GetFilePreData"-->
-            <!--:commentList="taskLogs"-->
-          <!--&gt;</component>-->
-          <div class="timeLine">
-            <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 375px;">
-              <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
-                <p class="time">{{comment.createDate}}</p>
-                <p class="content"  v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
-                <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
+            <!--操作记录 历史记录-->
+            <div class="discription lis" style="margin-top: 15px;">
+              <!-- 历史记录 评论 引入组件-->
+              <!--<component-->
+              <!--v-bind:is="compArr.CommentLogs"-->
+              <!--fileFormId="CommentLogs"-->
+              <!--v-on:FilePreEmit="GetFilePreData"-->
+              <!--:commentList="taskLogs"-->
+              <!--&gt;</component>-->
+              <div class="timeLine">
+                <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 395px;">
+                  <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
+                    <p class="time">{{comment.createDate}}</p>
+                    <p class="content"  v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
+                    <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
               <p class="content" v-if="com.showName">附件:
                 <span style="display: inline-block"> {{com.showName}}</span>
                 <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="GetFilePreData(com)">预览</span>
                 <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
               </p>
             </span>
+                  </Timeline-item>
+                </Timeline>
+                <div class="noComment" v-if="commentList.length === 0" style="height: 420px;">还没有人发言呦~</div>
+              </div>
+              <div style="text-align: center" v-if="commentList.length>0">
+                <Page
+                  :total="commentTotalNum"
+                  size="small"
+                  :page-size="5"
+                  show-total
+                  @on-change="commentPageChange($event)"
+                ></Page>
+              </div>
+            </div>
+          </div>
+        </TabPane>
+        <TabPane label="操作记录">
+          <div class="timeLine" style="padding:25px 15px">
+            <Timeline>
+              <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
+                <p class="time">{{history.oTime}}</p>
+                <p class="content">{{history.oName}}{{history.oContent}}</p>
+                <span v-for="(his, index2) in history.attachment" v-bind:key="index2">
+              <p class="content" v-if="his.showName"><span>附件:</span>
+                <span style="display: inline-block"> {{his.showName}}</span>
+                <span v-if="his.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePre(his.previewUrl, his.showName)">预览</span>
+                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="his.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+              </p>
+            </span>
               </Timeline-item>
             </Timeline>
-            <div class="noComment" v-if="commentList.length === 0" style="height: 400px;">还没有人发言呦~</div>
+            <div style="text-align: center;margin-top:40px">
+              <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
+            </div>
           </div>
-          <div style="text-align: center" v-if="commentList.length>0">
-            <Page
-              :total="commentTotalNum"
-              size="small"
-              :page-size="5"
-              show-total
-              @on-change="commentPageChange($event)"
-            ></Page>
-          </div>
-        </div>
-      </div>
+        </TabPane>
+      </Tabs>
       <!-- 图片预览 -->
       <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
         <div class="showImg">
@@ -88,7 +112,11 @@
       </Drawer>
     </div>
 </template>
-
+<style>
+  .ivu-tabs-bar {
+    margin-bottom: 0;
+  }
+</style>
 <script>
 import FileUploadComp from './FileUploadComp.vue'
 import CommentLogs from './CommentLogs.vue'
@@ -101,6 +129,9 @@ export default {
   },
   data () {
     return {
+      totalHistoryNum: 0,
+      pageSize: 10,
+      pageNo: 1,
       compArr: {
         FileUploadComp,
         CommentLogs,
@@ -120,6 +151,8 @@ export default {
       commitComent: '',
       // 历史记录
       commentList: [],
+      // 操作记录
+      historyList: [],
       commentTotalNum: 0,
       pageN: 1,
       // 新增 添加评论
@@ -146,12 +179,17 @@ export default {
   },
   created () {
     this.getHistoryCont()
+    this.getHistoryList()
   },
   methods: {
     // 历史记录 分页值改变
     commentPageChange: function (e) {
       this.pageN = e
       this.getHistoryCont()
+    },
+    getCurrentHistoryPage (e) {
+      this.pageNo = e
+      this.getHistoryList()
     },
     // 历史记录 点击回复
     addMarkInfo () {
@@ -206,6 +244,32 @@ export default {
           }
         } else {
           that.$message.warning(res.msg)
+        }
+      })
+    },
+    // 操作记录
+    getHistoryList: function () {
+      var that = this
+      that.ajax('/archives/getArchivesLog', {
+        spuId: this.$route.params.spuId,
+        pageSize: 10,
+        pageNum: that.pageNo
+      }).then(res => {
+        if (res.code === 200) {
+          that.historyList = res.data.list
+          that.totalHistoryNum = res.data.totalRow
+          if (that.historyList.length > 0) {
+            for (var i = 0; i < that.historyList.length; i++) {
+              for (var j = 0; j < that.historyList[i].attachment.length; j++) {
+                if (that.isImage(res.data.list[i].attachment[j].showName)) {
+                  res.data.list[i].attachment[j].isImg = true
+                } else {
+                  res.data.list[i].attachment[j].isImg = false
+                }
+                res.data.list[i].attachment[j].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].attachment[j].realUrl + '&showName=' + res.data.list[i].attachment[j].showName
+              }
+            }
+          }
         }
       })
     },

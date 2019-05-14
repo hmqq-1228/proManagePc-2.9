@@ -1,7 +1,8 @@
 <template>
    <div class="skuInfo">
-     <Input prefix="ios-search" placeholder="按SKU编码搜索" style="width:  300px;margin-top: 15px" v-model="searchCode" v-on:input="search" clearable />
-     <div style="margin-top: -15px">
+     <Input prefix="ios-search" placeholder="按SKU编码搜索" style="width:  300px;margin-top: 15px;float: left" v-model="searchCode" v-on:input="search" clearable />
+     <el-button type="primary" size="small" style="float: right;margin-right: 15px;margin-top: 20px"  @click.stop="addsku">新增SKU</el-button>
+     <div style="margin-top: -35px">
        <div class="sku" v-for="(item,index) in skuList" :key="index" v-if="skuList.length>0">
          <div class="sku-list">
            <div class="left">
@@ -12,13 +13,13 @@
                 </i-input>
               </div>
               <div class="imgBox" v-show="!item.isEdit">
-                <div v-for="(imgs,index) in item.attachmentList" :key="index">
-                  <img :src="imgs.previewUrl" alt="" @click="showImg(imgs)" style="float: left;margin-bottom: 10px;">
+                <div v-for="(imgs,idx) in item.attachmentList" :key="idx">
+                  <img :src="imgs.previewUrl" alt="" @click="showImg(item,imgs,idx)" style="float: left;margin-bottom: 10px;">
                 </div>
               </div>
              <div class="imgBox" v-show="item.isEdit">
-               <div v-for="(imgs,index) in item.attachmentList" :key="index">
-                 <img :src="imgs.previewUrl" alt="" @click="showImg(imgs)" style="float: left;margin-bottom: 10px;">
+               <div v-for="(imgs,idx) in item.attachmentList" :key="idx">
+                 <img :src="imgs.previewUrl" alt="" @click="showImg(item,imgs,idx)" style="float: left;margin-bottom: 10px;">
                </div>
              </div>
            </div>
@@ -129,7 +130,7 @@
                <div class="sku-info"><span>是否计抛</span>：{{behind(item.throwCalculation)}}</div>
                <div class="sku-info"><span>PCS（包装）</span>：<a href="javascript:void(0);" :title="item.pack">{{item.pack}}</a></div>
                <div class="sku-info"><span style="margin-right: -0.35em;letter-spacing:0.35em">中包规格</span>：<a href="javascript:void(0);" :title="item.middleStandards">{{item.middleStandards}}</a></div>
-               <div class="sku-info"><span>外箱尺寸（长*宽*高cm）</span>：<a href="javascript:void(0);" :title="item.outerBoxSize">{{item.outerBoxSize}}</a></div>
+               <div class="sku-info"><span style="margin-right: -0.4em;letter-spacing:0.4em">外箱尺寸</span>：<a href="javascript:void(0);" :title="item.outerBoxSize">{{item.outerBoxSize}}</a></div>
            </div>
            <div class="detail-left" v-if="item.isEdit">
              <div class="sku-info" style="width: 260px;margin-right: 40px;"><i>*</i>&nbsp;&nbsp;<span>零售价的价格段</span>：
@@ -138,7 +139,7 @@
                </Select>
                <Icon type="ios-arrow-dropdown-circle" :id="'priceSegment-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.priceSegment, 'priceSegment', item,index)"/>
              </div>
-             <div class="sku-info"><span style="margin-right: -0.3em;letter-spacing:0.3em">税率（%）</span>：
+             <div class="sku-info"><span style="margin-right: -0.28em;letter-spacing:0.28em">税率（%）</span>：
                <i-input placeholder="请输入" style="width: 140px" v-model="item.taxRate" type="number" @on-enter="submit(item.taxRate, 'taxRate', item,index)" v-on:input="detection($event,'taxRate',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'taxRate-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.taxRate, 'taxRate', item,index)"/>
                </i-input>
@@ -158,7 +159,7 @@
                  <Icon type="ios-arrow-dropdown-circle" :id="'flavor-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.flavor, 'flavor', item,index)"/>
                </i-input>
              </div>
-             <div class="sku-info"><span style="margin-right: -4.3em;letter-spacing:4.3em">气味</span>：
+             <div class="sku-info"><span style="margin-right: -4em;letter-spacing:4em">气味</span>：
                <i-input placeholder="请输入" style="width: 140px" v-model="item.smell"  @on-enter="submit(item.smell, 'smell', item,index)" v-on:input="detection($event,'smell',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'smell-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.smell, 'smell', item,index)"/>
                </i-input>
@@ -181,7 +182,7 @@
                  <Icon type="ios-arrow-dropdown-circle" :id="'width-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.width, 'width', item,index)"/>
                </i-input>
              </div>
-             <div class="sku-info"><span style="margin-right: -4.3em;letter-spacing:4.3em">体积</span>：
+             <div class="sku-info"><span style="margin-right: -4em;letter-spacing:4em">体积</span>：
                <i-input placeholder="请输入" style="width: 140px" v-model="item.volume" v-if="item.isEdit" @click="on-enter(item.volume, 'volume', item,index)" v-on:input="detection($event,'volume',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'volume-'+ index"  slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.volume, 'volume', item,index)"/>
                </i-input>
@@ -207,21 +208,22 @@
                  <Icon type="ios-arrow-dropdown-circle" :id="'pack-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.pack, 'pack', item,index)"/>
                </i-input>
              </div>
-             <div class="sku-info"><span style="margin-right: -0.35em;letter-spacing:0.35em">中包规格</span>：
+             <div class="sku-info"><span style="margin-right: -0.25em;letter-spacing:0.25em">中包规格</span>：
                <i-input placeholder="请输入" style="width: 140px" v-model="item.middleStandards" @on-enter="submit(item.middleStandards, 'middleStandards', item,index)" v-on:input="detection($event,'middleStandards',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'middleStandards-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.middleStandards, 'middleStandards', item,index)"/>
                </i-input>
              </div>
-             <div class="sku-info" style="width:296px;margin-right:0px "><span>外箱尺寸（长*宽*高cm）</span>：
-               <i-input placeholder="请输入" style="width: 120px" v-model="item.outerBoxSize" @on-enter="submit(item.outerBoxSize, 'outerBoxSize', item,index)" v-on:input="detection($event,'outerBoxSize',index)">
+             <div class="sku-info" style="width:296px;margin-right:0px "><span style="margin-right: -0.25em;letter-spacing:0.25em">外箱尺寸</span>：
+               <i-input placeholder="长*宽*高(cm)" style="width: 140px" v-model="item.outerBoxSize" @on-enter="submit(item.outerBoxSize, 'outerBoxSize', item,index)" v-on:input="detection($event,'outerBoxSize',index)">
                  <Icon type="ios-arrow-dropdown-circle" :id="'outerBoxSize-'+ index" slot="suffix" style="color:#808695;font-size: 20px" @click="submit(item.outerBoxSize, 'outerBoxSize', item,index)"/>
                </i-input>
              </div>
            </div>
            <div class="detail-right" v-if="item.editFlag">
              <!--<span style="position: absolute;bottom:45px;right:110px;">{{time}}</span>-->
-             <el-button type="primary" size="small" style="position: absolute;bottom:40px;right:40px;" v-if="!item.isEdit" @click.stop="edit(item, index)">编辑</el-button>
-             <el-button size="small" v-if="item.isEdit"  style="position: absolute;bottom:40px;right:40px;" @click.stop="finish(item, index)">结束</el-button>
+             <el-button type="danger" size="small" style="position: absolute;bottom:40px;right:10px;" @click.stop="deleteSku(item, index)">删除</el-button>
+             <el-button type="primary" size="small" style="position: absolute;bottom:40px;right:80px;" v-if="!item.isEdit" @click.stop="edit(item, index)">编辑</el-button>
+             <el-button size="small" v-if="item.isEdit"  style="position: absolute;bottom:40px;right:80px;" @click.stop="finish(item, index)">结束</el-button>
              <!--<el-button type="info" plain disabled size="small" v-if="">信息按钮</el-button>-->
              <!--<p style="position: absolute;bottom:10px;right:40px;">{{tip}}</p>-->
              <div v-show="item.isEdit">
@@ -251,11 +253,27 @@
        <div class="listNone" v-if="skuList.length===0">暂无相关的SKU信息</div>
      </div>
      <!-- 图片预览 -->
-     <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+     <el-dialog title="图片预览" :visible.sync="dialogShowImg" :width="imgWide + '%'">
+       <div class="controlImgWidth" style="position: absolute;top: 15px;left: 45%">
+         <div @click="addImgWide()"><i class="el-icon-zoom-in"></i></div>
+         <div @click="delImgWide()"><i class="el-icon-zoom-out"></i></div>
+       </div>
        <div class="showImg">
-         <img :src="imgUrl" alt style="width: 100%">
+         <el-carousel indicator-position="outside" height="600px" :initial-index="bannerIndex" :autoplay="false">
+           <el-carousel-item v-for="(item,index) in imgUrl" :key="index">
+             <img :src="item.previewUrl" alt style="width: 100%" class="imgH">
+           </el-carousel-item>
+         </el-carousel>
        </div>
      </el-dialog>
+     <Drawer
+       title="新增SKU"
+       width="740"
+       :closable="false"
+       v-model="addSku"
+     >
+     <add-sku @saveSuccess="saveSuccess" @cancel="cancel"></add-sku>
+     </Drawer>
    </div>
 </template>
 <style>
@@ -266,11 +284,13 @@
 </style>
 <script>
 import upload from '../CustomComp/FileUploadComp.vue'
+import addSku from './addSku.vue'
 export default {
   name: 'skuInfo',
   props: ['slideData'],
   data () {
     return {
+      imgWide: 50,
       buttonStr: '选择图片',
       selectType: '图片',
       FileUploadArr: [],
@@ -280,7 +300,7 @@ export default {
       // 附件上传 组件 是否让子组件清空文件 新组件
       IsClear: false,
       // 图片地址
-      imgUrl: '',
+      imgUrl: [],
       dialogShowImg: false, // 图片预览
       // 搜索sku
       searchCode: '',
@@ -293,36 +313,6 @@ export default {
         value: 1,
         label: '否'
       }],
-      skuObj: {
-        IsClear: false,
-        proFileList: [],
-        attachmentList: [],
-        skuCode: '',
-        yearDigital: '',
-        retailPrice: '',
-        tagPrice: '',
-        costPrice: '',
-        thirdSkuCode: '',
-        barCode: '',
-        color: '',
-        standards: '',
-        priceSegment: '',
-        taxRate: '',
-        otherFunctions: '',
-        component: '',
-        flavor: '',
-        smell: '',
-        hight: '',
-        length: '',
-        width: '',
-        volume: '',
-        weight: '',
-        throwWeight: '',
-        throwCalculation: true,
-        pack: '',
-        middleStandards: '',
-        outerBoxSize: ''
-      },
       // 当前页数
       pageNum: 1,
       // 总条数
@@ -331,19 +321,71 @@ export default {
       tip: '',
       time: '',
       pageSize: 10,
-      spuId: this.$route.params.spuId
+      spuId: this.$route.params.spuId,
+      addSku: false,
+      bannerHeight: '',
+      bannerIndex: 0
     }
   },
   components: {
-    upload
+    upload,
+    addSku
   },
   created () {
     this.getList()
     // this.getOnOffStatus()
   },
+  mounted () {
+
+  },
   watch: {
   },
   methods: {
+    addImgWide: function () {
+      if (this.imgWide < 90) {
+        this.imgWide = this.imgWide + 10
+      }
+    },
+    delImgWide: function () {
+      if (this.imgWide > 30) {
+        this.imgWide = this.imgWide - 10
+      }
+    },
+    // 保存成功
+    saveSuccess (res) {
+      if (res.code === 200) {
+        this.getList()
+        this.addSku = false
+      }
+    },
+    // 取消
+    cancel () {
+      this.addSku = false
+    },
+    // 删除sku
+    deleteSku (item) {
+      let that = this
+      that.$confirm('确认删除此SKU，确定删除？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/archives/delSku', {skuId: item.id}).then(res => {
+          if (res.code === 200) {
+            that.getList()
+            this.$Message.success('删除成功')
+          } else {
+            this.$Message.error(res.msg)
+          }
+        })
+      }).catch(() => {
+        return false
+      })
+    },
+    // 新增sku
+    addsku () {
+      this.addSku = true
+    },
     detection (val, name, index) {
       $('#' + name + '-' + index).css({color: '#2d8cf0', cursor: 'pointer'})
     },
@@ -415,9 +457,13 @@ export default {
       })
     },
     // 图片预览
-    showImg (imgs) {
+    showImg (item, imgs, idx) {
       this.dialogShowImg = true
-      this.imgUrl = imgs.previewUrl
+      this.bannerIndex = idx
+      // let img = document.querySelector('.imgH')
+      // console.log(img)
+      // this.bannerHeight = img.getBoundingClientRect.height
+      this.imgUrl = item.attachmentList
     },
     // 获取sku列表数据
     getList () {
@@ -715,5 +761,18 @@ export default {
     line-height: 150px;
     color:#ccc;
     float: left;
+  }
+  .controlImgWidth{
+    font-size: 20px;
+    color: #409EFF;
+    width: 100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+  }
+  .controlImgWidth > div{
+    width: 40px;
+    cursor: pointer;
+    text-align: center;
   }
 </style>

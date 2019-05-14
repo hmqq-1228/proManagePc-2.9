@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div style="font-size: 16px; margin-bottom: 10px;">添加项目成员</div>
+  <div class="members">
+    <div style="font-size: 16px; margin-bottom: 10px;">添加成员</div>
     <div class="searchBox">
       <div class="searchSelectIpt">
         <el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"
@@ -33,6 +33,23 @@
         </div>
       </div>
     </div>
+    <div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">小组成员列表</div>
+    <div class="memberTable">
+      <div class="memTblTitle">
+        <div class="tblTitItem">角色</div>
+        <div class="tblTitItem" style="width: 250px;">姓名</div>
+        <!--<div class="tblTitItem">查看</div>-->
+        <div class="tblTitItem">编辑</div>
+      </div>
+      <div class="memTblList">
+        <div class="memTblListItem" v-for="mem in groupList" :key="mem.userId">
+          <div class="memListItem">{{mem.roleStr}}</div>
+          <div class="memListItem overList" style="width: 250px;"><a href="javascript:void(0);" :title="mem.userName" style="color:#333">{{mem.userName}}</a></div>
+          <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
+          <div class="memListItem"><Checkbox v-bind:value="mem.auth === '2'" :disabled="true"></Checkbox></div>
+        </div>
+      </div>
+    </div>
     <!--组织架构 start-->
     <div v-if="organizationalShow" style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">组织架构</div>
     <!--organizationalShow-->
@@ -52,7 +69,12 @@
     </div>
   </div>
 </template>
-
+<style>
+  .members .ivu-checkbox-disabled .ivu-checkbox-inner {
+    border-color: #2d8cf0;
+    background-color: #2d8cf0;
+  }
+</style>
 <script>
 export default {
   name: 'MemberComp',
@@ -71,6 +93,8 @@ export default {
       proGrpMemList: [],
       getNextPeople: [],
       getNextPart: [],
+      // 小组成员
+      groupList: [],
       // 组织架构
       defaultProps: {
         children: 'children',
@@ -103,6 +127,7 @@ export default {
       // this.log('DrawerMemberShow:val:', val)
       if (val) {
         this.queryProGroupMember()
+        this.getGroup()
       } else {
         this.organizationalShow = false
       }
@@ -210,23 +235,31 @@ export default {
     // 新增 查询项目组成员getMembersByProjectUID
     queryProGroupMember () {
       var that = this
-      this.ajax('/archives/getMemberList', {groupId: that.groupId}).then(res => {
+      this.ajax('/archives/getCommonMemberList', {spuId: that.proId}).then(res => {
         if (res.code === 200) {
           that.proGrpMemList = res.data
-          that.log('getMembersByProjectUID:', that.proGrpMemList)
-          for (var i = 0; i < res.data.length; i++) {
-            if (res.data[i].peopleRole === '1') {
-              res.data[i].peopleRoleText = '创建人'
-            } else if (res.data[i].peopleRole === '2') {
-              res.data[i].peopleRoleText = '负责人'
-            } else if (res.data[i].peopleRole === '3') {
-              res.data[i].peopleRoleText = '执行人'
-            } else {
-              res.data[i].peopleRoleText = '组成员'
-            }
-          }
+          // that.log('getMembersByProjectUID:', that.proGrpMemList)
+          // for (var i = 0; i < res.data.length; i++) {
+          //   if (res.data[i].peopleRole === '1') {
+          //     res.data[i].peopleRoleText = '创建人'
+          //   } else if (res.data[i].peopleRole === '2') {
+          //     res.data[i].peopleRoleText = '负责人'
+          //   } else if (res.data[i].peopleRole === '3') {
+          //     res.data[i].peopleRoleText = '执行人'
+          //   } else {
+          //     res.data[i].peopleRoleText = '组成员'
+          //   }
+          // }
           // that.options4 = res.data peopleRole
           // this.loading2 = false
+        }
+      })
+    },
+    getGroup () {
+      var that = this
+      this.ajax('/archives/getGroupMemberList', {groupId: that.groupId}).then(res => {
+        if (res.code === 200) {
+          that.groupList = res.data
         }
       })
     },
