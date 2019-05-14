@@ -275,6 +275,8 @@ export default {
           this.$router.push('/GoodsArchives')
         } else if (proName === '研发管理') {
           this.$router.push('/GoodsManage')
+        } else if (proName === '产品小组') {
+          this.$router.push('/GroupAdmin')
         }
       } else {
         if (proName === '我的日程') {
