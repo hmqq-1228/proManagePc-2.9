@@ -133,8 +133,9 @@
             </div>
           </div>
         </div>
-        <div class="spuInfoItem">
-          <div style="float: right" v-if="editFlag"><Button type="primary" @click="baseEditBtn">{{baseEditBtnText}}</Button></div>
+        <div class="spuInfoItem" style="text-align: right">
+          <div v-if="editFlag"><Button type="primary" @click="baseEditBtn">{{baseEditBtnText}}</Button></div>
+          <div v-if="baseInfoEditStatus" style="margin-top: 15px;"><Button @click="delSpuBtn">删除</Button></div>
         </div>
       </div>
       <!-- spu类目信息 -->
@@ -948,6 +949,24 @@ export default {
     this.queryClassifyTree()
   },
   methods: {
+    delSpuBtn: function () {
+      var that = this
+      this.$Modal.confirm({
+        title: '确认要删除？',
+        content: '正在执行删除SPU操作，此操作不可恢复',
+        onOk: () => {
+          this.ajax('/archives/delSpu', {spuId: that.spuId}).then(res => {
+            if (res.code === 200) {
+              that.$Message.success('删除spu成功')
+              that.$router.push('/GoodsArchives')
+            }
+          })
+        },
+        onCancel: () => {
+          // this.$Message.info('Clicked cancel')
+        }
+      })
+    },
     moveLeft: function (currentId) {
       // j  spuBaseImgList FileUploadArr
       var that = this
