@@ -1,17 +1,15 @@
 <template>
   <div class="FileUploadComp" v-loading="loading21">
+    <div class="FileList">
+
+    </div>
     <form class="FileCompForm" :id="lalala" enctype="multipart/form-data">
-      <div class="FileCompFormIcon"><img src="../../../static/img/fujian.png" alt=""></div>
-      <div class="FileCompIptWrap">{{buttonStr}}
-        <!--fileFormId-->
+      <div class="FileCompIptWrap" v-if="fileListComment.length < 5">
+         <i class="el-icon-plus"></i>
         <input type="file" class="aaa" :disabled="commentDis" name="myfile" :id="lalala + '_myfile2'" @change="getFileName">
       </div>
-      <div class="FileCompIptText">{{uploadFileName}}</div>
     </form>
     <div style="font-size: 12px">
-      <span style="color: #f00" v-if="fileListComment.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个{{selectType}}:</span>
-      <span v-if="fileListComment.length < 5">已选 <span style="color: #409EFF;font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个{{selectType}}:</span>
-      <!--<span style="color: #888;" v-if="fileListComment.length === 0">暂无附件</span>-->
       <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index">
         <span style="color: #333" @click="FilePreEmitFuc(file.previewUrl, file.fileName, file.attachmentId)">{{index+1}}、{{file.fileName}}</span>
         <div style="color: #409EFF;display: inline-block;cursor: pointer;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>;&nbsp;&nbsp;
@@ -227,12 +225,16 @@ export default {
       }
     }
   }
-}
+  }
 </script>
 
 <style scoped>
   div img{
     width: 100%;
+  }
+  .FileList {
+    width: 60px;
+    height: 60px;
   }
   .FileUploadComp{
   }
@@ -247,15 +249,16 @@ export default {
   }
   .FileCompIptWrap{
     position: relative;
-    background: #D0EEFF;
+    width: 60px;
+    height: 60px;
     border: 1px solid #99D3F5;
     border-radius: 4px;
-    padding: 4px 12px;
-    overflow: hidden;
-    color: #1E88C7;
+    color: #8c939d;
     line-height: 20px;
     margin-top: 6px;
-    height: 30px;
+    font-size: 25px;
+    text-align: center;
+    line-height: 60px;
   }
   .FileCompIptWrap input{
     width: 100%;
