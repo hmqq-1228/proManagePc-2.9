@@ -1,5 +1,18 @@
 <template>
   <div class="members">
+    <div class="groupDetail">
+      <div class="groupName">
+        <span v-if="showName">{{groupInfo.name}}</span>
+        <span v-if="!showName"><Input v-model="groupInfo.name" :autofocus="trueFlag" placeholder="请输入名称" style="width: 150px" /></span>
+        <span class="groupEdit" @click="groupEdit()"><Icon type="md-create" color="#2d8cf0"/></span>
+      </div>
+      <div class="groupDiscript">{{groupInfo.description}}</div>
+      <div class="groupTime"><img src="../../../static/img/time.png" alt="" style="float: left;"> <span style="margin-left: 10px">创建时间: {{groupInfo.createDt}}</span></div>
+      <div class="groupMen">
+        <div><img src="../../../static/img/fuzeren.png" alt="" style="float: left;"> <span style="margin-left: 10px">负责人: {{groupInfo.userName}}</span></div>
+        <div><img src="../../../static/img/faqiren.png" alt="" style="float: left;"> <span style="margin-left: 10px">创建人: {{groupInfo.creatorName}}</span></div>
+      </div>
+    </div>
     <div style="font-size: 16px; margin-bottom: 10px;">添加成员</div>
     <div class="searchBox">
       <div class="searchSelectIpt">
@@ -29,29 +42,7 @@
           <div class="memListItem overList" style="width: 250px;"><a href="javascript:void(0);" :title="mem.userName" style="color:#333">{{mem.userName}}</a></div>
           <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
           <div class="memListItem"><Checkbox v-bind:value="mem.auth === '2'" @on-change="checkBoxChangeEdit($event, mem.id)"></Checkbox></div>
-          <div class="memListItem" style="cursor: pointer;"  v-on:click="delMember(mem.id)">x</div>
-        </div>
-      </div>
-    </div>
-    <div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">小组成员列表
-      <el-button type="text" style="margin-left: 10px" @click="selectGroup">选择小组</el-button>
-    </div>
-    <div class="memberTable">
-      <div class="memTblTitle">
-        <div class="tblTitItem">角色</div>
-        <div class="tblTitItem" style="width: 250px;">姓名</div>
-        <!--<div class="tblTitItem">查看</div>-->
-        <div class="tblTitItem">编辑</div>
-      </div>
-      <div class="memTblList">
-        <div class="memTblListItem" v-for="mem in groupList" :key="mem.userId">
-          <div class="memListItem">{{mem.roleStr}}</div>
-          <div class="memListItem overList" style="width: 250px;"><a href="javascript:void(0);" :title="mem.userName" style="color:#333">{{mem.userName}}</a></div>
-          <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
-          <div class="memListItem">
-            <Checkbox v-bind:value="mem.auth === '2'" :disabled="true" v-if="mem.auth === '2'"></Checkbox>
-            <Checkbox  :disabled="true" v-if="mem.auth === '1'"></Checkbox>
-          </div>
+          <div class="memListItem del" v-bind:class="mem.editPermission === true ? '' : 'banDel'" v-on:click="delMember(mem.id)">x</div>
         </div>
       </div>
     </div>
@@ -72,7 +63,6 @@
       </div>
       <div class="organizationalBtn"><Button type="primary" @click="addMenber()">添加</Button></div>
     </div>
-    <select-group :select="creatArchivesGroupList" @groupListSelectOk="groupListSelectOk" @groupListSelectCancel="groupListSelectCancel"></select-group>
   </div>
 </template>
 <style>
@@ -82,15 +72,17 @@
   }
 </style>
 <script>
-import SelectGroup from './SelectGroup.vue'
 export default {
-  name: 'MemberComp',
-  props: ['proId', 'DrawerMemberShow', 'groupId'],
+  name: 'GroupMemberComp',
+  props: ['DrawerMemberShow', 'groupId'],
   data () {
     return {
-      creatArchivesGroupList: false,
       loading2: false,
       loadingMan: false,
+      groupInfo: '',
+      trueFlag: true,
+      falseFlag: false,
+      showName: true,
       organizationalShow: false,
       organizLoading: false,
       deId: [],
@@ -130,14 +122,11 @@ export default {
       }
     }
   },
-  components: {
-    SelectGroup
-  },
   watch: {
     DrawerMemberShow: function (val, oV) {
       // this.log('DrawerMemberShow:val:', val)
       if (val) {
-        this.queryProGroupMember()
+        this.getGroupDetail()
         this.getGroup()
       } else {
         this.organizationalShow = false
@@ -151,24 +140,6 @@ export default {
     }
   },
   methods: {
-    groupListSelectOk (val) {
-      this.creatArchivesGroupList = false
-      this.ajax('/archives/editSpuGroup', {groupId: val.id, spuId: this.proId}).then(res => {
-        if (res.code === 200) {
-          this.groupId = val.id
-          this.getGroup()
-        } else {
-          this.$message.warning(res.msg)
-        }
-      })
-    },
-    groupListSelectCancel () {
-      this.creatArchivesGroupList = false
-    },
-    // 选择小组
-    selectGroup () {
-      this.creatArchivesGroupList = true
-    },
     // 新增 成员搜索
     remoteMethod (query) {
       var that = this
@@ -215,11 +186,10 @@ export default {
           obj.ID = that.taskForm.value9[i].split('-')[1]
           that.addMemPayload.hrocPeople.push(obj)
         }
-        that.addMemPayload.spuId = that.proId
         that.addMemPayload.groupId = that.groupId
-        this.ajax('/archives/addMember', JSON.stringify(that.addMemPayload)).then(res => {
+        this.ajax('/group/addGroupMember', JSON.stringify(that.addMemPayload)).then(res => {
           if (res.code === 200) {
-            that.queryProGroupMember()
+            that.getGroup()
             // that.queryProDetail()
             that.$emit('addMembersInfo', true)
             that.addMemPayload.hrocPeople = []
@@ -238,8 +208,8 @@ export default {
       var that = this
       that.loadingMan = true
       if (memId || memId === 0) {
-        that.ajax('/archives/delMember', {
-          spuId: that.proId,
+        that.ajax('/group/delGroupMember', {
+          groupId: that.groupId,
           memberId: memId
         }).then(res => {
           that.log('删除成员:', res)
@@ -248,7 +218,7 @@ export default {
               type: 'success',
               message: res.msg
             })
-            that.queryProGroupMember()
+            that.getGroup()
             that.$emit('delMembersInfo', true)
             // that.getProjectPeo()
             that.loadingMan = false
@@ -261,34 +231,28 @@ export default {
         })
       }
     },
-    // 新增 查询项目组成员getMembersByProjectUID
-    queryProGroupMember () {
+    getGroupDetail: function () {
       var that = this
-      this.ajax('/archives/getCommonMemberList', {spuId: that.proId}).then(res => {
+      this.ajax('/group/getGroupDetail', {groupId: that.groupId}).then(res => {
         if (res.code === 200) {
-          that.proGrpMemList = res.data
-          // that.log('getMembersByProjectUID:', that.proGrpMemList)
-          // for (var i = 0; i < res.data.length; i++) {
-          //   if (res.data[i].peopleRole === '1') {
-          //     res.data[i].peopleRoleText = '创建人'
-          //   } else if (res.data[i].peopleRole === '2') {
-          //     res.data[i].peopleRoleText = '负责人'
-          //   } else if (res.data[i].peopleRole === '3') {
-          //     res.data[i].peopleRoleText = '执行人'
-          //   } else {
-          //     res.data[i].peopleRoleText = '组成员'
-          //   }
-          // }
-          // that.options4 = res.data peopleRole
-          // this.loading2 = false
+          that.log('getGroupDetail:', res)
+          that.groupInfo = res.data
         }
       })
+    },
+    groupEdit: function () {
+      var that = this
+      that.log('修改中')
+      that.showName = !that.showName
+      if (that.showName) {
+        that.log('修改完')
+      }
     },
     getGroup () {
       var that = this
       this.ajax('/archives/getGroupMemberList', {groupId: that.groupId}).then(res => {
         if (res.code === 200) {
-          that.groupList = res.data
+          that.proGrpMemList = res.data
         }
       })
     },
@@ -301,7 +265,7 @@ export default {
       } else {
         auth = 1
       }
-      this.ajax('/archives/editAuth', {memberId: id, auth: auth, spuId: this.proId}).then(res => {
+      this.ajax('/group/editAuth', {memberId: id, auth: auth, groupId: this.groupId}).then(res => {
         // that.log('editRole:', res)
       })
     },
@@ -355,13 +319,12 @@ export default {
       var that = this
       that.organizLoading = true
       if (that.deId.length > 0) {
-        that.ajax('/archives/addMember', JSON.stringify({
-          spuId: that.proId,
+        that.ajax('/group/addGroupMember', JSON.stringify({
           hrocPeople: that.getPeople,
           groupId: that.groupId
         })).then(res => {
           if (res.code === 200) {
-            that.queryProGroupMember()
+            that.getGroup()
             that.$emit('addPeopleInfo', true)
             that.organizLoading = false
             // that.queryProDetail()
@@ -390,6 +353,40 @@ export default {
 <style scoped>
   .searchBox{
     display: flex;
+  }
+  .groupEdit{
+    display: none;
+    margin-left: 20px;
+  }
+  .groupDetail{
+    font-size: 14px;
+    border-bottom: 1px solid #e8eaec;
+    padding-bottom: 16px;
+    margin-bottom: 10px;
+  }
+  .groupName{
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  /*.groupName:hover .groupEdit{*/
+    /*display: inline-block;*/
+    /*margin-left: 20px;*/
+  /*}*/
+  .groupTime{
+    padding: 5px 0;
+  }
+  .groupMen{
+    padding: 5px 0;
+    display: flex;
+  }
+  .groupMen>div{
+    width: 50%;
+  }
+  .groupDiscript{
+    padding: 5px 10px;
+    color: #888;
+    font-size: 12px;
+    background-color: #f5f8fa;
   }
   .searchSelectIpt{
     width: 300px;
@@ -444,5 +441,11 @@ export default {
   .organizationalBox>div:nth-child(2){
     /*flex-grow: 1;*/
     width: 80px;
+  }
+  .del{
+    cursor: pointer;
+  }
+  .banDel{
+    cursor: not-allowed;
   }
 </style>

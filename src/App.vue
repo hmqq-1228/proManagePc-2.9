@@ -242,7 +242,6 @@ export default {
               that.slideMenu.push(res.data[i])
             }
           }
-          console.log('slideMenuGroup2', that.slideMenuGroup2)
           that.$store.state.slideMenuGroup = that.slideMenuGroup
           that.$store.state.slideMenu = that.slideMenu
           if (localStorage.getItem('generalMenuActive') !== '集团战略') {
@@ -270,7 +269,6 @@ export default {
         }
       } else if (proType === '商品管理') {
         localStorage.setItem('generalMenuActive', '商品管理')
-        console.log(id, n, proType, proName)
         if (proName === '档案管理') {
           this.$router.push('/GoodsArchives')
         } else if (proName === '研发管理') {
@@ -458,6 +456,9 @@ padding: 8px 20px;
   .contentTop .el-button{
     padding: 7px 14px;
   }
+.el-menu-item-group__title{
+  padding: 0;
+}
   .el-menu-item i{
     color: #ddd;
   }

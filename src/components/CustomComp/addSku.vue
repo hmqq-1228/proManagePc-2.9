@@ -5,7 +5,8 @@
         <Input v-model="formValidate.skuCode" placeholder="请输入SKU编码" :maxlength="20" size="large"/>
       </FormItem>
       <FormItem label="年份" prop="yearDigital">
-        <Input v-model="formValidate.yearDigital" placeholder="请输入年份" :maxlength="20" size="large" type="number"/>
+        <!--<Input v-model="formValidate.yearDigital" placeholder="请输入年份" :maxlength="20" size="large" type="number"/>-->
+        <DatePicker type="year" placeholder="请选择年份" @on-change="changeYear" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="零售价" prop="retailPrice">
         <Input v-model="formValidate.retailPrice" placeholder="请输入零售价" :maxlength="20" size="large" type="number"/>
@@ -30,7 +31,7 @@
       </FormItem>
       <!--基本信息 项目附件-->
       <FormItem label="上传图片" prop="desc2">
-        <component v-bind:is="compArr.FileUploadComp" v-on:FilePreEmit="GetFilePreData" v-bind:FileDataList="proFileList" fileFormId="goodsInfo" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl"></component>
+        <component v-bind:is="compArr.FileUploadComp" v-on:FilePreEmit="GetFilePreData" v-bind:FileDataList="proFileList" fileFormId="goodsInfo" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl" :buttonStr="buttonStr" :selectType="selectType" :limtImg="limtImg"></component>
       </FormItem>
       <FormItem>
         <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
@@ -48,6 +49,9 @@ export default {
   props: ['proId', 'fileFormId', 'ProBaseInfoShow'],
   data () {
     return {
+      buttonStr: '选择图片',
+      selectType: '图片',
+      limtImg: true,
       value5: '',
       selectionFlag: false,
       // 引入组件
@@ -95,7 +99,7 @@ export default {
           { required: true, message: '请选择颜色', trigger: 'blur' }
         ],
         yearDigital: [
-          { required: true, message: '请输入年份', trigger: 'blur' }
+          { required: true, type: 'string', message: '请选择年份', trigger: 'change' }
         ],
         retailPrice: [
           { required: true, message: '请输入零售价', trigger: 'blur' }
@@ -113,7 +117,7 @@ export default {
           { required: true, message: '请输入条码', trigger: 'blur' }
         ],
         thirdSkuCode: [
-          { required: true, message: '第三方SKU编码', trigger: 'blur' }
+          { required: true, message: '请输入第三方SKU编码', trigger: 'blur' }
         ]
       },
       options: []
@@ -127,6 +131,9 @@ export default {
   created () {
   },
   methods: {
+    changeYear (e) {
+      this.formValidate.yearDigital = e
+    },
     // 附件上传 获取附件上传组件发来的附件信息 新组件
     GetFileInfo (obj) {
       if (obj) {

@@ -1,11 +1,25 @@
 <template>
   <div class="GoodsArchives">
     <div style="position: absolute; right: 20px; top: 25px;"><Button @click="createArchivesBtn" type="primary">新建档案</Button></div>
-    <div class="goodSer" style="width: 350px;">
+    <div class="goodSer" style="width: 200px;display: inline-block">
       <el-input
         placeholder="请输入商品名称"
         prefix-icon="el-icon-search"
         v-model="inputVal">
+      </el-input>
+    </div>
+    <div class="goodSer" style="width: 200px;display: inline-block;margin-left: 20px;">
+      <el-input
+        placeholder="请输入商品编码"
+        prefix-icon="el-icon-search"
+        v-model="spuCode">
+      </el-input>
+    </div>
+    <div class="goodSer" style="width: 200px;display: inline-block;margin-left: 20px;">
+      <el-input
+        placeholder="请输入负责人,如:张三"
+        prefix-icon="el-icon-search"
+        v-model="searchUserName">
       </el-input>
     </div>
     <div class="serTag">
@@ -188,31 +202,19 @@
     </Modal>
     <!--小组列表-->
     <!--小组列表 选择小组-->
-    <Modal v-model="creatArchivesGroupList" width="800" title="小组列表" @on-ok="groupListSelectOk" @on-cancel="groupListSelectCancel">
-      <div class="tableQueryInput" style="margin-bottom: 10px;">
-        <el-input v-model="searchGroup" placeholder="请输入搜索内容"></el-input>
-      </div>
-      <Table highlight-row ref="currentRowTable" :columns="columns3" :data="tableData" @on-current-change="tableSelect"></Table>
-      <div style="margin-top: 15px;">
-        <el-pagination
-          layout="prev, pager, next"
-          :page-size="10"
-          :total="totalRow"
-          @current-change="currentChange"
-          :hide-on-single-page="true">
-        </el-pagination>
-      </div>
-    </Modal>
+    <select-group :select="creatArchivesGroupList" @groupListSelectOk="groupListSelectOk" @groupListSelectCancel="groupListSelectCancel"></select-group>
     <!---->
   </div>
 </template>
 
 <script>
 import FileUploadComp from './CustomComp/FileUploadComp.vue'
+import SelectGroup from './CustomComp/SelectGroup.vue'
 export default {
   name: 'GoodsArchives',
   components: {
-    FileUploadComp
+    FileUploadComp,
+    SelectGroup
   },
   data () {
     return {
@@ -271,7 +273,8 @@ export default {
       ],
       creatArchivesGroupList: false,
       compArr: {
-        FileUploadComp: 'FileUploadComp'
+        FileUploadComp: 'FileUploadComp',
+        SelectGroup: 'SelectGroup'
       },
       filUrl: '/file/uploadGoodsFileAjax',
       // 附件上传
@@ -310,6 +313,8 @@ export default {
       currentPage: 1,
       dialogVisible: false,
       inputVal: this.$store.state.goodsName,
+      spuCode: this.$store.state.spuCode,
+      searchUserName: this.$store.state.searchUserName,
       radioVal: this.$store.state.sortTypeName,
       goodTags: [],
       goodList: [],
@@ -321,20 +326,19 @@ export default {
         pageNum: 1,
         pageSize: 12,
         status: '',
+        spuCode: this.$store.state.spuCode,
         goodsName: this.$store.state.goodsName,
         sortType: this.$store.state.sortType,
         categoryType: '',
         startCostPrice: this.$store.state.startCostPrice,
         endCostPrice: this.$store.state.endCostPrice,
+        searchUserName: this.$store.state.searchUserName,
         categoryStr: '',
         permission: ''
       }
     }
   },
   watch: {
-    searchGroup: function (val, old) {
-      this.queryGroupList()
-    },
     dialogVisible: function (val, oV) {
       if (val === false) {
         this.imgWide = 50
@@ -376,6 +380,18 @@ export default {
       that.getGoodList.goodsName = val
       that.getGoodsList()
     },
+    spuCode: function (val, oV) {
+      var that = this
+      that.$store.state.spuCode = val
+      that.getGoodList.spuCode = val
+      that.getGoodsList()
+    },
+    searchUserName: function (val, oV) {
+      var that = this
+      that.$store.state.searchUserName = val
+      that.getGoodList.searchUserName = val
+      that.getGoodsList()
+    },
     // 商品排序
     radioVal: function (val, oV) {
       var that = this
@@ -411,39 +427,16 @@ export default {
     that.getGoodsList(codeStr)
     that.getPermission()
     that.queryOptionType()
-    that.queryGroupList()
   },
   methods: {
-    groupListSelectOk: function () {
+    groupListSelectOk: function (val) {
       this.creatArchivesGroupList = false
-      this.ArchivesGroupId = this.selectedGroupData.id
-      this.ArchivesGroupSearch = this.selectedGroupData.name
+      this.ArchivesGroupId = val.id
+      this.ArchivesGroupSearch = val.name
       // this.selectedGroupData
     },
-    groupListSelectCancel: function () {},
-    currentChange: function (num) {
-      this.log('currentChange:', num)
-      this.pageNumber = num
-      this.queryGroupList()
-    },
-    queryGroupList () {
-      var that = this
-      this.ajax('/group/getGroup', {groupName: that.searchGroup, type: 1, pageNum: that.pageNumber, pageSize: that.pageSize}).then(res => {
-        that.log('getGroup:111:', res)
-        if (res.code === 200) {
-          that.tableData = res.data.list
-          // that.GroupList = res.data.list
-          that.pageSize = res.data.pageSize
-          that.totalRow = res.data.totalRow
-        } else {
-          that.$message(res.msg)
-        }
-      })
-    },
-    tableSelect: function (selectData) {
-      // 选中的小组 临时存放
-      this.selectedGroupData = selectData
-      this.log('selectData:', selectData)
+    groupListSelectCancel () {
+      this.creatArchivesGroupList = false
     },
     showGroupList: function () {
       // this.creatArchivesShow = false
