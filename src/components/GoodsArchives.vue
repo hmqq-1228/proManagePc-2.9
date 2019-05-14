@@ -125,19 +125,31 @@
     </div>
     <!--新建档案-->
     <Modal v-model="creatArchivesShow" title="新建档案" @on-ok="createArchivesSub" @on-cancel="createArchivesCancel">
+      <!--<div slot="header" style="display: flex;">-->
+        <!--<div style="font-weight: 700; color: #17233d; font-size: 14px;">-->
+          <!--<span>新建档案</span>-->
+        <!--</div>-->
+        <!--<div style="margin-left:30px;color:#f60">-->
+          <!--<span>有必填项未填写</span>-->
+        <!--</div>-->
+      <!--</div>-->
+      <div style="position: absolute; left: 100px; top: 20px;">{{valueCheck}}</div>
       <div class="createGroupCnt">
+        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
         <div class="createGroupCntItem">商品名称:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-input placeholder="请输入商品名称" v-model="createArchivesName"></el-input>
         </div>
       </div>
       <div class="createGroupCnt">
+        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
         <div class="createGroupCntItem">商品ID:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-input placeholder="请输入商品ID" v-model="createArchivesId"></el-input>
         </div>
       </div>
       <div class="createGroupCnt">
+        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
         <div class="createGroupCntItem">品牌:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <!--@on-change="changeValue($event,'pinpaiNameVal',{brandCode: pinpaiCodeVal},'editBase')"-->
@@ -147,6 +159,7 @@
         </div>
       </div>
       <div class="createGroupCnt">
+        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
         <div class="createGroupCntItem">负责人:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-autocomplete style="width: 100%"
@@ -159,6 +172,7 @@
         </div>
       </div>
       <div class="createGroupCnt">
+        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
         <div class="createGroupCntItem">产品小组:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-autocomplete style="width: 100%"
@@ -172,12 +186,14 @@
         <div style="width: 90px; text-align: right; padding-top: 2px;"><Button @click="showGroupList" type="primary" >选择小组</Button></div>
       </div>
       <div class="createGroupCnt">
+        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
         <div class="createGroupCntItem">SPU编码:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-input placeholder="请输入SPU编码" v-model="createArchivesSpuCode"></el-input>
         </div>
       </div>
       <div class="createGroupCnt">
+        <div style="color: #e13d13; width: 10px; line-height: 40px;"></div>
         <div class="createGroupCntItem">附件上传:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
@@ -203,6 +219,7 @@ export default {
   data () {
     return {
       // 新建档案
+      valueCheck: '',
       selectedGroupData: '',
       totalRow: 0,
       pageNumber: 1,
@@ -526,8 +543,27 @@ export default {
         })
       }
     },
+    // 非空判断
+    argumentsCheck: function () {
+      // alert(arguments.length)
+      var nullflag = true
+      for (var i = 0; i < arguments.length; i++) {
+        if (arguments[i].trim().length === 0) {
+          nullflag = false
+          break
+        }
+      }
+      // this.creatArchivesShow = true
+      return nullflag
+    },
     createArchivesSub: function () {
       var that = this
+      if (!that.argumentsCheck(that.createArchivesName, that.createArchivesId, that.pinpaiCodeVal, that.createArchivesSpuCode, that.CreateArchivesMid, that.ArchivesGroupId)) {
+        that.valueCheck('有必填项未填写')
+        return
+      }
+      that.log('看看有没有放行')
+      // string.trim()
       var createArchivesPayload = {
         spuName: that.createArchivesName,
         spuGoodsId: that.createArchivesId,
@@ -542,7 +578,8 @@ export default {
         if (res.code === 200) {
           that.IsClear = true
           that.getGoodsList()
-          that.$message(res.msg)
+          that.$Message.success(res.msg)
+          // that.$message(res.msg)
           // that.queryGroupList()
           // that.GroupList = res.data.list
         } else {

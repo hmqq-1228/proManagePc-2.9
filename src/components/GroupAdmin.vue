@@ -96,7 +96,7 @@
         v-bind:DrawerMemberShow="DrawerMember"
       ></component>
     </Drawer>
-    <div>
+    <div style="text-align: center">
       <el-pagination
         layout="prev, pager, next"
         :page-size="10"
