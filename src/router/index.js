@@ -32,6 +32,7 @@ import TestUpload from '@/components/TestUpload'
 import CompUse from '@/components/CompUse'
 import goodsDetail2 from '@/components/goodsDetail2'
 import page404 from '@/components/page404'
+import GroupAdmin from '@/components/GroupAdmin'
 import TTEST from '@/components/TTEST'
 Vue.use(Router)
 
@@ -176,6 +177,11 @@ export default new Router({
       path: '/page404',
       name: 'page404',
       component: page404
+    },
+    {
+      path: '/GroupAdmin',
+      name: 'GroupAdmin',
+      component: GroupAdmin
     },
     {
       path: '/TTEST',
