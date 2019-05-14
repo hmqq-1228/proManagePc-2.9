@@ -83,8 +83,8 @@
           <div class="goodInfo" @click="toGoodsManage(good.spuId)">
             <div>编码: <span v-if="good.spuCode">{{good.spuCode}}</span><span v-if="!good.spuCode" style="color: #999;font-size: 12px;">无编码</span></div>
             <div class="goodTypeName" :title="good.spuName">品名: <span v-if="good.spuName">{{good.spuName}}</span><span v-if="!good.spuName" style="color: #999;font-size: 12px;">未命名</span></div>
-            <div>分类: <span v-if="good.brandName">{{good.brandName}}</span><span v-if="!good.brandName" style="color: #999;font-size: 12px;">未分类</span></div>
-            <div>品牌: <span v-if="good.category">{{good.category}}</span><span v-if="!good.category" style="color: #999;font-size: 12px;">未分类</span></div>
+            <div>品牌: <span v-if="good.brandName">{{good.brandName}}</span><span v-if="!good.brandName" style="color: #999;font-size: 12px;">未分类</span></div>
+            <div>分类: <span v-if="good.category">{{good.category}}</span><span v-if="!good.category" style="color: #999;font-size: 12px;">未分类</span></div>
             <div>负责人: <span>{{good.userName}}</span></div>
           </div>
         </div>

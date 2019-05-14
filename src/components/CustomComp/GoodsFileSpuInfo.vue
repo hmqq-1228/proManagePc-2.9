@@ -6,7 +6,8 @@
       <div class="spuInfo base" v-bind:class="baseEdit">
         <!-- spu 基本信息 预览图 -->
         <div class="spuInfoItem ImgPre">
-          <div class="ImgPrePrimary">
+          <div class="iptHiddenBox"><input class="iptHidden" v-on:keydown="inputkeydown" /></div>
+          <div class="ImgPrePrimary" @click="bigPre">
             <!--{{bigPreOffsetTop}}-->
             <!--../../../static/img/papa.jpg-->
             <img :src="bigPreImg" v-bind:style="{marginTop: bigPreOffsetTop + 'px'}" />
@@ -16,14 +17,18 @@
               <img :src="imgItem.previewUrl" />
             </div>
           </div>
-          <div class="ImgPreEditBox" v-if="baseInfoEditStatus">
-            <div class="ImgPreEditAdd" v-show="addIcon">
-              <Icon type="md-add" />
-              <div class="spuBaseInfoUpload">
-                <component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+          <div class="addRemoveBox" v-if="baseInfoEditStatus">
+            <div class="ImgPreEditBox">
+              <div class="ImgPreEditAdd" v-on:click="moveLeft(currentPreId)"><Icon type="md-arrow-back" /></div>
+              <div class="ImgPreEditAdd" v-on:click="moveRight(currentPreId)"><Icon type="md-arrow-forward" /></div>
+              <div class="ImgPreEditAdd" v-show="addIcon">
+                <Icon type="md-add" />
+                <div class="spuBaseInfoUpload">
+                  <component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+                </div>
               </div>
+              <div class="ImgPreEditAdd" v-on:click="removePreImg()"><Icon type="md-remove" /></div>
             </div>
-            <div class="ImgPreEditAdd" v-on:click="removePreImg()"><Icon type="md-remove" /></div>
           </div>
           <!--<div class="spuBaseInfoUpload">-->
             <!--<component v-bind:is="compArr.FileUploadComp" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
@@ -44,7 +49,7 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">品牌名称:</div>
             <div class="spuInfoName select">
-              <Select v-model="pinpaiCodeVal" v-show="baseInfoEditStatus" @on-change="changeValue($event,'pinpaiNameVal')">
+              <Select v-model="pinpaiCodeVal" v-show="baseInfoEditStatus" @on-change="changeValue($event,'pinpaiNameVal',{brandCode: pinpaiCodeVal},'editBase')" @keydown="testKeydown($event)">
                 <Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -66,14 +71,14 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel" style="text-align: justify">负责人:</div>
             <div class="spuInfoName manager">
+              <!--v-on:input="textValChange('managerNameVal')"-->
               <el-autocomplete style=""
                                v-model="managerNameVal"
-                               v-on:input="textValChange('managerNameVal')"
                                :readonly="!baseInfoEditStatus"
                                :fetch-suggestions="querySearchAsync"
                                placeholder="请输入负责人姓名"
                                :trigger-on-focus="false"
-                               @select="handleSelect"
+                               @select="handleSelect($event,'managerNameVal','editBase')"
               ></el-autocomplete>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" id="managerNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({managerId: Mid}, 'managerNameVal')" type="md-checkmark-circle" slot="suffix" />
@@ -120,7 +125,7 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">产品小组:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="groupNameVal" v-on:input="textValChange('groupNameVal')" :readonly="!baseInfoEditStatus" placeholder="请输入小组名称" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="groupNameVal" v-on:on-keydown="textValChange('groupNameVal',{groupName: groupNameVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入小组名称" style="max-width: 250px" >
                 <Icon class="haha" id="groupNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({groupName: groupNameVal}, 'groupNameVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
               <div class="jiagouInfo" v-show="!groupId && baseInfoEditStatus">请先创建产品小组</div>
@@ -141,7 +146,7 @@
             <div class="spuInfoLabel" style="text-align: justify">类目</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Cascader v-show="classifyInfoEditStatus" :data="options" @on-change="changeTree($event,'categoryCodeList')" trigger="hover" v-model="categoryCodeList"></Cascader>
+              <Cascader v-show="classifyInfoEditStatus" :data="options" @on-change="changeTree($event,'categoryCodeList',{categoryName: categoryCodeVal},'editExtra')" trigger="hover" v-model="categoryCodeList"></Cascader>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" id="categoryCodeList" @click="editExtraSpuInfo({categoryName: categoryCodeVal},'categoryCodeList')" type="md-checkmark-circle" slot="suffix" />
               </div>
@@ -155,7 +160,7 @@
             <div class="spuInfoLabel">物料类别</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="objClassifyCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'objClassifyCodeVal')">
+              <Select v-model="objClassifyCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'objClassifyCodeVal',{materialCode: objClassifyCodeVal},'editExtra')">
                 <Option v-for="brand in materialType" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -183,7 +188,7 @@
             <div class="spuInfoLabel">适用人群</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="renqunCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'renqunCodeVal')">
+              <Select v-model="renqunCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'renqunCodeVal',{intendedFor: renqunCodeVal},'editExtra')">
                 <Option v-for="brand in intendedFor" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -200,7 +205,7 @@
             <div class="spuInfoLabel">商品角色</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="goodsRoleNameVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'goodsRoleNameVal')">
+              <Select v-model="goodsRoleNameVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'goodsRoleNameVal',{goodsRole: goodsRoleNameVal},'editExtra')">
                 <Option v-for="brand in goodsRole" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -310,7 +315,7 @@
             <div class="spuInfoLabel">使用阶段</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="jieduanCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'jieduanCodeVal')">
+              <Select v-model="jieduanCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'jieduanCodeVal',{usageStage: jieduanCodeVal},'editExtra')">
                 <Option v-for="brand in usageStage" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -339,7 +344,7 @@
             <div class="spuInfoLabel">是否专利</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="zhuanliVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'zhuanliVal')">
+              <Select v-model="zhuanliVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'zhuanliVal',{patents: zhuanliVal},'editExtra')">
                 <Option v-for="brand in zhuanliOption" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -378,7 +383,7 @@
             <div class="spuInfoLabel">是否保修</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="baoxiuVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'baoxiuVal')">
+              <Select v-model="baoxiuVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'baoxiuVal',{rapair: baoxiuVal},'editExtra')">
                 <Option v-for="brand in baoxiuOption" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -417,8 +422,8 @@
             <div class="spuInfoLabel">类目编码</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="classifyCodeVal" :readonly="true" placeholder="请输入类目编码" style="max-width: 250px" >
-                <Icon class="haha" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({categoryCode: classifyCodeVal})" type="md-checkmark-circle" slot="suffix" />
+              <i-input class="iptTest" v-model="classifyCodeVal" v-on:on-keydown="textValChange('classifyCodeVal',{categoryCode: classifyCodeVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入类目编码" style="max-width: 250px" >
+                <Icon class="haha" id="classifyCodeVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({categoryCode: classifyCodeVal},'classifyCodeVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
             <!--<span class="spuInfoName">SL</span>-->
@@ -450,7 +455,7 @@
             <div class="spuInfoLabel">风格</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="fenggeCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'fenggeCodeVal')">
+              <Select v-model="fenggeCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'fenggeCodeVal',{style: fenggeCodeVal},'editExtra')">
                 <Option v-for="brand in desStyle" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -527,7 +532,7 @@
             <div class="spuInfoLabel">商品等级</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="dengjiVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'dengjiVal')">
+              <Select v-model="dengjiVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'dengjiVal',{level: dengjiVal},'editExtra')">
                 <Option v-for="brand in goodsLevel" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -555,7 +560,7 @@
             <div class="spuInfoLabel">季节</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="jijieCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'jijieCodeVal')">
+              <Select v-model="jijieCodeVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'jijieCodeVal',{season: jijieCodeVal},'editExtra')">
                 <Option v-for="brand in season" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -572,7 +577,7 @@
             <div class="spuInfoLabel">是否赠品</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Select v-model="zengpinVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'zengpinVal')">
+              <Select v-model="zengpinVal" v-show="classifyInfoEditStatus" @on-change="changeValue($event,'zengpinVal',{giveaway: zengpinVal},'editExtra')">
                 <Option v-for="brand in zengArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
               </Select>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
@@ -663,6 +668,21 @@
         v-bind:DrawerMemberShow="DrawerMember"
       ></component>
     </Drawer>
+    <!---->
+    <!-- 图片预览 -->
+    <el-dialog title="图片预览" :visible.sync="dialogShowImg">
+      <!--spuBaseImgList-->
+      <el-carousel indicator-position="outside" :autoplay="false" :initial-index="imgPreIniIndex" width="700px" height="700px">
+        <el-carousel-item v-for="(item, index) in spuBaseImgList" :key="item + '_' + index">
+          <div class="showImg">
+            <img :src="item.previewUrl" alt style="width: 100%">
+          </div>
+        </el-carousel-item>
+      </el-carousel>
+      <!--<div class="showImg">-->
+        <!--<img :src="bigPreImg" alt style="width: 100%">-->
+      <!--</div>-->
+    </el-dialog>
     <!--<div class="communication">沟通记录</div>-->
   </div>
 </template>
@@ -683,6 +703,10 @@ export default {
   },
   data () {
     return {
+      imgPreIniIndex: 0,
+      selectData: {},
+      imgUrl: '',
+      dialogShowImg: false,
       DrawerMember: false,
       proId: this.$route.params.spuId,
       DrawerMemberShow: false,
@@ -924,6 +948,78 @@ export default {
     this.queryClassifyTree()
   },
   methods: {
+    moveLeft: function (currentId) {
+      // j  spuBaseImgList FileUploadArr
+      var that = this
+      this.log('currentId:', currentId)
+      this.log('spuBaseImgList:', that.spuBaseImgList)
+      this.log('FileUploadArr:', that.FileUploadArr)
+      var imgPosIndex = -1
+      for (var i = 0; i < that.spuBaseImgList.length; i++) {
+        if (that.spuBaseImgList[i].id === currentId) {
+          imgPosIndex = i
+          break
+        }
+      }
+      if (imgPosIndex > 0) {
+        this.log('imgPosIndex:', imgPosIndex)
+        // var targetImgData = that.spuBaseImgList[imgPosIndex]
+        that.spuBaseImgList.splice(imgPosIndex - 1, 0, that.spuBaseImgList[imgPosIndex])
+        that.spuBaseImgList.splice(imgPosIndex + 1, 1)
+        that.FileUploadArr.splice(imgPosIndex - 1, 0, that.FileUploadArr[imgPosIndex])
+        that.FileUploadArr.splice(imgPosIndex + 1, 1)
+        that.editBaseSpuInfo({attachmentId: that.SetFileIdStr()})
+      }
+      this.log('spuBaseImgList2:', that.spuBaseImgList)
+      this.log('FileUploadArr2:', that.FileUploadArr)
+    },
+    moveRight: function (currentId) {
+      var that = this
+      var imgPosIndex = -1
+      for (var i = 0; i < that.spuBaseImgList.length; i++) {
+        if (that.spuBaseImgList[i].id === currentId) {
+          imgPosIndex = i
+          break
+        }
+      }
+      if (imgPosIndex < (that.spuBaseImgList.length - 1)) {
+        this.log('imgPosIndex:', imgPosIndex)
+        // var targetImgData = that.spuBaseImgList[imgPosIndex]
+        that.spuBaseImgList.splice(imgPosIndex, 0, that.spuBaseImgList[imgPosIndex + 1])
+        that.spuBaseImgList.splice(imgPosIndex + 2, 1)
+        that.FileUploadArr.splice(imgPosIndex, 0, that.FileUploadArr[imgPosIndex + 1])
+        that.FileUploadArr.splice(imgPosIndex + 2, 1)
+        that.editBaseSpuInfo({attachmentId: that.SetFileIdStr()})
+      }
+    },
+    inputkeydown: function (e) {
+      if (e.which === 13) {
+        // j this.selectData  @click="editBaseSpuInfo({brandCode: pinpaiCodeVal},'pinpaiNameVal')"
+        if (this.selectData.type === 'editBase') {
+          this.editBaseSpuInfo(this.selectData.obj, this.selectData.flag)
+        } else if (this.selectData.type === 'editExtra') {
+          // @click="editExtraSpuInfo({materialCode: objClassifyCodeVal},'objClassifyCodeVal')"
+          this.editExtraSpuInfo(this.selectData.obj, this.selectData.flag)
+        }
+      }
+    },
+    testKeydown: function (e) {
+      this.log('pppp:', e)
+      // j
+    },
+    bigPre: function () {
+      var that = this
+      // this.currentPreId spuBaseImgList
+      var imgIndex = -1
+      for (var i = 0; i < that.spuBaseImgList.length; i++) {
+        if (that.currentPreId === that.spuBaseImgList[i].id) {
+          imgIndex = i
+          break
+        }
+      }
+      this.imgPreIniIndex = imgIndex > -1 ? imgIndex : 0
+      this.dialogShowImg = true
+    },
     testFileList: function () {
       // FileUploadArr
       this.log('spuBaseImgList:', this.spuBaseImgList)
@@ -947,16 +1043,25 @@ export default {
       }
     },
     // 改变下拉框
-    changeValue (e, name) {
+    changeValue (e, name, obj, type) {
+      this.log('下拉change:', e)
+      $('.iptHidden').focus()
+      this.selectData = {
+        obj: obj,
+        type: type,
+        flag: name
+      }
+      // $event,'pinpaiNameVal',{brandCode: pinpaiCodeVal},'editBase'
       $('#' + name).css('color', '#2d8cf0')
     },
     member () {
       this.DrawerMember = true
     },
     // 新建 人员选择
-    handleSelect (item) {
-      // console.log('hhhhh:', item)
+    handleSelect (item, flag, type) {
+      console.log('hhhhh:', item)
       this.Mid = item.userId
+      this.changeValue('e', flag, {managerId: item.userId}, type)
     },
     // 新建 搜索选择项目负责人
     querySearchAsync (queryString, cb) {
@@ -1000,16 +1105,26 @@ export default {
       var that = this
       // this.bigPreImg = preUrl
       // this.currentPreId = currentPreId
-      var targetPreIndex = -1
-      for (var t = 0; t < that.FileUploadArr.length; t++) {
-        if (this.currentPreId === that.FileUploadArr[t].attachmentId) {
-          targetPreIndex = t
+      this.$Modal.confirm({
+        title: '确认要删除？',
+        content: '正在执行删除操作，此操作不可恢复',
+        onOk: () => {
+          var targetPreIndex = -1
+          for (var t = 0; t < that.FileUploadArr.length; t++) {
+            if (this.currentPreId === that.FileUploadArr[t].attachmentId) {
+              targetPreIndex = t
+            }
+          }
+          if (targetPreIndex >= 0) {
+            that.FileUploadArr.splice(targetPreIndex, 1)
+            that.editBaseSpuInfo({attachmentId: that.SetFileIdStr()})
+          }
+          // this.$Message.info('Clicked ok')
+        },
+        onCancel: () => {
+          // this.$Message.info('Clicked cancel')
         }
-      }
-      if (targetPreIndex >= 0) {
-        that.FileUploadArr.splice(targetPreIndex, 1)
-        that.editBaseSpuInfo({attachmentId: that.SetFileIdStr()})
-      }
+      })
     },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {
@@ -1066,7 +1181,6 @@ export default {
         if (res.code === 200) {
           that.FileUploadArr = []
           this.IsClear = false
-          that.log('FileUploadArr清空了')
           for (var r = 0; r < res.data.attachmentList.length && res.data.attachmentList.length > 0; r++) {
             var offsetObj = that.getImgOffset(res.data.attachmentList[r].previewUrl, 150)
             res.data.attachmentList[r].marginTop = offsetObj.top
@@ -1076,10 +1190,8 @@ export default {
               fileName: res.data.attachmentList[r].showName,
               previewUrl: res.data.attachmentList[r].previewUrl
             }
-            that.log('走for循环')
             that.FileUploadArr.push(imgobj)
           }
-          that.log('for循环结束')
           if (res.data.attachmentList.length > 0) {
             that.currentPreId = res.data.attachmentList[0].id
             that.bigPreImg = res.data.attachmentList[0].previewUrl
@@ -1241,6 +1353,10 @@ export default {
           that.$Message.success('保存成功')
           $('#' + flag).css('color', '#808695')
           $('input').blur()
+          that.selectData.obj = {}
+          that.selectData.type = ''
+          that.selectData.flag = ''
+          $('.iptHidden').blur()
           that.queryExtraSpuInfo()
         } else {
           that.$Message.success(res.msg)
@@ -1253,9 +1369,13 @@ export default {
       this.ajax('/archives/editSpuBasic', JSON.stringify(obj)).then(res => {
         // that.log('editSpuBasic:', res)
         if (res.code === 200) {
-          that.$Message.success('保存成功')
+          that.$Message.success('操作成功')
           $('#' + flag).css('color', '#808695')
           $('input').blur()
+          that.selectData.obj = {}
+          that.selectData.type = ''
+          that.selectData.flag = ''
+          $('.iptHidden').blur()
           that.querySpuBaseInfo()
         } else {
           that.$Message.success(res.msg)
@@ -1328,6 +1448,7 @@ export default {
     width: 150px;
     height: 150px;
     overflow: hidden;
+    position: relative;
     background-color: #fff;
   }
   .ImgPreList{
@@ -1353,6 +1474,19 @@ export default {
     padding-top: 0;
     position: relative;
   }
+  .baseEdit .ImgPre:hover .addRemoveBox{
+    height: 26px;
+  }
+  .addRemoveBox{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 0px;
+    overflow: hidden;
+    transition:height 0.2s;
+    background: rgba(45,140,240,0.5);
+  }
   .ImgPreEditBox{
     position: absolute;
     top: 5px;
@@ -1363,10 +1497,10 @@ export default {
   .ImgPreEditBox>div{
     width: 18px;
     height: 18px;
-    color: #fff;
+    color: #2d8cf0;
     font-size: 14px;
     line-height: 18px;
-    background: rgba(0,0,0, 0.2);
+    background: rgba(255,255,255, 0.6);
     padding: 0px;
     margin-left: 5px;
     border-radius: 8px;
@@ -1493,5 +1627,15 @@ export default {
     width: 30%;
     margin-left: 10px;
     border: 1px solid #ddd;
+  }
+  .iptHiddenBox{
+    position: absolute;
+    width: 20px;
+    top: 0;
+    left: 0;
+  }
+  .iptHiddenBox input{
+    width: 100%;
+    opacity: 0;
   }
 </style>
