@@ -1,11 +1,25 @@
 <template>
   <div class="GoodsArchives">
     <div style="position: absolute; right: 20px; top: 25px;"><Button @click="createArchivesBtn" type="primary">新建档案</Button></div>
-    <div class="goodSer" style="width: 350px;">
+    <div class="goodSer" style="width: 200px;display: inline-block">
       <el-input
         placeholder="请输入商品名称"
         prefix-icon="el-icon-search"
         v-model="inputVal">
+      </el-input>
+    </div>
+    <div class="goodSer" style="width: 200px;display: inline-block;margin-left: 20px;">
+      <el-input
+        placeholder="请输入商品编码"
+        prefix-icon="el-icon-search"
+        v-model="spuCode">
+      </el-input>
+    </div>
+    <div class="goodSer" style="width: 200px;display: inline-block;margin-left: 20px;">
+      <el-input
+        placeholder="请输入负责人,如:张三"
+        prefix-icon="el-icon-search"
+        v-model="searchUserName">
       </el-input>
     </div>
     <div class="serTag">
@@ -282,6 +296,8 @@ export default {
       currentPage: 1,
       dialogVisible: false,
       inputVal: this.$store.state.goodsName,
+      spuCode: this.$store.state.spuCode,
+      searchUserName: this.$store.state.searchUserName,
       radioVal: this.$store.state.sortTypeName,
       goodTags: [],
       goodList: [],
@@ -293,11 +309,13 @@ export default {
         pageNum: 1,
         pageSize: 12,
         status: '',
+        spuCode: this.$store.state.spuCode,
         goodsName: this.$store.state.goodsName,
         sortType: this.$store.state.sortType,
         categoryType: '',
         startCostPrice: this.$store.state.startCostPrice,
         endCostPrice: this.$store.state.endCostPrice,
+        searchUserName: this.$store.state.searchUserName,
         categoryStr: '',
         permission: ''
       }
@@ -343,6 +361,18 @@ export default {
       var that = this
       that.$store.state.goodsName = val
       that.getGoodList.goodsName = val
+      that.getGoodsList()
+    },
+    spuCode: function (val, oV) {
+      var that = this
+      that.$store.state.spuCode = val
+      that.getGoodList.spuCode = val
+      that.getGoodsList()
+    },
+    searchUserName: function (val, oV) {
+      var that = this
+      that.$store.state.searchUserName = val
+      that.getGoodList.searchUserName = val
       that.getGoodsList()
     },
     // 商品排序

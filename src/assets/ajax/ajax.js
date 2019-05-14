@@ -14,7 +14,11 @@ const install = function (Vue, options) {
         zzPostData.userId = store.state.userId
         postData = JSON.stringify(zzPostData)
       } else {
-        postData.userId = store.state.userId
+        if (postData.userId) {
+          // j
+        } else {
+          postData.userId = store.state.userId
+        }
       }
     }
     baseurl = store.state.baseServiceUrl + actionName
