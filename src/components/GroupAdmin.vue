@@ -15,9 +15,12 @@
       </Tabs>
     </div>
     <div style="padding: 20px">
-      <Card :bordered="true" style="margin-bottom: 15px;" v-for="groupItem in GroupList" v-bind:key="groupItem.id">
+      <Card :bordered="true" style="margin-bottom: 15px;" v-for="groupItem in GroupList" v-bind:key="groupItem.id" @click.native="toGroupDetail(groupItem.id)">
         <p class="groupItemTit" slot="title">{{groupItem.name}}</p>
-        <a href="#" slot="extra" @click.prevent="deleteGroup(groupItem.id)">
+        <a href="#" slot="extra" @click.prevent="updateGroup($event, groupItem.id)" style="margin-right: 20px;">
+          修改
+        </a>
+        <a href="#" slot="extra" @click.prevent="deleteGroup($event, groupItem.id)">
           删除
         </a>
         <div style="display: flex; justify-content: space-between;">
@@ -49,11 +52,50 @@
       <div class="createGroupCnt">
         <div class="createGroupCntItem">小组描述:</div>
         <div class="createGroupCntItem GroupCntItemVal">
-          <el-input v-model="createGroupDes" type="textarea" placeholder="Enter something..."></el-input>
+          <el-input v-model="createGroupDes" type="textarea" placeholder="请输入小组详情"></el-input>
         </div>
       </div>
     </Modal>
     <!---->
+    <!--新建小组-->
+    <Modal v-model="creatGroupShow2" title="新建小组" @on-ok="createGroupSub2" @on-cancel="createGroupCancel2">
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">小组名称:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <el-input placeholder="请选择小组名称" v-model="createGroupName2"></el-input>
+        </div>
+      </div>
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">负责人:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <el-autocomplete style="width: 100%"
+                           v-model="CreateGroupSearchManager2"
+                           :fetch-suggestions="queryNewGroupManager2"
+                           placeholder="搜索小组负责人"
+                           :trigger-on-focus="false"
+                           @select="CreateGroupManagerSelect2($event)"
+          ></el-autocomplete>
+        </div>
+      </div>
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">小组描述:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <el-input v-model="createGroupDes2" type="textarea" placeholder="请输入小组详情"></el-input>
+        </div>
+      </div>
+    </Modal>
+    <Drawer
+      title="小组详情"
+      width="740"
+      :closable="false"
+      v-model="DrawerMember"
+    >
+      <component
+        v-bind:is="compArr.GroupMembers"
+        v-bind:groupId="groupId"
+        v-bind:DrawerMemberShow="DrawerMember"
+      ></component>
+    </Drawer>
     <div>
       <el-pagination
         layout="prev, pager, next"
@@ -68,17 +110,31 @@
 </template>
 
 <script>
+import GroupMembers from './CustomComp/GroupMembers.vue'
 export default {
   name: 'GroupAdmin',
+  components: {
+    GroupMembers
+  },
   data () {
     return {
+      DrawerMember: false,
+      // 引入组件
+      compArr: {
+        GroupMembers: 'GroupMembers'
+      },
+      Gid: '',
+      groupId: '',
       searchGroup: '',
       GroupSelectVal: '',
       GroupList: [],
       creatGroupShow: false,
+      creatGroupShow2: false,
       CreateGroupMid: '',
+      CreateGroupMid2: '',
       Mid: '',
       CreateGroupSearchManager: '',
+      CreateGroupSearchManager2: '',
       autoCompleteNamesPayload: {
         projectManager: '',
         groupName: ''
@@ -86,8 +142,13 @@ export default {
       NewGroupManagerPayload: {
         projectManager: ''
       },
+      NewGroupManagerPayload2: {
+        projectManager: ''
+      },
       createGroupName: '',
+      createGroupName2: '',
       createGroupDes: '',
+      createGroupDes2: '',
       totalRow: 0,
       pageSize: 10,
       pageNumber: 1
@@ -114,8 +175,17 @@ export default {
       this.pageNumber = num
       this.queryGroupList()
     },
+    toGroupDetail: function (Gid) {
+      var that = this
+      that.log('gid:', Gid)
+      that.groupId = Gid
+      if (that.groupId) {
+        that.DrawerMember = true
+      }
+    },
     createGroupSub: function () {
       var that = this
+      // that.DrawerMember = true
       this.ajax('/group/addGroup', {userId: that.CreateGroupMid, userName: that.CreateGroupSearchManager, groupName: that.createGroupName, description: that.createGroupDes}).then(res => {
         that.log('addGroup:', res)
         if (res.code === 200) {
@@ -127,6 +197,20 @@ export default {
       })
     },
     createGroupCancel: function () {},
+    createGroupSub2: function () {
+      var that = this
+      // that.DrawerMember = true
+      that.log('that.CreateGroupMid2666', that.CreateGroupMid2)
+      this.ajax('/group/editGroup', {userId: that.CreateGroupMid2, groupId: that.Gid, userName: that.CreateGroupSearchManager2, groupName: that.createGroupName2, description: that.createGroupDes2}).then(res => {
+        if (res.code === 200) {
+          that.queryGroupList()
+          // that.GroupList = res.data.list
+        } else {
+          that.$message(res.msg)
+        }
+      })
+    },
+    createGroupCancel2: function () {},
     createGroupBtn: function () {
       this.creatGroupShow = true
     },
@@ -155,13 +239,43 @@ export default {
         })
       }
     },
+    queryNewGroupManager2 (queryString, cb) {
+      var that = this
+      if (queryString) {
+        that.NewGroupManagerPayload2.projectManager = queryString
+        this.ajax('/myProject/autoCompleteNames', that.NewGroupManagerPayload2).then(res => {
+          if (res.code === 200) {
+            var dddarr = []
+            if (res.data.length > 0) {
+              for (var i = 0; i < res.data.length; i++) {
+                var obj = {}
+                obj.value = res.data[i].Name + ' (' + res.data[i].jName + ')'
+                obj.userId = res.data[i].ID
+                dddarr.push(obj)
+              }
+              cb(dddarr)
+            } else {
+              var aaaddd = []
+              that.$message('未能搜索到该人员')
+              cb(aaaddd)
+            }
+          }
+        })
+      }
+    },
     CreateGroupManagerSelect (item) {
       this.log('新建小组：', item)
       // this.CreateGroupMid = item.userId
       this.CreateGroupMid = item.userId
     },
-    deleteGroup (groupId) {
+    CreateGroupManagerSelect2 (item) {
+      this.log('新建小组：', item)
+      // this.CreateGroupMid = item.userId
+      this.CreateGroupMid2 = item.userId
+    },
+    deleteGroup (e, groupId) {
       var that = this
+      e.stopPropagation()
       this.$Modal.confirm({
         title: '确认要删除？',
         content: '正在执行删除操作，此操作不可恢复',
@@ -178,6 +292,25 @@ export default {
         },
         onCancel: () => {
           // this.$Message.info('Clicked cancel')
+        }
+      })
+    },
+    updateGroup: function (e, Gid) {
+      var that = this
+      that.Gid = Gid
+      e.stopPropagation()
+      that.log(Gid)
+      this.creatGroupShow2 = true
+      that.ajax('/group/getGroupDetail', {groupId: Gid}).then(res => {
+        that.log('GroupMsg:', res)
+        if (res.code === 200) {
+          that.createGroupName2 = res.data.name
+          that.CreateGroupSearchManager2 = res.data.userName
+          that.CreateGroupMid2 = res.data.userId
+          that.createGroupDes2 = res.data.description
+          console.log('that.CreateGroupMid2', res.data.userId)
+        } else {
+          that.$message(res.msg)
         }
       })
     },

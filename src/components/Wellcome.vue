@@ -59,6 +59,8 @@ export default {
           this.$router.push('/GoodsArchives')
         } else if (proName === '研发管理') {
           this.$router.push('/GoodsManage')
+        } else if (proName === '产品小组') {
+          this.$router.push('/GroupAdmin')
         }
       } else {
         // this.log('getProjectDetail：', '没走集团战略')
