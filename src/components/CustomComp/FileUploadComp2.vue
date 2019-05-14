@@ -1,20 +1,25 @@
 <template>
-  <div class="FileUploadComp" v-loading="loading21">
-    <div class="FileList">
-
-    </div>
+  <div class="FileUploadComp">
     <form class="FileCompForm" :id="lalala" enctype="multipart/form-data">
-      <div class="FileCompIptWrap" v-if="fileListComment.length < 5">
-         <i class="el-icon-plus"></i>
-        <input type="file" class="aaa" :disabled="commentDis" name="myfile" :id="lalala + '_myfile2'" @change="getFileName">
+      <div class="upload-img" v-loading="loading21">
+        <div class="FileList" v-for="(file, index) in fileListComment" v-bind:key="index">
+          <img :src="file.previewUrl" alt="">
+          <div class="cover">
+            <i class="el-icon-delete" @click="delUploadFileComment(file.attachmentId)"></i>
+          </div>
+        </div>
+        <div class="FileCompIptWrap" v-if="fileListComment.length < 5">
+           <i class="el-icon-plus"></i>
+          <input type="file" class="aaa" :disabled="commentDis" name="myfile" :id="lalala + '_myfile2'" @change="getFileName">
+        </div>
       </div>
     </form>
-    <div style="font-size: 12px">
-      <span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index">
-        <span style="color: #333" @click="FilePreEmitFuc(file.previewUrl, file.fileName, file.attachmentId)">{{index+1}}、{{file.fileName}}</span>
-        <div style="color: #409EFF;display: inline-block;cursor: pointer;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>;&nbsp;&nbsp;
-      </span>
-    </div>
+    <!--<div style="font-size: 12px">-->
+      <!--<span style="color: #409EFF" v-if="fileListComment.length > 0" v-for="(file, index) in fileListComment" v-bind:key="index">-->
+        <!--<span style="color: #333" @click="FilePreEmitFuc(file.previewUrl, file.fileName, file.attachmentId)">{{index+1}}、{{file.fileName}}</span>-->
+        <!--<div style="color: #409EFF;display: inline-block;cursor: pointer;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>;&nbsp;&nbsp;-->
+      <!--</span>-->
+    <!--</div>-->
   </div>
 </template>
 
@@ -112,6 +117,7 @@ export default {
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
       // this.uploadFileName = fileName
+      console.log(fileName)
       if (filePath) {
         if (that.limtImg) {
           if (that.isImage(fileName)) {
@@ -225,21 +231,58 @@ export default {
       }
     }
   }
-  }
+}
+
 </script>
 
 <style scoped>
   div img{
     width: 100%;
   }
+  .upload-img {
+    position: absolute;
+    width: 260px;
+    height: 150px;
+    right: 140px;
+    top:10px;
+  }
   .FileList {
     width: 60px;
     height: 60px;
+    margin-right: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    margin-top: 7px;
+    float: left;
+  }
+  .FileList img {
+    width: 100%;
+    height: 100%;
+  }
+  .cover {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left:0;
+    top:0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    text-align: center;
+    line-height: 60px;
+    color: #fff;
+    font-size: 18px;
+    z-index: 15;
+  }
+  .FileList:hover .cover {
+    display: block;
   }
   .FileUploadComp{
   }
   .FileCompForm{
     display: flex;
+    /*width: 80%;*/
   }
   .FileCompFormIcon{
     width: 20px;
@@ -248,7 +291,6 @@ export default {
     margin-right: 10px;
   }
   .FileCompIptWrap{
-    position: relative;
     width: 60px;
     height: 60px;
     border: 1px solid #99D3F5;
@@ -259,6 +301,9 @@ export default {
     font-size: 25px;
     text-align: center;
     line-height: 60px;
+    float: left;
+    cursor: pointer;
+    position: relative;
   }
   .FileCompIptWrap input{
     width: 100%;

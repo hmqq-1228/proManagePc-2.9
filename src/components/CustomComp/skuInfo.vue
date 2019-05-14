@@ -541,6 +541,7 @@ export default {
         this.IsClear = false
       }
       this.FileUploadArr = obj
+      console.log(obj)
     },
     // 附件上传 拼接附件上传的id为字符串
     SetFileIdStr () {

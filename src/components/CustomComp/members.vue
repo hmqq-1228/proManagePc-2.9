@@ -34,7 +34,7 @@
       </div>
     </div>
     <div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">小组成员列表
-      <el-button type="text" style="margin-left: 10px">选择小组</el-button>
+      <el-button type="text" style="margin-left: 10px" @click="selectGroup">选择小组</el-button>
     </div>
     <div class="memberTable">
       <div class="memTblTitle">
@@ -48,7 +48,10 @@
           <div class="memListItem">{{mem.roleStr}}</div>
           <div class="memListItem overList" style="width: 250px;"><a href="javascript:void(0);" :title="mem.userName" style="color:#333">{{mem.userName}}</a></div>
           <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
-          <div class="memListItem"><Checkbox v-bind:value="mem.auth === '2'" :disabled="true"></Checkbox></div>
+          <div class="memListItem">
+            <Checkbox v-bind:value="mem.auth === '2'" :disabled="true" v-if="mem.auth === '2'"></Checkbox>
+            <Checkbox  :disabled="true" v-if="mem.auth === '1'"></Checkbox>
+          </div>
         </div>
       </div>
     </div>
@@ -69,6 +72,7 @@
       </div>
       <div class="organizationalBtn"><Button type="primary" @click="addMenber()">添加</Button></div>
     </div>
+    <select-group :select="creatArchivesGroupList" @groupListSelectOk="groupListSelectOk" @groupListSelectCancel="groupListSelectCancel"></select-group>
   </div>
 </template>
 <style>
@@ -78,11 +82,13 @@
   }
 </style>
 <script>
+import SelectGroup from './SelectGroup.vue'
 export default {
   name: 'MemberComp',
   props: ['proId', 'DrawerMemberShow', 'groupId'],
   data () {
     return {
+      creatArchivesGroupList: false,
       loading2: false,
       loadingMan: false,
       organizationalShow: false,
@@ -124,6 +130,9 @@ export default {
       }
     }
   },
+  components: {
+    SelectGroup
+  },
   watch: {
     DrawerMemberShow: function (val, oV) {
       // this.log('DrawerMemberShow:val:', val)
@@ -142,6 +151,24 @@ export default {
     }
   },
   methods: {
+    groupListSelectOk (val) {
+      this.creatArchivesGroupList = false
+      this.ajax('/archives/editSpuGroup', {groupId: val.id, spuId: this.proId}).then(res => {
+        if (res.code === 200) {
+          this.groupId = val.id
+          this.getGroup()
+        } else {
+          this.$message.warning(res.msg)
+        }
+      })
+    },
+    groupListSelectCancel () {
+      this.creatArchivesGroupList = false
+    },
+    // 选择小组
+    selectGroup () {
+      this.creatArchivesGroupList = true
+    },
     // 新增 成员搜索
     remoteMethod (query) {
       var that = this
