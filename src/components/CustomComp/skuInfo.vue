@@ -376,7 +376,7 @@ export default {
       }
     },
     // 保存成功
-    saveSuccess (res) {
+    saveSuccess (res, val) {
       if (res.code === 200) {
         this.getList()
         this.addSku = false

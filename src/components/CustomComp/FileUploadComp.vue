@@ -117,8 +117,9 @@ export default {
       if (filePath) {
         if (that.limtImg) {
           if (that.isImage(fileName)) {
-            that.addMarkInfo4()
             this.uploadFileName = fileName
+            that.addMarkInfo4()
+            console.log(fileName)
           } else {
             this.$message.warning('请上传图片')
             this.uploadFileName = ''
@@ -192,17 +193,7 @@ export default {
               message: '文件' + data.msg
             })
             that.loading21 = false
-            // that.log('fileListComment:', that.fileListComment)
-            if (that.limtImg) {
-              if (that.isImage(that.fileListComment.showName)) {
-                console.log(11111111111111111)
-                that.$emit('FileDataEmit', that.fileListComment)
-              } else {
-                console.log(222222222222)
-              }
-            } else {
-              that.$emit('FileDataEmit', that.fileListComment)
-            }
+            that.$emit('FileDataEmit', that.fileListComment)
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
