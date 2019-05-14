@@ -33,7 +33,9 @@
         </div>
       </div>
     </div>
-    <div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">小组成员列表</div>
+    <div style="font-size: 16px; margin-bottom: 10px; margin-top: 20px;">小组成员列表
+      <el-button type="text" style="margin-left: 10px">选择小组</el-button>
+    </div>
     <div class="memberTable">
       <div class="memTblTitle">
         <div class="tblTitItem">角色</div>

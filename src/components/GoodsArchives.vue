@@ -1,5 +1,6 @@
 <template>
   <div class="GoodsArchives">
+    <div style="position: absolute; right: 20px; top: 25px;"><Button @click="createArchivesBtn" type="primary">新建档案</Button></div>
     <div class="goodSer" style="width: 350px;">
       <el-input
         placeholder="请输入商品名称"
@@ -108,14 +109,172 @@
         :total="goodListTotal">
       </el-pagination>
     </div>
+    <!--新建档案-->
+    <Modal v-model="creatArchivesShow" title="新建档案" @on-ok="createArchivesSub" @on-cancel="createArchivesCancel">
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">商品名称:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <el-input placeholder="请输入商品名称" v-model="createArchivesName"></el-input>
+        </div>
+      </div>
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">商品ID:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <el-input placeholder="请输入商品ID" v-model="createArchivesId"></el-input>
+        </div>
+      </div>
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">品牌:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <!--@on-change="changeValue($event,'pinpaiNameVal',{brandCode: pinpaiCodeVal},'editBase')"-->
+          <Select v-model="pinpaiCodeVal">
+            <Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
+          </Select>
+        </div>
+      </div>
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">负责人:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <el-autocomplete style="width: 100%"
+                           v-model="CreateGroupSearchManager"
+                           :fetch-suggestions="queryNewGroupManager"
+                           placeholder="搜索小组负责人"
+                           :trigger-on-focus="false"
+                           @select="CreateGroupManagerSelect($event)"
+          ></el-autocomplete>
+        </div>
+      </div>
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">产品小组:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <el-autocomplete style="width: 100%"
+                           v-model="ArchivesGroupSearch"
+                           :fetch-suggestions="queryArchivesGroup"
+                           placeholder="搜索小组"
+                           :trigger-on-focus="false"
+                           @select="ArchivesGroupSelect($event)"
+          ></el-autocomplete>
+        </div>
+        <div style="width: 90px; text-align: right; padding-top: 2px;"><Button @click="showGroupList" type="primary" >选择小组</Button></div>
+      </div>
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">SPU编码:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <el-input placeholder="请输入SPU编码" v-model="createArchivesSpuCode"></el-input>
+        </div>
+      </div>
+      <div class="createGroupCnt">
+        <div class="createGroupCntItem">附件上传:</div>
+        <div class="createGroupCntItem GroupCntItemVal">
+          <component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+        </div>
+      </div>
+    </Modal>
+    <!--小组列表-->
+    <!--小组列表 选择小组-->
+    <Modal v-model="creatArchivesGroupList" width="800" title="小组列表" @on-ok="groupListSelectOk" @on-cancel="groupListSelectCancel">
+      <div class="tableQueryInput" style="margin-bottom: 10px;">
+        <el-input v-model="searchGroup" placeholder="请输入搜索内容"></el-input>
+      </div>
+      <Table highlight-row ref="currentRowTable" :columns="columns3" :data="tableData" @on-current-change="tableSelect"></Table>
+      <div style="margin-top: 15px;">
+        <el-pagination
+          layout="prev, pager, next"
+          :page-size="10"
+          :total="totalRow"
+          @current-change="currentChange"
+          :hide-on-single-page="true">
+        </el-pagination>
+      </div>
+    </Modal>
+    <!---->
   </div>
 </template>
 
 <script>
+import FileUploadComp from './CustomComp/FileUploadComp.vue'
 export default {
   name: 'GoodsArchives',
+  components: {
+    FileUploadComp
+  },
   data () {
     return {
+      // 新建档案
+      selectedGroupData: '',
+      totalRow: 0,
+      pageNumber: 1,
+      pageSize: 10,
+      tableColumns: [],
+      tableData: [],
+      columns3: [
+        {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
+        {
+          title: '小组名称',
+          key: 'name'
+        },
+        {
+          title: '创建人',
+          key: 'creatorName'
+        },
+        {
+          title: '创建时间',
+          key: 'createDt'
+        }
+      ],
+      data1: [
+        {
+          groupName: '玩教研发组',
+          creator: '张三',
+          id: 1,
+          createDate: '2016-10-03'
+        },
+        {
+          groupName: '出行档案组',
+          creator: '李四',
+          id: 2,
+          createDate: '2016-10-01'
+        },
+        {
+          groupName: 'KUB喂养',
+          creator: '王五',
+          id: 3,
+          createDate: '2016-10-02'
+        },
+        {
+          groupName: 'KUB创意设计',
+          creator: '赵六',
+          id: 4,
+          createDate: '2016-10-04'
+        }
+      ],
+      creatArchivesGroupList: false,
+      compArr: {
+        FileUploadComp: 'FileUploadComp'
+      },
+      filUrl: '/file/uploadGoodsFileAjax',
+      // 附件上传
+      FileUploadArr: [],
+      IsClear: false,
+      pinpaiCodeVal: '',
+      brandTypeArr: [],
+      searchGroup: '',
+      createArchivesSpuCode: '',
+      createArchivesId: '',
+      createArchivesName: '',
+      CreateArchivesMid: '',
+      ArchivesGroupId: '',
+      NewGroupManagerPayload: {
+        projectManager: ''
+      },
+      CreateGroupSearchManager: '',
+      ArchivesGroupSearch: '',
+      creatArchivesShow: false,
+      // xin end
       imgWide: 50,
       value1: this.$store.state.startCostPrice,
       value2: this.$store.state.endCostPrice,
@@ -156,6 +315,9 @@ export default {
     }
   },
   watch: {
+    searchGroup: function (val, old) {
+      this.queryGroupList()
+    },
     dialogVisible: function (val, oV) {
       if (val === false) {
         this.imgWide = 50
@@ -231,8 +393,174 @@ export default {
     this.iniBtn()
     that.getGoodsList(codeStr)
     that.getPermission()
+    that.queryOptionType()
+    that.queryGroupList()
   },
   methods: {
+    groupListSelectOk: function () {
+      this.creatArchivesGroupList = false
+      this.ArchivesGroupId = this.selectedGroupData.id
+      this.ArchivesGroupSearch = this.selectedGroupData.name
+      // this.selectedGroupData
+    },
+    groupListSelectCancel: function () {},
+    currentChange: function (num) {
+      this.log('currentChange:', num)
+      this.pageNumber = num
+      this.queryGroupList()
+    },
+    queryGroupList () {
+      var that = this
+      this.ajax('/group/getGroup', {groupName: that.searchGroup, type: 1, pageNum: that.pageNumber, pageSize: that.pageSize}).then(res => {
+        that.log('getGroup:111:', res)
+        if (res.code === 200) {
+          that.tableData = res.data.list
+          // that.GroupList = res.data.list
+          that.pageSize = res.data.pageSize
+          that.totalRow = res.data.totalRow
+        } else {
+          that.$message(res.msg)
+        }
+      })
+    },
+    tableSelect: function (selectData) {
+      // 选中的小组 临时存放
+      this.selectedGroupData = selectData
+      this.log('selectData:', selectData)
+    },
+    showGroupList: function () {
+      // this.creatArchivesShow = false
+      this.creatArchivesGroupList = true
+    },
+    // 拼接附件上传的id为字符串
+    SetFileIdStr () {
+      var that = this
+      var FileIdStr = ''
+      for (var i = 0; i < that.FileUploadArr.length; i++) {
+        var splitIcon = ','
+        if (i === that.FileUploadArr.length - 1) {
+          splitIcon = ''
+        }
+        FileIdStr = FileIdStr + that.FileUploadArr[i].attachmentId + splitIcon
+      }
+      that.FileUploadArr = []
+      return FileIdStr
+    },
+    // 获取附件上传组件发来的附件信息
+    GetFileInfo (obj) {
+      if (obj) {
+        this.IsClear = false
+      }
+      this.FileUploadArr = obj
+    },
+    queryOptionType: function () {
+      var that = this
+      this.ajax('/archives/getOptionType', {}).then(res => {
+        that.log('getOptionType:', res)
+        if (res.code === 200) {
+          that.brandTypeArr = res.data.brandType
+          that.pinpaiCodeVal = res.data.brandType[0].dictCode
+          // that.materialType = res.data.materialType
+          // that.intendedFor = res.data.intendedFor
+          // that.goodsRole = res.data.goodsRole
+          // that.usageStage = res.data.usageStage
+          // that.desStyle = res.data.style
+          // that.goodsLevel = res.data.goodsLevel
+          // that.season = res.data.season
+          // that.changjingArr = res.data.scene
+        }
+        // that.log('getOptionType：1:', res)
+      })
+    },
+    CreateGroupManagerSelect (item) {
+      this.log('搜索负责人：', item)
+      this.CreateArchivesMid = item.userId
+    },
+    // ArchivesGroupSelect
+    ArchivesGroupSelect (item) {
+      this.log('新建小组：', item)
+      this.ArchivesGroupId = item.groupId
+    },
+    // 新建 搜索选择项目负责人
+    queryNewGroupManager (queryString, cb) {
+      var that = this
+      if (queryString) {
+        that.NewGroupManagerPayload.projectManager = queryString
+        this.ajax('/myProject/autoCompleteNames', that.NewGroupManagerPayload).then(res => {
+          if (res.code === 200) {
+            var dddarr = []
+            if (res.data.length > 0) {
+              for (var i = 0; i < res.data.length; i++) {
+                var obj = {}
+                obj.value = res.data[i].Name + ' (' + res.data[i].jName + ')'
+                obj.userId = res.data[i].ID
+                dddarr.push(obj)
+              }
+              cb(dddarr)
+            } else {
+              var aaaddd = []
+              that.$message('未能搜索到该人员')
+              cb(aaaddd)
+            }
+          }
+        })
+      }
+    },
+    // queryArchivesGroupManager
+    // 新建 搜索选择项目小组
+    queryArchivesGroup (queryString, cb) {
+      var that = this
+      if (queryString) {
+        // that.NewGroupManagerPayload.projectManager = queryString
+        this.ajax('/group/getGroup', {groupName: queryString, type: 1, pageNum: 1, pageSize: 100}).then(res => {
+          that.log('getGroup:', res)
+          if (res.code === 200) {
+            var dddarr = []
+            if (res.data.list.length > 0) {
+              for (var i = 0; i < res.data.list.length; i++) {
+                var obj = {}
+                obj.value = res.data.list[i].name
+                obj.groupId = res.data.list[i].id
+                dddarr.push(obj)
+              }
+              cb(dddarr)
+            } else {
+              var aaaddd = []
+              that.$message('未能搜索到该人员')
+              cb(aaaddd)
+            }
+          }
+        })
+      }
+    },
+    createArchivesSub: function () {
+      var that = this
+      var createArchivesPayload = {
+        spuName: that.createArchivesName,
+        spuGoodsId: that.createArchivesId,
+        brandCode: that.pinpaiCodeVal,
+        spuCode: that.createArchivesSpuCode,
+        managerId: that.CreateArchivesMid,
+        groupId: that.ArchivesGroupId,
+        attachmentId: that.SetFileIdStr()
+      }
+      this.ajax('/archives/addSpuBasic', JSON.stringify(createArchivesPayload)).then(res => {
+        that.log('addGroup:', res)
+        if (res.code === 200) {
+          that.IsClear = true
+          that.getGoodsList()
+          that.$message(res.msg)
+          // that.queryGroupList()
+          // that.GroupList = res.data.list
+        } else {
+          that.$message(res.msg)
+        }
+      })
+    },
+    createArchivesCancel: function () {},
+    createArchivesBtn: function () {
+      this.creatArchivesShow = true
+    },
     getPermission: function () {
       var that = this
       console.log('that.$store.state.permission', that.$store.state.permission)
@@ -439,6 +767,9 @@ export default {
 </script>
 
 <style scoped>
+  .GoodsArchives{
+    position: relative;
+  }
   .goodType{
     display: flex;
     font-size: 14px;
@@ -632,5 +963,20 @@ export default {
   .content div.active{
     color: #fff;
     background-color: #34c5be;
+  }
+  /* 新建档案 表单 */
+  .createGroupCnt{
+    display: flex;
+    margin-bottom: 15px;
+  }
+  .createGroupCntItem{
+    width: 70px;
+    font-size: 14px;
+    font-weight: bold;
+    padding-top: 0px;
+    line-height: 35px;
+  }
+  .createGroupCntItem.GroupCntItemVal{
+    flex-grow: 1;
   }
 </style>
