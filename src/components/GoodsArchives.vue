@@ -124,7 +124,7 @@
       </el-pagination>
     </div>
     <!--新建档案-->
-    <Modal v-model="creatArchivesShow" title="新建档案" @on-ok="createArchivesSub" @on-cancel="createArchivesCancel">
+    <Modal v-model="creatArchivesShow" title="新建档案">
       <!--<div slot="header" style="display: flex;">-->
         <!--<div style="font-weight: 700; color: #17233d; font-size: 14px;">-->
           <!--<span>新建档案</span>-->
@@ -198,6 +198,10 @@
         <div class="createGroupCntItem GroupCntItemVal">
           <component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
         </div>
+      </div>
+      <div slot="footer">
+        <Button @click="createArchivesCancel">取消</Button>
+        <Button type="primary" @click="createArchivesSub">确定</Button>
       </div>
     </Modal>
     <!--小组列表-->
@@ -588,6 +592,8 @@ export default {
           that.IsClear = true
           that.getGoodsList()
           that.$Message.success(res.msg)
+          this.$router.push('/goodsfileDetail/' + res.data)
+          this.creatArchivesShow = false
           // that.$message(res.msg)
           // that.queryGroupList()
           // that.GroupList = res.data.list

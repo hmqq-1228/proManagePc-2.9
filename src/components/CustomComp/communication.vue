@@ -37,7 +37,7 @@
             </div>
             <!--操作记录 历史记录-->
             <div class="discription lis" style="margin-top: 15px;">
-              <div class="timeLine">
+              <div class="timeLine" v-loading="loadCom">
                 <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 390px;">
                   <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
                     <p class="time">{{comment.createDate}}</p>
@@ -126,6 +126,7 @@ export default {
   },
   data () {
     return {
+      loadCom: true, // 加载历史记录
       type: 1,
       totalHistoryNum: 0,
       pageSize: 10,
@@ -232,18 +233,18 @@ export default {
     // 历史记录 获取历史记录
     getHistoryCont () {
       var that = this
-      that.log(5566)
+      that.loadCom = true
       that.ajax('/comment/getGoodsComment', {
         spuId: this.$route.params.spuId,
         pageSize: 5,
         pageNum: that.pageN
       }).then(res => {
         if (res.code === 200) {
+          that.loadCom = false
           that.commentList = res.data.list
           that.commentTotalNum = res.data.totalRow
           that.log('kkkkk:', that.commentList.length)
           if (that.commentList.length > 0) {
-            that.log(112233)
             for (var i = 0; i < that.commentList.length; i++) {
               for (var j = 0; j < that.commentList[i].attachment.length; j++) {
                 if (that.isImage(res.data.list[i].attachment[j].showName)) {

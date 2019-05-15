@@ -9,13 +9,13 @@
         <DatePicker type="year" placeholder="请选择年份" @on-change="changeYear" style="width: 100%" v-model="formValidate.yearDigital"></DatePicker>
       </FormItem>
       <FormItem label="零售价" prop="retailPrice">
-        <i-input v-model="formValidate.retailPrice" placeholder="请输入零售价" :maxlength="20" size="large" ></i-input>
+        <Input v-model="formValidate.retailPrice" placeholder="请输入零售价" :maxlength="20" size="large" number/>
       </FormItem>
       <FormItem label="吊牌价" prop="tagPrice">
-        <Input v-model="formValidate.tagPrice" placeholder="请输入吊牌价" :maxlength="20" size="large"/>
+        <Input v-model="formValidate.tagPrice" placeholder="请输入吊牌价" :maxlength="20" size="large" number/>
       </FormItem>
       <FormItem label="固定成本" prop="costPrice">
-        <Input v-model="formValidate.costPrice" placeholder="请输入成本价" :maxlength="20" size="large"/>
+        <Input v-model="formValidate.costPrice" placeholder="请输入成本价" :maxlength="20" size="large" number/>
       </FormItem>
       <FormItem label="条码" prop="barCode">
         <Input v-model="formValidate.barCode" placeholder="请输入条码" :maxlength="20" size="large"/>
@@ -48,6 +48,42 @@ export default {
   name: 'goodsInfo',
   props: ['proId', 'fileFormId', 'ProBaseInfoShow'],
   data () {
+    const retailPrice = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('请输入零售价'))
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error('请输入正确格式'))
+        } else {
+          callback()
+        }
+      }, 0)
+    }
+    const tagPrice = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('请输入吊牌价'))
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error('请输入正确格式'))
+        } else {
+          callback()
+        }
+      }, 0)
+    }
+    const costPrice = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('请输入成本价'))
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error('请输入正确格式'))
+        } else {
+          callback()
+        }
+      }, 0)
+    }
     return {
       buttonStr: '选择图片',
       selectType: '图片',
@@ -102,13 +138,17 @@ export default {
           { required: true, type: 'string', message: '请选择年份', trigger: 'change' }
         ],
         retailPrice: [
-          { required: true, message: '请输入零售价', trigger: 'blur' }
+          // { required: true, message: '请输入零售价', trigger: 'blur' },
+          // { type: 'number', message: '请输入正确格式', trigger: 'blur' }
+          { required: true, validator: retailPrice, trigger: 'blur' }
         ],
         tagPrice: [
-          { required: true, message: '请输入吊牌价', trigger: 'blur' }
+          // { required: true, message: '请输入吊牌价', trigger: 'blur' }
+          { required: true, validator: tagPrice, trigger: 'blur' }
         ],
         costPrice: [
-          { required: true, message: '请输入成本价', trigger: 'blur' }
+          // { required: true, message: '请输入成本价', trigger: 'blur' }
+          { required: true, validator: costPrice, trigger: 'blur' }
         ],
         standards: [
           { required: true, message: '请输入规格', trigger: 'blur' }

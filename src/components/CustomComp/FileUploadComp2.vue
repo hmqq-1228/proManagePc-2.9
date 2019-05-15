@@ -3,7 +3,7 @@
     <form class="FileCompForm" :id="lalala" enctype="multipart/form-data">
       <div class="upload-img" v-loading="loading21">
         <div class="FileList" v-for="(file, index) in fileListComment" v-bind:key="index">
-          <img :src="file.previewUrl" alt="">
+          <img :src="file.previewUrl" :alt="file.showName">
           <div class="cover" @click="delUploadFileComment(file.attachmentId)">
             <i class="el-icon-delete"></i>
           </div>

@@ -224,8 +224,6 @@
              <el-button type="danger" size="small" style="position: absolute;bottom:40px;right:10px;" @click.stop="deleteSku(item, index)">删除</el-button>
              <el-button type="primary" size="small" style="position: absolute;bottom:40px;right:80px;" v-if="!item.isEdit" @click.stop="edit(item, index)">编辑</el-button>
              <el-button size="small" v-if="item.isEdit"  style="position: absolute;bottom:40px;right:80px;" @click.stop="finish(item, index)">结束</el-button>
-             <!--<el-button type="info" plain disabled size="small" v-if="">信息按钮</el-button>-->
-             <!--<p style="position: absolute;bottom:10px;right:40px;">{{tip}}</p>-->
              <div v-show="item.isEdit">
                  <upload  v-bind:FileDataList="item.proFileList"  v-bind:clearInfo="item.IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl" style="margin-left: 0px;float: left;" fileFormId="skuInfo" :buttonStr="buttonStr" :selectType="selectType" :limtImg="limtImg" @delUploadFileComment="delUploadFileComment"></upload>
                  <Button  style="position: absolute;right:10px;top:10px;" shape="circle" @click.stop="submitFile(item, index)">提交图片</Button>
@@ -326,7 +324,8 @@ export default {
       spuId: this.$route.params.spuId,
       addSku: false,
       bannerHeight: '',
-      bannerIndex: 0
+      bannerIndex: 0,
+      saveList: []
     }
   },
   components: {
@@ -412,6 +411,11 @@ export default {
     },
     detection (val, name, index) {
       $('#' + name + '-' + index).css({color: '#2d8cf0', cursor: 'pointer'})
+      let obj = {
+        name: name
+      }
+      // this.saveList.push(obj)
+      console.log(this.saveList)
     },
     // 改变颜色
     changeColor (e, name, index) {
