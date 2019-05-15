@@ -19,8 +19,8 @@
           </div>
           <div class="addRemoveBox" v-if="baseInfoEditStatus">
             <div class="ImgPreEditBox">
-              <div class="ImgPreEditAdd" v-on:click="moveLeft(currentPreId)"><Icon type="md-arrow-back" /></div>
-              <div class="ImgPreEditAdd" v-on:click="moveRight(currentPreId)"><Icon type="md-arrow-forward" /></div>
+              <!--<div class="ImgPreEditAdd" v-on:click="moveLeft(currentPreId)"><Icon type="md-arrow-back" /></div>-->
+              <!--<div class="ImgPreEditAdd" v-on:click="moveRight(currentPreId)"><Icon type="md-arrow-forward" /></div>-->
               <div class="ImgPreEditAdd" v-show="addIcon">
                 <Icon type="md-add" />
                 <div class="spuBaseInfoUpload">
@@ -1176,56 +1176,89 @@ export default {
       // preBaseArr: [],
       // preExtraArr: [],
       var that = this
-      if (this.preBaseArr.length > 0) {
-        this.$Modal.confirm({
-          title: '有修改项未保存',
-          content: '基本信息有修改项未保存，是否保存？',
-          onOk: () => {
-            var pinBaseObj = {}
-            var moreBaseFlag = that.preBaseArr.length >= 1 ? 'more' : 'single'
-            for (var k = 0; k < that.preBaseArr.length; k++) {
-              $.extend(pinBaseObj, that.preBaseArr[k].targetData)
+      if (this.baseInfoEditStatus) {
+        if (this.preBaseArr.length > 0) {
+          this.$Modal.confirm({
+            title: '有修改项未保存',
+            content: '基本信息有修改项未保存，是否保存？',
+            onOk: () => {
+              var pinBaseObj = {}
+              var moreBaseFlag = that.preBaseArr.length >= 1 ? 'more' : 'single'
+              for (var k = 0; k < that.preBaseArr.length; k++) {
+                $.extend(pinBaseObj, that.preBaseArr[k].targetData)
+              }
+              that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+              this.baseInfoEditStatus = !this.baseInfoEditStatus
+              this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
+              this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
+              this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
+            },
+            onCancel: () => {
+              for (var u = 0; u < that.preBaseArr.length; u++) {
+                $('#' + that.preBaseArr[u].targetName).css('color', '#808695')
+              }
+              that.preBaseArr = []
+              that.querySpuBaseInfo()
+              this.baseInfoEditStatus = !this.baseInfoEditStatus
+              this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
+              this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
+              this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
             }
-            that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
-          },
-          onCancel: () => {
-            that.preBaseArr = []
-            that.querySpuBaseInfo()
-            // that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
-            // this.$Message.info('Clicked cancel')
-          }
-        })
+          })
+        } else {
+          this.baseInfoEditStatus = !this.baseInfoEditStatus
+          this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
+          this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
+          this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
+        }
+      } else {
+        this.baseInfoEditStatus = !this.baseInfoEditStatus
+        this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
+        this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
+        this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
       }
-      this.baseInfoEditStatus = !this.baseInfoEditStatus
-      this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
-      this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
-      this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
     },
     classifyEditBtn: function () {
       var that = this
-      if (this.preExtraArr.length > 0) {
-        this.$Modal.confirm({
-          title: '有修改项未保存',
-          content: 'SPU信息有修改的项未保存，是否保存？',
-          onOk: () => {
-            var pinBaseObj = {}
-            var moreBaseFlag = that.preExtraArr.length >= 1 ? 'more' : 'single'
-            for (var k = 0; k < that.preExtraArr.length; k++) {
-              $.extend(pinBaseObj, that.preExtraArr[k].targetData)
+      if (this.classifyInfoEditStatus) {
+        if (this.preExtraArr.length > 0) {
+          this.$Modal.confirm({
+            title: '有修改项未保存',
+            content: 'SPU信息有修改的项未保存，是否保存？',
+            onOk: () => {
+              var pinBaseObj = {}
+              var moreBaseFlag = that.preExtraArr.length >= 1 ? 'more' : 'single'
+              for (var k = 0; k < that.preExtraArr.length; k++) {
+                $.extend(pinBaseObj, that.preExtraArr[k].targetData)
+              }
+              that.editExtraSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+              this.classifyInfoEditStatus = !this.classifyInfoEditStatus
+              this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
+              this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
+            },
+            onCancel: () => {
+              for (var u = 0; u < that.preExtraArr.length; u++) {
+                $('#' + that.preExtraArr[u].targetName).css('color', '#808695')
+              }
+              that.preExtraArr = []
+              that.queryExtraSpuInfo()
+              // that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+              // this.$Message.info('Clicked cancel')
+              this.classifyInfoEditStatus = !this.classifyInfoEditStatus
+              this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
+              this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
             }
-            that.editExtraSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
-          },
-          onCancel: () => {
-            that.preBaseArr = []
-            that.querySpuBaseInfo()
-            // that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
-            // this.$Message.info('Clicked cancel')
-          }
-        })
+          })
+        } else {
+          this.classifyInfoEditStatus = !this.classifyInfoEditStatus
+          this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
+          this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
+        }
+      } else {
+        this.classifyInfoEditStatus = !this.classifyInfoEditStatus
+        this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
+        this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
       }
-      this.classifyInfoEditStatus = !this.classifyInfoEditStatus
-      this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
-      this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
     },
     removePreImg: function () {
       var that = this
@@ -1276,7 +1309,7 @@ export default {
       this.FileUploadArr = this.FileUploadArr.concat(obj)
       // this.FileUploadArr = obj
       // this.log('上传：', obj)
-      this.editBaseSpuInfo({attachmentId: that.SetFileIdStr()})
+      this.editBaseSpuInfo({attachmentId: that.SetFileIdStr()}, '', '', 'refresh')
     },
     smallPreClick: function (e, preUrl, currentPreId, allData) {
       var obj = e.currentTarget
@@ -1483,6 +1516,13 @@ export default {
             }
             that.preExtraArr = []
           } else {
+            // var tarindex = -1
+            for (var p = 0; p < that.preExtraArr.length; p++) {
+              if (that.preExtraArr[p].targetName === flag) {
+                that.preExtraArr.splice(p, 1)
+              }
+              // $('#' + that.preExtraArr[p].targetName).css('color', '#808695')
+            }
             $('#' + flag).css('color', '#808695')
           }
           $('input').blur()
@@ -1503,26 +1543,34 @@ export default {
       var that = this
       obj.spuId = that.spuId
       this.ajax('/archives/editSpuBasic', JSON.stringify(obj)).then(res => {
-        // that.log('editSpuBasic:', res)
+        that.log('editSpuBasic:', res)
         if (res.code === 200) {
-          that.$Message.success('操作成功')
+          that.log(111111)
+          that.$Message.success('操作成功!')
           if (moreFlag === 'more') {
+            that.log(55555)
             for (var u = 0; u < that.preBaseArr.length; u++) {
               $('#' + that.preBaseArr[u].targetName).css('color', '#808695')
             }
             that.preBaseArr = []
-          } else {
+          } else if (flag) {
+            that.log(66666)
             $('#' + flag).css('color', '#808695')
+            that.log(77777)
           }
+          that.log(22)
           // $('#' + flag).css('color', '#808695')
           $('input').blur()
           that.selectData.obj = {}
           that.selectData.type = ''
           that.selectData.flag = ''
           $('.iptHidden').blur()
-          if (refresh) {
-            that.querySpuBaseInfo()
-          }
+          that.querySpuBaseInfo()
+          // that.alert(refresh)
+          // if (refresh) {
+          //   that.alert(1)
+          //   that.querySpuBaseInfo()
+          // }
         } else {
           that.$Message.success(res.msg)
         }
