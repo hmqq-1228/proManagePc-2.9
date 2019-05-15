@@ -411,9 +411,9 @@ export default {
     },
     detection (val, name, index) {
       $('#' + name + '-' + index).css({color: '#2d8cf0', cursor: 'pointer'})
-      let obj = {
-        name: name
-      }
+      // let obj = {
+      //   name: name
+      // }
       // this.saveList.push(obj)
       console.log(this.saveList)
     },
@@ -596,7 +596,7 @@ export default {
     width: 100%;
   }
   .skuInfo .sku {
-    width: 100%;
+    width: 1620px;
   }
   .skuInfo .sku-list {
    width:100%;

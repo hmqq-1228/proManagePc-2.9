@@ -76,10 +76,10 @@
   </div>
 </template>
 <style>
-  .members .ivu-checkbox-disabled .ivu-checkbox-inner {
-    border-color: #2d8cf0;
-    background-color: #2d8cf0;
-  }
+  /*.members .ivu-checkbox-disabled .ivu-checkbox-inner {*/
+    /*border-color: #2d8cf0;*/
+    /*background-color: #2d8cf0;*/
+  /*}*/
 </style>
 <script>
 import SelectGroup from './SelectGroup.vue'
