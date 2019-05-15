@@ -575,6 +575,7 @@ export default {
     ArchivesGroupSelect (item) {
       this.log('新建小组：', item)
       this.ArchivesGroupId = item.groupId
+      this.formValidate.ArchivesGroupId = item.groupId
     },
     // 新建 搜索选择项目负责人
     queryNewGroupManager (queryString, cb) {
