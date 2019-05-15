@@ -40,7 +40,7 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel" v-on:click="testFileList">商品名称:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="goodsNameVal" v-on:on-keydown="textValChange('goodsNameVal',{spuName: goodsNameVal}, 'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入商品名称" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="goodsNameVal" v-on:input="preExtraInput('goodsNameVal',{spuName: goodsNameVal},'editBase')" v-on:on-keydown="textValChange('goodsNameVal',{spuName: goodsNameVal}, 'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入商品名称" style="max-width: 250px" >
                 <Icon class="haha" id="goodsNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({spuName: goodsNameVal}, 'goodsNameVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -92,7 +92,7 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">SPU编码:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="spuCodeVal" v-on:on-keydown="textValChange('spuCodeVal',{spuCode: spuCodeVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入SPU编码" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="spuCodeVal" v-on:input="preExtraInput('spuCodeVal',{spuCode: spuCodeVal},'editBase')" v-on:on-keydown="textValChange('spuCodeVal',{spuCode: spuCodeVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入SPU编码" style="max-width: 250px" >
                 <Icon class="haha" id="spuCodeVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({spuCode: spuCodeVal}, 'spuCodeVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -105,7 +105,7 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">商品ID:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="goodsIdVal" v-on:on-keydown="textValChange('goodsIdVal',{spuGoodsId: goodsIdVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入商品ID" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="goodsIdVal" v-on:input="preExtraInput('goodsIdVal',{spuGoodsId: goodsIdVal},'editBase')" v-on:on-keydown="textValChange('goodsIdVal',{spuGoodsId: goodsIdVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入商品ID" style="max-width: 250px" >
                 <Icon class="haha" id="goodsIdVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({spuGoodsId: goodsIdVal}, 'goodsIdVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -125,7 +125,7 @@
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">产品小组:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="groupNameVal" v-on:on-keydown="textValChange('groupNameVal',{groupName: groupNameVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入小组名称" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="groupNameVal" v-on:input="preExtraInput('groupNameVal',{groupName: groupNameVal},'editBase')" v-on:on-keydown="textValChange('groupNameVal',{groupName: groupNameVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入小组名称" style="max-width: 250px" >
                 <Icon class="haha" id="groupNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({groupName: groupNameVal}, 'groupNameVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
               <div class="jiagouInfo" v-show="!groupId && baseInfoEditStatus">请先创建产品小组</div>
@@ -178,7 +178,7 @@
             <div class="spuInfoLabel">系列</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="xilieNameVal" v-on:on-keydown="textValChange('xilieNameVal',{series: xilieNameVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入系列" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="xilieNameVal" v-on:input="preExtraInput('xilieNameVal',{series: xilieNameVal},'editExtra')" v-on:on-keydown="textValChange('xilieNameVal',{series: xilieNameVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入系列" style="max-width: 250px" >
                 <Icon class="haha" id="xilieNameVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({series: xilieNameVal}, 'xilieNameVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -257,7 +257,7 @@
             <div class="spuInfoLabel">设计组</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="designGroupVal" v-on:on-keydown="textValChange('designGroupVal',{designGroup: designGroupVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入设计组名称" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="designGroupVal" v-on:input="preExtraInput('designGroupVal',{designGroup: designGroupVal},'editExtra')" v-on:on-keydown="textValChange('designGroupVal',{designGroup: designGroupVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入设计组名称" style="max-width: 250px" >
                 <Icon class="haha" id="designGroupVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({designGroup: designGroupVal}, 'designGroupVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -268,7 +268,7 @@
             <div class="spuInfoLabel">保质期</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="baozhiqiVal" v-on:on-keydown="textValChange('baozhiqiVal',{qualityLimit: baozhiqiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入保质期" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="baozhiqiVal" v-on:input="preExtraInput('baozhiqiVal',{qualityLimit: baozhiqiVal},'editExtra')" v-on:on-keydown="textValChange('baozhiqiVal',{qualityLimit: baozhiqiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入保质期" style="max-width: 250px" >
                 <Icon class="haha" id="baozhiqiVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({qualityLimit: baozhiqiVal}, 'baozhiqiVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -294,7 +294,7 @@
             <div class="spuInfoLabel">主材质</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="zhucaizhiVal" v-on:on-keydown="textValChange('zhucaizhiVal',{mainMaterial: zhucaizhiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入主材质名称" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="zhucaizhiVal" v-on:input="preExtraInput('zhucaizhiVal',{mainMaterial: zhucaizhiVal},'editExtra')" v-on:on-keydown="textValChange('zhucaizhiVal',{mainMaterial: zhucaizhiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入主材质名称" style="max-width: 250px" >
                 <Icon class="haha" id="zhucaizhiVal" v-show="classifyInfoEditStatus" type="md-checkmark-circle" slot="suffix" @click="editExtraSpuInfo({mainMaterial: zhucaizhiVal}, 'zhucaizhiVal')" />
               </i-input>
             </div>
@@ -305,7 +305,7 @@
             <div class="spuInfoLabel">设计元素</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="designEleVal" v-on:on-keydown="textValChange('designEleVal',{element: designEleVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入设计元素" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="designEleVal" v-on:input="preExtraInput('designEleVal',{element: designEleVal},'editExtra')" v-on:on-keydown="textValChange('designEleVal',{element: designEleVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入设计元素" style="max-width: 250px" >
                 <Icon class="haha" id="designEleVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({element: designEleVal}, 'designEleVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -334,7 +334,7 @@
             <div class="spuInfoLabel">采购组</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="caigouGroupVal" v-on:on-keydown="textValChange('caigouGroupVal',{buyerGroup: caigouGroupVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入采购组名称" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="caigouGroupVal" v-on:input="preExtraInput('caigouGroupVal',{buyerGroup: caigouGroupVal},'editExtra')" v-on:on-keydown="textValChange('caigouGroupVal',{buyerGroup: caigouGroupVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入采购组名称" style="max-width: 250px" >
                 <Icon class="haha" id="caigouGroupVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({buyerGroup: caigouGroupVal}, 'caigouGroupVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -362,7 +362,7 @@
             <div class="spuInfoLabel">生产周期</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="zhouqiVal" v-on:on-keydown="textValChange('zhouqiVal',{productCycle: zhouqiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入生产周期" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="zhouqiVal" v-on:input="preExtraInput('zhouqiVal',{productCycle: zhouqiVal},'editExtra')" v-on:on-keydown="textValChange('zhouqiVal',{productCycle: zhouqiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入生产周期" style="max-width: 250px" >
                 <Icon class="haha" id="zhouqiVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({productCycle: zhouqiVal}, 'zhouqiVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -373,7 +373,7 @@
             <div class="spuInfoLabel moreWords">配色设计师</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="colorDesignerVal" v-on:on-keydown="textValChange('colorDesignerVal',{colorDesigner: colorDesignerVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入配色设计师" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="colorDesignerVal" v-on:input="preExtraInput('colorDesignerVal',{colorDesigner: colorDesignerVal},'editExtra')" v-on:on-keydown="textValChange('colorDesignerVal',{colorDesigner: colorDesignerVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入配色设计师" style="max-width: 250px" >
                 <Icon class="haha" id="colorDesignerVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({colorDesigner: colorDesignerVal}, 'colorDesignerVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -423,7 +423,7 @@
             <div class="spuInfoLabel">类目编码</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="classifyCodeVal" v-on:on-keydown="textValChange('classifyCodeVal',{categoryCode: classifyCodeVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入类目编码" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="classifyCodeVal" v-on:input="preExtraInput('classifyCodeVal',{categoryCode: classifyCodeVal},'editExtra')" v-on:on-keydown="textValChange('classifyCodeVal',{categoryCode: classifyCodeVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入类目编码" style="max-width: 250px" >
                 <Icon class="haha" id="classifyCodeVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({categoryCode: classifyCodeVal},'classifyCodeVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -434,7 +434,7 @@
             <div class="spuInfoLabel">单位</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="danweiVal" v-on:on-keydown="textValChange('danweiVal',{unit: danweiVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入计量单位" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="danweiVal" v-on:input="preExtraInput('danweiVal',{unit: danweiVal},'editExtra')" v-on:on-keydown="textValChange('danweiVal',{unit: danweiVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入计量单位" style="max-width: 250px" >
                 <Icon class="haha" id="danweiVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({unit: danweiVal}, 'danweiVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -445,7 +445,7 @@
             <div class="spuInfoLabel">造型</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="zaoxingVal" v-on:on-keydown="textValChange('zaoxingVal',{shape: zaoxingVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入所属造型" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="zaoxingVal" v-on:input="preExtraInput('zaoxingVal',{shape: zaoxingVal},'editExtra')" v-on:on-keydown="textValChange('zaoxingVal',{shape: zaoxingVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入所属造型" style="max-width: 250px" >
                 <Icon class="haha" id="zaoxingVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({shape: zaoxingVal}, 'zaoxingVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -474,7 +474,7 @@
             <div class="spuInfoLabel">执行标准</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="zhixingVal" v-on:on-keydown="textValChange('zhixingVal',{standard: zhixingVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入执行标准" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="zhixingVal" v-on:input="preExtraInput('zhixingVal',{standard: zhixingVal},'editExtra')" v-on:on-keydown="textValChange('zhixingVal',{standard: zhixingVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入执行标准" style="max-width: 250px" >
                 <Icon class="haha" id="zhixingVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({standard: zhixingVal}, 'zhixingVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -485,7 +485,7 @@
             <div class="spuInfoLabel moreWords">供应商名称</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="gongyingVal" v-on:on-keydown="textValChange('gongyingVal',{supplier: gongyingVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入供应商名称" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="gongyingVal" v-on:input="preExtraInput('gongyingVal',{supplier: gongyingVal},'editExtra')" v-on:on-keydown="textValChange('gongyingVal',{supplier: gongyingVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入供应商名称" style="max-width: 250px" >
                 <Icon class="haha" id="gongyingVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({supplier: gongyingVal}, 'gongyingVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -496,7 +496,7 @@
             <div class="spuInfoLabel">备货周期</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="beihuozqVal" v-on:on-keydown="textValChange('beihuozqVal',{stockCycle: beihuozqVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入备货周期" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="beihuozqVal" v-on:input="preExtraInput('beihuozqVal',{stockCycle: beihuozqVal},'editExtra')" v-on:on-keydown="textValChange('beihuozqVal',{stockCycle: beihuozqVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入备货周期" style="max-width: 250px" >
                 <Icon class="haha" id="beihuozqVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({stockCycle: beihuozqVal}, 'beihuozqVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -507,7 +507,7 @@
             <div class="spuInfoLabel moreWords">包装设计师</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="baozhuangVal" v-on:input="textValChange('baozhuangVal',{packageDesigner: baozhuangVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入包装设计师" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="baozhuangVal" v-on:input="preExtraInput('baozhuangVal',{packageDesigner: baozhuangVal},'editExtra')" v-on:on-keydown="textValChange('baozhuangVal',{packageDesigner: baozhuangVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入包装设计师" style="max-width: 250px" >
                 <Icon class="haha" id="baozhuangVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({packageDesigner: baozhuangVal}, 'baozhuangVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -518,7 +518,7 @@
             <div class="spuInfoLabel">保修期</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="baoxiuqiVal" v-on:on-keydown="textValChange('baoxiuqiVal',{rapairLimit: baoxiuqiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入保修期" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="baoxiuqiVal" v-on:input="preExtraInput('baoxiuqiVal',{rapairLimit: baoxiuqiVal},'editExtra')" v-on:on-keydown="textValChange('baoxiuqiVal',{rapairLimit: baoxiuqiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入保修期" style="max-width: 250px" >
                 <Icon class="haha" id="baoxiuqiVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({rapairLimit: baoxiuqiVal}, 'baoxiuqiVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -550,7 +550,7 @@
             <div class="spuInfoLabel">产品组成</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="zuchengVal" v-on:on-keydown="textValChange('zuchengVal',{makeup: zuchengVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入产品组成" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="zuchengVal" v-on:input="preExtraInput('zuchengVal',{makeup: zuchengVal},'editExtra')" v-on:on-keydown="textValChange('zuchengVal',{makeup: zuchengVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入产品组成" style="max-width: 250px" >
                 <Icon class="haha" id="zuchengVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({makeup: zuchengVal}, 'zuchengVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -596,7 +596,7 @@
             <div class="spuInfoLabel">安全类型</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="anquanLxVal" v-on:on-keydown="textValChange('anquanLxVal',{safetyType: anquanLxVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入安全类型" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="anquanLxVal" v-on:input="preExtraInput('anquanLxVal',{safetyType: anquanLxVal},'editExtra')" v-on:on-keydown="textValChange('anquanLxVal',{safetyType: anquanLxVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入安全类型" style="max-width: 250px" >
                 <Icon class="haha" id="anquanLxVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({safetyType: anquanLxVal}, 'anquanLxVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -607,7 +607,7 @@
             <div class="spuInfoLabel">产地</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="chandiVal" v-on:on-keydown="textValChange('chandiVal',{productArea: chandiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入产地" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="chandiVal" v-on:input="preExtraInput('chandiVal',{productArea: chandiVal},'editExtra')" v-on:on-keydown="textValChange('chandiVal',{productArea: chandiVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入产地" style="max-width: 250px" >
                 <Icon class="haha" id="chandiVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({productArea: chandiVal}, 'chandiVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -618,7 +618,7 @@
             <div class="spuInfoLabel">安全库存</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="kucunVal" v-on:on-keydown="textValChange('kucunVal',{safetyStock: kucunVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入安全库存" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="kucunVal" v-on:input="preExtraInput('kucunVal',{safetyStock: kucunVal},'editExtra')" v-on:on-keydown="textValChange('kucunVal',{safetyStock: kucunVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入安全库存" style="max-width: 250px" >
                 <Icon class="haha" id="kucunVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({safetyStock: kucunVal}, 'kucunVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -629,7 +629,7 @@
             <div class="spuInfoLabel moreWords">结构设计师</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="jiegouDesignVal" v-on:on-keydown="textValChange('jiegouDesignVal',{structureDesigner: jiegouDesignVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入设计师名称" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="jiegouDesignVal" v-on:input="preExtraInput('jiegouDesignVal',{structureDesigner: jiegouDesignVal},'editExtra')" v-on:on-keydown="textValChange('jiegouDesignVal',{structureDesigner: jiegouDesignVal}, 'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入设计师名称" style="max-width: 250px" >
                 <Icon class="haha" id="jiegouDesignVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({structureDesigner: jiegouDesignVal}, 'jiegouDesignVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -640,7 +640,7 @@
             <div class="spuInfoLabel">保修单位</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="baoxiudwVal" v-on:on-keydown="textValChange('baoxiudwVal',{rapairUnit: baoxiudwVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入保修单位" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="baoxiudwVal" v-on:input="preExtraInput('baoxiudwVal',{rapairUnit: baoxiudwVal},'editExtra')" v-on:on-keydown="textValChange('baoxiudwVal',{rapairUnit: baoxiudwVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入保修单位" style="max-width: 250px" >
                 <Icon class="haha" id="baoxiudwVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({rapairUnit: baoxiudwVal}, 'baoxiudwVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -651,7 +651,7 @@
         <!-- spu 类目信息: 编辑按钮 -->
         <div class="spuInfoItem">
           <div style="float: right" v-if="ExtraEditFlag"><Button type="primary" @click="classifyEditBtn">{{classifyEditBtnText}}</Button></div>
-          <div style=""><Button @click="testPreSub">测试</Button></div>
+          <!--<div style=""><Button @click="testPreSub">测试</Button></div>-->
         </div>
       </div>
     </div>
@@ -1076,21 +1076,22 @@ export default {
     textValChange: function (flag, obj, editType, e) {
       // var obj = e.currentTarget
       var that = this
-      // that.log('oooobbj:', obj)
-      // that.preSubFuc(flag, obj, editType)
       if (e.keyCode === 13) {
         // k
         if (editType === 'editBase') {
-          that.editBaseSpuInfo(obj, flag)
+          var pinBaseObj = {}
+          var moreBaseFlag = that.preBaseArr.length >= 1 ? 'more' : 'single'
+          for (var k = 0; k < that.preBaseArr.length; k++) {
+            $.extend(pinBaseObj, that.preBaseArr[k].targetData)
+          }
+          that.editBaseSpuInfo(pinBaseObj, flag, moreBaseFlag)
+          // that.editBaseSpuInfo(obj, flag)
         } else if (editType === 'editExtra') {
           var pinObj = {}
-          var moreFlag = that.preExtraArr.length > 1 ? 'more' : 'single'
-          // that.log('回车后：', that.preExtraArr)
+          var moreFlag = that.preExtraArr.length >= 1 ? 'more' : 'single'
           for (var n = 0; n < that.preExtraArr.length; n++) {
             $.extend(pinObj, that.preExtraArr[n].targetData)
           }
-          // that.log('pinObj:', pinObj)
-          // that.editExtraSpuInfo(obj, flag)
           that.editExtraSpuInfo(pinObj, flag, moreFlag)
         }
       } else {
@@ -1164,12 +1165,56 @@ export default {
       }
     },
     baseEditBtn: function () {
+      // preBaseArr: [],
+      // preExtraArr: [],
+      var that = this
+      if (this.preBaseArr.length > 0) {
+        this.$Modal.confirm({
+          title: '有修改项未保存',
+          content: '基本信息有修改项未保存，是否保存？',
+          onOk: () => {
+            var pinBaseObj = {}
+            var moreBaseFlag = that.preBaseArr.length >= 1 ? 'more' : 'single'
+            for (var k = 0; k < that.preBaseArr.length; k++) {
+              $.extend(pinBaseObj, that.preBaseArr[k].targetData)
+            }
+            that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+          },
+          onCancel: () => {
+            that.preBaseArr = []
+            that.querySpuBaseInfo()
+            // that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+            // this.$Message.info('Clicked cancel')
+          }
+        })
+      }
       this.baseInfoEditStatus = !this.baseInfoEditStatus
       this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
       this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
       this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
     },
     classifyEditBtn: function () {
+      var that = this
+      if (this.preExtraArr.length > 0) {
+        this.$Modal.confirm({
+          title: '有修改项未保存',
+          content: 'SPU信息有修改的项未保存，是否保存？',
+          onOk: () => {
+            var pinBaseObj = {}
+            var moreBaseFlag = that.preExtraArr.length >= 1 ? 'more' : 'single'
+            for (var k = 0; k < that.preExtraArr.length; k++) {
+              $.extend(pinBaseObj, that.preExtraArr[k].targetData)
+            }
+            that.editExtraSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+          },
+          onCancel: () => {
+            that.preBaseArr = []
+            that.querySpuBaseInfo()
+            // that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+            // this.$Message.info('Clicked cancel')
+          }
+        })
+      }
       this.classifyInfoEditStatus = !this.classifyInfoEditStatus
       this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
       this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
@@ -1416,7 +1461,7 @@ export default {
         }
       })
     },
-    editExtraSpuInfo: function (obj, flag, moreFlag) {
+    editExtraSpuInfo: function (obj, flag, moreFlag, refresh) {
       var that = this
       obj.spuInfoId = that.ExtraSpuInfoId
       // this.log('obj:', obj)
@@ -1428,6 +1473,7 @@ export default {
             for (var u = 0; u < that.preExtraArr.length; u++) {
               $('#' + that.preExtraArr[u].targetName).css('color', '#808695')
             }
+            that.preExtraArr = []
           } else {
             $('#' + flag).css('color', '#808695')
           }
@@ -1436,26 +1482,39 @@ export default {
           that.selectData.type = ''
           that.selectData.flag = ''
           $('.iptHidden').blur()
+          if (refresh) {
+            that.queryExtraSpuInfo()
+          }
           // that.queryExtraSpuInfo()
         } else {
           that.$Message.success(res.msg)
         }
       })
     },
-    editBaseSpuInfo: function (obj, flag) {
+    editBaseSpuInfo: function (obj, flag, moreFlag, refresh) {
       var that = this
       obj.spuId = that.spuId
       this.ajax('/archives/editSpuBasic', JSON.stringify(obj)).then(res => {
         // that.log('editSpuBasic:', res)
         if (res.code === 200) {
           that.$Message.success('操作成功')
-          $('#' + flag).css('color', '#808695')
+          if (moreFlag === 'more') {
+            for (var u = 0; u < that.preBaseArr.length; u++) {
+              $('#' + that.preBaseArr[u].targetName).css('color', '#808695')
+            }
+            that.preBaseArr = []
+          } else {
+            $('#' + flag).css('color', '#808695')
+          }
+          // $('#' + flag).css('color', '#808695')
           $('input').blur()
           that.selectData.obj = {}
           that.selectData.type = ''
           that.selectData.flag = ''
           $('.iptHidden').blur()
-          that.querySpuBaseInfo()
+          if (refresh) {
+            that.querySpuBaseInfo()
+          }
         } else {
           that.$Message.success(res.msg)
         }
