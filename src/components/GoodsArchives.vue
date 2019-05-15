@@ -350,6 +350,10 @@ export default {
         that.getGoodList.startCostPrice = val
         that.$store.state.startCostPrice = val
         that.getGoodsList()
+      } else {
+        that.getGoodList.startCostPrice = ''
+        that.$store.state.startCostPrice = ''
+        that.getGoodsList()
       }
     },
     OptionModel: function (val, oV) {
@@ -370,6 +374,10 @@ export default {
       if (val) {
         that.getGoodList.endCostPrice = val
         that.$store.state.endCostPrice = val
+        that.getGoodsList()
+      } else {
+        that.getGoodList.endCostPrice = ''
+        that.$store.state.endCostPrice = ''
         that.getGoodsList()
       }
     },

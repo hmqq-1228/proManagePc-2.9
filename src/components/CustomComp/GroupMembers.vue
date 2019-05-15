@@ -13,8 +13,8 @@
         <div><img src="../../../static/img/faqiren.png" alt="" style="float: left;"> <span style="margin-left: 10px">创建人: {{groupInfo.creatorName}}</span></div>
       </div>
     </div>
-    <div style="font-size: 16px; margin-bottom: 10px;margin-top: 20px;">添加成员</div>
-    <div class="searchBox">
+    <div style="font-size: 16px; margin-bottom: 10px;margin-top: 20px;" v-if="groupInfo.editPermission">添加成员</div>
+    <div class="searchBox" v-if="groupInfo.editPermission">
       <div class="searchSelectIpt">
         <el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"
                    :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
