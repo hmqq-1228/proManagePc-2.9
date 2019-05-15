@@ -34,7 +34,7 @@
       <div class="createGroupCnt">
         <div class="createGroupCntItem">小组名称:</div>
         <div class="createGroupCntItem GroupCntItemVal">
-          <el-input placeholder="请选择日期" v-model="createGroupName"></el-input>
+          <el-input placeholder="请填写小组名称" v-model="createGroupName"></el-input>
         </div>
       </div>
       <div class="createGroupCnt">
@@ -62,7 +62,7 @@
       <div class="createGroupCnt">
         <div class="createGroupCntItem">小组名称:</div>
         <div class="createGroupCntItem GroupCntItemVal">
-          <el-input placeholder="请选择小组名称" v-model="createGroupName2"></el-input>
+          <el-input placeholder="请填写小组名称" v-model="createGroupName2"></el-input>
         </div>
       </div>
       <div class="createGroupCnt">
