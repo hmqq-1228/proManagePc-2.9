@@ -1061,6 +1061,7 @@ export default {
         targetData: obj,
         targetType: type
       }
+      console.log(that[preType])
       var posindex = -1
       for (var r = 0; r < that[preType].length; r++) {
         if (that[preType][r].targetName === name) {
