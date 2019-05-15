@@ -6,7 +6,7 @@
           <div class="list" @click="toOperation" :class="type===2 ? 'active':''"><span>操作记录</span><i class="el-icon-refresh" style="margin-left: -10px" @click.stop="refreshOp"></i></div>
         </div>
         <!--<TabPane label="沟通">-->
-        <div style="padding:0 15px 15px 15px" v-if="type===1">
+        <div style="padding:0 15px 15px 15px;width: 500px;" v-if="type===1">
             <div class="el-textarea" v-loading="loadingRe">
               <!--enctype="multipart/form-data"-->
               <form id="uploadFile">
@@ -51,7 +51,7 @@
                     </span>
                   </Timeline-item>
                 </Timeline>
-                <div class="noComment" v-if="commentList.length === 0" style="height: 420px;">还没有人发言呦~</div>
+                <div class="noComment" v-if="commentList.length === 0" style="height: 415px;">还没有人发言呦~</div>
               </div>
               <div style="text-align: center" v-if="commentList.length>0">
                 <Page
@@ -66,7 +66,7 @@
           </div>
         <!--</TabPane>-->
         <!--<TabPane label="操作记录">-->
-        <div class="timeLine" style="padding:25px 15px" v-if="type===2">
+        <div class="timeLine" style="padding:25px 15px;width: 500px;" v-if="type===2">
             <Timeline style="overflow-y: auto; height: 505px;" v-if="historyList && historyList.length>0">
               <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
                 <p class="time">{{history.oTime}}</p>
@@ -80,7 +80,7 @@
                 </span>
               </Timeline-item>
             </Timeline>
-            <div class="noComment" v-if="historyList.length === 0" style="height: 420px;">还没有操作记录呦~</div>
+            <div class="noComment" v-if="historyList.length === 0" style="height: 570px;">还没有操作记录呦~</div>
             <div style="text-align: center;margin-top:40px" v-if="historyList.length>0">
               <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
             </div>
@@ -126,7 +126,7 @@ export default {
   },
   data () {
     return {
-      loadCom: true, // 加载历史记录
+      loadCom: false, // 加载历史记录
       type: 1,
       totalHistoryNum: 0,
       pageSize: 10,
@@ -334,7 +334,7 @@ export default {
 
 <style scoped>
 .communications {
-  width: 100%;
+  width: 500px;
   border: 1px solid #ccc;
   /*padding: 20px;*/
 }
