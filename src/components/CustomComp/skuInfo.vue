@@ -411,19 +411,65 @@ export default {
     },
     detection (val, name, index) {
       $('#' + name + '-' + index).css({color: '#2d8cf0', cursor: 'pointer'})
-      // let obj = {
-      //   name: name
-      // }
-      // this.saveList.push(obj)
+      let param = {}
+      let obj = {
+        name: name,
+        data: param
+      }
+      param[name] = val
+      var posindex = -1
+      for (var r = 0; r < this.saveList.length; r++) {
+        if (this.saveList[r].name === name) {
+          posindex = r
+        }
+      }
+      if (posindex >= 0) {
+        this.saveList.splice(posindex, 1, obj)
+      } else {
+        this.saveList.push(obj)
+      }
       console.log(this.saveList)
     },
     // 改变颜色
     changeColor (e, name, index) {
       $('#' + name + '-' + index).css({color: '#2d8cf0', cursor: 'pointer'})
+      let param = {}
+      let obj = {
+        name: name,
+        data: param
+      }
+      param[name] = e
+      var posindex = -1
+      for (var r = 0; r < this.saveList.length; r++) {
+        if (this.saveList[r].name === name) {
+          posindex = r
+        }
+      }
+      if (posindex >= 0) {
+        this.saveList.splice(posindex, 1, obj)
+      } else {
+        this.saveList.push(obj)
+      }
     },
     changeValue (e, name, index) {
-      console.log(111)
       $('#' + name + '-' + index).css({color: '#2d8cf0', cursor: 'pointer'})
+      let param = {}
+      let obj = {
+        name: name,
+        data: param
+      }
+      param[name] = e
+      var posindex = -1
+      for (var r = 0; r < this.saveList.length; r++) {
+        if (this.saveList[r].name === name) {
+          posindex = r
+        }
+      }
+      if (posindex >= 0) {
+        this.saveList.splice(posindex, 1, obj)
+      } else {
+        this.saveList.push(obj)
+      }
     },
     // 翻页
     changePage (val) {
@@ -476,6 +522,12 @@ export default {
         if (res.code === 200) {
           this.$Message.success(res.msg)
           $('#' + parameter + '-' + index).css({color: '#808695', cursor: 'Default'})
+          this.saveList.forEach((item, index) => {
+            if (parameter === item.name) {
+              this.saveList.splice(index, 1)
+            }
+            console.log(this.saveList)
+          })
           $('.ivu-input').blur()
           this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
           })
@@ -524,6 +576,54 @@ export default {
       // })
     },
     finish (item, index) {
+      if (this.saveList.length > 0) {
+        this.$Modal.confirm({
+          title: '有修改项未保存',
+          content: 'SKU有修改项未保存，是否保存？',
+          onOk: () => {
+            item.isEdit = false
+            item.show = false
+            this.$set(this.skuList, index, item)
+            let obj = {}
+            for (var k = 0; k < this.saveList.length; k++) {
+              $.extend(obj, this.saveList[k].data)
+            }
+            obj['skuId'] = item.id
+            this.ajax('/archives/editSku', JSON.stringify(obj)).then(ress => {
+              if (ress.code === 200) {
+                this.saveList = []
+                this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
+                  res.data.list.forEach((items, idx) => {
+                    if (index === idx) {
+                      item = items
+                      this.$set(this.skuList, index, item)
+                    }
+                  })
+                })
+              }
+            })
+          },
+          onCancel: () => {
+            this.saveList = []
+            this.refsh(item, index)
+          }
+        })
+      } else {
+        this.refsh(item, index)
+      }
+      // item.isEdit = false
+      // item.show = false
+      // this.$set(this.skuList, index, item)
+      // this.ajax('/archives/getSkuPage', {pageNum: this.pageNum, pageSize: this.pageSize, spuId: this.spuId, skuCode: this.searchCode}).then(res => {
+      //   res.data.list.forEach((items, idx) => {
+      //     if (index === idx) {
+      //       item = items
+      //       this.$set(this.skuList, index, item)
+      //     }
+      //   })
+      // })
+    },
+    refsh (item, index) {
       item.isEdit = false
       item.show = false
       this.$set(this.skuList, index, item)
@@ -535,9 +635,6 @@ export default {
           }
         })
       })
-      // this.ajax('/myProject/onOffMove', {status: false, projectId: 'SPU00001'}).then(res => {
-      //   this.getOnOffStatus()
-      // })
     },
     // 附件上传 获取附件上传组件发来的附件信息 新组件
     GetFileInfo (obj) {
