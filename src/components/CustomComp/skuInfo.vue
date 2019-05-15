@@ -227,7 +227,7 @@
              <!--<el-button type="info" plain disabled size="small" v-if="">信息按钮</el-button>-->
              <!--<p style="position: absolute;bottom:10px;right:40px;">{{tip}}</p>-->
              <div v-show="item.isEdit">
-                 <upload  v-bind:FileDataList="item.proFileList"  v-bind:clearInfo="item.IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl" style="margin-left: 0px;float: left;" fileFormId="skuInfo" :buttonStr="buttonStr" :selectType="selectType" :limtImg="limtImg"></upload>
+                 <upload  v-bind:FileDataList="item.proFileList"  v-bind:clearInfo="item.IsClear" v-on:FileDataEmit="GetFileInfo" :filUrl="filUrl" style="margin-left: 0px;float: left;" fileFormId="skuInfo" :buttonStr="buttonStr" :selectType="selectType" :limtImg="limtImg" @delUploadFileComment="delUploadFileComment"></upload>
                  <Button  style="position: absolute;right:10px;top:10px;" shape="circle" @click.stop="submitFile(item, index)">提交图片</Button>
              </div>
            </div>
@@ -283,7 +283,7 @@
   }
 </style>
 <script>
-import upload from '../CustomComp/FileUploadComp.vue'
+import upload from '../CustomComp/FileUploadComp2.vue'
 import addSku from './addSku.vue'
 export default {
   name: 'skuInfo',
@@ -376,7 +376,7 @@ export default {
       }
     },
     // 保存成功
-    saveSuccess (res) {
+    saveSuccess (res, val) {
       if (res.code === 200) {
         this.getList()
         this.addSku = false
@@ -556,6 +556,10 @@ export default {
       }
       that.FileUploadArr = []
       return FileIdStr
+    },
+    // 删除
+    delUploadFileComment (val) {
+      this.FileUploadArr = val
     },
     submitFile (item, index) {
       let obj = {

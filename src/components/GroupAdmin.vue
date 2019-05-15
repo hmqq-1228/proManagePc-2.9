@@ -86,7 +86,7 @@
     </Modal>
     <Drawer
       title="小组详情"
-      width="740"
+      width="700"
       :closable="false"
       v-model="DrawerMember"
     >
@@ -96,7 +96,7 @@
         v-bind:DrawerMemberShow="DrawerMember"
       ></component>
     </Drawer>
-    <div>
+    <div style="text-align: center">
       <el-pagination
         layout="prev, pager, next"
         :page-size="10"

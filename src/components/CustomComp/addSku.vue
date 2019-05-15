@@ -6,7 +6,7 @@
       </FormItem>
       <FormItem label="年份" prop="yearDigital">
         <!--<Input v-model="formValidate.yearDigital" placeholder="请输入年份" :maxlength="20" size="large" type="number"/>-->
-        <DatePicker type="year" placeholder="请选择年份" @on-change="changeYear" style="width: 100%"></DatePicker>
+        <DatePicker type="year" placeholder="请选择年份" @on-change="changeYear" style="width: 100%" v-model="formValidate.yearDigital"></DatePicker>
       </FormItem>
       <FormItem label="零售价" prop="retailPrice">
         <i-input v-model="formValidate.retailPrice" placeholder="请输入零售价" :maxlength="20" size="large" ></i-input>
@@ -183,10 +183,20 @@ export default {
             that.editValidate.attachmentId = ''
           }
           that.ajax('/archives/addSku', JSON.stringify(that.editValidate)).then(res => {
-            that.$emit('saveSuccess', res)
+            that.$emit('saveSuccess', res, that.formValidate)
             if (res.code === 200) {
               that.IsClear = true
               that.$Message.success('保存成功')
+              that.formValidate = {
+                skuCode: '',
+                retailPrice: '',
+                costPrice: '',
+                tagPrice: '',
+                yearDigital: '',
+                barCode: '',
+                thirdSkuCode: '',
+                standards: ''
+              }
             }
           })
         } else {

@@ -54,7 +54,9 @@ const install = function (Vue, options) {
   }
   // 判断是否是图片
   Vue.prototype.isImage = function (fileName) {
-    var geshi = fileName.substr(-4).indexOf('.') > -1 ? fileName.toLowerCase().substr(-3) : fileName.toLowerCase().substr(-4)
+    if (fileName) {
+      var geshi = fileName.substr(-4).indexOf('.') > -1 ? fileName.toLowerCase().substr(-3) : fileName.toLowerCase().substr(-4)
+    }
     var isImg = false
     for (var i = 0; i < store.state.fileFormat.length; i++) {
       if (store.state.fileFormat[i] === geshi) {

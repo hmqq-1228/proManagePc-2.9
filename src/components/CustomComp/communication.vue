@@ -1,9 +1,12 @@
 <template>
     <div class="communications">
-      <Tabs type="card">
-        <TabPane label="沟通">
-          <!--<div class="title">沟通</div>-->
-          <div style="padding:0 15px 15px 15px">
+      <!--<Tabs type="card">-->
+        <div class="title">
+          <div class="list" @click="toCom" :class="type===1 ? 'active':''"><span>沟通</span><i class="el-icon-refresh" style="margin-left: -10px" @click.stop="refreshCom"></i></div>
+          <div class="list" @click="toOperation" :class="type===2 ? 'active':''"><span>操作记录</span><i class="el-icon-refresh" style="margin-left: -10px" @click.stop="refreshOp"></i></div>
+        </div>
+        <!--<TabPane label="沟通">-->
+        <div style="padding:0 15px 15px 15px" v-if="type===1">
             <div class="el-textarea" v-loading="loadingRe">
               <!--enctype="multipart/form-data"-->
               <form id="uploadFile">
@@ -33,56 +36,57 @@
               </form>
             </div>
             <!--操作记录 历史记录-->
-            <!--<div class="discription lis" style="margin-top: 15px;">-->
-              <!--<div class="timeLine">-->
-                <!--<Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 395px;">-->
-                  <!--<Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">-->
-                    <!--<p class="time">{{comment.createDate}}</p>-->
-                    <!--<p class="content"  v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>-->
-                    <!--<span v-for="(com, index2) in comment.attachment" v-bind:key="index2">-->
-                      <!--<p class="content" v-if="com.showName">附件:-->
-                        <!--<span style="display: inline-block"> {{com.showName}}</span>-->
-                        <!--<span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="GetFilePreData(com)">预览</span>-->
-                        <!--<span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>-->
-                      <!--</p>-->
-                    <!--</span>-->
-                  <!--</Timeline-item>-->
-                <!--</Timeline>-->
-                <!--<div class="noComment" v-if="commentList.length === 0" style="height: 420px;">还没有人发言呦~</div>-->
-              <!--</div>-->
-              <!--<div style="text-align: center" v-if="commentList.length>0">-->
-                <!--<Page-->
-                  <!--:total="commentTotalNum"-->
-                  <!--size="small"-->
-                  <!--:page-size="5"-->
-                  <!--show-total-->
-                  <!--@on-change="commentPageChange($event)"-->
-                <!--&gt;</Page>-->
-              <!--</div>-->
-            <!--</div>-->
+            <div class="discription lis" style="margin-top: 15px;">
+              <div class="timeLine">
+                <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 390px;">
+                  <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
+                    <p class="time">{{comment.createDate}}</p>
+                    <p class="content"  v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
+                    <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
+                      <p class="content" v-if="com.showName">附件:
+                        <span style="display: inline-block"> {{com.showName}}</span>
+                        <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="GetFilePreData(com)">预览</span>
+                        <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+                      </p>
+                    </span>
+                  </Timeline-item>
+                </Timeline>
+                <div class="noComment" v-if="commentList.length === 0" style="height: 420px;">还没有人发言呦~</div>
+              </div>
+              <div style="text-align: center" v-if="commentList.length>0">
+                <Page
+                  :total="commentTotalNum"
+                  size="small"
+                  :page-size="5"
+                  show-total
+                  @on-change="commentPageChange($event)"
+                ></Page>
+              </div>
+            </div>
           </div>
-        </TabPane>
-        <TabPane label="操作记录">
-          <div class="timeLine" style="padding:25px 15px">
-            <Timeline>
+        <!--</TabPane>-->
+        <!--<TabPane label="操作记录">-->
+        <div class="timeLine" style="padding:25px 15px" v-if="type===2">
+            <Timeline style="overflow-y: auto; height: 505px;" v-if="historyList && historyList.length>0">
               <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
                 <p class="time">{{history.oTime}}</p>
                 <p class="content">{{history.oName}}{{history.oContent}}</p>
                 <span v-for="(his, index2) in history.attachment" v-bind:key="index2">
-              <p class="content" v-if="his.showName"><span>附件:</span>
-                <span style="display: inline-block"> {{his.showName}}</span>
-                <span v-if="his.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePre(his.previewUrl, his.showName)">预览</span>
-                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="his.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
-              </p>
-            </span>
+                  <p class="content" v-if="his.showName"><span>附件:</span>
+                    <span style="display: inline-block"> {{his.showName}}</span>
+                    <span v-if="his.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePre(his.previewUrl, his.showName)">预览</span>
+                    <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="his.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
+                  </p>
+                </span>
               </Timeline-item>
             </Timeline>
-            <div style="text-align: center;margin-top:40px">
+            <div class="noComment" v-if="historyList.length === 0" style="height: 420px;">还没有操作记录呦~</div>
+            <div style="text-align: center;margin-top:40px" v-if="historyList.length>0">
               <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
             </div>
           </div>
-        </TabPane>
-      </Tabs>
+        <!--</TabPane>-->
+      <!--</Tabs>-->
       <!-- 图片预览 -->
       <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
         <div class="showImg">
@@ -122,6 +126,7 @@ export default {
   },
   data () {
     return {
+      type: 1,
       totalHistoryNum: 0,
       pageSize: 10,
       pageNo: 1,
@@ -175,6 +180,18 @@ export default {
     this.getHistoryList()
   },
   methods: {
+    refreshCom () {
+      this.getHistoryCont()
+    },
+    refreshOp () {
+      this.getHistoryList()
+    },
+    toCom () {
+      this.type = 1
+    },
+    toOperation () {
+      this.type = 2
+    },
     // 历史记录 分页值改变
     commentPageChange: function (e) {
       this.pageN = e
@@ -256,20 +273,18 @@ export default {
         if (res.code === 200) {
           that.historyList = res.data.list
           that.totalHistoryNum = res.data.totalRow
-          that.log('kkkkk2:', that.historyList)
-          if (that.historyList.length > 0) {
-            for (var i = 0; i < that.historyList.length; i++) {
-              that.log('ttttt:', that.historyList[i].attachment)
-              for (var j = 0; j < that.historyList[i].attachment.length; j++) {
-                if (that.isImage(res.data.list[i].attachment[j].showName)) {
-                  res.data.list[i].attachment[j].isImg = true
-                } else {
-                  res.data.list[i].attachment[j].isImg = false
-                }
-                res.data.list[i].attachment[j].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].attachment[j].realUrl + '&showName=' + res.data.list[i].attachment[j].showName
-              }
-            }
-          }
+          // if (that.historyList.length > 0) {
+          //   for (var i = 0; i < that.historyList.length; i++) {
+          //     for (var j = 0; j < that.historyList[i].attachment.length; j++) {
+          //       if (that.isImage(res.data.list[i].attachment[j].showName)) {
+          //         res.data.list[i].attachment[j].isImg = true
+          //       } else {
+          //         res.data.list[i].attachment[j].isImg = false
+          //       }
+          //       res.data.list[i].attachment[j].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.list[i].attachment[j].realUrl + '&showName=' + res.data.list[i].attachment[j].showName
+          //     }
+          //   }
+          // }
         }
       })
       that.log(3344)
@@ -326,13 +341,21 @@ export default {
   border-bottom: 1px solid #ccc;
   width: 100%;
   height: 40px;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 40px;
   text-indent: 15px;
   background: #f5f8fa;
   color:#333;
   letter-spacing: 2px;
   font-weight: bold;
+}
+.communications .title .list {
+  float: left;
+  cursor: pointer;
+  margin-right: 15px;
+}
+.communications .title .active {
+  color:#2d8cf0;
 }
 .el-textarea {
   margin-top: 15px;

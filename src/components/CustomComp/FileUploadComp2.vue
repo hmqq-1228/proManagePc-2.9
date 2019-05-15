@@ -4,14 +4,16 @@
       <div class="upload-img" v-loading="loading21">
         <div class="FileList" v-for="(file, index) in fileListComment" v-bind:key="index">
           <img :src="file.previewUrl" alt="">
-          <div class="cover">
-            <i class="el-icon-delete" @click="delUploadFileComment(file.attachmentId)"></i>
+          <div class="cover" @click="delUploadFileComment(file.attachmentId)">
+            <i class="el-icon-delete"></i>
           </div>
         </div>
-        <div class="FileCompIptWrap" v-if="fileListComment.length < 5">
+        <!-- v-if="fileListComment.length < 5"-->
+        <div class="FileCompIptWrap">
            <i class="el-icon-plus"></i>
-          <input type="file" class="aaa" :disabled="commentDis" name="myfile" :id="lalala + '_myfile2'" @change="getFileName">
+           <input type="file" class="aaa" :disabled="commentDis" name="myfile" :id="lalala + '_myfile2'" @change="getFileName">
         </div>
+        <p style="font-size: 12px;color:red;position: absolute;left:0;bottom: 0"  v-if="fileListComment.length === 5">最多上传5张图片!</p>
       </div>
     </form>
     <!--<div style="font-size: 12px">-->
@@ -151,7 +153,9 @@ export default {
                 that.fileListComment.splice(i, 1)
               }
             }
+            this.$emit('delUploadFileComment', that.fileListComment)
             that.fileListCommentLen = that.fileListComment.length
+            console.log(that.fileListComment)
             // console.log('edit', that.fileListComment)
             $('#myfile2').val('')
           }
@@ -196,17 +200,7 @@ export default {
               message: '文件' + data.msg
             })
             that.loading21 = false
-            // that.log('fileListComment:', that.fileListComment)
-            if (that.limtImg) {
-              if (that.isImage(that.fileListComment.showName)) {
-                console.log(11111111111111111)
-                that.$emit('FileDataEmit', that.fileListComment)
-              } else {
-                console.log(222222222222)
-              }
-            } else {
-              that.$emit('FileDataEmit', that.fileListComment)
-            }
+            that.$emit('FileDataEmit', that.fileListComment)
           } else if (data.code === 300) {
             that.$message({
               type: 'error',
@@ -242,7 +236,7 @@ export default {
   .upload-img {
     position: absolute;
     width: 260px;
-    height: 150px;
+    height: 170px;
     right: 140px;
     top:10px;
   }
