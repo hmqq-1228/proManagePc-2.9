@@ -124,7 +124,7 @@
       </el-pagination>
     </div>
     <!--新建档案-->
-    <Modal v-model="creatArchivesShow" title="新建档案">
+    <Modal v-model="creatArchivesShow" title="新建档案" @on-ok="createArchivesSub" @on-cancel="createArchivesCancel">
       <!--<div slot="header" style="display: flex;">-->
         <!--<div style="font-weight: 700; color: #17233d; font-size: 14px;">-->
           <!--<span>新建档案</span>-->
@@ -133,7 +133,7 @@
           <!--<span>有必填项未填写</span>-->
         <!--</div>-->
       <!--</div>-->
-      <div style="position: absolute; left: 100px; top: 20px;">{{valueCheck}}</div>
+      <!--<div style="position: absolute; left: 100px; top: 20px;">{{valueCheck}}</div>-->
       <div class="createGroupCnt">
         <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
         <div class="createGroupCntItem">商品名称:</div>
@@ -199,10 +199,10 @@
           <component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
         </div>
       </div>
-      <div slot="footer">
-        <Button @click="createArchivesCancel">取消</Button>
-        <Button type="primary" @click="createArchivesSub">确定</Button>
-      </div>
+      <!--<div slot="footer">-->
+        <!--<Button @click="createArchivesCancel">取消</Button>-->
+        <!--<Button type="primary" @click="createArchivesSub">确定</Button>-->
+      <!--</div>-->
     </Modal>
     <!--小组列表-->
     <!--小组列表 选择小组-->
@@ -339,6 +339,16 @@ export default {
         searchUserName: this.$store.state.searchUserName,
         categoryStr: '',
         permission: ''
+      },
+      formValidate: {
+        name: '',
+        mail: '',
+        city: '',
+        gender: '',
+        interest: [],
+        date: '',
+        time: '',
+        desc: ''
       }
     }
   },

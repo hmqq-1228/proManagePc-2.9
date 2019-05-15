@@ -135,7 +135,7 @@
         </div>
         <div class="spuInfoItem" style="text-align: right">
           <div v-if="editFlag"><Button type="primary" @click="baseEditBtn">{{baseEditBtnText}}</Button></div>
-          <div v-if="baseInfoEditStatus" style="margin-top: 15px;"><Button @click="delSpuBtn">删除</Button></div>
+          <div v-if="editFlag" style="margin-top: 15px;"><Button @click="delSpuBtn">删除</Button></div>
         </div>
       </div>
       <!-- spu类目信息 -->
