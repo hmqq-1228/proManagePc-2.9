@@ -567,10 +567,10 @@ export default {
     },
     createArchivesSub: function () {
       var that = this
-      if (!that.argumentsCheck(that.createArchivesName, that.createArchivesId, that.pinpaiCodeVal, that.createArchivesSpuCode, that.CreateArchivesMid, that.ArchivesGroupId)) {
-        that.valueCheck('有必填项未填写')
-        return
-      }
+      // if (!that.argumentsCheck(that.createArchivesName, that.createArchivesId, that.pinpaiCodeVal, that.createArchivesSpuCode, that.CreateArchivesMid, that.ArchivesGroupId)) {
+      //   that.valueCheck('有必填项未填写')
+      //   return
+      // }
       that.log('看看有没有放行')
       // string.trim()
       var createArchivesPayload = {

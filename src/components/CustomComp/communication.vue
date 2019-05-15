@@ -232,6 +232,7 @@ export default {
     // 历史记录 获取历史记录
     getHistoryCont () {
       var that = this
+      that.log(5566)
       that.ajax('/comment/getGoodsComment', {
         spuId: this.$route.params.spuId,
         pageSize: 5,
@@ -240,7 +241,9 @@ export default {
         if (res.code === 200) {
           that.commentList = res.data.list
           that.commentTotalNum = res.data.totalRow
+          that.log('kkkkk:', that.commentList.length)
           if (that.commentList.length > 0) {
+            that.log(112233)
             for (var i = 0; i < that.commentList.length; i++) {
               for (var j = 0; j < that.commentList[i].attachment.length; j++) {
                 if (that.isImage(res.data.list[i].attachment[j].showName)) {
@@ -256,10 +259,12 @@ export default {
           that.$message.warning(res.msg)
         }
       })
+      that.log(6677)
     },
     // 操作记录
     getHistoryList: function () {
       var that = this
+      that.log(2233)
       that.ajax('/archives/getArchivesLog', {
         spuId: this.$route.params.spuId,
         pageSize: 10,
@@ -282,6 +287,7 @@ export default {
           // }
         }
       })
+      that.log(3344)
     },
     // 附件 附件预览
     GetFilePreData (obj) {
@@ -307,6 +313,7 @@ export default {
     SetFileIdStr () {
       var that = this
       var FileIdStr = ''
+      that.log(4455)
       for (var i = 0; i < that.FileUploadArr.length; i++) {
         var splitIcon = ','
         if (i === that.FileUploadArr.length - 1) {
