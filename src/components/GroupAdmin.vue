@@ -86,7 +86,7 @@
     </Modal>
     <Drawer
       title="小组详情"
-      width="740"
+      width="700"
       :closable="false"
       v-model="DrawerMember"
     >

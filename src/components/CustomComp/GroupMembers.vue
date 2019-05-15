@@ -3,17 +3,17 @@
     <div class="groupDetail">
       <div class="groupName">
         <span v-if="showName">{{groupInfo.name}}</span>
-        <span v-if="!showName"><Input v-model="groupInfo.name" :autofocus="trueFlag" placeholder="请输入名称" style="width: 150px" /></span>
-        <span class="groupEdit" @click="groupEdit()"><Icon type="md-create" color="#2d8cf0"/></span>
+        <!--<span v-if="!showName"><Input v-model="groupInfo.name" :autofocus="trueFlag" placeholder="请输入名称" style="width: 150px" /></span>-->
+        <!--<span class="groupEdit" @click="groupEdit()"><Icon type="md-create" color="#2d8cf0"/></span>-->
       </div>
-      <div class="groupDiscript">{{groupInfo.description}}</div>
+      <div class="groupDiscript" :title="groupInfo.description">{{groupInfo.description}}</div>
       <div class="groupTime"><img src="../../../static/img/time.png" alt="" style="float: left;"> <span style="margin-left: 10px">创建时间: {{groupInfo.createDt}}</span></div>
       <div class="groupMen">
         <div><img src="../../../static/img/fuzeren.png" alt="" style="float: left;"> <span style="margin-left: 10px">负责人: {{groupInfo.userName}}</span></div>
         <div><img src="../../../static/img/faqiren.png" alt="" style="float: left;"> <span style="margin-left: 10px">创建人: {{groupInfo.creatorName}}</span></div>
       </div>
     </div>
-    <div style="font-size: 16px; margin-bottom: 10px;">添加成员</div>
+    <div style="font-size: 16px; margin-bottom: 10px;margin-top: 20px;">添加成员</div>
     <div class="searchBox">
       <div class="searchSelectIpt">
         <el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"
@@ -34,7 +34,7 @@
         <div class="tblTitItem" style="width: 250px;">姓名</div>
         <!--<div class="tblTitItem">查看</div>-->
         <div class="tblTitItem">编辑</div>
-        <div class="tblTitItem" title="清空全部" style="color: #409EFF;cursor: pointer;" v-on:click="delMember(0)">清空</div>
+        <div class="tblTitItem" v-bind:class="groupInfo.editPermission === true ? 'allDel' : 'banDel'" title="清空全部" v-on:click="delMember(0)">清空</div>
       </div>
       <div class="memTblList" v-loading="loadingMan">
         <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userId">
@@ -42,7 +42,7 @@
           <div class="memListItem overList" style="width: 250px;"><a href="javascript:void(0);" :title="mem.userName" style="color:#333">{{mem.userName}}</a></div>
           <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
           <div class="memListItem"><Checkbox v-bind:value="mem.auth === '2'" @on-change="checkBoxChangeEdit($event, mem.id)"></Checkbox></div>
-          <div class="memListItem del" v-bind:class="mem.editPermission === true ? '' : 'banDel'" v-on:click="delMember(mem.id)">x</div>
+          <div class="memListItem" v-bind:class="mem.editPermission === true ? 'del' : 'banDel'" v-on:click="delMember(mem.id)">x</div>
         </div>
       </div>
     </div>
@@ -361,7 +361,6 @@ export default {
   .groupDetail{
     font-size: 14px;
     border-bottom: 1px solid #e8eaec;
-    padding-bottom: 16px;
     margin-bottom: 10px;
   }
   .groupName{
@@ -374,6 +373,7 @@ export default {
   /*}*/
   .groupTime{
     padding: 5px 0;
+    border-bottom: 1px solid #e8eaec;
   }
   .groupMen{
     padding: 5px 0;
@@ -383,10 +383,15 @@ export default {
     width: 50%;
   }
   .groupDiscript{
-    padding: 5px 10px;
+    padding: 2px 10px;
     color: #888;
     font-size: 12px;
     background-color: #f5f8fa;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
   }
   .searchSelectIpt{
     width: 300px;
@@ -443,9 +448,16 @@ export default {
     width: 80px;
   }
   .del{
+    color: #409EFF;
     cursor: pointer;
   }
   .banDel{
+    color: #999;
     cursor: not-allowed;
+    pointer-events: none;
+  }
+  .allDel{
+    color: #409EFF;
+    cursor: pointer;
   }
 </style>

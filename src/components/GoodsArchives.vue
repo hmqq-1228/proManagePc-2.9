@@ -548,6 +548,7 @@ export default {
       // alert(arguments.length)
       var nullflag = true
       for (var i = 0; i < arguments.length; i++) {
+        console.log('11111', arguments[i])
         if (arguments[i].trim().length === 0) {
           nullflag = false
           break
