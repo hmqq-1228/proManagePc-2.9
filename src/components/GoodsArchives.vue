@@ -163,11 +163,11 @@
         <div class="createGroupCntItem">负责人:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-autocomplete style="width: 100%"
-                           v-model="CreateGroupSearchManager"
-                           :fetch-suggestions="queryNewGroupManager"
-                           placeholder="搜索小组负责人"
-                           :trigger-on-focus="false"
-                           @select="CreateGroupManagerSelect($event)"
+             v-model="CreateGroupSearchManager"
+             :fetch-suggestions="queryNewGroupManager"
+             placeholder="搜索小组负责人"
+             :trigger-on-focus="false"
+             @select="CreateGroupManagerSelect($event)"
           ></el-autocomplete>
         </div>
       </div>
@@ -176,11 +176,11 @@
         <div class="createGroupCntItem">产品小组:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-autocomplete style="width: 100%"
-                           v-model="ArchivesGroupSearch"
-                           :fetch-suggestions="queryArchivesGroup"
-                           placeholder="搜索小组"
-                           :trigger-on-focus="false"
-                           @select="ArchivesGroupSelect($event)"
+             v-model="ArchivesGroupSearch"
+             :fetch-suggestions="queryArchivesGroup"
+             placeholder="搜索小组"
+             :trigger-on-focus="false"
+             @select="ArchivesGroupSelect($event)"
           ></el-autocomplete>
         </div>
         <div style="width: 90px; text-align: right; padding-top: 2px;"><Button @click="showGroupList" type="primary" >选择小组</Button></div>
@@ -592,13 +592,15 @@ export default {
           // that.queryGroupList()
           // that.GroupList = res.data.list
         } else {
-          that.$message(res.msg)
+          that.$message.warning(res.msg)
         }
       })
     },
     createArchivesCancel: function () {},
     createArchivesBtn: function () {
       this.creatArchivesShow = true
+      this.CreateGroupSearchManager = this.$store.state.userName + '(' + this.$store.state.jName + ')'
+      this.CreateArchivesMid = this.$store.state.userId
     },
     getPermission: function () {
       var that = this

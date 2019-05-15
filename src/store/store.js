@@ -38,6 +38,7 @@ const state = {
   count: 0,
   userId: '',
   userName: '',
+  jName: '',
   userLoginInfo: '',
   debug: true,
   proId: '',
