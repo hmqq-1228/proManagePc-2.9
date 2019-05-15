@@ -6,16 +6,16 @@
       </FormItem>
       <FormItem label="年份" prop="yearDigital">
         <!--<Input v-model="formValidate.yearDigital" placeholder="请输入年份" :maxlength="20" size="large" type="number"/>-->
-        <DatePicker type="year" placeholder="请选择年份" @on-change="changeYear" style="width: 100%"></DatePicker>
+        <DatePicker type="year" placeholder="请选择年份" @on-change="changeYear" style="width: 100%" v-model="formValidate.yearDigital"></DatePicker>
       </FormItem>
       <FormItem label="零售价" prop="retailPrice">
-        <Input v-model="formValidate.retailPrice" placeholder="请输入零售价" :maxlength="20" size="large" type="number"/>
+        <i-input v-model="formValidate.retailPrice" placeholder="请输入零售价" :maxlength="20" size="large" type="number"></i-input>
       </FormItem>
       <FormItem label="吊牌价" prop="tagPrice">
-        <Input v-model="formValidate.tagPrice" placeholder="请输入吊牌价" :maxlength="20" size="large" type="number"/>
+        <i-input v-model="formValidate.tagPrice" placeholder="请输入吊牌价" :maxlength="20" size="large" type="number"></i-input>
       </FormItem>
       <FormItem label="固定成本" prop="costPrice">
-        <Input v-model="formValidate.costPrice" placeholder="请输入成本价" :maxlength="20" size="large" type="number"/>
+        <i-input v-model="formValidate.costPrice" placeholder="请输入成本价" :maxlength="20" size="large" type="number"></i-input>
       </FormItem>
       <FormItem label="条码" prop="barCode">
         <Input v-model="formValidate.barCode" placeholder="请输入条码" :maxlength="20" size="large"/>
@@ -183,10 +183,20 @@ export default {
             that.editValidate.attachmentId = ''
           }
           that.ajax('/archives/addSku', JSON.stringify(that.editValidate)).then(res => {
-            that.$emit('saveSuccess', res)
+            that.$emit('saveSuccess', res, that.formValidate)
             if (res.code === 200) {
               that.IsClear = true
               that.$Message.success('保存成功')
+              that.formValidate = {
+                skuCode: '',
+                retailPrice: '',
+                costPrice: '',
+                tagPrice: '',
+                yearDigital: '',
+                barCode: '',
+                thirdSkuCode: '',
+                standards: ''
+              }
             }
           })
         } else {
