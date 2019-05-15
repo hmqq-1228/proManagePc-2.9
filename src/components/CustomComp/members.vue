@@ -85,9 +85,10 @@
 import SelectGroup from './SelectGroup.vue'
 export default {
   name: 'MemberComp',
-  props: ['proId', 'DrawerMemberShow', 'groupId'],
+  props: ['proId', 'DrawerMemberShow', 'groupIds'],
   data () {
     return {
+      groupId: this.groupIds,
       creatArchivesGroupList: false,
       loading2: false,
       loadingMan: false,
@@ -148,12 +149,16 @@ export default {
       if (val) {
         this.proId = val
       }
+    },
+    groupIds (val) {
+      this.groupId = val
     }
   },
   methods: {
     groupListSelectOk (val) {
       this.creatArchivesGroupList = false
       this.ajax('/archives/editSpuGroup', {groupId: val.id, spuId: this.proId}).then(res => {
+        this.$emit('refshGroup', res)
         if (res.code === 200) {
           this.groupId = val.id
           this.getGroup()
@@ -302,7 +307,7 @@ export default {
         auth = 1
       }
       this.ajax('/archives/editAuth', {memberId: id, auth: auth, spuId: this.proId}).then(res => {
-        // that.log('editRole:', res)
+        this.$emit('refshGroup', res)
       })
     },
     checkChangeSee (checked, id, role) {

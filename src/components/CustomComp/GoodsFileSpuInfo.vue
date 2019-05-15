@@ -666,8 +666,9 @@
       <component
         v-bind:is="compArr.member"
         v-bind:proId="proId"
-        v-bind:groupId="groupId"
+        v-bind:groupIds="groupId"
         v-bind:DrawerMemberShow="DrawerMember"
+        @refshGroup="refshGroup"
       ></component>
     </Drawer>
     <!---->
@@ -952,6 +953,12 @@ export default {
     this.queryClassifyTree()
   },
   methods: {
+    // 刷新
+    refshGroup (res) {
+      if (res.code === 200) {
+        this.querySpuBaseInfo()
+      }
+    },
     delSpuBtn: function () {
       var that = this
       this.$Modal.confirm({
