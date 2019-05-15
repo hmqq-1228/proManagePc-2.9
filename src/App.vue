@@ -132,6 +132,7 @@ export default {
           that.$store.state.userId = res.data.ID
           that.$store.state.userName = res.data.Name
           that.$store.state.userLoginInfo = res.data
+          that.$store.state.jName = res.data.jName
         }
       })
     },

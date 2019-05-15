@@ -13,8 +13,8 @@
         <div><img src="../../../static/img/faqiren.png" alt="" style="float: left;"> <span style="margin-left: 10px">创建人: {{groupInfo.creatorName}}</span></div>
       </div>
     </div>
-    <div style="font-size: 16px; margin-bottom: 10px;margin-top: 20px;">添加成员</div>
-    <div class="searchBox">
+    <div style="font-size: 16px; margin-bottom: 10px;margin-top: 20px;" v-if="groupInfo.editPermission">添加成员</div>
+    <div class="searchBox" v-if="groupInfo.editPermission">
       <div class="searchSelectIpt">
         <el-select v-model="taskForm.value9" multiple filterable remote style="width: 100%;"
                    :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
@@ -37,13 +37,14 @@
         <div class="tblTitItem" v-bind:class="groupInfo.editPermission === true ? 'allDel' : 'banDel'" title="清空全部" v-on:click="delMember(0)">清空</div>
       </div>
       <div class="memTblList" v-loading="loadingMan">
-        <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userId">
+        <div v-if="proGrpMemList.length > 0" class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userId">
           <div class="memListItem">{{mem.roleStr}}</div>
           <div class="memListItem overList" style="width: 250px;"><a href="javascript:void(0);" :title="mem.userName" style="color:#333">{{mem.userName}}</a></div>
           <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
           <div class="memListItem"><Checkbox v-bind:value="mem.auth === '2'" @on-change="checkBoxChangeEdit($event, mem.id)"></Checkbox></div>
           <div class="memListItem" v-bind:class="mem.editPermission === true ? 'del' : 'banDel'" v-on:click="delMember(mem.id)">x</div>
         </div>
+        <div v-if="proGrpMemList.length === 0" style="height: 40px;color: #888;line-height: 40px">暂无小组成员</div>
       </div>
     </div>
     <!--组织架构 start-->
@@ -178,8 +179,8 @@ export default {
     // 新增 增加项目组成员
     addMember () {
       var that = this
-      that.loadingMan = true
       if (that.taskForm.value9.length > 0) {
+        that.loadingMan = true
         for (var i = 0; i < that.taskForm.value9.length; i++) {
           var obj = {Name: '', ID: ''}
           obj.Name = that.taskForm.value9[i].split('-')[0]
@@ -201,6 +202,8 @@ export default {
             that.loadingMan = false
           }
         })
+      } else {
+        that.$message.warning('请选择负责人')
       }
     },
     // 删除成员

@@ -2,7 +2,7 @@
   <div class="GroupAdmin">
     <div class="GroupSearch">
       <div class="GroupSearchItem">
-        <el-input v-model="searchGroup" placeholder="请输入内容"></el-input>
+        <el-input v-model="searchGroup" placeholder="请输入小组名称"></el-input>
       </div>
       <div class="GroupSearchItem">
         <Button type="primary" @click="createGroupBtn">新建小组</Button>
