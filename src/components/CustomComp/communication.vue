@@ -33,40 +33,33 @@
               </form>
             </div>
             <!--操作记录 历史记录-->
-            <div class="discription lis" style="margin-top: 15px;">
-              <!-- 历史记录 评论 引入组件-->
-              <!--<component-->
-              <!--v-bind:is="compArr.CommentLogs"-->
-              <!--fileFormId="CommentLogs"-->
-              <!--v-on:FilePreEmit="GetFilePreData"-->
-              <!--:commentList="taskLogs"-->
-              <!--&gt;</component>-->
-              <div class="timeLine">
-                <Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 395px;">
-                  <Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">
-                    <p class="time">{{comment.createDate}}</p>
-                    <p class="content"  v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>
-                    <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
-              <p class="content" v-if="com.showName">附件:
-                <span style="display: inline-block"> {{com.showName}}</span>
-                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="GetFilePreData(com)">预览</span>
-                <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
-              </p>
-            </span>
-                  </Timeline-item>
-                </Timeline>
-                <div class="noComment" v-if="commentList.length === 0" style="height: 420px;">还没有人发言呦~</div>
-              </div>
-              <div style="text-align: center" v-if="commentList.length>0">
-                <Page
-                  :total="commentTotalNum"
-                  size="small"
-                  :page-size="5"
-                  show-total
-                  @on-change="commentPageChange($event)"
-                ></Page>
-              </div>
-            </div>
+            <!--<div class="discription lis" style="margin-top: 15px;">-->
+              <!--<div class="timeLine">-->
+                <!--<Timeline v-if="commentList && commentList.length > 0" style="overflow-y: auto; height: 395px;">-->
+                  <!--<Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">-->
+                    <!--<p class="time">{{comment.createDate}}</p>-->
+                    <!--<p class="content"  v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>-->
+                    <!--<span v-for="(com, index2) in comment.attachment" v-bind:key="index2">-->
+                      <!--<p class="content" v-if="com.showName">附件:-->
+                        <!--<span style="display: inline-block"> {{com.showName}}</span>-->
+                        <!--<span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="GetFilePreData(com)">预览</span>-->
+                        <!--<span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>-->
+                      <!--</p>-->
+                    <!--</span>-->
+                  <!--</Timeline-item>-->
+                <!--</Timeline>-->
+                <!--<div class="noComment" v-if="commentList.length === 0" style="height: 420px;">还没有人发言呦~</div>-->
+              <!--</div>-->
+              <!--<div style="text-align: center" v-if="commentList.length>0">-->
+                <!--<Page-->
+                  <!--:total="commentTotalNum"-->
+                  <!--size="small"-->
+                  <!--:page-size="5"-->
+                  <!--show-total-->
+                  <!--@on-change="commentPageChange($event)"-->
+                <!--&gt;</Page>-->
+              <!--</div>-->
+            <!--</div>-->
           </div>
         </TabPane>
         <TabPane label="操作记录">
@@ -222,6 +215,7 @@ export default {
     // 历史记录 获取历史记录
     getHistoryCont () {
       var that = this
+      that.log(5566)
       that.ajax('/comment/getGoodsComment', {
         spuId: this.$route.params.spuId,
         pageSize: 5,
@@ -230,7 +224,9 @@ export default {
         if (res.code === 200) {
           that.commentList = res.data.list
           that.commentTotalNum = res.data.totalRow
+          that.log('kkkkk:', that.commentList.length)
           if (that.commentList.length > 0) {
+            that.log(112233)
             for (var i = 0; i < that.commentList.length; i++) {
               for (var j = 0; j < that.commentList[i].attachment.length; j++) {
                 if (that.isImage(res.data.list[i].attachment[j].showName)) {
@@ -246,10 +242,12 @@ export default {
           that.$message.warning(res.msg)
         }
       })
+      that.log(6677)
     },
     // 操作记录
     getHistoryList: function () {
       var that = this
+      that.log(2233)
       that.ajax('/archives/getArchivesLog', {
         spuId: this.$route.params.spuId,
         pageSize: 10,
@@ -258,8 +256,10 @@ export default {
         if (res.code === 200) {
           that.historyList = res.data.list
           that.totalHistoryNum = res.data.totalRow
+          that.log('kkkkk2:', that.historyList)
           if (that.historyList.length > 0) {
             for (var i = 0; i < that.historyList.length; i++) {
+              that.log('ttttt:', that.historyList[i].attachment)
               for (var j = 0; j < that.historyList[i].attachment.length; j++) {
                 if (that.isImage(res.data.list[i].attachment[j].showName)) {
                   res.data.list[i].attachment[j].isImg = true
@@ -272,6 +272,7 @@ export default {
           }
         }
       })
+      that.log(3344)
     },
     // 附件 附件预览
     GetFilePreData (obj) {
@@ -297,6 +298,7 @@ export default {
     SetFileIdStr () {
       var that = this
       var FileIdStr = ''
+      that.log(4455)
       for (var i = 0; i < that.FileUploadArr.length; i++) {
         var splitIcon = ','
         if (i === that.FileUploadArr.length - 1) {

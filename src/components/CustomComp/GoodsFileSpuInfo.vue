@@ -224,7 +224,7 @@
             <div class="spuInfoLabel">采购员</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="caigouNameVal" v-on:on-keydown="textValChange('caigouNameVal',{buyer: caigouNameVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入采购员姓名" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="caigouNameVal" v-on:input="preExtraInput('caigouNameVal',{buyer: caigouNameVal},'editExtra')" v-on:on-keydown="textValChange('caigouNameVal',{buyer: caigouNameVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入采购员姓名" style="max-width: 250px" >
                 <Icon class="haha" id="caigouNameVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({buyer: caigouNameVal}, 'caigouNameVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -235,7 +235,7 @@
             <div class="spuInfoLabel">产品认证</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="renzhengVal" v-on:on-keydown="textValChange('renzhengVal',{certification: renzhengVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入认证信息" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="renzhengVal" v-on:input="preExtraInput('renzhengVal',{certification: renzhengVal},'editExtra')" v-on:on-keydown="textValChange('renzhengVal',{certification: renzhengVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入认证信息" style="max-width: 250px" >
                 <Icon class="haha" id="renzhengVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({certification: renzhengVal}, 'renzhengVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -246,7 +246,7 @@
             <div class="spuInfoLabel">起订量</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName">
-              <i-input class="iptTest" v-model="qidingVal" v-on:on-keydown="textValChange('qidingVal',{miniOrder: qidingVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入起订量" style="max-width: 250px" >
+              <i-input class="iptTest" v-model="qidingVal" v-on:input="preExtraInput('qidingVal',{miniOrder: qidingVal},'editExtra')" v-on:on-keydown="textValChange('qidingVal',{miniOrder: qidingVal},'editExtra', $event)" :readonly="!classifyInfoEditStatus" placeholder="请输入起订量" style="max-width: 250px" >
                 <Icon class="haha" id="qidingVal" v-show="classifyInfoEditStatus" @click="editExtraSpuInfo({miniOrder: qidingVal}, 'qidingVal')" type="md-checkmark-circle" slot="suffix" />
               </i-input>
             </div>
@@ -651,6 +651,7 @@
         <!-- spu 类目信息: 编辑按钮 -->
         <div class="spuInfoItem">
           <div style="float: right" v-if="ExtraEditFlag"><Button type="primary" @click="classifyEditBtn">{{classifyEditBtnText}}</Button></div>
+          <div style=""><Button @click="testPreSub">测试</Button></div>
         </div>
       </div>
     </div>
@@ -704,6 +705,8 @@ export default {
   },
   data () {
     return {
+      preBaseArr: [],
+      preExtraArr: [],
       imgPreIniIndex: 0,
       selectData: {},
       imgUrl: '',
@@ -766,7 +769,7 @@ export default {
       renqunNameVal: '男/女孩通用',
       renqunCodeVal: '',
       // 类目 商品角色
-      goodsRoleNameVal: 'S',
+      goodsRoleNameVal: '',
       // 类目 采购员
       caigouNameVal: '张三三',
       // 类目 产品认证
@@ -970,9 +973,6 @@ export default {
     moveLeft: function (currentId) {
       // j  spuBaseImgList FileUploadArr
       var that = this
-      this.log('currentId:', currentId)
-      this.log('spuBaseImgList:', that.spuBaseImgList)
-      this.log('FileUploadArr:', that.FileUploadArr)
       var imgPosIndex = -1
       for (var i = 0; i < that.spuBaseImgList.length; i++) {
         if (that.spuBaseImgList[i].id === currentId) {
@@ -981,7 +981,6 @@ export default {
         }
       }
       if (imgPosIndex > 0) {
-        this.log('imgPosIndex:', imgPosIndex)
         // var targetImgData = that.spuBaseImgList[imgPosIndex]
         that.spuBaseImgList.splice(imgPosIndex - 1, 0, that.spuBaseImgList[imgPosIndex])
         that.spuBaseImgList.splice(imgPosIndex + 1, 1)
@@ -989,8 +988,6 @@ export default {
         that.FileUploadArr.splice(imgPosIndex + 1, 1)
         that.editBaseSpuInfo({attachmentId: that.SetFileIdStr()})
       }
-      this.log('spuBaseImgList2:', that.spuBaseImgList)
-      this.log('FileUploadArr2:', that.FileUploadArr)
     },
     moveRight: function (currentId) {
       var that = this
@@ -1002,7 +999,6 @@ export default {
         }
       }
       if (imgPosIndex < (that.spuBaseImgList.length - 1)) {
-        this.log('imgPosIndex:', imgPosIndex)
         // var targetImgData = that.spuBaseImgList[imgPosIndex]
         that.spuBaseImgList.splice(imgPosIndex, 0, that.spuBaseImgList[imgPosIndex + 1])
         that.spuBaseImgList.splice(imgPosIndex + 2, 1)
@@ -1046,24 +1042,83 @@ export default {
       this.log('currentPreId:', this.currentPreId)
       this.log('bigPreImg:', this.bigPreImg)
     },
+    testPreSub: function () {
+      this.log('preBaseArr:', this.preBaseArr)
+      this.log('preExtraArr:', this.preExtraArr)
+    },
+    preExtraInput: function (name, obj, type) {
+      var that = this
+      that.preSubFuc(name, obj, type)
+    },
+    // 预存
+    preSubFuc: function (name, obj, type) {
+      var that = this
+      // editExtra preExtraArr preBaseArr
+      // this.preExtraArr = []
+      var preType = type === 'editExtra' ? 'preExtraArr' : 'preBaseArr'
+      var preobj = {
+        targetName: name,
+        targetData: obj,
+        targetType: type
+      }
+      var posindex = -1
+      for (var r = 0; r < that[preType].length; r++) {
+        if (that[preType][r].targetName === name) {
+          posindex = r
+        }
+      }
+      if (posindex >= 0) {
+        that[preType].splice(posindex, 1, preobj)
+      } else {
+        that[preType].push(preobj)
+      }
+    },
     textValChange: function (flag, obj, editType, e) {
       // var obj = e.currentTarget
       var that = this
-      this.log('hhhhhhhhhh:', e.keyCode)
+      // that.log('oooobbj:', obj)
+      // that.preSubFuc(flag, obj, editType)
       if (e.keyCode === 13) {
         // k
         if (editType === 'editBase') {
           that.editBaseSpuInfo(obj, flag)
         } else if (editType === 'editExtra') {
-          that.editExtraSpuInfo(obj, flag)
+          var pinObj = {}
+          var moreFlag = that.preExtraArr.length > 1 ? 'more' : 'single'
+          // that.log('回车后：', that.preExtraArr)
+          for (var n = 0; n < that.preExtraArr.length; n++) {
+            $.extend(pinObj, that.preExtraArr[n].targetData)
+          }
+          // that.log('pinObj:', pinObj)
+          // that.editExtraSpuInfo(obj, flag)
+          that.editExtraSpuInfo(pinObj, flag, moreFlag)
         }
       } else {
         $('#' + flag).css('color', '#2d8cf0')
       }
     },
     // 改变下拉框
+    // changeValue($event,'goodsRoleNameVal',{goodsRole: goodsRoleNameVal},'editExtra')
     changeValue (e, name, obj, type) {
-      this.log('下拉change:', e)
+      var that = this
+      that.preSubFuc(name, obj, type)
+      this.preSubArr = []
+      var preobj = {
+        targetName: name,
+        targetData: obj,
+        targetType: type
+      }
+      var posindex = -1
+      for (var r = 0; r < that.preSubArr.length; r++) {
+        if (that.preSubArr[r].targetName === name) {
+          posindex = r
+        }
+      }
+      if (posindex >= 0) {
+        that.preSubArr.splice(posindex, 1, preobj)
+      } else {
+        that.preSubArr.push(preobj)
+      }
       $('.iptHidden').focus()
       this.selectData = {
         obj: obj,
@@ -1078,7 +1133,6 @@ export default {
     },
     // 新建 人员选择
     handleSelect (item, flag, type) {
-      console.log('hhhhh:', item)
       this.Mid = item.userId
       this.changeValue('e', flag, {managerId: item.userId}, type)
     },
@@ -1362,7 +1416,7 @@ export default {
         }
       })
     },
-    editExtraSpuInfo: function (obj, flag) {
+    editExtraSpuInfo: function (obj, flag, moreFlag) {
       var that = this
       obj.spuInfoId = that.ExtraSpuInfoId
       // this.log('obj:', obj)
@@ -1370,7 +1424,13 @@ export default {
         // that.log('editSpuInfo:', res)
         if (res.code === 200) {
           that.$Message.success('保存成功')
-          $('#' + flag).css('color', '#808695')
+          if (moreFlag === 'more') {
+            for (var u = 0; u < that.preExtraArr.length; u++) {
+              $('#' + that.preExtraArr[u].targetName).css('color', '#808695')
+            }
+          } else {
+            $('#' + flag).css('color', '#808695')
+          }
           $('input').blur()
           that.selectData.obj = {}
           that.selectData.type = ''
