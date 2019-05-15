@@ -125,84 +125,123 @@
     </div>
     <!--新建档案-->
     <Modal v-model="creatArchivesShow" title="新建档案" @on-ok="createArchivesSub" @on-cancel="createArchivesCancel">
-      <!--<div slot="header" style="display: flex;">-->
-        <!--<div style="font-weight: 700; color: #17233d; font-size: 14px;">-->
-          <!--<span>新建档案</span>-->
-        <!--</div>-->
-        <!--<div style="margin-left:30px;color:#f60">-->
-          <!--<span>有必填项未填写</span>-->
+      <!--<div class="createGroupCnt">-->
+        <!--<div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>-->
+        <!--<div class="createGroupCntItem">商品名称:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<el-input placeholder="请输入商品名称" v-model="createArchivesName"></el-input>-->
         <!--</div>-->
       <!--</div>-->
-      <!--<div style="position: absolute; left: 100px; top: 20px;">{{valueCheck}}</div>-->
-      <div class="createGroupCnt">
-        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
-        <div class="createGroupCntItem">商品名称:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
-          <el-input placeholder="请输入商品名称" v-model="createArchivesName"></el-input>
-        </div>
-      </div>
-      <div class="createGroupCnt">
-        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
-        <div class="createGroupCntItem">商品ID:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
-          <el-input placeholder="请输入商品ID" v-model="createArchivesId"></el-input>
-        </div>
-      </div>
-      <div class="createGroupCnt">
-        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
-        <div class="createGroupCntItem">品牌:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
-          <!--@on-change="changeValue($event,'pinpaiNameVal',{brandCode: pinpaiCodeVal},'editBase')"-->
-          <Select v-model="pinpaiCodeVal">
+      <!--<div class="createGroupCnt">-->
+        <!--<div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>-->
+        <!--<div class="createGroupCntItem">商品ID:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<el-input placeholder="请输入商品ID" v-model="createArchivesId"></el-input>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="createGroupCnt">-->
+        <!--<div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>-->
+        <!--<div class="createGroupCntItem">品牌:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<Select v-model="pinpaiCodeVal">-->
+            <!--<Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>-->
+          <!--</Select>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="createGroupCnt">-->
+        <!--<div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>-->
+        <!--<div class="createGroupCntItem">负责人:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<el-autocomplete style="width: 100%"-->
+             <!--v-model="CreateGroupSearchManager"-->
+             <!--:fetch-suggestions="queryNewGroupManager"-->
+             <!--placeholder="搜索小组负责人"-->
+             <!--:trigger-on-focus="false"-->
+             <!--@select="CreateGroupManagerSelect($event)"-->
+          <!--&gt;</el-autocomplete>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="createGroupCnt">-->
+        <!--<div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>-->
+        <!--<div class="createGroupCntItem">产品小组:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<el-autocomplete style="width: 100%"-->
+             <!--v-model="ArchivesGroupSearch"-->
+             <!--:fetch-suggestions="queryArchivesGroup"-->
+             <!--placeholder="搜索小组"-->
+             <!--:trigger-on-focus="false"-->
+             <!--@select="ArchivesGroupSelect($event)"-->
+          <!--&gt;</el-autocomplete>-->
+        <!--</div>-->
+        <!--<div style="width: 90px; text-align: right; padding-top: 2px;"><Button @click="showGroupList" type="primary" >选择小组</Button></div>-->
+      <!--</div>-->
+      <!--<div class="createGroupCnt">-->
+        <!--<div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>-->
+        <!--<div class="createGroupCntItem">SPU编码:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<el-input placeholder="请输入SPU编码" v-model="createArchivesSpuCode"></el-input>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="createGroupCnt">-->
+        <!--<div style="color: #e13d13; width: 10px; line-height: 40px;"></div>-->
+        <!--<div class="createGroupCntItem">附件上传:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
+        <!--</div>-->
+      <!--</div>-->
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <FormItem label="商品名称" prop="createArchivesName">
+          <Input v-model="formValidate.createArchivesName" placeholder="请输入商品名称"></Input>
+        </FormItem>
+        <FormItem label="商品ID" prop="createArchivesId">
+          <Input v-model="formValidate.createArchivesId" placeholder="请输入商品ID"></Input>
+        </FormItem>
+        <FormItem label="品牌名称" prop="pinpaiCodeVal">
+          <!--<Input v-model="formValidate.pinpaiCodeVal" placeholder="请输入商品ID"></Input>-->
+          <Select v-model="formValidate.pinpaiCodeVal">
             <Option v-for="brand in brandTypeArr" :key="brand.dictCode" :value="brand.dictCode">{{ brand.dictName }}</Option>
           </Select>
-        </div>
-      </div>
-      <div class="createGroupCnt">
-        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
-        <div class="createGroupCntItem">负责人:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
+        </FormItem>
+        <FormItem label="负责人" prop="CreateGroupSearchManager">
+          <!--<Input v-model="formValidate.createArchivesId" placeholder="请输入商品ID"></Input>-->
           <el-autocomplete style="width: 100%"
-             v-model="CreateGroupSearchManager"
-             :fetch-suggestions="queryNewGroupManager"
-             placeholder="搜索小组负责人"
-             :trigger-on-focus="false"
-             @select="CreateGroupManagerSelect($event)"
+              v-model="formValidate.CreateGroupSearchManager"
+              :fetch-suggestions="queryNewGroupManager"
+              placeholder="搜索小组负责人"
+              :trigger-on-focus="false"
+              @select="CreateGroupManagerSelect($event)"
           ></el-autocomplete>
-        </div>
+        </FormItem>
+        <FormItem label="选择小组" prop="ArchivesGroupSearch">
+          <!--<Input v-model="formValidate.createArchivesId" placeholder="请输入商品ID"></Input>-->
+          <div style="display: flex">
+            <div style="flex-grow: 1">
+              <el-autocomplete style="width: 100%"
+                               v-model="formValidate.ArchivesGroupSearch"
+                               :fetch-suggestions="queryArchivesGroup"
+                               placeholder="搜索小组"
+                               :trigger-on-focus="false"
+                               @select="ArchivesGroupSelect($event)"
+              ></el-autocomplete>
+            </div>
+            <div style="width: 90px; text-align: right; padding-top: 2px;"><Button @click="showGroupList" type="primary" >选择小组</Button></div>
+          </div>
+        </FormItem>
+        <FormItem label="SPU编码" prop="createArchivesSpuCode">
+          <!--<Input v-model="formValidate.createArchivesId" placeholder="请输入商品ID"></Input>-->
+          <el-input placeholder="请输入SPU编码" v-model="formValidate.createArchivesSpuCode"></el-input>
+        </FormItem>
+        <FormItem label="图片上传" prop="">
+          <!--<Input v-model="formValidate.createArchivesId" placeholder="请输入商品ID"></Input>-->
+          <component v-bind:is="compArr.FileUploadComp" :buttonStr="buttonStr" :selectType="selectType" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+        </FormItem>
+        <!--<component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
+      </Form>
+      <!-- 自定义页脚 -->
+      <div slot="footer">
+        <Button @click="createArchivesCancel">取消</Button>
+        <Button type="primary" @click="createArchivesSub('formValidate')">确定</Button>
       </div>
-      <div class="createGroupCnt">
-        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
-        <div class="createGroupCntItem">产品小组:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
-          <el-autocomplete style="width: 100%"
-             v-model="ArchivesGroupSearch"
-             :fetch-suggestions="queryArchivesGroup"
-             placeholder="搜索小组"
-             :trigger-on-focus="false"
-             @select="ArchivesGroupSelect($event)"
-          ></el-autocomplete>
-        </div>
-        <div style="width: 90px; text-align: right; padding-top: 2px;"><Button @click="showGroupList" type="primary" >选择小组</Button></div>
-      </div>
-      <div class="createGroupCnt">
-        <div style="color: #e13d13; width: 10px; line-height: 40px;">*</div>
-        <div class="createGroupCntItem">SPU编码:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
-          <el-input placeholder="请输入SPU编码" v-model="createArchivesSpuCode"></el-input>
-        </div>
-      </div>
-      <div class="createGroupCnt">
-        <div style="color: #e13d13; width: 10px; line-height: 40px;"></div>
-        <div class="createGroupCntItem">附件上传:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
-          <component v-bind:is="compArr.FileUploadComp" :filUrl="filUrl" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
-        </div>
-      </div>
-      <!--<div slot="footer">-->
-        <!--<Button @click="createArchivesCancel">取消</Button>-->
-        <!--<Button type="primary" @click="createArchivesSub">确定</Button>-->
-      <!--</div>-->
     </Modal>
     <!--小组列表-->
     <!--小组列表 选择小组-->
@@ -223,6 +262,8 @@ export default {
   data () {
     return {
       // 新建档案
+      selectType: '图片',
+      buttonStr: '选择图片',
       valueCheck: '',
       selectedGroupData: '',
       totalRow: 0,
@@ -341,14 +382,34 @@ export default {
         permission: ''
       },
       formValidate: {
-        name: '',
-        mail: '',
-        city: '',
-        gender: '',
-        interest: [],
-        date: '',
-        time: '',
+        createArchivesName: '',
+        createArchivesId: '',
+        pinpaiCodeVal: '',
+        CreateGroupSearchManager: '',
+        ArchivesGroupSearch: '',
+        ArchivesGroupId: '',
+        createArchivesSpuCode: '',
         desc: ''
+      },
+      ruleValidate: {
+        createArchivesName: [
+          { required: true, message: '商品名称不能为空', trigger: 'blur' }
+        ],
+        createArchivesId: [
+          { required: true, message: '商品ID不能为空', trigger: 'blur' }
+        ],
+        pinpaiCodeVal: [
+          { required: true, message: '品牌名称不能为空', trigger: 'change' }
+        ],
+        CreateGroupSearchManager: [
+          { required: true, message: '负责人不能为空', trigger: 'change' }
+        ],
+        ArchivesGroupSearch: [
+          { required: true, message: '小组不能为空', trigger: 'change' }
+        ],
+        createArchivesSpuCode: [
+          { required: true, message: 'SPU编码不能为空', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -454,7 +515,8 @@ export default {
     groupListSelectOk: function (val) {
       this.creatArchivesGroupList = false
       this.ArchivesGroupId = val.id
-      this.ArchivesGroupSearch = val.name
+      this.formValidate.ArchivesGroupId = val.id
+      this.formValidate.ArchivesGroupSearch = val.name
       // this.selectedGroupData
     },
     groupListSelectCancel () {
@@ -491,6 +553,7 @@ export default {
         that.log('getOptionType:', res)
         if (res.code === 200) {
           that.brandTypeArr = res.data.brandType
+          that.formValidate.pinpaiCodeVal = res.data.brandType[0].dictCode
           that.pinpaiCodeVal = res.data.brandType[0].dictCode
           // that.materialType = res.data.materialType
           // that.intendedFor = res.data.intendedFor
@@ -579,43 +642,47 @@ export default {
       // this.creatArchivesShow = true
       return nullflag
     },
-    createArchivesSub: function () {
+    createArchivesSub: function (name) {
       var that = this
+      this.$refs[name].validate((valid) => {
+        if (valid) {
+          var createArchivesPayload = {
+            spuName: that.formValidate.createArchivesName,
+            spuGoodsId: that.formValidate.createArchivesId,
+            brandCode: that.formValidate.pinpaiCodeVal,
+            spuCode: that.formValidate.createArchivesSpuCode,
+            managerId: that.CreateArchivesMid,
+            groupId: that.formValidate.ArchivesGroupId,
+            attachmentId: that.SetFileIdStr()
+          }
+          this.ajax('/archives/addSpuBasic', JSON.stringify(createArchivesPayload)).then(res => {
+            that.log('addGroup:', res)
+            if (res.code === 200) {
+              that.IsClear = true
+              that.getGoodsList()
+              that.$Message.success(res.msg)
+              this.$router.push('/goodsfileDetail/' + res.data)
+              this.creatArchivesShow = false
+              // that.$message(res.msg)
+              // that.queryGroupList()
+              // that.GroupList = res.data.list
+            } else {
+              that.$message.warning(res.msg)
+            }
+          })
+        }
+      })
       // if (!that.argumentsCheck(that.createArchivesName, that.createArchivesId, that.pinpaiCodeVal, that.createArchivesSpuCode, that.CreateArchivesMid, that.ArchivesGroupId)) {
       //   that.valueCheck('有必填项未填写')
       //   return
       // }
       that.log('看看有没有放行')
       // string.trim()
-      var createArchivesPayload = {
-        spuName: that.createArchivesName,
-        spuGoodsId: that.createArchivesId,
-        brandCode: that.pinpaiCodeVal,
-        spuCode: that.createArchivesSpuCode,
-        managerId: that.CreateArchivesMid,
-        groupId: that.ArchivesGroupId,
-        attachmentId: that.SetFileIdStr()
-      }
-      this.ajax('/archives/addSpuBasic', JSON.stringify(createArchivesPayload)).then(res => {
-        that.log('addGroup:', res)
-        if (res.code === 200) {
-          that.IsClear = true
-          that.getGoodsList()
-          that.$Message.success(res.msg)
-          this.$router.push('/goodsfileDetail/' + res.data)
-          this.creatArchivesShow = false
-          // that.$message(res.msg)
-          // that.queryGroupList()
-          // that.GroupList = res.data.list
-        } else {
-          that.$message.warning(res.msg)
-        }
-      })
     },
     createArchivesCancel: function () {},
     createArchivesBtn: function () {
       this.creatArchivesShow = true
-      this.CreateGroupSearchManager = this.$store.state.userName + '(' + this.$store.state.jName + ')'
+      this.formValidate.CreateGroupSearchManager = this.$store.state.userName + '(' + this.$store.state.jName + ')'
       this.CreateArchivesMid = this.$store.state.userId
     },
     getPermission: function () {

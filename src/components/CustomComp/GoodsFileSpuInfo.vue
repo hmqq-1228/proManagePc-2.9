@@ -1168,56 +1168,78 @@ export default {
       // preBaseArr: [],
       // preExtraArr: [],
       var that = this
-      if (this.preBaseArr.length > 0) {
-        this.$Modal.confirm({
-          title: '有修改项未保存',
-          content: '基本信息有修改项未保存，是否保存？',
-          onOk: () => {
-            var pinBaseObj = {}
-            var moreBaseFlag = that.preBaseArr.length >= 1 ? 'more' : 'single'
-            for (var k = 0; k < that.preBaseArr.length; k++) {
-              $.extend(pinBaseObj, that.preBaseArr[k].targetData)
+      if (this.baseInfoEditStatus) {
+        if (this.preBaseArr.length > 0) {
+          this.$Modal.confirm({
+            title: '有修改项未保存',
+            content: '基本信息有修改项未保存，是否保存？',
+            onOk: () => {
+              var pinBaseObj = {}
+              var moreBaseFlag = that.preBaseArr.length >= 1 ? 'more' : 'single'
+              for (var k = 0; k < that.preBaseArr.length; k++) {
+                $.extend(pinBaseObj, that.preBaseArr[k].targetData)
+              }
+              that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+              this.baseInfoEditStatus = !this.baseInfoEditStatus
+              this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
+              this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
+              this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
+            },
+            onCancel: () => {
+              that.preBaseArr = []
+              that.querySpuBaseInfo()
+              this.baseInfoEditStatus = !this.baseInfoEditStatus
+              this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
+              this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
+              this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
             }
-            that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
-          },
-          onCancel: () => {
-            that.preBaseArr = []
-            that.querySpuBaseInfo()
-            // that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
-            // this.$Message.info('Clicked cancel')
-          }
-        })
+          })
+        }
+      } else {
+        this.baseInfoEditStatus = !this.baseInfoEditStatus
+        this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
+        this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
+        this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
       }
-      this.baseInfoEditStatus = !this.baseInfoEditStatus
-      this.baseEditBtnText = this.baseInfoEditStatus ? '结束' : '编辑'
-      this.baseEdit = this.baseInfoEditStatus ? 'baseEdit' : 'readonly'
-      this.customM = this.baseInfoEditStatus ? 'click' : 'custom'
     },
     classifyEditBtn: function () {
       var that = this
-      if (this.preExtraArr.length > 0) {
-        this.$Modal.confirm({
-          title: '有修改项未保存',
-          content: 'SPU信息有修改的项未保存，是否保存？',
-          onOk: () => {
-            var pinBaseObj = {}
-            var moreBaseFlag = that.preExtraArr.length >= 1 ? 'more' : 'single'
-            for (var k = 0; k < that.preExtraArr.length; k++) {
-              $.extend(pinBaseObj, that.preExtraArr[k].targetData)
+      if (this.classifyInfoEditStatus) {
+        if (this.preExtraArr.length > 0) {
+          this.$Modal.confirm({
+            title: '有修改项未保存',
+            content: 'SPU信息有修改的项未保存，是否保存？',
+            onOk: () => {
+              var pinBaseObj = {}
+              var moreBaseFlag = that.preExtraArr.length >= 1 ? 'more' : 'single'
+              for (var k = 0; k < that.preExtraArr.length; k++) {
+                $.extend(pinBaseObj, that.preExtraArr[k].targetData)
+              }
+              that.editExtraSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+              this.classifyInfoEditStatus = !this.classifyInfoEditStatus
+              this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
+              this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
+            },
+            onCancel: () => {
+              that.preExtraArr = []
+              that.queryExtraSpuInfo()
+              // that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
+              // this.$Message.info('Clicked cancel')
+              this.classifyInfoEditStatus = !this.classifyInfoEditStatus
+              this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
+              this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
             }
-            that.editExtraSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
-          },
-          onCancel: () => {
-            that.preBaseArr = []
-            that.querySpuBaseInfo()
-            // that.editBaseSpuInfo(pinBaseObj, 'goodsNameVal', moreBaseFlag, 'refresh')
-            // this.$Message.info('Clicked cancel')
-          }
-        })
+          })
+        } else {
+          this.classifyInfoEditStatus = !this.classifyInfoEditStatus
+          this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
+          this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
+        }
+      } else {
+        this.classifyInfoEditStatus = !this.classifyInfoEditStatus
+        this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
+        this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
       }
-      this.classifyInfoEditStatus = !this.classifyInfoEditStatus
-      this.classifyEditBtnText = this.classifyInfoEditStatus ? '结束' : '编辑'
-      this.classifyEdit = this.classifyInfoEditStatus ? 'classifyEdit' : 'readonly'
     },
     removePreImg: function () {
       var that = this
