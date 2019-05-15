@@ -1436,7 +1436,7 @@ export default {
           that.selectData.type = ''
           that.selectData.flag = ''
           $('.iptHidden').blur()
-          that.queryExtraSpuInfo()
+          // that.queryExtraSpuInfo()
         } else {
           that.$Message.success(res.msg)
         }
