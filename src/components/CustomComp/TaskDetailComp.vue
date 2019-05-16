@@ -80,7 +80,7 @@
           <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
           <Button type="info" v-if="taskBasicMsg.timeoutButton === 1" style="margin-right: 20px;" @click="stopeTask(taskBasicMsg.uid)">任务暂停</Button>
           <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
-          <Button type="info" @click=" (taskBasicMsg.uid)">任务分解</Button>
+          <Button type="info" @click="taskToDevided(taskBasicMsg.uid)">任务分解</Button>
         </div>
         <div class="cannetProject" v-if="taskBasicMsg.isRestart">
           <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
