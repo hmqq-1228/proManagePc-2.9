@@ -59,7 +59,7 @@ export default new Router({
     },
     {
       path: '/goodsDetail/:proId',
-      name: 'goodsDetail',
+      name: 'goodsDetailPath',
       component: goodsDetail
     },
     {
