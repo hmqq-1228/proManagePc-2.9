@@ -64,7 +64,7 @@
         </el-radio-group>
       </div>
     </div>
-    <div class="goodList">
+    <div class="goodList" v-loading="goodsLoading">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
         <div class="goodItemCon">
           <div class="goodImg" @click="toGoodsManage(good.projectId)">
@@ -122,6 +122,7 @@ export default {
       goodsImgUrl: '',
       currentPage: 1,
       dialogVisible: false,
+      goodsLoading: false,
       inputVal: '',
       radioVal: '创建时间',
       goodTags: [],
@@ -242,6 +243,7 @@ export default {
     // 查询商品列表
     getGoodsList: function (type, code) {
       var that = this
+      that.goodsLoading = true
       if (type && code) {
         that.getGoodList.categoryType = that.$store.state.goodType
         that.getGoodList.code = that.$store.state.goodCode
@@ -249,6 +251,7 @@ export default {
           if (res.code === 200) {
             that.goodList = res.data.list
             that.goodListTotal = res.data.totalRow
+            that.goodsLoading = false
             for (var i = 0; i < res.data.list.length; i++) {
               if (res.data.list[i].attachment.length > 0) {
                 res.data.list[i].activeImgUrl = res.data.list[i].attachment[0].previewUrl
@@ -263,6 +266,7 @@ export default {
           if (res.code === 200) {
             that.goodList = res.data.list
             that.goodListTotal = res.data.totalRow
+            that.goodsLoading = false
             for (var i = 0; i < res.data.list.length; i++) {
               if (res.data.list[i].attachment.length > 0) {
                 res.data.list[i].activeImgUrl = res.data.list[i].attachment[0].previewUrl

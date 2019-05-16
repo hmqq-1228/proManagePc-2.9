@@ -77,7 +77,7 @@
         </el-radio-group>
       </div>
     </div>
-    <div class="goodList">
+    <div class="goodList" v-loading="goodsLoading">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
         <div class="goodItemCon">
           <div class="goodImg" @click="toGoodsManage(good.spuId)">
@@ -266,6 +266,7 @@ export default {
       buttonStr: '选择图片',
       valueCheck: '',
       selectedGroupData: '',
+      goodsLoading: false,
       totalRow: 0,
       pageNumber: 1,
       pageSize: 10,
@@ -739,12 +740,14 @@ export default {
     // 查询商品列表
     getGoodsList: function (code) {
       var that = this
+      that.goodsLoading = true
       if (code) {
         that.getGoodList.categoryStr = code
         that.ajax('/archives/getGoodsList', that.getGoodList).then(res => {
           if (res.code === 200) {
             that.goodList = res.data.list
             that.goodListTotal = res.data.totalRow
+            that.goodsLoading = false
             for (var i = 0; i < res.data.list.length; i++) {
               if (res.data.list[i].attachment.length > 0) {
                 res.data.list[i].activeImgUrl = res.data.list[i].attachment[0].previewUrl
@@ -764,6 +767,7 @@ export default {
           if (res.code === 200) {
             that.goodList = res.data.list
             that.goodListTotal = res.data.totalRow
+            that.goodsLoading = false
             for (var i = 0; i < res.data.list.length; i++) {
               if (res.data.list[i].attachment.length > 0) {
                 res.data.list[i].activeImgUrl = res.data.list[i].attachment[0].previewUrl
