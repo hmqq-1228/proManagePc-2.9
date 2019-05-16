@@ -8,8 +8,6 @@
         <div class="spuInfoItem ImgPre">
           <div class="iptHiddenBox"><input class="iptHidden" v-on:keydown="inputkeydown" /></div>
           <div class="ImgPrePrimary" @click="bigPre">
-            <!--{{bigPreOffsetTop}}-->
-            <!--../../../static/img/papa.jpg-->
             <img :src="bigPreImg" v-bind:style="{marginTop: bigPreOffsetTop + 'px'}" />
           </div>
           <div class="ImgPreList">
@@ -675,7 +673,7 @@
     <!-- 图片预览 -->
     <el-dialog title="图片预览" :visible.sync="dialogShowImg">
       <!--spuBaseImgList-->
-      <el-carousel indicator-position="outside" :autoplay="false" :initial-index="imgPreIniIndex" width="700px" height="700px">
+      <el-carousel indicator-position="outside" :autoplay="false" :initial-index="imgPreIniIndex" ref="carousel" width="700px" height="700px">
         <el-carousel-item v-for="(item, index) in spuBaseImgList" :key="item + '_' + index">
           <div class="showImg">
             <img :src="item.previewUrl" alt style="width: 100%">
@@ -1031,6 +1029,7 @@ export default {
     },
     bigPre: function () {
       var that = this
+      this.dialogShowImg = true
       // this.currentPreId spuBaseImgList
       var imgIndex = -1
       for (var i = 0; i < that.spuBaseImgList.length; i++) {
@@ -1039,8 +1038,12 @@ export default {
           break
         }
       }
-      this.imgPreIniIndex = imgIndex > -1 ? imgIndex : 0
-      this.dialogShowImg = true
+      // that.log('imgIndex:', imgIndex)
+      var carouselIndex = imgIndex > -1 ? imgIndex : 0
+      setTimeout(function () {
+        that.$refs.carousel.setActiveItem(carouselIndex)
+      }, 200)
+      // this.$refs.carousel.setActiveItem(carouselIndex)
     },
     testFileList: function () {
       // FileUploadArr
