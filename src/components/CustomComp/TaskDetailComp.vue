@@ -94,7 +94,7 @@
     <!--v-bind:TaskDistributeShow="rilegou" tetstt -->
       <div v-show="toShowDevided2">
         <component v-bind:is="compArr.TaskDistribute"
-                   v-bind:TaskDistributeShow="testtest"
+                   v-bind:TaskDistributeShow="toShowDevided2"
                    fileFormId="TaskDistribute"
                    v-on:DistributeFormVisible="DistributeFormVisibleFuc"
                    v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
@@ -394,6 +394,7 @@ export default {
       } else {
         that.concelTransfer()
         that.showDrawer = false
+        that.toShowDevided2 = false
         that.taskFinishedVisible = false
         that.projectStopeVisible2 = false
       }
@@ -1008,7 +1009,9 @@ export default {
     },
     // 任务分解
     DistributeFormVisibleFuc: function (res) {
-      this.toShowDevided = false
+      if (res === false) {
+        this.toShowDevided2 = false
+      }
     },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {

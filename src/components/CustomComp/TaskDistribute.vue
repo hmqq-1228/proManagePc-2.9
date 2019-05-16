@@ -176,6 +176,9 @@ export default {
       if (val) {
         // this.toShowDevided = val
         this.getPlanTaskDetail()
+        this.taskRelationShow2 = true
+        this.moreText2 = '收起'
+        this.moreIcon2 = 'el-icon-arrow-up'
       }
     },
     cancelBtnShow: function (val, oV) {
@@ -414,7 +417,7 @@ export default {
     },
     cancelDevide: function () {
       var that = this
-      that.taskRelationShow2 = false
+      // that.taskRelationShow2 = false
       // that.toShowDevided = false
       that.$emit('DistributeFormVisible', false)
       that.clearDynamicsForm2()
