@@ -57,11 +57,11 @@ export default new Router({
       name: 'goodsfileDetail1',
       component: goodsfileDetail
     },
-    // {
-    //   path: '/goodsDetail/:proId',
-    //   name: 'goodsDetail',
-    //   component: goodsDetail
-    // },
+    {
+      path: '/goodsDetail/:proId',
+      name: 'goodsDetail',
+      component: goodsDetail
+    },
     {
       path: '/',
       name: 'Wellcome',
