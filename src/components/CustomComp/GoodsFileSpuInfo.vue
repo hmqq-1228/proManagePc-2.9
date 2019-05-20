@@ -122,10 +122,21 @@
           <div class="spuInfoCnt">
             <div class="requiredFlag">*</div>
             <div class="spuInfoLabel">产品小组:</div>
-            <div class="spuInfoName">
-              <i-input class="iptTest" v-model="groupNameVal" v-on:input="preExtraInput('groupNameVal',{groupName: groupNameVal},'editBase')" v-on:on-keydown="textValChange('groupNameVal',{groupName: groupNameVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入小组名称" style="max-width: 250px" >
-                <Icon class="haha" id="groupNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({groupName: groupNameVal}, 'groupNameVal')" type="md-checkmark-circle" slot="suffix" />
-              </i-input>
+            <div class="spuInfoName manager">
+              <el-autocomplete style=""
+                               v-model="groupNameVal"
+                               :readonly="groupId ? true : false"
+                               :fetch-suggestions="querySearchGroup"
+                               placeholder="搜索小组"
+                               :trigger-on-focus="false"
+                               @select="searchGroupSelect($event,'groupNameVal','editBase')"
+              ></el-autocomplete>
+              <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
+                <Icon class="haha" id="groupNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({groupId: groupId}, 'groupNameVal')" type="md-checkmark-circle" slot="suffix" />
+              </div>
+              <!--<i-input class="iptTest" v-model="groupNameVal" v-on:input="preExtraInput('groupNameVal',{groupName: groupNameVal},'editBase')" v-on:on-keydown="textValChange('groupNameVal',{groupName: groupNameVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入小组名称" style="max-width: 250px" >-->
+                <!--<Icon class="haha" id="groupNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({groupName: groupNameVal}, 'groupNameVal')" type="md-checkmark-circle" slot="suffix" />-->
+              <!--</i-input>-->
               <div class="jiagouInfo" v-show="!groupId && baseInfoEditStatus">请先创建产品小组</div>
               <div class="jiagou" v-show="groupId && baseInfoEditStatus" @click="member">成员管理</div>
             </div>
@@ -1175,6 +1186,37 @@ export default {
         })
       }
     },
+    // 新建 小组选择
+    searchGroupSelect (item, flag, type) {
+      this.log(item)
+      this.groupId = item.groupId
+      this.changeValue('e', flag, {groupId: item.groupId}, type)
+    },
+    // 新建 搜索小组
+    querySearchGroup (queryString, cb) {
+      var that = this
+      if (queryString) {
+        this.ajax('/group/getGroup', {groupName: queryString, type: 1, pageNum: 1, pageSize: 100}).then(res => {
+          that.log('getGroup:', res)
+          if (res.code === 200) {
+            var dddarr = []
+            if (res.data.list.length > 0) {
+              for (var i = 0; i < res.data.list.length; i++) {
+                var obj = {}
+                obj.value = res.data.list[i].name
+                obj.groupId = res.data.list[i].id
+                dddarr.push(obj)
+              }
+              cb(dddarr)
+            } else {
+              var aaaddd = []
+              that.$message('未能搜索到该人员')
+              cb(aaaddd)
+            }
+          }
+        })
+      }
+    },
     baseEditBtn: function () {
       // preBaseArr: [],
       // preExtraArr: [],
@@ -1613,6 +1655,12 @@ export default {
   }
   .GoodsFileSpuInfo .base .el-autocomplete{
     width: 100%;
+  }
+  .GoodsFileSpuInfo .ivu-input-prefix i, .ivu-input-suffix i{
+    font-size: 16px;
+  }
+  .GoodsFileSpuInfo .spuInfoName.select{
+    font-size: 16px;
   }
 </style>
 <style scoped>

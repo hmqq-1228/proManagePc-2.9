@@ -30,6 +30,8 @@
         <div class="cntItem fourLevel" :class="'c_' + item.code" @click="btnClick($event, item.code, item.typeName)" v-for="item in fourLevel" :key="item.code">{{item.categoryName}}</div>
       </div>
     </div>
+    <button @click="pach('single')">单向随机</button>
+    <button @click="pach('double')">双向随机</button>
   </div>
 </template>
 
@@ -45,7 +47,12 @@ export default {
       thirdLevel: [],
       fourLevel: [],
       codeArr: [],
-      num: 0
+      num: 0,
+      member: ['董广', '李朝招', '黄猛', '袁鹏', '郭宋恒', '张冉冉', '张荷', '姜海川'],
+      food: ['豆浆', '香蕉', '咖啡', '烤肠', '冰淇淋', '绿豆沙', '茶叶蛋', '玉米'],
+      memPach: [],
+      ying: [],
+      shu: []
     }
   },
   created () {
@@ -58,6 +65,46 @@ export default {
     }
   },
   methods: {
+    pach: function (type) {
+      var that = this
+      // this.log('length:', this.member.length)
+      var obj = {}
+      var num01 = this.getRandomInt(0, this.member.length - 1)
+      obj.name01 = this.member[num01]
+      this.shu.push(obj.name01)
+      this.member.splice(num01, 1)
+      // j
+      var num02 = this.getRandomInt(0, this.member.length - 1)
+      obj.name02 = this.member[num02]
+      this.ying.push(obj.name02)
+      this.member.splice(num02, 1)
+      this.memPach.push(obj)
+      // j
+      if (this.member.length > 1) {
+        this.pach(type)
+      } else {
+        that.log('第一波:')
+        for (var t = 0; t < that.memPach.length; t++) {
+          var foodRandom = that.getRandomInt(0, that.food.length - 1)
+          that.memPach[t].food = that.food[foodRandom]
+          that.log(that.memPach[t].name01 + '买' + that.memPach[t].food + ', 送给' + that.memPach[t].name02)
+        }
+        if (type === 'double') {
+          // j
+          that.log('第二波:')
+          for (var r = 0; r < that.ying.length; r++) {
+            var foodRandom2 = that.getRandomInt(0, that.food.length - 1)
+            var shuRandom2 = that.getRandomInt(0, that.shu.length - 1)
+            that.log(that.ying[r] + '买' + that.food[foodRandom2] + ',,送给' + that.shu[shuRandom2])
+            that.shu.splice(shuRandom2, 1)
+            // that.ying[r]
+          }
+        }
+      }
+    },
+    getRandomInt: function (n, m) {
+      return Math.floor(Math.random() * (m - n + 1) + n)
+    },
     routerFuc: function (arr, isIni) {
       var that = this
       that.actionEmit(arr[that.num].code, isIni)

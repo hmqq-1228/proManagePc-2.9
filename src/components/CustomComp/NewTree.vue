@@ -14,7 +14,7 @@
     <div class="NewTree" v-bind:id="'parent_' + (newTreeList && newTreeList[0] && newTreeList[0].parentId?newTreeList[0].parentId: nextId)">
       <div class="node" v-for="newTreeItem in newTreeList" :key="newTreeItem.id" :id="newTreeItem.id" :draggable="onOffStatusT===2" @dragstart="dragstart($event, newTreeItem)">
         <div class="lineLeft" v-if="newTreeItem.type!=='rootPlan'"></div>
-        <div class="nodeCnt">
+        <div class="nodeCnt" v-bind:class="'treeNodeLevel_' + treeNodeLevel">
           <div class="insertLine" :id="'line_' + newTreeItem.id">
             <div class="insertLineCnt"></div>
             <div class="arrowLeft"></div>
@@ -479,6 +479,9 @@ export default {
     padding-top: 20px;
     flex-grow: 1;
     margin-left: -1px;
+  }
+  .nodeCnt.treeNodeLevel_0{
+    margin-left: 0px;
   }
   .node .NewTree{
     margin-left: 50px;
