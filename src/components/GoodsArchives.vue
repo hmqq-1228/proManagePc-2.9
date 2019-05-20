@@ -71,7 +71,7 @@
       <div style="margin-left: 10px">
         <el-radio-group v-model="radioVal" size="mini">
           <el-radio-button label="创建时间"></el-radio-button>
-          <el-radio-button label="商品年份"></el-radio-button>
+          <!--<el-radio-button label="商品年份"></el-radio-button>-->
           <el-radio-button label="爆品等级"></el-radio-button>
           <!--<el-radio-button label="库存"></el-radio-button>-->
         </el-radio-group>
@@ -96,11 +96,11 @@
             <div class="active" v-if="good.attachment.length === 0"><img src="../../static/img/defult.png" alt=""></div>
           </div>
           <div class="goodInfo" @click="toGoodsManage(good.spuId)">
-            <div>编码: <span v-if="good.spuCode">{{good.spuCode}}</span><span v-if="!good.spuCode" style="color: #999;font-size: 12px;">无编码</span></div>
+            <div class="goodTypeName" :title="good.spuCode">编码: <span v-if="good.spuCode">{{good.spuCode}}</span><span v-if="!good.spuCode" style="color: #999;font-size: 12px;">无编码</span></div>
             <div class="goodTypeName" :title="good.spuName">品名: <span v-if="good.spuName">{{good.spuName}}</span><span v-if="!good.spuName" style="color: #999;font-size: 12px;">未命名</span></div>
-            <div>品牌: <span v-if="good.brandName">{{good.brandName}}</span><span v-if="!good.brandName" style="color: #999;font-size: 12px;">未分类</span></div>
-            <div>分类: <span v-if="good.category">{{good.category}}</span><span v-if="!good.category" style="color: #999;font-size: 12px;">未分类</span></div>
-            <div>负责人: <span>{{good.userName}}</span></div>
+            <div class="goodTypeName" :title="good.brandName">品牌: <span v-if="good.brandName">{{good.brandName}}</span><span v-if="!good.brandName" style="color: #999;font-size: 12px;">未分类</span></div>
+            <div class="goodTypeName" :title="good.category">分类: <span v-if="good.category">{{good.category}}</span><span v-if="!good.category" style="color: #999;font-size: 12px;">未分类</span></div>
+            <div class="goodTypeName" :title="good.userName">负责人: <span v-if="good.userName">{{good.userName}}</span><span v-if="!good.userName" style="color: #999;font-size: 12px;">暂无负责人</span></div>
           </div>
         </div>
       </div>

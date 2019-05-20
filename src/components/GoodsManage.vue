@@ -83,10 +83,10 @@
             <div class="active" v-if="good.attachment.length === 0"><img src="../../static/img/defult.png" alt=""></div>
           </div>
           <div class="goodInfo" @click="toGoodsManage(good.projectId)">
-            <div>编码: <span v-if="good.goodsCode">{{good.goodsCode}}</span><span v-if="!good.goodsCode" style="color: #999;font-size: 12px;">无编码</span></div>
+            <div class="goodTypeName" :title="good.goodsCode">编码: <span v-if="good.goodsCode">{{good.goodsCode}}</span><span v-if="!good.goodsCode" style="color: #999;font-size: 12px;">无编码</span></div>
             <div class="goodTypeName" :title="good.name">品名: <span v-if="good.name">{{good.name}}</span><span v-if="!good.name" style="color: #999;font-size: 12px;">未命名</span></div>
             <div class="goodTypeName" :title="good.projectName">项目: <span v-if="good.projectName">{{good.projectName}}</span><span v-if="!good.projectName" style="color: #999;font-size: 12px;">无项目</span></div>
-            <div>分类: <span v-if="good.categoryName">{{good.categoryName}}</span><span v-if="!good.categoryName" style="color: #999;font-size: 12px;">未分类</span></div>
+            <div class="goodTypeName" :title="good.categoryName">分类: <span v-if="good.categoryName">{{good.categoryName}}</span><span v-if="!good.categoryName" style="color: #999;font-size: 12px;">未分类</span></div>
             <div>进度: <span>{{good.developProgress}}</span></div>
           </div>
         </div>
