@@ -1210,7 +1210,7 @@ export default {
               cb(dddarr)
             } else {
               var aaaddd = []
-              that.$message('未能搜索到该人员')
+              that.$message('未搜索到结果')
               cb(aaaddd)
             }
           }
@@ -1590,21 +1590,20 @@ export default {
       this.ajax('/archives/editSpuBasic', JSON.stringify(obj)).then(res => {
         that.log('editSpuBasic:', res)
         if (res.code === 200) {
-          that.log(111111)
           that.$Message.success('操作成功!')
           if (moreFlag === 'more') {
-            that.log(55555)
             for (var u = 0; u < that.preBaseArr.length; u++) {
               $('#' + that.preBaseArr[u].targetName).css('color', '#808695')
             }
             that.preBaseArr = []
           } else if (flag) {
-            that.log(66666)
+            for (var p = 0; p < that.preBaseArr.length; p++) {
+              if (that.preBaseArr[p].targetName === flag) {
+                that.preBaseArr.splice(p, 1)
+              }
+            }
             $('#' + flag).css('color', '#808695')
-            that.log(77777)
           }
-          that.log(22)
-          // $('#' + flag).css('color', '#808695')
           $('input').blur()
           that.selectData.obj = {}
           that.selectData.type = ''

@@ -2,7 +2,7 @@
     <div>
       <Modal v-model="selectChange" width="800" title="小组列表" @on-ok="groupListSelectOk" @on-cancel="groupListSelectCancel">
         <div class="tableQueryInput" style="margin-bottom: 10px;">
-          <el-input v-model="searchGroup" placeholder="请输入搜索内容"></el-input>
+          <el-input v-model="searchGroup" placeholder="请输入搜索搜索小组名称"></el-input>
         </div>
         <Table highlight-row ref="currentRowTable" :columns="columns3" :data="tableData" @on-current-change="tableSelect"></Table>
         <div style="margin-top: 15px;">
@@ -48,8 +48,8 @@ export default {
           key: 'name'
         },
         {
-          title: '创建人',
-          key: 'creatorName'
+          title: '负责人',
+          key: 'userName'
         },
         {
           title: '创建时间',
