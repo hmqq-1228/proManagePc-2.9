@@ -196,6 +196,7 @@ export default {
     // 查询侧边栏
     queryMenu: function () {
       var that = this
+      // auth/getMenuList
       this.ajax('/myTask/getProjectList', {}).then(res => {
         // this.log('请求侧边栏:', res)
         if (res.code === 200) {
