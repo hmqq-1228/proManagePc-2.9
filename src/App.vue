@@ -269,17 +269,18 @@ export default {
     },
     getProjectDetail: function (id, n, proType, proName) {
       this.log('id:', id)
+      if (id) {
+        this.$store.state.menuId = id
+      }
       if (proType === '集团战略') {
         localStorage.setItem('generalMenuActive', '集团战略')
         if (id) {
           this.$store.state.proId = id
-          this.$store.state.menuId = id
           this.$store.state.navType = n
           this.$router.push('/goodsDetail')
         }
       } else if (proType === '商品管理') {
         localStorage.setItem('generalMenuActive', '商品管理')
-        this.$store.state.menuId = id
         if (proName === '档案管理') {
           this.$router.push('/GoodsArchives')
         } else if (proName === '研发管理') {

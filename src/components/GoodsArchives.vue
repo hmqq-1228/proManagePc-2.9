@@ -690,7 +690,8 @@ export default {
     getPermission: function () {
       var that = this
       console.log('that.$store.state.permission', that.$store.state.permission)
-      that.ajax('/archives/getPermission', {}).then(res => {
+      that.ajax('/archives/getPermission', {menuId: that.$store.state.menuId}).then(res => {
+        that.log('getPermission:', res)
         if (res.code === 200) {
           that.OptionList = res.data
           if (that.$store.state.permission) {

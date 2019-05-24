@@ -19,7 +19,6 @@ export default {
   computed: {
     querySlideMenuData: function () {
       var that = this
-      that.log('dddddd:', this.$store.state.slideMenu)
       that.slideMenuData = this.$store.state.slideMenu
       return that.slideMenuData
     },
@@ -34,8 +33,10 @@ export default {
       var that = this
       if (val.length > 0) {
         if (that.slideMenuGroupData.length > 0) {
+          that.$store.state.menuId = that.slideMenuGroupData[0].dataList[0].menuId
           that.getProjectDetail(that.slideMenuGroupData[0].dataList[0].menuId, '1', '集团战略')
         } else {
+          that.$store.state.menuId = val[0].menuId
           that.getProjectDetail(val[0].menuId, '2', '', val[0].menuName)
         }
       } else {

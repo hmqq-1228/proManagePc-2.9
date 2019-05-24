@@ -292,7 +292,7 @@ export default {
     },
     getQuestionTypeSource () {
       var that = this
-      this.ajax('/question/getQuestionTypeSource', {}).then(res => {
+      this.ajax('/question/getQuestionTypeSource', {menuId: that.$store.state.menuId}).then(res => {
         // this.log('选择所属项目:', res)
         console.log('optionsTask', that.optionsTask)
         if (res.code === 200) {
