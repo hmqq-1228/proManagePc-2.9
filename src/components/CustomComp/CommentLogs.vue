@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     showImagePreCom: function (previewUrl, fileName) {
-      this.log(123)
+      // this.log(123)
       this.$emit('FilePreEmit', {previewUrl, fileName})
       // if (url) {
       //   this.commentPreviewUrl = url

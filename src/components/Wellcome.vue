@@ -19,6 +19,7 @@ export default {
   computed: {
     querySlideMenuData: function () {
       var that = this
+      that.log('dddddd:', this.$store.state.slideMenu)
       that.slideMenuData = this.$store.state.slideMenu
       return that.slideMenuData
     },
@@ -33,9 +34,9 @@ export default {
       var that = this
       if (val.length > 0) {
         if (that.slideMenuGroupData.length > 0) {
-          that.getProjectDetail(that.slideMenuGroupData[0].projectList[0].projectUID, '1', '集团战略')
+          that.getProjectDetail(that.slideMenuGroupData[0].dataList[0].menuId, '1', '集团战略')
         } else {
-          that.getProjectDetail(val[0].projectUID, '2', '', val[0].projectType)
+          that.getProjectDetail(val[0].menuId, '2', '', val[0].menuName)
         }
       } else {
         // that.log('数组为空')
@@ -67,7 +68,7 @@ export default {
         if (proName === '我的日程') {
           this.$router.push('/Schedule')
         } else if (proName === '我的动态') {
-          this.$router.push('/MyDep')
+          this.$router.push('/MyDepNew')
         } else if (proName === '我的任务') {
           this.$router.push('/MyTask')
         } else if (proName === '我的项目') {

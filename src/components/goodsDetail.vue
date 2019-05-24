@@ -5,19 +5,12 @@
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}} {{nodeDragRefresh?'':''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
     <div class="fileModel" v-if="showFileModel">
-      <div style="text-align: center;height: 30px;line-height: 30px;color: #999;border-bottom: 1px solid #f1f1f1">共<span style="color: chocolate;font-size: 16px;font-weight: bold;">{{proDetailMsg.fileList.length}}</span> 个附件
-      </div>
+      <!--dddd-->
+      <div style="text-align: center;height: 30px;line-height: 30px;color: #999;border-bottom: 1px solid #f1f1f1">共<span style="color: chocolate;font-size: 16px;font-weight: bold;">{{proDetailMsg.fileList.length}}</span> 个附件</div>
       <div class="fileItem" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl">
-        <div
-          style="width: 60%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;"
-          :title="fileItem.showName"
-        >{{fileItem.showName}}</div>
+        <div style="width: 60%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" :title="fileItem.showName">{{fileItem.showName}}</div>
         <div class="fileDone">
-          <div
-            style="width: 50%;cursor: pointer"
-            v-if="fileItem.isImg"
-            @click="showImagePre(fileItem.previewUrl, fileItem.showName)"
-          >预览</div>
+          <div style="width: 50%;cursor: pointer" v-if="fileItem.isImg" @click="showImagePre(fileItem.previewUrl, fileItem.showName)">预览</div>
           <div style="width: 50%;">
             <a v-bind:download="fileItem.showName" v-bind:href="fileItem.downloadUrl">下载</a>
           </div>
@@ -73,6 +66,7 @@
                 </div>
                 <div style="margin-left: 10px; color: #28558c; display: flex;">
                   <div>附件:</div>
+                  <!--dddd-->
                   <div v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0" style="display: flex">
                     <div class="proFileListPre"
                          :title="fileItem.showName"
@@ -90,19 +84,13 @@
                       </div>
                     </div>
                   </div>
-                  <!--<span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0">-->
-                    <!--<span style="cursor: pointer;color: #409EFF;font-size: 14px;" @click="showFileModelClick()">查看附件</span>-->
-                  <!--</span>-->
                   <div style="color: #aaa;font-size: 14px" v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0">暂无附件</div>
                 </div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 8px; color: #2d8cf0;">
                 <span v-if="archives">
                    <Icon size="18" style="margin-top: -3px;" type="ios-paper-outline"/>
-                   <span
-                     style="margin-right: 10px; margin-left: 5px;"
-                    v-on:click="proGoodsEditClick()"
-                   >查看档案</span>
+                   <span style="margin-right: 10px; margin-left: 5px;" v-on:click="proGoodsEditClick()">查看档案</span>
                 </span>
                 <Icon size="20" style="margin-top: -3px;" type="ios-create-outline" />
                 <span style="margin-right: 10px; margin-left: 5px;" v-on:click="proBaseEditClick()">基本信息</span>
@@ -126,12 +114,9 @@
           <div class="memName">
             <Icon size="30" type="ios-person-outline"/>
           </div>
+          <!--dddd-->
           <div class="memBox">
-            <div
-              v-if="memberList.length > 0"
-              v-for="(member, memIndex) in memberList"
-              v-bind:key="member.userName + '-' + memIndex"
-            >{{member.userName}}</div>
+            <div v-if="memberList.length > 0" v-for="(member, memIndex) in memberList" v-bind:key="member.userName + '-' + memIndex">{{member.userName}}</div>
             <div class="moreBtn" v-on:click="moreMemberClick()">
               <Button size="small" style="width: 84px;" type="primary">更多 / 编辑</Button>
             </div>
@@ -190,6 +175,7 @@
           <div class="plan-list addPlan" v-on:click="addNode(firstPlanId)">
              <i class="el-icon-plus"></i>
           </div>
+          <!--dddd-->
           <div v-for="(plan, index) in planList" v-bind:key="index" class="plan-all">
               <div class="plan-list"
                     v-if="planList.length > 0"
@@ -202,14 +188,9 @@
                 <div class="planDetail" @click="showPlanDetail(plan.id, 'QueryFirstLevelChild', $event,)"><i class="el-icon-edit"></i></div>
               </div>
           </div>
-         <!--  <Button
-            style="width: 84px; margin-top: 16px; margin-left: 20px; position: absolute; right: 1px;"
-            size="small"
-            type="primary"
-            v-on:click="FistLevelPlanDetail()"
-          >添加 / 编辑</Button> -->
         </div>
       </div>
+      <!--dddd-->
       <div style="margin-top:20px;" v-if="planList.length > 0 ">
           <el-tabs v-model="activeName">
               <el-tab-pane label="加任务" name="first">
@@ -234,6 +215,7 @@
     </div>
     <!-- Part01 end -->
     <!-- Part02 start 项目详情 title -->
+    <!--dddd-->
     <div class="devide">
       <div class="proTreeHeader">
         <div>详情</div>
@@ -714,6 +696,7 @@ export default {
   },
   created: function () {
     if (this.$store.state.proId || this.$route.params.proId) {
+      this.log(6666)
       this.proId = this.$store.state.proId || this.$route.params.proId
       this.$store.state.proId = this.proId
       // this.queryProDetail()
@@ -731,29 +714,22 @@ export default {
     // },
     proId: function (val, oVal) {
       var that = this
+      // that.log(123)
       // this.currentProId = val
       // this.currentType = this.type
       localStorage.setItem('proId', val)
       var findId = false
-      for (
-        var t = 0; that.$store.state.slideMenuGroup.length > 0 &&
-        t < that.$store.state.slideMenuGroup[0].projectList.length;
-        t++
-      ) {
-        if (
-          that.$store.state.slideMenuGroup[0].projectList[t].projectUID ===
-          that.proId
-        ) {
+      // that.log('length:', that.$store.state.slideMenuGroup.length)
+      // dddd
+      for (var t = 0; that.$store.state.slideMenuGroup.length > 0 && t < that.$store.state.slideMenuGroup[0].dataList.length; t++) {
+        if (that.$store.state.slideMenuGroup[0].dataList[t].projectUID === that.proId) {
           findId = true
           that.$store.state.activeNavIndex = 'group_0_' + t
         }
       }
       if (!findId) {
         for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
-          if (
-            that.$store.state.slideMenu[p].projectType ===
-            localStorage.getItem('generalMenuActive')
-          ) {
+          if (that.$store.state.slideMenu[p].menuName === localStorage.getItem('generalMenuActive')) {
             that.$store.state.activeNavIndex = 'general_' + p
           }
         }
@@ -764,6 +740,7 @@ export default {
       this.queryProDetail()
     },
     commitComent: function (val, oVal) {
+      this.log(777777)
       if (val) {
         this.butnDisabled = false
       } else {
@@ -784,7 +761,7 @@ export default {
     },
     planList: function (val, old) {
       var that = this
-      this.log('goods:planList==:', val)
+      // this.log('goods:planList==:', val)
       if (val) {
         that.FirstLevelPlanList = []
         for (var i = 0; i < val.length; i++) {
@@ -825,18 +802,14 @@ export default {
     slideMenuGroup: function () {
       var that = this
       if (!this.$route.params.proId && !that.$store.state.proId) {
-        if (
-          that.$store.state.slideMenuGroup.length > 0 &&
-          that.$store.state.slideMenuGroup[0].projectList.length > 0
-        ) {
+        that.log('huo:', that.$store.state.slideMenuGroup)
+        if (that.$store.state.slideMenuGroup.length > 0 && that.$store.state.slideMenuGroup[0].dataList.length > 0) {
           if (localStorage.getItem('proId')) {
             that.$store.state.proId = localStorage.getItem('proId')
             that.proId = localStorage.getItem('proId')
           } else {
-            that.$store.state.proId =
-              that.$store.state.slideMenuGroup[0].projectList[0].projectUID
-            that.proId =
-              that.$store.state.slideMenuGroup[0].projectList[0].projectUID
+            that.$store.state.proId = that.$store.state.slideMenuGroup[0].dataList[0].menuId
+            that.proId = that.$store.state.slideMenuGroup[0].dataList[0].menuId
             localStorage.setItem('proId', that.proId)
             that.$store.state.activeNavIndex = 'group_0_0'
           }
@@ -844,6 +817,7 @@ export default {
       } else {
         // that.log(555555)
       }
+      // that.log(3333333)
       return that.$store.state.slideMenuGroup
     },
     goPerfect: function () {
@@ -1023,7 +997,7 @@ export default {
     },
     // 键盘删除事件
     deleteText () {
-      this.log(123)
+      // this.log(123)
       let content = this.commitComent
       let content1 = this.commitComent
       let delBefore = content.substring(0, this.position)
@@ -1236,7 +1210,6 @@ export default {
       // this.selectProjectId(nodeId, flag, e)
       this.currentNodeId = nodeId
       this.isChangeActive = true
-      console.log('idddddd', this.currentNodeId)
       if (nodeId.substring(0, 1) === 'J') {
         that.TaskDetailCompShow = true
       } else {
@@ -1314,7 +1287,7 @@ export default {
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
         that.log('getProjectDetail:', res)
         if (res.code === 200) {
-          this.log('getProjectDetail:', res)
+          // this.log('getProjectDetail:', res)
           that.memberList = res.data.memberList
           that.proDetailMsg = res.data
           that.startPlanDate = res.data.startDate.split(' ')[0]
@@ -1333,12 +1306,7 @@ export default {
             } else {
               res.data.fileList[i].isImg = false
             }
-            res.data.fileList[i].downloadUrl =
-              that.$store.state.baseServiceUrl +
-              '/file/downloadFile?realUrl=' +
-              res.data.fileList[i].realUrl +
-              '&showName=' +
-              res.data.fileList[i].showName
+            res.data.fileList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.fileList[i].realUrl + '&showName=' + res.data.fileList[i].showName
           }
           if (res.data.planOrJobList.length > 0) {
             // that.log('activeId:', that.activeId)

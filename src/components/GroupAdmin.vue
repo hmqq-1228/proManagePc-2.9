@@ -58,43 +58,34 @@
     </Modal>
     <!---->
     <!--新建小组-->
-    <Modal v-model="creatGroupShow2" title="新建小组" @on-ok="createGroupSub2" @on-cancel="createGroupCancel2">
-      <div class="createGroupCnt">
-        <div class="createGroupCntItem">小组名称:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
-          <el-input placeholder="请输入小组名称" v-model="createGroupName2"></el-input>
-        </div>
-      </div>
-      <div class="createGroupCnt">
-        <div class="createGroupCntItem">负责人:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
-          <el-autocomplete style="width: 100%"
-                           v-model="CreateGroupSearchManager2"
-                           :fetch-suggestions="queryNewGroupManager2"
-                           placeholder="搜索小组负责人"
-                           :trigger-on-focus="false"
-                           @select="CreateGroupManagerSelect2($event)"
-          ></el-autocomplete>
-        </div>
-      </div>
-      <div class="createGroupCnt">
-        <div class="createGroupCntItem">小组描述:</div>
-        <div class="createGroupCntItem GroupCntItemVal">
-          <el-input v-model="createGroupDes2" type="textarea" placeholder="请输入小组详情"></el-input>
-        </div>
-      </div>
-    </Modal>
-    <Drawer
-      title="小组详情"
-      width="700"
-      :closable="false"
-      v-model="DrawerMember"
-    >
-      <component
-        v-bind:is="compArr.GroupMembers"
-        v-bind:groupId="groupId"
-        v-bind:DrawerMemberShow="DrawerMember"
-      ></component>
+    <!--<Modal v-model="creatGroupShow2" title="新建小组2" @on-ok="createGroupSub2" @on-cancel="createGroupCancel2">-->
+      <!--<div class="createGroupCnt">-->
+        <!--<div class="createGroupCntItem">小组名称:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<el-input placeholder="请输入小组名称" v-model="createGroupName2"></el-input>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="createGroupCnt">-->
+        <!--<div class="createGroupCntItem">负责人:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<el-autocomplete style="width: 100%"-->
+                           <!--v-model="CreateGroupSearchManager2"-->
+                           <!--:fetch-suggestions="queryNewGroupManager2"-->
+                           <!--placeholder="搜索小组负责人"-->
+                           <!--:trigger-on-focus="false"-->
+                           <!--@select="CreateGroupManagerSelect2($event)"-->
+          <!--&gt;</el-autocomplete>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="createGroupCnt">-->
+        <!--<div class="createGroupCntItem">小组描述:</div>-->
+        <!--<div class="createGroupCntItem GroupCntItemVal">-->
+          <!--<el-input v-model="createGroupDes2" type="textarea" placeholder="请输入小组详情"></el-input>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</Modal>-->
+    <Drawer title="小组详情" width="700" :closable="false" v-model="DrawerMember">
+      <component v-bind:is="compArr.GroupMembers" v-bind:groupId="groupId" v-bind:DrawerMemberShow="DrawerMember"></component>
     </Drawer>
     <div style="text-align: center">
       <el-pagination
@@ -168,6 +159,7 @@ export default {
   },
   created () {
     this.queryGroupList()
+    this.queryPermission()
   },
   methods: {
     currentChange: function (num) {
@@ -197,20 +189,20 @@ export default {
       })
     },
     createGroupCancel: function () {},
-    createGroupSub2: function () {
-      var that = this
-      // that.DrawerMember = true
-      that.log('that.CreateGroupMid2666', that.CreateGroupMid2)
-      this.ajax('/group/editGroup', {userId: that.CreateGroupMid2, groupId: that.Gid, userName: that.CreateGroupSearchManager2, groupName: that.createGroupName2, description: that.createGroupDes2}).then(res => {
-        if (res.code === 200) {
-          that.queryGroupList()
-          // that.GroupList = res.data.list
-        } else {
-          that.$message(res.msg)
-        }
-      })
-    },
-    createGroupCancel2: function () {},
+    // createGroupSub2: function () {
+    //   var that = this
+    //   // that.DrawerMember = true
+    //   that.log('that.CreateGroupMid2666', that.CreateGroupMid2)
+    //   this.ajax('/group/editGroup', {userId: that.CreateGroupMid2, groupId: that.Gid, userName: that.CreateGroupSearchManager2, groupName: that.createGroupName2, description: that.createGroupDes2}).then(res => {
+    //     if (res.code === 200) {
+    //       that.queryGroupList()
+    //       // that.GroupList = res.data.list
+    //     } else {
+    //       that.$message(res.msg)
+    //     }
+    //   })
+    // },
+    // createGroupCancel2: function () {},
     createGroupBtn: function () {
       this.creatGroupShow = true
     },
@@ -239,40 +231,40 @@ export default {
         })
       }
     },
-    queryNewGroupManager2 (queryString, cb) {
-      var that = this
-      if (queryString) {
-        that.NewGroupManagerPayload2.projectManager = queryString
-        this.ajax('/myProject/autoCompleteNames', that.NewGroupManagerPayload2).then(res => {
-          if (res.code === 200) {
-            var dddarr = []
-            if (res.data.length > 0) {
-              for (var i = 0; i < res.data.length; i++) {
-                var obj = {}
-                obj.value = res.data[i].Name + ' (' + res.data[i].jName + ')'
-                obj.userId = res.data[i].ID
-                dddarr.push(obj)
-              }
-              cb(dddarr)
-            } else {
-              var aaaddd = []
-              that.$message('未能搜索到该人员')
-              cb(aaaddd)
-            }
-          }
-        })
-      }
-    },
+    // queryNewGroupManager2 (queryString, cb) {
+    //   var that = this
+    //   if (queryString) {
+    //     that.NewGroupManagerPayload2.projectManager = queryString
+    //     this.ajax('/myProject/autoCompleteNames', that.NewGroupManagerPayload2).then(res => {
+    //       if (res.code === 200) {
+    //         var dddarr = []
+    //         if (res.data.length > 0) {
+    //           for (var i = 0; i < res.data.length; i++) {
+    //             var obj = {}
+    //             obj.value = res.data[i].Name + ' (' + res.data[i].jName + ')'
+    //             obj.userId = res.data[i].ID
+    //             dddarr.push(obj)
+    //           }
+    //           cb(dddarr)
+    //         } else {
+    //           var aaaddd = []
+    //           that.$message('未能搜索到该人员')
+    //           cb(aaaddd)
+    //         }
+    //       }
+    //     })
+    //   }
+    // },
     CreateGroupManagerSelect (item) {
       this.log('新建小组：', item)
       // this.CreateGroupMid = item.userId
       this.CreateGroupMid = item.userId
     },
-    CreateGroupManagerSelect2 (item) {
-      this.log('新建小组：', item)
-      // this.CreateGroupMid = item.userId
-      this.CreateGroupMid2 = item.userId
-    },
+    // CreateGroupManagerSelect2 (item) {
+    //   this.log('新建小组：', item)
+    //   // this.CreateGroupMid = item.userId
+    //   this.CreateGroupMid2 = item.userId
+    // },
     deleteGroup (e, groupId) {
       var that = this
       e.stopPropagation()
@@ -324,6 +316,17 @@ export default {
           that.totalRow = res.data.totalRow
         } else {
           that.$message(res.msg)
+        }
+      })
+    },
+    // archives/getPermission
+    queryPermission () {
+      var that = this
+      this.ajax('/archives/getPermission', {menuId: ''}).then(res => {
+        that.log('getPermission:', res)
+        if (res.code === 200) {
+        } else {
+          // that.$message(res.msg)
         }
       })
     }

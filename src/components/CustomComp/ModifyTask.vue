@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     GetFilePreData (obj) {
-      this.log(123)
+      // this.log(123)
       this.$emit('FilePreEmit', obj)
     },
     levelChange: function (rateval) {

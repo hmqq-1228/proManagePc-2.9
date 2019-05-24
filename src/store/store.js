@@ -42,6 +42,7 @@ const state = {
   userLoginInfo: '',
   debug: true,
   proId: '',
+  menuId: '',
   spuId: '',
   navType: '',
   goodType: '',

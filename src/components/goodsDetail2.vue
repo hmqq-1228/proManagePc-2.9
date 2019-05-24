@@ -1121,7 +1121,7 @@ export default {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
         .then(res => {
-          that.log('getProjectDetail:', res)
+          // that.log('getProjectDetail:', res)
           if (res.code === 200) {
             // that.queryNewTree(res)
             that.memberList = res.data.memberList

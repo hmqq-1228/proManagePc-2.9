@@ -29,28 +29,31 @@
                   text-color="#fff"
                   active-text-color="#ffd04b">
                   <!--侧边栏 集团战略-->
+                  <!--v-for="(name, index) in slideMenuGroup" :-->
+                  <!--<el-submenu index="'group_55'">-->
                   <el-submenu v-for="(name, index) in slideMenuGroup" :index="'group_' + index" v-bind:key="index">
                     <template slot="title">
                       <Icon style="color: #ddd" size="18" type="ios-ribbon-outline" />
-                      <span>{{name.projectType}}</span>
+                      <span>{{name.menuName}}</span>
                     </template>
                     <el-menu-item-group>
-                      <el-menu-item v-for="(nameItem, index1) in name.projectList" :index="'group_' + index + '_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectName)" v-bind:title="nameItem.projectName">{{nameItem.projectName}}</el-menu-item>
+                      <!--<el-menu-item v-for="(nameItem, index1) in name.dataList" :index="'group_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.menuName, nameItem.menuName)" v-bind:title="nameItem.menuName">{{nameItem.menuName}}</el-menu-item>-->
+                      <el-menu-item v-for="(nameItem, index1) in name.dataList" :index="'group_' + index + '_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.menuId, 1,name.menuName, nameItem.menuName)" v-bind:title="nameItem.menuName">{{nameItem.menuName}}</el-menu-item>
                     </el-menu-item-group>
                   </el-submenu>
                   <el-submenu v-for="(name, index5) in slideMenuGroup2" :index="'up_' + index5" v-bind:key="'up_' + index5">
                     <template slot="title">
                       <Icon style="color: #ddd" size="18" type="md-cart" />
-                      <span>{{name.projectType}}</span>
+                      <span>{{name.menuName}}</span>
                     </template>
                     <el-menu-item-group>
-                      <el-menu-item v-for="(nameItem, index3) in name.projectList" :index="'up_' + index5 + '_' + index3" v-bind:key="index3" @click="getProjectDetail(nameItem.projectUID, 1,name.projectType, nameItem.projectType)" v-bind:title="nameItem.projectType">{{nameItem.projectType}}</el-menu-item>
+                      <el-menu-item v-for="(nameItem, index3) in name.dataList" :index="'up_' + index5 + '_' + index3" v-bind:key="index3" @click="getProjectDetail(nameItem.menuId, 1,name.menuName, nameItem.menuName)" v-bind:title="nameItem.menuName">{{nameItem.menuName}}</el-menu-item>
                     </el-menu-item-group>
                   </el-submenu>
                   <!--侧边栏 非集团战略-->
-                  <el-menu-item v-for="(name, index2) in slideMenu" :index="'general_' + index2" v-bind:key="name.projectType + '-' + index2" @click="toMenu(name.projectType)">
+                  <el-menu-item v-for="(name, index2) in slideMenu" :index="'general_' + index2" v-bind:key="name.menuName + '-' + index2" @click="toMenu(name.menuName, name.menuId)">
                     <Icon size="18" :type="name.icon" />
-                    <span slot="title">{{name.projectType}}</span>
+                    <span slot="title">{{name.menuName}}</span>
                   </el-menu-item>
                 </el-menu>
               </el-col>
@@ -139,7 +142,7 @@ export default {
     setActiveNavIndex: function (typename) {
       var that = this
       for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
-        if (that.$store.state.slideMenu[i].projectType === typename) {
+        if (that.$store.state.slideMenu[i].menuName === typename) {
           that.$store.state.activeNavIndex = 'general_' + i
           localStorage.setItem('generalMenuActive', typename)
         }
@@ -158,8 +161,9 @@ export default {
     testUpload: function () {
       this.$router.push('/TTEST')
     },
-    toMenu: function (menuName) {
+    toMenu: function (menuName, menuId) {
       var that = this
+      this.$store.state.menuId = menuId
       switch (menuName) {
         case '商品管理':
           localStorage.setItem('generalMenuActive', '商品管理')
@@ -197,15 +201,16 @@ export default {
     queryMenu: function () {
       var that = this
       // auth/getMenuList
-      this.ajax('/myTask/getProjectList', {}).then(res => {
-        // this.log('请求侧边栏:', res)
+      this.ajax('/auth/getMenuList', {}).then(res => {
+      // this.ajax('/myTask/getProjectList', {}).then(res => {
+        this.log('请求侧边栏:', res)
         if (res.code === 200) {
           that.slideMenuGroup = []
           that.slideMenuGroup2 = []
           that.slideMenu = []
           for (var i = 0; i < res.data.length; i++) {
             // 设置图标
-            switch (res.data[i].projectType) {
+            switch (res.data[i].menuName) {
               // case '集团战略':
               //   res.data[i].icon = 'ios-ribbon-outline'
               //   break
@@ -233,12 +238,13 @@ export default {
               default:
                 res.data[i].icon = 'md-analytics'
             }
-            if (res.data[i].projectType === '集团战略') {
+            if (res.data[i].menuName === '集团战略') {
               res.data[i].icon = ''
             }
-            if (res.data[i].projectType === '集团战略') {
+            if (res.data[i].menuName === '集团战略') {
               that.slideMenuGroup.push(res.data[i])
-            } else if (res.data[i].projectType === '商品管理') {
+              // that.log()
+            } else if (res.data[i].menuName === '商品管理') {
               that.slideMenuGroup2.push(res.data[i])
             } else {
               that.slideMenu.push(res.data[i])
@@ -248,29 +254,32 @@ export default {
           that.$store.state.slideMenu = that.slideMenu
           if (localStorage.getItem('generalMenuActive') !== '集团战略') {
             for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
-              if (that.$store.state.slideMenu[p].projectType === localStorage.getItem('generalMenuActive')) {
+              if (that.$store.state.slideMenu[p].menuName === localStorage.getItem('generalMenuActive')) {
                 that.$store.state.activeNavIndex = 'general_' + p
               }
             }
           }
           that.$store.commit('setRouterName', {
-            name: res.data[0].projectList[0] ? res.data[0].projectList[0].projectName : '',
-            id: res.data[0].projectList[0] ? res.data[0].projectList[0].projectUID : '',
+            name: res.data[0].dataList[0] ? res.data[0].dataList[0].menuName : '',
+            id: res.data[0].dataList[0] ? res.data[0].dataList[0].menuId : '',
             type: 1
           })
         }
       })
     },
     getProjectDetail: function (id, n, proType, proName) {
+      this.log('id:', id)
       if (proType === '集团战略') {
         localStorage.setItem('generalMenuActive', '集团战略')
         if (id) {
           this.$store.state.proId = id
+          this.$store.state.menuId = id
           this.$store.state.navType = n
           this.$router.push('/goodsDetail')
         }
       } else if (proType === '商品管理') {
         localStorage.setItem('generalMenuActive', '商品管理')
+        this.$store.state.menuId = id
         if (proName === '档案管理') {
           this.$router.push('/GoodsArchives')
         } else if (proName === '研发管理') {
@@ -282,7 +291,7 @@ export default {
         if (proName === '我的日程') {
           this.$router.push('/Schedule')
         } else if (proName === '我的动态') {
-          this.$router.push('/MyDep')
+          this.$router.push('/MyDepNew')
         } else if (proName === '我的任务') {
           this.$router.push('/MyTask')
         } else if (proName === '我的项目') {
