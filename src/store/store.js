@@ -8,7 +8,7 @@ const state = {
   sortType: '1',
   goodsName: '',
   spuCode: '',
-  permission: '1',
+  permission: '',
   endCostPrice: '',
   searchUserName: '',
   sortTypeName: '创建时间',

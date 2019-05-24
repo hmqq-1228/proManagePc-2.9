@@ -103,7 +103,7 @@ export default {
   computed: {
     refshPlan: function () {
       var that = this
-      console.log(that.$store.state.goPerfect)
+      that.log(that.$store.state.goPerfect)
       if (that.$store.state.refshPlan === true) {
         that.getNextPlanTask(this.nodeId)
       }
@@ -188,7 +188,7 @@ export default {
     },
     delCurrentPlan: function (id) {
       var that = this
-      console.log('id', id)
+      that.log('id', id)
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -209,7 +209,7 @@ export default {
     },
     delChildTask: function (id) {
       var that = this
-      console.log('id', id)
+      that.log('id', id)
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

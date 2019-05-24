@@ -160,7 +160,7 @@ export default {
           obj.Name = that.taskForm.value9[i].split('-')[0]
           obj.ID = that.taskForm.value9[i].split('-')[1]
           that.addMemPayload.hrocPeople.push(obj)
-          console.log('hrocPeople', that.addMemPayload.hrocPeople)
+          that.log('hrocPeople', that.addMemPayload.hrocPeople)
         }
         that.addMemPayload.projectUID = this.proId
         this.ajax('/myProject/addMembers', JSON.stringify(that.addMemPayload)).then(res => {

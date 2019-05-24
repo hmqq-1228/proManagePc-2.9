@@ -691,6 +691,7 @@ export default {
       var that = this
       console.log('that.$store.state.permission', that.$store.state.permission)
       that.ajax('/archives/getPermission', {menuId: that.$store.state.menuId}).then(res => {
+        that.log('store.permission', that.$store.state.permission)
         that.log('getPermission:', res)
         if (res.code === 200) {
           that.OptionList = res.data
@@ -793,6 +794,7 @@ export default {
     actionEmit: function (codeStr, isIni) {
       var that = this
       that.ajax('/archives/getDownByCategory', {categoryStr: codeStr}).then(res => {
+        that.log('getDownByCategory:', res)
         if (res.code === 200) {
           switch (res.data[0].typeName) {
             case '一级类目':

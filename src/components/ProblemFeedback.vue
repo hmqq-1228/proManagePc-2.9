@@ -294,7 +294,7 @@ export default {
       var that = this
       this.ajax('/question/getQuestionTypeSource', {menuId: that.$store.state.menuId}).then(res => {
         // this.log('选择所属项目:', res)
-        console.log('optionsTask', that.optionsTask)
+        that.log('optionsTask', that.optionsTask)
         if (res.code === 200) {
           that.optionsTask = res.data
           that.optionsValue = res.data[0].value
