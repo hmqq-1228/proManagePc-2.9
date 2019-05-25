@@ -1,9 +1,10 @@
 <template>
   <div id="app">
+    <div>{{getNavActive?'':''}}</div>
     <el-container>
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
-          <div>贝豪实业项目管理中心</div>
+          <div @click="tttest()">贝豪实业项目管理中心</div>
         </div>
       </el-header>
       <el-container>
@@ -18,6 +19,7 @@
             <el-row :style="{paddingRright: '10px', height: '100%', width: Width, overflowY: scrollY}">
               <el-col>
                 <el-menu
+                  :default-active="getNavActive"
                   :collapse-transition="false"
                   :collapse="isCollapse"
                   class="el-menu-vertical-demo"
@@ -25,20 +27,23 @@
                   background-color="#2f64a5"
                   text-color="#fff"
                   active-text-color="#ffd04b">
-                  <!--侧边栏 集团战略-->
-                  <div v-for="(name, index) in navList" :index="'group_' + index" v-bind:key="index">
-                    <el-submenu v-if="name.dataList.length > 0">
+                  <!--侧边栏-->
+                  <div v-for="(navItem, index) in navList" v-bind:key="index">
+                    <!--:index="'group_' + index"-->
+                    <el-submenu v-if="navItem.dataList.length > 0" :index="navItem.menuId.toString()">
                       <template slot="title">
-                        <Icon style="color: #ddd" size="18" type="ios-ribbon-outline" />
-                        <span>{{name.menuName}}</span>
+                        <Icon style="color: #ddd" size="18" :type="navItem.icon" />
+                        <span>{{navItem.menuName}}</span>
                       </template>
                       <el-menu-item-group>
-                        <el-menu-item v-for="(nameItem, index1) in name.dataList" :index="'group_' + index + '_' + index1" v-bind:key="index1" v-bind:title="nameItem.menuName">{{nameItem.menuName}}</el-menu-item>
+                        <!--:index="'group_' + index + '_' + index1"-->
+                        <el-menu-item v-for="(nameItemChild, index1) in navItem.dataList" :index="nameItemChild.menuId.toString()" v-bind:key="index1" @click="toNavDetail(nameItemChild)" v-bind:title="nameItemChild.menuName">{{nameItemChild.menuName}}</el-menu-item>
                       </el-menu-item-group>
                     </el-submenu>
-                    <el-menu-item v-if="name.dataList.length === 0">
-                      <Icon size="18" :type="name.icon" />
-                      <span slot="title">{{name.menuName}}</span>
+                    <!--:index="'general_' + index"-->
+                    <el-menu-item v-if="navItem.dataList.length === 0" :index="navItem.menuId.toString()" @click="toNavDetail(navItem)">
+                      <Icon size="18" :type="navItem.icon" />
+                      <span slot="title">{{navItem.menuName}}</span>
                     </el-menu-item>
                   </div>
                 </el-menu>
@@ -65,7 +70,8 @@ export default {
       Width: '270px',
       scrollY: 'auto',
       navList: [],
-      version: ''
+      version: '',
+      navActive: ''
     }
   },
   created: function () {
@@ -75,8 +81,23 @@ export default {
   watch: {
   },
   computed: {
+    getNavActive: function () {
+      return this.$store.state.navActive
+    }
   },
   methods: {
+    tttest: function () {
+      this.navActive = '3'
+    },
+    toNavDetail: function (navData) {
+      var that = this
+      that.log('navData:', navData)
+      if (navData.navType === '集团战略') {
+        this.$store.state.proId = navData.menuId
+      }
+      this.$store.state.menuId = navData.menuId
+      that.$router.push('/' + navData.path)
+    },
     getPmsVersion: function () {
       var that = this
       that.ajax('/myProject/getVersion', {}).then(res => {
@@ -99,6 +120,34 @@ export default {
     },
     generalSelect: function (menu) {
     },
+    NavItemSet: function (navData, pathType, navType, navPath) {
+      if (pathType === 'singlePath') {
+        for (var i = 0; i < navData.length; i++) {
+          navData[i].path = navPath
+          navData[i].navType = navType
+        }
+        return navData
+      } else {
+        for (var r = 0; r < navData.length; r++) {
+          if (navType === '商品管理') {
+            switch (navData[r].menuName) {
+              case '研发管理':
+                navData[r].path = 'GoodsManage'
+                break
+              case '档案管理':
+                navData[r].path = 'GoodsArchives'
+                break
+              case '产品小组':
+                navData[r].path = 'GroupAdmin'
+                break
+              default:
+                // h
+            }
+          }
+        }
+        return navData
+      }
+    },
     // 查询侧边栏
     queryMenu: function () {
       var that = this
@@ -107,44 +156,44 @@ export default {
         // this.ajax('/myTask/getProjectList', {}).then(res => {
         this.log('请求侧边栏:', res)
         if (res.code === 200) {
-          that.slideMenuGroup = []
-          that.slideMenuGroup2 = []
-          that.slideMenu = []
           for (var i = 0; i < res.data.length; i++) {
             // 设置图标
             switch (res.data[i].menuName) {
-              // case '集团战略':
-              //   res.data[i].icon = 'ios-ribbon-outline'
-              //   break
+              case '集团战略':
+                res.data[i].icon = 'ios-ribbon-outline'
+                res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'singlePath', '集团战略', 'goodsDetail')
+                break
               case '商品管理':
                 res.data[i].icon = 'md-cart'
-                break
-              case '商品档案':
-                res.data[i].icon = 'ios-create'
+                res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'mix', '商品管理', '')
                 break
               case '我的动态':
                 res.data[i].icon = 'md-chatboxes'
+                res.data[i].path = 'MyDepNew'
                 break
               case '我的日程':
                 res.data[i].icon = 'ios-calendar'
+                res.data[i].path = 'Schedule'
                 break
               case '我的项目':
                 res.data[i].icon = 'ios-paper'
+                res.data[i].path = 'MyPro'
                 break
               case '我的任务':
                 res.data[i].icon = 'md-analytics'
+                res.data[i].path = 'MyTask'
                 break
               case '问题反馈':
                 res.data[i].icon = 'md-help-circle'
+                res.data[i].path = 'ProblemFeedback'
                 break
               default:
                 res.data[i].icon = 'md-analytics'
             }
-            if (res.data[i].menuName === '集团战略') {
-              res.data[i].icon = ''
-            }
           }
           that.navList = res.data
+          that.$store.state.navList = res.data
+          that.log('navList:', that.navList)
         }
       })
     }
