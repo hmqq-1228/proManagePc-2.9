@@ -2,7 +2,7 @@
   <div class="Wellcome">
     <div>Wellcome</div>
     <div>{{querySlideMenuData?'':''}} {{querySlideMenuGroupData?'':''}}</div>
-    <Spin size="large" fix v-if="spinShow"></Spin>
+    <!--<Spin size="large" fix v-if="spinShow"></Spin>-->
   </div>
 </template>
 
