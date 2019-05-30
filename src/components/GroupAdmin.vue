@@ -160,8 +160,20 @@ export default {
   created () {
     this.queryGroupList()
     this.queryPermission()
+    this.getDataAuth()
   },
   methods: {
+    getDataAuth: function () {
+      var that = this
+      that.ajax('/group/getDataAuth', {}).then(res => {
+        that.log('GroupMsg:', res)
+        if (res.code === 200) {
+          console.log('that.CreateGroupMid2', res)
+        } else {
+          that.$message(res.msg)
+        }
+      })
+    },
     currentChange: function (num) {
       this.log('currentChange:', num)
       this.pageNumber = num
@@ -189,20 +201,6 @@ export default {
       })
     },
     createGroupCancel: function () {},
-    // createGroupSub2: function () {
-    //   var that = this
-    //   // that.DrawerMember = true
-    //   that.log('that.CreateGroupMid2666', that.CreateGroupMid2)
-    //   this.ajax('/group/editGroup', {userId: that.CreateGroupMid2, groupId: that.Gid, userName: that.CreateGroupSearchManager2, groupName: that.createGroupName2, description: that.createGroupDes2}).then(res => {
-    //     if (res.code === 200) {
-    //       that.queryGroupList()
-    //       // that.GroupList = res.data.list
-    //     } else {
-    //       that.$message(res.msg)
-    //     }
-    //   })
-    // },
-    // createGroupCancel2: function () {},
     createGroupBtn: function () {
       this.creatGroupShow = true
     },
@@ -231,30 +229,6 @@ export default {
         })
       }
     },
-    // queryNewGroupManager2 (queryString, cb) {
-    //   var that = this
-    //   if (queryString) {
-    //     that.NewGroupManagerPayload2.projectManager = queryString
-    //     this.ajax('/myProject/autoCompleteNames', that.NewGroupManagerPayload2).then(res => {
-    //       if (res.code === 200) {
-    //         var dddarr = []
-    //         if (res.data.length > 0) {
-    //           for (var i = 0; i < res.data.length; i++) {
-    //             var obj = {}
-    //             obj.value = res.data[i].Name + ' (' + res.data[i].jName + ')'
-    //             obj.userId = res.data[i].ID
-    //             dddarr.push(obj)
-    //           }
-    //           cb(dddarr)
-    //         } else {
-    //           var aaaddd = []
-    //           that.$message('未能搜索到该人员')
-    //           cb(aaaddd)
-    //         }
-    //       }
-    //     })
-    //   }
-    // },
     CreateGroupManagerSelect (item) {
       this.log('新建小组：', item)
       // this.CreateGroupMid = item.userId
