@@ -20,6 +20,7 @@
               <el-dropdown-item command="unstart">未开始任务</el-dropdown-item>
               <el-dropdown-item command="unfinish">进行中任务</el-dropdown-item>
               <el-dropdown-item command="finish">已完成任务</el-dropdown-item>
+              <el-dropdown-item command="pause">已暂停任务</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>

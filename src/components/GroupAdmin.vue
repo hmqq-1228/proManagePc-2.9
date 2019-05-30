@@ -17,12 +17,8 @@
     <div style="padding: 20px">
       <Card :bordered="true" style="margin-bottom: 15px;" v-for="groupItem in GroupList" v-bind:key="groupItem.id" @click.native="toGroupDetail(groupItem.id)">
         <p class="groupItemTit" slot="title">{{groupItem.name}}</p>
-        <a href="#" slot="extra" @click.prevent="updateGroup($event, groupItem.id)" style="margin-right: 20px;">
-          修改
-        </a>
-        <a href="#" slot="extra" @click.prevent="deleteGroup($event, groupItem.id)">
-          删除
-        </a>
+        <a href="#" slot="extra" @click.prevent="updateGroup($event, groupItem.id)" style="margin-right: 20px;">修改</a>
+        <a href="#" slot="extra" @click.prevent="deleteGroup($event, groupItem.id)">删除</a>
         <div style="display: flex; justify-content: space-between;">
           <div style="width: 50%"><p class="textIntro">{{groupItem.description}}</p></div>
           <div style="width: 50%; text-align: right; color: #888"><span>负责人: {{groupItem.userName}}</span><span style="margin-left: 15px;">创建时间: {{groupItem.createDt}}</span></div>

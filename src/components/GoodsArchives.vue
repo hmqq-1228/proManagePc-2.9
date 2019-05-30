@@ -681,7 +681,9 @@ export default {
       that.log('看看有没有放行')
       // string.trim()
     },
-    createArchivesCancel: function () {},
+    createArchivesCancel: function () {
+      this.creatArchivesShow = false
+    },
     createArchivesBtn: function () {
       this.creatArchivesShow = true
       this.formValidate.CreateGroupSearchManager = this.$store.state.userName + '(' + this.$store.state.jName + ')'

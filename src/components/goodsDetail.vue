@@ -195,10 +195,10 @@
           <el-tabs v-model="activeName">
               <el-tab-pane label="加任务" name="first">
                   <component v-bind:is="compArr.AddNewTask"
-                     fileFormId="GetUploadCount1"
-                     v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
-                     :nodeId="parentId"
-                     >
+                             fileFormId="GetUploadCount1"
+                             v-on:FilePreEmit="GetFilePreData"
+                             v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
+                             :nodeId="parentId">
                   </component>
               </el-tab-pane>
               <el-tab-pane label="加计划" name="second" v-bind:disabled="panshow">
@@ -494,7 +494,7 @@
 </template>
 
 <script>
-import FileUploadComp from './FileUploadComp.vue'
+import FileUploadComp from './CustomComp/FileUploadComp.vue'
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
 import ModifyPlan from './CustomComp/ModifyPlan.vue'
@@ -1248,7 +1248,9 @@ export default {
     },
     // 附件 附件预览
     GetFilePreData (obj) {
+      this.log(112233)
       if (obj.previewUrl && this.isImage(obj.fileName)) {
+        this.log('obj::', obj)
         this.showBigImage1(obj.previewUrl)
       }
     },
