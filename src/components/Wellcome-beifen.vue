@@ -1,7 +1,7 @@
 <template>
   <div class="Wellcome">
     <div>Wellcome</div>
-    <div>{{listenerNavList?'':''}}</div>
+    <div>{{querySlideMenuData?'':''}} {{querySlideMenuGroupData?'':''}}</div>
     <!--<Spin size="large" fix v-if="spinShow"></Spin>-->
   </div>
 </template>
@@ -17,28 +17,15 @@ export default {
     }
   },
   computed: {
-    listenerNavList: function () {
-      var that = this
-      if (that.$store.state.navList.length > 0) {
-        if (that.$store.state.navList[0].menuName === '集团战略') {
-          if (that.$store.state.proId) {
-            // j
-          } else {
-            that.$store.state.proId = that.$store.state.navList[0].dataList[0].menuId
-          }
-          that.$router.push('/goodsDetail')
-        } else if (that.$store.state.navList[0].menuName === '商品管理') {
-          that.log('商品管理dataList:', that.$store.state.navList[0].dataList)
-          that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
-        } else {
-          that.$router.push('/' + that.$store.state.navList[0].path)
-        }
-      }
-      return this.$store.state.navList
-    },
     querySlideMenuData: function () {
       var that = this
+      that.slideMenuData = this.$store.state.slideMenu
       return that.slideMenuData
+    },
+    querySlideMenuGroupData: function () {
+      var that = this
+      that.slideMenuGroupData = this.$store.state.slideMenuGroup
+      return that.$store.state.slideMenuGroup
     }
   },
   watch: {

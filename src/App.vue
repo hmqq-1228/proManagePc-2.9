@@ -1,14 +1,13 @@
 <template>
   <div id="app">
-    <div>{{getActiveNavIndex?'':''}} {{getMenuRefresh?'':''}}</div>
+    <div>{{getNavActive?'':''}}</div>
     <el-container>
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
-          <div @click="testUpload">贝豪实业项目管理中心</div>
+          <div @click="tttest()">贝豪实业项目管理中心</div>
         </div>
       </el-header>
       <el-container>
-        <!--height: 100%; background-color: #2f64a5-->
         <el-aside class="asideBox" v-bind:style="{width: asideWidth, height: '100%', backgroundColor: '#2f64a5'}">
           <div class="collapseBtnBox" v-on:click="collapseBtnClick">
             <div style="position: absolute; top: 45%;">
@@ -17,10 +16,10 @@
             </div>
           </div>
           <div class="hhhhhh" style="height: 100%; overflow: hidden;">
-            <!--:default-active="activeNavIndex"-->
             <el-row :style="{paddingRright: '10px', height: '100%', width: Width, overflowY: scrollY}">
               <el-col>
                 <el-menu
+                  :default-active="getNavActive"
                   :collapse-transition="false"
                   :collapse="isCollapse"
                   class="el-menu-vertical-demo"
@@ -28,33 +27,25 @@
                   background-color="#2f64a5"
                   text-color="#fff"
                   active-text-color="#ffd04b">
-                  <!--侧边栏 集团战略-->
-                  <!--v-for="(name, index) in slideMenuGroup" :-->
-                  <!--<el-submenu index="'group_55'">-->
-                  <el-submenu v-for="(name, index) in slideMenuGroup" :index="'group_' + index" v-bind:key="index">
-                    <template slot="title">
-                      <Icon style="color: #ddd" size="18" type="ios-ribbon-outline" />
-                      <span>{{name.menuName}}</span>
-                    </template>
-                    <el-menu-item-group>
-                      <!--<el-menu-item v-for="(nameItem, index1) in name.dataList" :index="'group_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.projectUID, 1,name.menuName, nameItem.menuName)" v-bind:title="nameItem.menuName">{{nameItem.menuName}}</el-menu-item>-->
-                      <el-menu-item v-for="(nameItem, index1) in name.dataList" :index="'group_' + index + '_' + index1" v-bind:key="index1" @click="getProjectDetail(nameItem.menuId, 1,name.menuName, nameItem.menuName)" v-bind:title="nameItem.menuName">{{nameItem.menuName}}</el-menu-item>
-                    </el-menu-item-group>
-                  </el-submenu>
-                  <el-submenu v-for="(name, index5) in slideMenuGroup2" :index="'up_' + index5" v-bind:key="'up_' + index5">
-                    <template slot="title">
-                      <Icon style="color: #ddd" size="18" type="md-cart" />
-                      <span>{{name.menuName}}</span>
-                    </template>
-                    <el-menu-item-group>
-                      <el-menu-item v-for="(nameItem, index3) in name.dataList" :index="'up_' + index5 + '_' + index3" v-bind:key="index3" @click="getProjectDetail(nameItem.menuId, 1,name.menuName, nameItem.menuName)" v-bind:title="nameItem.menuName">{{nameItem.menuName}}</el-menu-item>
-                    </el-menu-item-group>
-                  </el-submenu>
-                  <!--侧边栏 非集团战略-->
-                  <el-menu-item v-for="(name, index2) in slideMenu" :index="'general_' + index2" v-bind:key="name.menuName + '-' + index2" @click="toMenu(name.menuName, name.menuId)">
-                    <Icon size="18" :type="name.icon" />
-                    <span slot="title">{{name.menuName}}</span>
-                  </el-menu-item>
+                  <!--侧边栏-->
+                  <div v-for="(navItem, index) in navList" v-bind:key="index">
+                    <!--:index="'group_' + index"-->
+                    <el-submenu v-if="navItem.dataList.length > 0" :index="navItem.menuId.toString()">
+                      <template slot="title">
+                        <Icon style="color: #ddd" size="18" :type="navItem.icon" />
+                        <span>{{navItem.menuName}}</span>
+                      </template>
+                      <el-menu-item-group>
+                        <!--:index="'group_' + index + '_' + index1"-->
+                        <el-menu-item v-for="(nameItemChild, index1) in navItem.dataList" :index="nameItemChild.menuId.toString()" v-bind:key="index1" @click="toNavDetail(nameItemChild)" v-bind:title="nameItemChild.menuName">{{nameItemChild.menuName}}</el-menu-item>
+                      </el-menu-item-group>
+                    </el-submenu>
+                    <!--:index="'general_' + index"-->
+                    <el-menu-item v-if="navItem.dataList.length === 0" :index="navItem.menuId.toString()" @click="toNavDetail(navItem)">
+                      <Icon size="18" :type="navItem.icon" />
+                      <span slot="title">{{navItem.menuName}}</span>
+                    </el-menu-item>
+                  </div>
                 </el-menu>
               </el-col>
             </el-row>
@@ -74,48 +65,47 @@ export default {
   name: 'App',
   data () {
     return {
-      activeNavIndex: this.$store.state.activeNavIndex,
       isCollapse: false,
       asideWidth: '250px',
       Width: '270px',
       scrollY: 'auto',
-      // 侧边栏 集团战略
-      slideMenuGroup: [],
-      slideMenuGroup2: [],
-      // 非集团战略的侧边栏
-      slideMenu: [],
-      proId: '',
-      nav: 1,
-      count: 0,
-      version: ''
+      navList: [],
+      version: '',
+      navActive: ''
     }
   },
   created: function () {
-    this.queryMenu()
     this.getPmsVersion()
-    this.getUserInfo()
+    this.queryMenu()
   },
   watch: {
-    activeNavIndex (val, old) {
-      // this.log('activeNavIndex:', val)
-    }
   },
   computed: {
-    getMenuRefresh: function () {
-      var that = this
-      if (this.$store.state.menuRefresh) {
-        that.$store.state.menuRefresh = false
-        this.queryMenu()
-      }
-      return this.$store.state.menuRefresh
-    },
-    getActiveNavIndex: function () {
-      var that = this
-      that.activeNavIndex = this.$store.state.activeNavIndex
-      return this.$store.state.activeNavIndex
+    getNavActive: function () {
+      return this.$store.state.navActive
     }
   },
   methods: {
+    tttest: function () {
+      this.navActive = '3'
+    },
+    toNavDetail: function (navData) {
+      var that = this
+      that.log('navData:', navData)
+      if (navData.navType === '集团战略') {
+        this.$store.state.proId = navData.menuId
+      }
+      this.$store.state.menuId = navData.menuId
+      that.$router.push('/' + navData.path)
+    },
+    getPmsVersion: function () {
+      var that = this
+      that.ajax('/myProject/getVersion', {}).then(res => {
+        if (res.code === 200) {
+          that.version = res.data
+        }
+      })
+    },
     collapseBtnClick: function () {
       this.isCollapse = !this.isCollapse
       if (!this.isCollapse) {
@@ -128,73 +118,34 @@ export default {
         this.scrollY = 'visible'
       }
     },
-    getUserInfo: function () {
-      var that = this
-      this.ajax('/myProject/getUserInfo', {}).then(res => {
-        if (res.code === 200) {
-          that.$store.state.userId = res.data.ID
-          that.$store.state.userName = res.data.Name
-          that.$store.state.userLoginInfo = res.data
-          that.$store.state.jName = res.data.jName
-        }
-      })
-    },
-    setActiveNavIndex: function (typename) {
-      var that = this
-      for (var i = 0; i < that.$store.state.slideMenu.length; i++) {
-        if (that.$store.state.slideMenu[i].menuName === typename) {
-          that.$store.state.activeNavIndex = 'general_' + i
-          localStorage.setItem('generalMenuActive', typename)
-        }
-      }
-    },
     generalSelect: function (menu) {
     },
-    getPmsVersion: function () {
-      var that = this
-      that.ajax('/myProject/getVersion', {}).then(res => {
-        if (res.code === 200) {
-          that.version = res.data
+    NavItemSet: function (navData, pathType, navType, navPath) {
+      if (pathType === 'singlePath') {
+        for (var i = 0; i < navData.length; i++) {
+          navData[i].path = navPath
+          navData[i].navType = navType
         }
-      })
-    },
-    testUpload: function () {
-      this.$router.push('/TTEST')
-    },
-    toMenu: function (menuName, menuId) {
-      var that = this
-      this.$store.state.menuId = menuId
-      switch (menuName) {
-        case '商品管理':
-          localStorage.setItem('generalMenuActive', '商品管理')
-          that.$router.push('/GoodsManage')
-          break
-        case '商品档案':
-          localStorage.setItem('generalMenuActive', '商品档案')
-          that.$router.push('/GoodsArchives')
-          break
-        case '我的项目':
-          localStorage.setItem('generalMenuActive', '我的项目')
-          that.$router.push('/MyPro')
-          break
-        case '我的日程':
-          localStorage.setItem('generalMenuActive', '我的日程')
-          that.$router.push('/Schedule')
-          break
-        case '我的动态':
-          localStorage.setItem('generalMenuActive', '我的动态')
-          that.$router.push('/MyDepNew')
-          break
-        case '我的任务':
-          localStorage.setItem('generalMenuActive', '我的任务')
-          that.$router.push('/MyTaskNew')
-          break
-        case '问题反馈':
-          localStorage.setItem('generalMenuActive', '问题反馈')
-          that.$router.push('/ProblemFeedback')
-          break
-        default:
-          this.log('未找到')
+        return navData
+      } else {
+        for (var r = 0; r < navData.length; r++) {
+          if (navType === '商品管理') {
+            switch (navData[r].menuName) {
+              case '研发管理':
+                navData[r].path = 'GoodsManage'
+                break
+              case '档案管理':
+                navData[r].path = 'GoodsArchives'
+                break
+              case '产品小组':
+                navData[r].path = 'GroupAdmin'
+                break
+              default:
+                // h
+            }
+          }
+        }
+        return navData
       }
     },
     // 查询侧边栏
@@ -202,115 +153,49 @@ export default {
       var that = this
       // auth/getMenuList
       this.ajax('/auth/getMenuList', {}).then(res => {
-      // this.ajax('/myTask/getProjectList', {}).then(res => {
+        // this.ajax('/myTask/getProjectList', {}).then(res => {
         this.log('请求侧边栏:', res)
         if (res.code === 200) {
-          that.slideMenuGroup = []
-          that.slideMenuGroup2 = []
-          that.slideMenu = []
           for (var i = 0; i < res.data.length; i++) {
             // 设置图标
             switch (res.data[i].menuName) {
-              // case '集团战略':
-              //   res.data[i].icon = 'ios-ribbon-outline'
-              //   break
+              case '集团战略':
+                res.data[i].icon = 'ios-ribbon-outline'
+                res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'singlePath', '集团战略', 'goodsDetail')
+                break
               case '商品管理':
                 res.data[i].icon = 'md-cart'
-                break
-              case '商品档案':
-                res.data[i].icon = 'ios-create'
+                res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'mix', '商品管理', '')
                 break
               case '我的动态':
                 res.data[i].icon = 'md-chatboxes'
+                res.data[i].path = 'MyDepNew'
                 break
               case '我的日程':
                 res.data[i].icon = 'ios-calendar'
+                res.data[i].path = 'Schedule'
                 break
               case '我的项目':
                 res.data[i].icon = 'ios-paper'
+                res.data[i].path = 'MyPro'
                 break
               case '我的任务':
                 res.data[i].icon = 'md-analytics'
+                res.data[i].path = 'MyTaskNew'
                 break
               case '问题反馈':
                 res.data[i].icon = 'md-help-circle'
+                res.data[i].path = 'ProblemFeedback'
                 break
               default:
                 res.data[i].icon = 'md-analytics'
             }
-            if (res.data[i].menuName === '集团战略') {
-              res.data[i].icon = ''
-            }
-            if (res.data[i].menuName === '集团战略') {
-              that.slideMenuGroup.push(res.data[i])
-              // that.log()
-            } else if (res.data[i].menuName === '商品管理') {
-              that.slideMenuGroup2.push(res.data[i])
-            } else {
-              that.slideMenu.push(res.data[i])
-            }
           }
-          that.$store.state.slideMenuGroup = that.slideMenuGroup
-          that.$store.state.slideMenu = that.slideMenu
-          if (localStorage.getItem('generalMenuActive') !== '集团战略') {
-            for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
-              if (that.$store.state.slideMenu[p].menuName === localStorage.getItem('generalMenuActive')) {
-                that.$store.state.activeNavIndex = 'general_' + p
-              }
-            }
-          }
-          that.$store.commit('setRouterName', {
-            name: res.data[0].dataList[0] ? res.data[0].dataList[0].menuName : '',
-            id: res.data[0].dataList[0] ? res.data[0].dataList[0].menuId : '',
-            type: 1
-          })
+          that.navList = res.data
+          that.$store.state.navList = res.data
+          that.log('navList:', that.navList)
         }
       })
-    },
-    getProjectDetail: function (id, n, proType, proName) {
-      this.log('id:', id)
-      if (proType === '集团战略') {
-        localStorage.setItem('generalMenuActive', '集团战略')
-        if (id) {
-          this.$store.state.proId = id
-          this.$store.state.menuId = id
-          this.$store.state.navType = n
-          this.$router.push('/goodsDetail')
-        }
-      } else if (proType === '商品管理') {
-        localStorage.setItem('generalMenuActive', '商品管理')
-        this.$store.state.menuId = id
-        if (proName === '档案管理') {
-          this.$router.push('/GoodsArchives')
-        } else if (proName === '研发管理') {
-          this.$router.push('/GoodsManage')
-        } else if (proName === '产品小组') {
-          this.$router.push('/GroupAdmin')
-        }
-      } else {
-        if (proName === '我的日程') {
-          this.$router.push('/Schedule')
-        } else if (proName === '我的动态') {
-          this.$router.push('/MyDepNew')
-        } else if (proName === '我的任务') {
-          this.$router.push('/MyTask')
-        } else if (proName === '我的项目') {
-          this.$router.push('/MyPro')
-        } else if (proName === '商品管理') {
-          this.$router.push('/GoodsManage')
-        } else if (proName === '商品档案') {
-          this.$router.push('/GoodsArchives')
-        } else if (proName === '问题反馈') {
-          this.$router.push('/ProblemFeedback')
-        } else {
-          this.activeNavIndex = ''
-          this.$store.state.activeNavIndex = ''
-          this.$store.state.proId = id
-        }
-      }
-    },
-    toDongtai: function () {
-      this.$router.push('/dongtai')
     }
   }
 }

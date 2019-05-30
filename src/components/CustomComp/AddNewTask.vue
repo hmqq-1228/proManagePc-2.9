@@ -74,7 +74,12 @@
           <div class="fileUploadCao">
             <div class="selectLeft">
               <!-- 任务分解 -->
-              <component v-bind:is="compArr.FileUploadComp" fileFormId="GetUploadCount2" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+              <component v-bind:is="compArr.FileUploadComp"
+                         fileFormId="GetUploadCount2"
+                         v-bind:clearInfo="IsClear"
+                         v-on:FilePreEmit="GetFilePreData"
+                         v-on:FileDataEmit="GetFileInfo">
+              </component>
             </div>
             <div class="selectRight2">
               <div class="selectMoreInfo" v-on:click="moreClick2()">
@@ -212,6 +217,14 @@ export default {
     this.getDefultTime()
   },
   methods: {
+    // 附件 附件预览
+    GetFilePreData (obj) {
+      this.log('GetFilePreData:', obj)
+      this.$emit('FilePreEmit', obj)
+      // if (obj.previewUrl && this.isImage(obj.fileName)) {
+      //   this.showBigImage1(obj.previewUrl)
+      // }
+    },
     getDefultTime () {
       var that = this
       that.ajax('/myProject/getPlanOrTaskDetail', {id: that.nodeId}).then(res => {

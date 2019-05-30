@@ -138,7 +138,7 @@
                 <!--<Icon class="haha" id="groupNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({groupName: groupNameVal}, 'groupNameVal')" type="md-checkmark-circle" slot="suffix" />-->
               <!--</i-input>-->
               <div class="jiagouInfo" v-show="!groupId && baseInfoEditStatus">请先创建产品小组</div>
-              <div class="jiagou" v-show="groupId && baseInfoEditStatus" @click="member">成员管理</div>
+              <div class="jiagou" v-show="groupId && baseInfoEditStatus && groupManageShow > 0" @click="member">成员管理</div>
             </div>
           </div>
         </div>
@@ -756,9 +756,11 @@ export default {
       pinpaiNameVal: 'KUB可优比',
       pinpaiCodeVal: '',
       // 基本信息 产品小组
-      groupNameVal: '学爬健身组',
+      groupNameVal: '',
       // 基本信息 小组ID
       groupId: '',
+      // 返回的小组id是否存在
+      groupManageShow: '',
       // 基本信息 spu编码
       spuCodeVal: 'KUB-0501',
       // 基本信息 商品ID
@@ -1409,6 +1411,8 @@ export default {
           that.pinpaiNameVal = res.data.brandName
           that.groupNameVal = res.data.groupName
           that.groupId = res.data.groupId
+          // if () {}
+          that.groupManageShow = res.data.groupId ? 1 : 0
           that.spuCodeVal = res.data.spuCode
           that.goodsIdVal = res.data.spuGoodsId
           that.pinpaiCodeVal = res.data.brandCode
