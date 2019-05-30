@@ -29,6 +29,21 @@
         <div style="color: #409EFF;display: inline-block;cursor: pointer;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>;&nbsp;&nbsp;
       </span>
     </div>
+    <!-- 图片预览 -->
+    <el-dialog title="截图上传" :visible.sync="slipPreShow" width="30%">
+      <div class="showImg">
+        <img v-bind:src="slipPreSrc" alt>
+      </div>
+      <!--<div class="diaFooter" style="text-align: right">-->
+        <!--<el-button>取消</el-button>-->
+        <!--<el-button type="primary">确定</el-button>-->
+      <!--</div>-->
+      <!--<span>这是一段信息</span>-->
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="slipPreShow = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="slipImgUpload(base64Data)">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -76,7 +91,10 @@ export default {
       fileListComment: [],
       fileListCommentLen: 0,
       slipKK: false,
-      hhhh: ''
+      hhhh: '',
+      slipPreSrc: '',
+      slipPreShow: false,
+      base64Data: ''
     }
   },
   created () {
@@ -108,9 +126,10 @@ export default {
         // 文件读取完成时触发
         reader.onload = function (event) {
           // 获取base64流
-          // that.base64Str = event.target.result
-          // that.log('base64Str:', that.base64Str)
-          that.slipImgUpload(event.target.result)
+          that.slipPreSrc = event.target.result
+          that.slipPreShow = true
+          that.base64Data = event.target.result
+          // that.slipImgUpload(event.target.result)
         }
       }
     })
@@ -192,6 +211,7 @@ export default {
       var that = this
       that.ajax('/file/uploadFileAjaxCopy', {baseData: baseData}).then(res => {
         if (res.code === 200) {
+          that.slipPreShow = false
           // that.log('uploadFileAjax:', data)
           // that.attachmentId2 = data.data.attachmentId
           var obj = {

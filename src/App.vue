@@ -181,7 +181,7 @@ export default {
                 break
               case '我的任务':
                 res.data[i].icon = 'md-analytics'
-                res.data[i].path = 'MyTask'
+                res.data[i].path = 'MyTaskNew'
                 break
               case '问题反馈':
                 res.data[i].icon = 'md-help-circle'
