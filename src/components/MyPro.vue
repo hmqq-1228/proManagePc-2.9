@@ -26,34 +26,57 @@
           <TabPane label="已暂停" name="4"></TabPane>
         </Tabs>
       </div>
-      <div class="content">
-        <div class="cntItem" v-for="item in projectViewData" :key="item.projectUID">
-          <div class="cntItemLeft" @click="toProDetail(item.projectUID)">
-            <div class="proTit">项目名称: {{item.projectName}}</div>
-            <div class="proPrincipals">负责人: {{item.projectManager}}</div>
-            <div class="proDuration">{{item.startDate}} 至 {{item.endDate}}</div>
-          </div>
-          <div class="cntItemRight">
-            <div class="proType"><span>项目类型: {{item.projectType}}</span></div>
-            <div class="proType">
-              <div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum < 0 && item.state != '3'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(item.dayNum)}}</span> 天</div>
-              <div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum >= 0 && item.state != '3'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{item.dayNum}}</span> 天</div>
-              <div style="text-align: right;font-size: 12px;color: #3a8ee6;font-weight: bold;display: inline-block" v-if="item.state === '3'">项目已完成</div>
-            </div>
-            <div class="proPregress">
-              <i-circle :percent="item.proportion" :size="60">
-                <span class="demo-Circle-inner" v-if="item.proportion < 50" style="font-size:18px;color: chocolate;">{{item.proportion}}%</span>
-                <span class="demo-Circle-inner" v-if="item.proportion >= 50 && item.proportion < 80" style="font-size:18px;color: #409EFF;">{{item.proportion}}%</span>
-                <span class="demo-Circle-inner" v-if="item.proportion >= 80" style="font-size:18px;color: #13ce66;">{{item.proportion}}%</span>
-              </i-circle>
-            </div>
-            <div style="text-align: right; padding-right: 30px;">
-              <Button size="small" v-if="item.timeoutButton === 1" style="margin-left: 15px;" @click="stopePro(item.projectUID)">暂停</Button>
-              <Button size="small" v-if="item.timeoutButton === 2" style="margin-left: 15px;" @click="startPro(item.projectUID)">开启</Button>
-              <Button size="small" @click="responsePro(item.projectUID)">回复</Button>
-              <Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID, item.projectType)">删除</Button>
-            </div>
-            <div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
+      <div class="content" style="margin-top: 15px;">
+        <!--<div class="cntItem" v-if="false" v-for="item in projectViewData" :key="item.projectUID">-->
+          <!--<div class="cntItemLeft" @click="toProDetail(item.projectUID)">-->
+            <!--<div class="proTit">项目名称: {{item.projectName}}</div>-->
+            <!--<div class="proPrincipals">负责人: {{item.projectManager}}</div>-->
+            <!--<div class="proDuration">{{item.startDate}} 至 {{item.endDate}}</div>-->
+          <!--</div>-->
+          <!--<div class="cntItemRight">-->
+            <!--<div class="proType"><span>项目类型: {{item.projectType}}</span></div>-->
+            <!--<div class="proType">-->
+              <!--<div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum < 0 && item.state != '3'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(item.dayNum)}}</span> 天</div>-->
+              <!--<div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum >= 0 && item.state != '3'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{item.dayNum}}</span> 天</div>-->
+              <!--<div style="text-align: right;font-size: 12px;color: #3a8ee6;font-weight: bold;display: inline-block" v-if="item.state === '3'">项目已完成</div>-->
+            <!--</div>-->
+            <!--<div class="proPregress">-->
+              <!--<i-circle :percent="item.proportion" :size="60">-->
+                <!--<span class="demo-Circle-inner" v-if="item.proportion < 50" style="font-size:18px;color: chocolate;">{{item.proportion}}%</span>-->
+                <!--<span class="demo-Circle-inner" v-if="item.proportion >= 50 && item.proportion < 80" style="font-size:18px;color: #409EFF;">{{item.proportion}}%</span>-->
+                <!--<span class="demo-Circle-inner" v-if="item.proportion >= 80" style="font-size:18px;color: #13ce66;">{{item.proportion}}%</span>-->
+              <!--</i-circle>-->
+            <!--</div>-->
+            <!--<div style="text-align: right; padding-right: 30px;">-->
+              <!--<Button size="small" v-if="item.timeoutButton === 1" style="margin-left: 15px;" @click="stopePro(item.projectUID)">暂停</Button>-->
+              <!--<Button size="small" v-if="item.timeoutButton === 2" style="margin-left: 15px;" @click="startPro(item.projectUID)">开启</Button>-->
+              <!--<Button size="small" @click="responsePro(item.projectUID)">回复</Button>-->
+              <!--<Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID, item.projectType)">删除</Button>-->
+            <!--</div>-->
+            <!--<div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <div style="padding: 0px;" class="clear">
+          <div style="margin-bottom: 15px; float: left; width: 50%; min-width: 571px; padding-right: 20px;box-sizing: border-box;" v-for="item in projectViewData" :key="item.projectUID">
+            <Card :bordered="true">
+              <div class="groupItemTit" slot="title" :title="item.projectName">
+                <div class="groupItemTitCnt" @click="toProDetail(item.projectUID)"><span style="color: #888; font-weight: normal">{{item.projectType}}</span>：{{item.projectName}}</div>
+                <div class="taskStateBiaoNew" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
+              </div>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.prevent="stopePro(item.projectUID)" style="margin-left: 6px;">暂停</a>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.prevent="startPro(item.projectUID)" style="margin-left: 6px;">开启</a>
+              <a href="#" slot="extra" @click.prevent="responsePro(item.projectUID)" style="margin-left: 6px;">回复</a>
+              <a href="#" slot="extra" v-if="item.isDelProject" @click.prevent="delPro(item.projectUID, item.projectType)" style="margin-left: 6px;">删除</a>
+              <div style="display: flex; justify-content: space-between;">
+                <div style="width: 50%; display: flex;">
+                  <div class="textIntro">负责人：{{item.projectManager}}</div>
+                  <div style="width: 150px; margin-left: 10px;">
+                    <Progress :percent="item.proportion" :stroke-width="5" status="active" />
+                  </div>
+                </div>
+                <div style="width: 50%; text-align: right; color: #888"><span style="margin-left: 15px;">{{item.startDate}} 至 {{item.endDate}}</span></div>
+              </div>
+            </Card>
           </div>
         </div>
         <div class="nodata" v-if="projectViewData.length === 0">
@@ -69,8 +92,8 @@
       center>
       <span style="font-size: 15px;">请选择您要暂停项目的方式</span>
       <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="stopeProject(stopeId, '1')">只暂停项目</el-button>
-    <el-button type="primary" @click="stopeProject(stopeId, '2')">暂停项目和任务</el-button>
+    <el-button type="primary" size="mini" @click="stopeProject(stopeId, '1')">只暂停项目</el-button>
+    <el-button type="primary" size="mini" @click="stopeProject(stopeId, '2')">暂停项目和任务</el-button>
   </span>
     </el-dialog>
     <el-dialog
@@ -80,8 +103,8 @@
       center>
       <span style="font-size: 15px;">确定开启项目且修改时间吗？</span>
       <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="startProject(stopeId)">开启不修改时间</el-button>
-    <el-button type="primary" @click="startEditProject()">开启修改时间</el-button>
+    <el-button type="primary" size="mini" @click="startProject(stopeId)">开启不修改时间</el-button>
+    <el-button type="primary" size="mini" @click="startEditProject()">开启修改时间</el-button>
   </span>
     </el-dialog>
     <!--新建项目 对话框-->
@@ -213,12 +236,7 @@
       <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
     </el-dialog>
     <!-- 完善产品信息 -->
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogGoods"
-      width="30%"
-      center
-    >
+    <el-dialog title="提示" :visible.sync="dialogGoods" width="30%" center>
       <span>是否完善产品信息？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="jumpInfo">跳过</el-button>
@@ -1354,11 +1372,45 @@ export default {
 }
 </script>
 
+<style>
+  .ivu-card{
+    box-shadow:0 1px 6px rgba(0,0,0,.1)
+  }
+  .ivu-card:hover{
+    box-shadow:0 1px 6px rgba(45,140,240,.6)
+  }
+  .ivu-card .groupItemTit{
+    display: flex;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .ivu-card:hover .groupItemTit{
+    color: #2d8cf0;
+  }
+</style>
 <style scoped>
 .MyProCnt{
   min-width: 600px;
   /*max-width: 1000px;*/
 }
+  .clear:after{ content: ""; display: block;height: 0;visibility: hidden;clear: both;}
+  .groupItemTit{
+    color: #555;
+  }
+  .groupItemTitCnt{
+    max-width:250px;
+    font-size: 16px;
+    overflow:hidden;
+    cursor: pointer;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .textIntro{
+    width: 100px;
+    color: #888;
+  }
   .MyProHeader{
     display: flex;
     padding: 20px 10px;
@@ -1451,9 +1503,32 @@ export default {
   .taskStateBiao.finished{
     background-color: #3a8ee6;
   }
-.taskStateBiao.stoped{
-  background-color: #e97474;
-}
+  .taskStateBiao.stoped{
+    background-color: #e97474;
+  }
+  .taskStateBiaoNew{
+    text-align: center;
+    padding: 0px 5px;
+    font-size: 12px;
+    margin-left: 10px;
+    border-radius: 6px;
+  }
+  .taskStateBiaoNew.noStart{
+    color: #ffb400;
+    border: 1px solid #ffb400;
+  }
+  .taskStateBiaoNew.isDoing{
+    color: #13ce66;
+    border: 1px solid #13ce66;
+  }
+  .taskStateBiaoNew.finished{
+    color: #3a8ee6;
+    border: 1px solid #3a8ee6;
+  }
+  .taskStateBiaoNew.stoped{
+    color: #e97474;
+    border: 1px solid #e97474;
+  }
   /*新建模板*/
   .cartHover:hover{
     background-color: #f5f8f8;
