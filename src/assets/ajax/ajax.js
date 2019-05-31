@@ -130,6 +130,18 @@ const install = function (Vue, options) {
     var sec = myDate.getSeconds() < 10 ? '0' + myDate.getSeconds() : myDate.getSeconds()
     return year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec
   }
+  Vue.prototype.getBeforeTime = function (msecond, btime) {
+    var myDate = btime ? new Date(btime) : new Date()
+    var laterTimeStamp = myDate.getTime() - msecond
+    myDate = new Date(laterTimeStamp)
+    var year = myDate.getFullYear()
+    var month = (myDate.getMonth() + 1) < 10 ? '0' + (myDate.getMonth() + 1) : (myDate.getMonth() + 1)
+    var date = myDate.getDate() < 10 ? '0' + myDate.getDate() : myDate.getDate()
+    var hour = myDate.getHours() < 10 ? '0' + myDate.getHours() : myDate.getHours()
+    var min = myDate.getMinutes() < 10 ? '0' + myDate.getMinutes() : myDate.getMinutes()
+    var sec = myDate.getSeconds() < 10 ? '0' + myDate.getSeconds() : myDate.getSeconds()
+    return year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec
+  }
   // 常规时间格式 兼容苹果的时间格式 replace(/-/g, '/')
   Vue.prototype.dateCompatibility = function (baseDate) {
     var finalDate = ''
