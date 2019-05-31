@@ -4,11 +4,13 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  navList: [],
+  navActive: '4',
   codeArr: [],
   sortType: '1',
   goodsName: '',
   spuCode: '',
-  permission: '1',
+  permission: '',
   endCostPrice: '',
   searchUserName: '',
   sortTypeName: '创建时间',

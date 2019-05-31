@@ -521,7 +521,7 @@ export default {
       let before = content1.substring(0, that.position)
       let after = content2.substring(that.position)
       that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
-      console.log(that.peopleList)
+      that.log(that.peopleList)
     },
     // 获取默认的人员
     getPeople () {

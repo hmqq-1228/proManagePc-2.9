@@ -681,7 +681,9 @@ export default {
       that.log('看看有没有放行')
       // string.trim()
     },
-    createArchivesCancel: function () {},
+    createArchivesCancel: function () {
+      this.creatArchivesShow = false
+    },
     createArchivesBtn: function () {
       this.creatArchivesShow = true
       this.formValidate.CreateGroupSearchManager = this.$store.state.userName + '(' + this.$store.state.jName + ')'
@@ -691,6 +693,7 @@ export default {
       var that = this
       console.log('that.$store.state.permission', that.$store.state.permission)
       that.ajax('/archives/getPermission', {menuId: that.$store.state.menuId}).then(res => {
+        that.log('store.permission', that.$store.state.permission)
         that.log('getPermission:', res)
         if (res.code === 200) {
           that.OptionList = res.data
@@ -793,6 +796,7 @@ export default {
     actionEmit: function (codeStr, isIni) {
       var that = this
       that.ajax('/archives/getDownByCategory', {categoryStr: codeStr}).then(res => {
+        that.log('getDownByCategory:', res)
         if (res.code === 200) {
           switch (res.data[0].typeName) {
             case '一级类目':

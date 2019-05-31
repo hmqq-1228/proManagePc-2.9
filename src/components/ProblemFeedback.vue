@@ -47,25 +47,49 @@
       </div>
     </div>
     <!---->
-    <div class="taskBox" style="box-sizing: border-box;">
-      <div class="taskList" v-if="myTaskList.length > 0" v-for="(myTask, index) in myTaskList" :key="index" @click="toDetail(myTask.id)" style="cursor: pointer;">
-        <div class="taskItem">
-          <div><span style="font-size: 16px;color: #409EFF;">{{myTask.questionName}}</span></div>
-          <div class="taskName"><Icon type="ios-flag" color="#fd8e6b" size="20"/>{{myTask.typeName}}</div>
-        </div>
-        <div class="taskMsg">
-          <div><Icon type="md-contact" size="20"/><span style="padding-left: 8px;">{{myTask.userName}}</span></div>
-          <div style="line-height: 20px;">
-            <Icon type="md-alarm" size="18"/>
-            <span style="padding-left: 8px;float: right;margin-top: 2px;">{{myTask.queStartDate.split(' ')[0]}} - {{myTask.queFinishDate.split(' ')[0]}}</span>
+    <!--<div class="taskBox" style="box-sizing: border-box;">-->
+      <!--<div class="taskList" v-if="myTaskList.length > 0" v-for="(myTask, index) in myTaskList" :key="index" @click="toDetail(myTask.id)" style="cursor: pointer;">-->
+        <!--<div class="taskItem">-->
+          <!--<div><span style="font-size: 16px;color: #409EFF;">{{myTask.questionName}}</span></div>-->
+          <!--<div class="taskName"><Icon type="ios-flag" color="#fd8e6b" size="20"/>{{myTask.typeName}}</div>-->
+        <!--</div>-->
+        <!--<div class="taskMsg">-->
+          <!--<div><Icon type="md-contact" size="20"/><span style="padding-left: 8px;">{{myTask.userName}}</span></div>-->
+          <!--<div style="line-height: 20px;">-->
+            <!--<Icon type="md-alarm" size="18"/>-->
+            <!--<span style="padding-left: 8px;float: right;margin-top: 2px;">{{myTask.queStartDate.split(' ')[0]}} - {{myTask.queFinishDate.split(' ')[0]}}</span>-->
+          <!--</div>-->
+          <!--<div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum < 0 && myTask.status != '2'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(myTask.dayNum)}}</span> 天</div>-->
+          <!--<div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum >= 0 && myTask.status != '2'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{myTask.dayNum}}</span> 天</div>-->
+          <!--<div style="text-align: right;margin-top: 4px;font-size: 12px;color: #3a8ee6;font-weight: bold;" v-if="myTask.status === '2'">问题已解决</div>-->
+        <!--</div>-->
+        <!--<div v-bind:class="'taskTag'+ myTask.status">{{myTask.statusStr}}</div>-->
+      <!--</div>-->
+      <!--<div class="noDate" v-if="myTaskList.length === 0">暂无符合该条件的数据~</div>-->
+    <!--</div>-->
+    <!---->
+    <div style="padding: 0px; margin-top: 30px;" class="clear">
+      <div class="cardWrap" v-for="(myTask, index) in myTaskList" :key="index" @click="toDetail(myTask.id)">
+        <Card :bordered="true">
+          <div class="groupItemTit" slot="title" :title="myTask.questionName">
+            <div class="groupItemTitCnt">
+              <span style="color: #888; font-weight: normal">问题:</span>{{myTask.questionName}}
+            </div>
+            <div class="taskStateBiaoNew" v-bind:class="myTask.tagStyle">{{myTask.statusStr}}</div>
           </div>
-          <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum < 0 && myTask.status != '2'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(myTask.dayNum)}}</span> 天</div>
-          <div style="text-align: right;margin-top: 4px;font-size: 12px;" v-if="myTask.dayNum >= 0 && myTask.status != '2'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{myTask.dayNum}}</span> 天</div>
-          <div style="text-align: right;margin-top: 4px;font-size: 12px;color: #3a8ee6;font-weight: bold;" v-if="myTask.status === '2'">问题已解决</div>
-        </div>
-        <div v-bind:class="'taskTag'+ myTask.status">{{myTask.statusStr}}</div>
+          <div slot="extra" style="color: #888">负责人：{{myTask.userName}}</div>
+          <div style="display: flex; justify-content: space-between;">
+            <div style="width: 50%; display: flex;">
+              <div class="textIntro">类型：{{myTask.typeName}}</div>
+            </div>
+            <div style="width: 50%; text-align: right; color: #888">
+              <span style="margin-left: 15px; margin-right: 6px;">{{myTask.queStartDate.split(' ')[0]}} 至 {{myTask.queFinishDate.split(' ')[0]}}</span>
+              <span style="color: #2d8cf0" v-if="myTask.dayNum >= 0 && myTask.status != '2'">剩余:{{myTask.dayNum}}天</span>
+              <span style="color: #ffb400" v-if="myTask.dayNum < 0 && myTask.status != '2'">逾期:{{Math.abs(myTask.dayNum)}}天</span>
+            </div>
+          </div>
+        </Card>
       </div>
-      <div class="noDate" v-if="myTaskList.length === 0">暂无符合该条件的数据~</div>
     </div>
     <!---->
     <div style="text-align: center;margin-top: 40px;margin-bottom: 40px;">
@@ -294,7 +318,7 @@ export default {
       var that = this
       this.ajax('/question/getQuestionTypeSource', {menuId: that.$store.state.menuId}).then(res => {
         // this.log('选择所属项目:', res)
-        console.log('optionsTask', that.optionsTask)
+        that.log('optionsTask', that.optionsTask)
         if (res.code === 200) {
           that.optionsTask = res.data
           that.optionsValue = res.data[0].value
@@ -324,8 +348,27 @@ export default {
     queryMyTaskView () {
       var that = this
       this.ajax('/question/getQuestionList', that.myTaskViewPayload).then(res => {
+        that.log('getQuestionList:', res)
         if (res.code === 200) {
           that.log('myTaskView:', res)
+          for (var i = 0; i < res.data.list.length; i++) {
+            if (res.data.list[i].status === '0') {
+              res.data.list[i].tagStyle = 'noStart'
+              res.data.list[i].statusInfo = '未开始'
+            } else if (res.data.list[i].status === '1') {
+              res.data.list[i].tagStyle = 'isDoing'
+              res.data.list[i].statusInfo = '进行中'
+            } else if (res.data.list[i].status === '2') {
+              res.data.list[i].tagStyle = 'finished'
+              res.data.list[i].statusInfo = '已完成'
+            } else if (res.data.list[i].status === '3') {
+              res.data.list[i].tagStyle = 'stoped'
+              res.data.list[i].statusInfo = '已暂停'
+            } else if (res.data.list[i].status === '4') {
+              res.data.list[i].tagStyle = 'overtime'
+              res.data.list[i].statusInfo = '已逾期'
+            }
+          }
           that.myTaskList = res.data.list
           that.totalRowNum = res.data.totalRow
         }
@@ -515,10 +558,82 @@ export default {
   }
 }
 </script>
-
+<style>
+  .ivu-card{
+    box-shadow:0 1px 6px rgba(0,0,0,.1)
+  }
+  .ivu-card:hover{
+    box-shadow:0 1px 6px rgba(45,140,240,.6)
+  }
+  .ivu-card .groupItemTit{
+    display: flex;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .ivu-card:hover .groupItemTit{
+    color: #2d8cf0;
+  }
+</style>
 <style scoped>
   .MyTaskNew{
     position: relative;
+  }
+  .clear:after{ content: ""; display: block;height: 0;visibility: hidden;clear: both;}
+  .cardWrap{
+    margin-bottom: 15px;
+    float: left;
+    width: 50%;
+    min-width: 571px;
+    padding-right: 20px;
+    box-sizing: border-box;
+  }
+  .textIntro{
+    width: 250px;
+    color: #888;
+    overflow:hidden;
+    cursor: pointer;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .groupItemTit{
+    color: #555;
+  }
+  .groupItemTitCnt{
+    max-width:220px;
+    font-size: 16px;
+    overflow:hidden;
+    cursor: pointer;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .taskStateBiaoNew{
+    text-align: center;
+    padding: 0px 5px;
+    font-size: 12px;
+    margin-left: 10px;
+    border-radius: 6px;
+  }
+  .taskStateBiaoNew.noStart{
+    color: #ffb400;
+    border: 1px solid #ffb400;
+  }
+  .taskStateBiaoNew.isDoing{
+    color: #13ce66;
+    border: 1px solid #13ce66;
+  }
+  .taskStateBiaoNew.finished{
+    color: #3a8ee6;
+    border: 1px solid #3a8ee6;
+  }
+  .taskStateBiaoNew.stoped{
+    color: #e97474;
+    border: 1px solid #e97474;
+  }
+  .taskStateBiaoNew.overtime{
+    color: #ccc;
+    border: 1px solid #ccc;
   }
   .searchItem{
     margin-top: 10px;

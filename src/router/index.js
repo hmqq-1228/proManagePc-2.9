@@ -14,7 +14,7 @@ import Wellcome from '@/components/Wellcome'
  */
 import MyDep from '@/components/MyDep'
 import MyTask from '@/components/MyTask'
-import MyPro3 from '@/components/MyPro3'
+// import MyPro3 from '@/components/MyPro3'
 import GoodsManage from '@/components/GoodsManage'
 import GoodsArchives from '@/components/GoodsArchives'
 import GoodsArchives2 from '@/components/GoodsArchives2'
@@ -96,11 +96,11 @@ export default new Router({
       name: 'MyDep',
       component: MyDep
     },
-    {
-      path: '/MyPro3',
-      name: 'MyPro3',
-      component: MyPro3
-    },
+    // {
+    //   path: '/MyPro3',
+    //   name: 'MyPro3',
+    //   component: MyPro3
+    // },
     {
       path: '/ProDetail2',
       name: 'ProDetail2',

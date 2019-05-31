@@ -6,7 +6,19 @@
         <!--fileFormId-->
         <input type="file" class="aaa" :disabled="commentDis" name="myfile" :id="lalala + '_myfile2'" @change="getFileName">
       </div>
-      <div class="FileCompIptText">{{uploadFileName}}</div>
+      <!--<div class="FileCompIptText">{{uploadFileName}}</div>-->
+      <div style="padding-top: 6px; margin-left: 15px;">
+        <!--@keydown="slipKeydown"-->
+        <div style="width: 80px; height: 30px; line-height: 30px; overflow: hidden; display: inline-block; border: 1px solid #99D3F5; border-radius: 4px; padding-left: 2px;">
+          <textarea style="border: none; width: 95px; height: 100%; resize: none; font-size: 12px;" id="slipTextarea" placeholder="此处粘贴截图" v-bind:value="textareaVal" @keydown="slipKeydown"></textarea>
+        </div>
+        <!--<div contenteditable id="ieDiv" style="width: 50px; height: 50px; border: 1px solid #aaa; display: inline-block;">-->
+          <!--<img src="" />-->
+        <!--</div>-->
+        <!--<div style="width: 30px; height: 30px; overflow: hidden; border: 1px solid #aaa; display: inline-block;">-->
+          <!--<img src="http://localhost:8080/static/img/doing.e21ad06.png" />-->
+        <!--</div>-->
+      </div>
     </form>
     <div style="font-size: 12px">
       <span style="color: #f00" v-if="fileListComment.length === 5">最多选择 <span style="font-size: 16px;font-weight: bold;">{{fileListComment.length}}</span> 个{{selectType}}:</span>
@@ -17,6 +29,21 @@
         <div style="color: #409EFF;display: inline-block;cursor: pointer;" class="el-icon-close" @click="delUploadFileComment(file.attachmentId)"></div>;&nbsp;&nbsp;
       </span>
     </div>
+    <!-- 图片预览 -->
+    <el-dialog title="截图上传" :visible.sync="slipPreShow" width="30%">
+      <div class="showImg">
+        <img v-bind:src="slipPreSrc" alt>
+      </div>
+      <!--<div class="diaFooter" style="text-align: right">-->
+        <!--<el-button>取消</el-button>-->
+        <!--<el-button type="primary">确定</el-button>-->
+      <!--</div>-->
+      <!--<span>这是一段信息</span>-->
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="slipPreShow = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="slipImgUpload(base64Data)">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -56,26 +83,63 @@ export default {
   data () {
     return {
       lalala: '',
+      textareaVal: '',
       loading21: false,
       uploadFileName: '',
       uploadFileRe: '',
       commentDis: false,
       fileListComment: [],
-      fileListCommentLen: 0
+      fileListCommentLen: 0,
+      slipKK: false,
+      hhhh: '',
+      slipPreSrc: '',
+      slipPreShow: false,
+      base64Data: ''
     }
   },
   created () {
+    // var that = this
     this.$store.state.uploadCount = this.$store.state.uploadCount + 1
     this.lalala = 'lala_' + this.$store.state.uploadCount
-    // this.$Bus.$on('proFileList', list => {
-    //   this.log('FileDataList:', list)
-    //   this.fileListComment = list
-    //   if (list.length >= 5) {
-    //     this.commentDis = true
-    //   }
-    // })
+  },
+  mounted: function () {
+    var that = this
+    var slipTextarea = document.getElementById('slipTextarea')
+    slipTextarea.addEventListener('paste', function (event) {
+      // that.log('ctrl+v:', event)
+      event.preventDefault()
+      var data = event.clipboardData || window.clipboardData
+      if (data.items[0].getAsFile()) {
+        that.log('截图内容')
+      } else {
+        that.$Message.warning('此处只可粘贴截图内容')
+        that.textareaVal = ''
+        // that.log('此处只可粘贴截图内容')
+      }
+      var blob = data.items[0].getAsFile()
+      // that.log('blob:', blob)
+      // 判断是不是图片，最好通过文件类型判断
+      if (blob && !that.commentDis) {
+        var reader = new FileReader()
+        // 将文件读取为 DataURL
+        reader.readAsDataURL(blob)
+        // 文件读取完成时触发
+        reader.onload = function (event) {
+          // 获取base64流
+          that.slipPreSrc = event.target.result
+          that.slipPreShow = true
+          that.base64Data = event.target.result
+          // that.slipImgUpload(event.target.result)
+        }
+      }
+    })
   },
   watch: {
+    textareaVal (val, old) {
+      if (val) {
+        this.textareaVal = ''
+      }
+    },
     FileDataList (val, old) {
       this.log('FileDataList:', val)
       if (val) {
@@ -103,7 +167,82 @@ export default {
       }
     }
   },
+  computed: {
+  },
   methods: {
+    slipKeydown: function (e) {
+      // var that = this
+      if (e.keyCode === 86) {
+        // console.log('lala:', 'ctrl + v')
+      }
+    },
+    pasteEvent: function () {
+      // var that = this
+      // window.document.addEventListener('paste', function (event) {
+      //   console.log('lala:', 2)
+      //   var data = event.clipboardData || window.clipboardData
+      //   var blob = data.items[0].getAsFile()
+      //   // 判断是不是图片，最好通过文件类型判断
+      //   var isImg = (blob && 1) || -1
+      //   // console.log('isImg:', isImg)
+      //   var reader = new FileReader()
+      //   if (isImg >= 0) {
+      //     // 将文件读取为 DataURL
+      //     reader.readAsDataURL(blob)
+      //   }
+      //   // 文件读取完成时触发
+      //   reader.onload = function (event) {
+      //     // 获取base64流
+      //     that.base64Str = event.target.result
+      //     // that.log('base64Str:', that.base64Str)
+      //     that.slipImgUpload(event.target.result)
+      //   }
+      // })
+    },
+    // A
+    DDD: function () {
+      var a, b
+      // 拿起一杯酒，向 任何一人发问
+      if ((a === '诚实' && '酒1' === '毒') || (b === '诚实' && '酒1' === '毒')) {
+        // 如果回答是，则当前这杯酒有毒，否则无毒
+      }
+    },
+    slipImgUpload: function (baseData) {
+      var that = this
+      that.ajax('/file/uploadFileAjaxCopy', {baseData: baseData}).then(res => {
+        if (res.code === 200) {
+          that.slipPreShow = false
+          // that.log('uploadFileAjax:', data)
+          // that.attachmentId2 = data.data.attachmentId
+          var obj = {
+            attachmentId: res.data.attachmentId,
+            fileName: res.data.showName,
+            previewUrl: res.data.previewUrl
+          }
+          that.fileListComment.push(obj)
+          // that.log('fileListComment:', that.fileListComment.length)
+          that.fileListCommentLen = that.fileListComment.length
+          that.$message({
+            type: 'success',
+            message: '文件' + res.msg
+          })
+          that.loading21 = false
+          that.$emit('FileDataEmit', that.fileListComment)
+        } else if (res.code === 300) {
+          that.$message({
+            type: 'error',
+            message: res.msg
+          })
+          that.loading21 = false
+        } else {
+          that.$message({
+            type: 'error',
+            message: res.msg
+          })
+          that.loading21 = false
+        }
+      })
+    },
     FilePreEmitFuc: function (previewUrl, fileName, attachmentId) {
       this.$emit('FilePreEmit', {previewUrl, fileName, attachmentId})
     },
@@ -162,7 +301,7 @@ export default {
       that.loading21 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#' + that.lalala)[0])
-      // this.log(456)
+      this.log(456)
       if (formData) {
         $.ajax({
           type: 'post',
