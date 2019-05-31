@@ -44,10 +44,11 @@
           </el-collapse-item>
         </el-collapse>
       </div>
-      <div class="cannetProject">
+      <div class="cannetProjectFile">
         <div style="display: inline-block"><img src="../../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
-        <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>
+        <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}, </span>
         <span style="font-size: 14px;color: #888;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
+        <span class="bainProject" @click="connectProject(taskBasicMsg.uid)">关联项目</span>
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
@@ -247,18 +248,6 @@
         </div>
       </div>
     </div>
-    <!--<el-dialog-->
-      <!--title="任务开启"-->
-      <!--:visible.sync="projectStopeVisible2"-->
-      <!--width="350px"-->
-      <!--style="margin-top: 10%;"-->
-      <!--center>-->
-      <!--<span style="font-size: 15px;">确定开任务目且修改时间吗？</span>-->
-      <!--<span slot="footer" class="dialog-footer">-->
-        <!--<el-button type="primary" @click="startTaskOnly()">开启不修改时间</el-button>-->
-        <!--<el-button type="primary" @click="startEditTask()">开启修改时间</el-button>-->
-      <!--</span>-->
-    <!--</el-dialog>-->
     <div class="stopeModel" v-if="projectStopeVisible2">
       <div class="stopeTitle">任务开启</div>
       <div class="modelCon">确定开启任务且修改时间吗?</div>
@@ -303,6 +292,7 @@ export default {
       showDrawer: false,
       butnDisabled: true,
       butnDisabledF: false,
+      projectListShow: false,
       projectStopeVisible2: false,
       selDateEnd2: '',
       selDateStart2: '',
@@ -450,6 +440,10 @@ export default {
   //   })
   // },
   methods: {
+    getNextPlan: function (pid) {
+      this.$store.state.proId = pid
+      this.$router.push('/goodsDetail')
+    },
     getPosition (element) {
       let cursorPos = 0
       if (document.selection) { // IE
@@ -538,6 +532,11 @@ export default {
         this.$store.state.proId = id
         this.$router.push('/goodsDetail')
       }
+    },
+    // 关联项目
+    connectProject: function (id) {
+      var that = this
+      that.$emit('taskShow', id)
     },
     // 创建流程 流程选项列表
     rowClick: function (obj) {
@@ -1514,5 +1513,20 @@ export default {
     color: #fff;
     font-size: 14px;
     line-height: 60px;
+  }
+  .bainProject{
+    padding: 2px 6px;
+    background-color: #509EFF;
+    display: inline-block;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    line-height: 20px;
+    border-radius: 4px;
+  }
+  .linkProject{
+    color: #409EFF;
+    cursor: pointer;
+    font-size: 14px;
   }
 </style>

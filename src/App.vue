@@ -385,4 +385,19 @@ padding: 8px 20px;
   .GoodsArchives .ivu-input-prefix i, .ivu-input-suffix i{
     font-size: 14px;
   }
+.unstartStyle{
+  color: #ffb400;
+}
+.underwayStyle{
+  color: #13ce66;
+}
+.finishStyle{
+  color: #409EFF;
+}
+.pauseStyle{
+  color: #e97474;
+}
+.tabbox .el-table td, .el-table th{
+  padding: 10px 0;
+}
 </style>
