@@ -1,8 +1,7 @@
 <template>
   <div class="ProDetail goodsDetail" style="position: relative;margin-top: 15px;">
-    <!--<div @click="ttttttt()"><button>TTTTTTT</button></div>-->
     <div>{{goPerfect?'':''}}</div>
-    <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}} {{nodeDragRefresh?'':''}}</div>
+    <div>{{getStoreProId?'':''}} {{nodeDragRefresh?'':''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
     <div class="fileModel" v-if="showFileModel">
       <!--dddd-->
@@ -695,52 +694,28 @@ export default {
     }
   },
   created: function () {
-    if (this.$store.state.proId || this.$route.params.proId) {
-      this.log(6666)
-      this.proId = this.$store.state.proId || this.$route.params.proId
+    this.log(10010)
+    if (this.$route.params.proId || this.$store.state.proId || localStorage.getItem('proId')) {
+      this.log(112233)
+      this.proId = this.$route.params.proId || this.$store.state.proId || localStorage.getItem('proId')
       this.$store.state.proId = this.proId
-      // this.queryProDetail()
+      localStorage.setItem('proId', this.proId)
     }
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    // this.$store.commit('setNavActive', {navName: '集团战略', childNavName: '产品小组'})
+  },
   watch: {
-    // nodeDragRefresh: function (val, old) {
-    //   this.log('watch:nodeDragRefresh:', val)
-    //   if (val) {
-    //     this.log('watch:nodeDragRefresh:', val)
-    //     this.newTreeList = []
-    //     this.$store.state.nodeDragRefresh = false
-    //     this.queryNewTree()
-    //   }
-    // },
     proId: function (val, oVal) {
       var that = this
-      // that.log(123)
-      // this.currentProId = val
-      // this.currentType = this.type
       localStorage.setItem('proId', val)
-      var findId = false
-      // that.log('length:', that.$store.state.slideMenuGroup.length)
-      // dddd
-      for (var t = 0; that.$store.state.slideMenuGroup.length > 0 && t < that.$store.state.slideMenuGroup[0].dataList.length; t++) {
-        if (that.$store.state.slideMenuGroup[0].dataList[t].projectUID === that.proId) {
-          findId = true
-          that.$store.state.activeNavIndex = 'group_0_' + t
-        }
-      }
-      if (!findId) {
-        for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
-          if (that.$store.state.slideMenu[p].menuName === localStorage.getItem('generalMenuActive')) {
-            that.$store.state.activeNavIndex = 'general_' + p
-          }
-        }
-      }
       if (val) {
         that.activeId = ''
       }
       this.queryProDetail()
     },
     commitComent: function (val, oVal) {
-      this.log(777777)
       if (val) {
         this.butnDisabled = false
       } else {
@@ -794,32 +769,8 @@ export default {
         this.getPeople()
       }
     }
-    // nodeDragRefresh: function (val, old) {
-    //   this.log('watch:nodeDragRefresh:', val)
-    // }
   },
   computed: {
-    slideMenuGroup: function () {
-      var that = this
-      if (!this.$route.params.proId && !that.$store.state.proId) {
-        that.log('huo:', that.$store.state.slideMenuGroup)
-        if (that.$store.state.slideMenuGroup.length > 0 && that.$store.state.slideMenuGroup[0].dataList.length > 0) {
-          if (localStorage.getItem('proId')) {
-            that.$store.state.proId = localStorage.getItem('proId')
-            that.proId = localStorage.getItem('proId')
-          } else {
-            that.$store.state.proId = that.$store.state.slideMenuGroup[0].dataList[0].menuId
-            that.proId = that.$store.state.slideMenuGroup[0].dataList[0].menuId
-            localStorage.setItem('proId', that.proId)
-            that.$store.state.activeNavIndex = 'group_0_0'
-          }
-        }
-      } else {
-        // that.log(555555)
-      }
-      // that.log(3333333)
-      return that.$store.state.slideMenuGroup
-    },
     goPerfect: function () {
       var that = this
       // console.log(that.$store.state.goPerfect)
@@ -836,25 +787,6 @@ export default {
       // this.log('that.proId:', that.proId)
       return this.$store.state.proId
     },
-    slideMenu: function () {
-      var that = this
-      if (!this.$route.params.proId && !that.$store.state.proId) {
-        if (
-          that.$store.state.slideMenuGroup.length === 0 &&
-          that.$store.state.slideMenu.length > 0
-        ) {
-          if (localStorage.getItem('proId')) {
-            that.$store.state.proId = localStorage.getItem('proId')
-            that.proId = localStorage.getItem('proId')
-          } else {
-            // that.$store.state.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
-            // that.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
-            // localStorage.setItem('proId', that.proId)
-          }
-        }
-      }
-      return that.$store.state.slideMenu
-    },
     timeDialogVisible: function () {
       var that = this
       // that.timeDialogVisibleShow = true
@@ -867,7 +799,7 @@ export default {
     nodeDragRefresh: function () {
       var that = this
       if (that.$store.state.nodeDragRefresh) {
-        this.log('watch:nodeDragRefresh:', this.$store.state.nodeDragRefresh)
+        // this.log('watch:nodeDragRefresh:', this.$store.state.nodeDragRefresh)
         that.newTreeList = []
         this.queryNewTree()
         this.getTree()
@@ -1290,6 +1222,12 @@ export default {
         that.log('getProjectDetail:', res)
         if (res.code === 200) {
           // this.log('getProjectDetail:', res)
+          /** 设置侧边栏激活状态 */
+          var navActiveType = res.data.projectType === '集团战略' ? '集团战略' : '我的项目'
+          that.log('navActiveType:', navActiveType)
+          that.$store.commit('setNavActive', {navName: navActiveType})
+          that.$store.commit('useNavActive', {navName: navActiveType})
+          // res.data.projectType
           that.memberList = res.data.memberList
           that.proDetailMsg = res.data
           that.startPlanDate = res.data.startDate.split(' ')[0]

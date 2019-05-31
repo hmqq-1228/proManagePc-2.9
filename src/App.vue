@@ -19,7 +19,7 @@
             <el-row :style="{paddingRright: '10px', height: '100%', width: Width, overflowY: scrollY}">
               <el-col>
                 <el-menu
-                  :default-active="getNavActive"
+                  :default-active="navActive"
                   :collapse-transition="false"
                   :collapse="isCollapse"
                   class="el-menu-vertical-demo"
@@ -82,12 +82,14 @@ export default {
   },
   computed: {
     getNavActive: function () {
-      return this.$store.state.navActive
+      var that = this
+      that.navActive = this.$store.state.navActive
+      return that.$store.state.navActive
     }
   },
   methods: {
     tttest: function () {
-      this.navActive = '3'
+      this.$store.state.navActive = '3'
     },
     toNavDetail: function (navData) {
       var that = this
@@ -194,6 +196,8 @@ export default {
           that.navList = res.data
           that.$store.state.navList = res.data
           that.log('navList:', that.navList)
+          /** 设置侧边栏激活状态 */
+          this.$store.commit('useNavActive', that.$store.state.NavActiveData)
         }
       })
     }

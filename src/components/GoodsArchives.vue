@@ -512,6 +512,10 @@ export default {
     that.getPermission()
     that.queryOptionType()
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '商品管理', childNavName: '档案管理'})
+  },
   methods: {
     groupListSelectOk: function (val) {
       this.creatArchivesGroupList = false

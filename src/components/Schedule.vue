@@ -617,6 +617,10 @@ export default {
     //   }
     // }
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '我的日程', childNavName: ''})
+  },
   computed: {
     slideMenu: function () {
       var that = this

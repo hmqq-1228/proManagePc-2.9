@@ -76,7 +76,7 @@
             </div>
             <div class="taskStateBiaoNew" v-bind:class="myTask.tagStyle">{{myTask.statusStr}}</div>
           </div>
-          <div slot="extra" style="color: #888">负责人：{{myTask.userName}}</div>
+          <div slot="extra" style="color: #888" class="taskManager" :title="myTask.userName">负责人：{{myTask.userName}}</div>
           <div style="display: flex; justify-content: space-between;">
             <div style="width: 50%; display: flex;">
               <div class="textIntro">项目：{{myTask.projectName}}</div>
@@ -284,6 +284,10 @@ export default {
     this.queryMyTaskView()
     this.queryMyProjectList()
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '我的任务', childNavName: ''})
+  },
   watch: {
     // optionsValue3: function (newValue, oldValue) {
     //   this.myTaskViewPayload.projectName = newValue
@@ -344,6 +348,9 @@ export default {
             } else if (res.data.list[i].status === '3') {
               res.data.list[i].tagStyle = 'stoped'
               res.data.list[i].statusInfo = '已暂停'
+            } else if (res.data.list[i].status === '4') {
+              res.data.list[i].tagStyle = 'overTime'
+              res.data.list[i].statusInfo = '已逾期'
             }
           }
           that.myTaskList = res.data.list
@@ -569,6 +576,13 @@ export default {
     text-overflow:ellipsis;
     white-space:nowrap;
   }
+  .taskManager{
+    width: 200px;
+    text-align: right;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
   .taskStateBiaoNew{
     text-align: center;
     padding: 0px 5px;
@@ -591,6 +605,10 @@ export default {
   .taskStateBiaoNew.stoped{
     color: #e97474;
     border: 1px solid #e97474;
+  }
+  .taskStateBiaoNew.overTime{
+    color: #ccc;
+    border: 1px solid #ccc;
   }
   .searchItem{
     margin-top: 10px;

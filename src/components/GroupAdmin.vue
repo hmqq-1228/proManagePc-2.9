@@ -14,16 +14,23 @@
         <TabPane label="我负责的" name="2"></TabPane>
       </Tabs>
     </div>
-    <div style="padding: 20px">
-      <Card :bordered="true" style="margin-bottom: 15px;" v-for="groupItem in GroupList" v-bind:key="groupItem.id" @click.native="toGroupDetail(groupItem.id)">
-        <p class="groupItemTit" slot="title">{{groupItem.name}}</p>
-        <a href="#" slot="extra" @click.prevent="updateGroup($event, groupItem.id)" style="margin-right: 20px;">修改</a>
-        <a href="#" slot="extra" @click.prevent="deleteGroup($event, groupItem.id)">删除</a>
-        <div style="display: flex; justify-content: space-between;">
-          <div style="width: 50%"><p class="textIntro">{{groupItem.description}}</p></div>
-          <div style="width: 50%; text-align: right; color: #888"><span>负责人: {{groupItem.userName}}</span><span style="margin-left: 15px;">创建时间: {{groupItem.createDt}}</span></div>
-        </div>
-      </Card>
+    <div style="padding: 20px 10px" class="clear">
+      <div style="float: left; width: 50%; padding-left: 15px; box-sizing: border-box;" v-for="groupItem in GroupList" v-bind:key="groupItem.id">
+        <Card :bordered="true" style="margin-bottom: 15px;" @click.native="toGroupDetail(groupItem.id)">
+          <p class="groupItemTit" slot="title" :title="groupItem.name">{{groupItem.name}}</p>
+          <a href="#" slot="extra" @click.prevent="updateGroup($event, groupItem.id)" style="margin-right: 20px;">修改</a>
+          <a href="#" slot="extra" @click.prevent="deleteGroup($event, groupItem.id)">删除</a>
+          <div style="display: flex; justify-content: space-between;">
+            <div style="width: 50%">
+              <p class="textIntro" :title="groupItem.description">{{groupItem.description}}</p>
+            </div>
+            <div style="width: 50%; text-align: right; color: #888">
+              <span>负责人: {{groupItem.userName.split(' ')[0]}}</span>
+              <span style="margin-left: 15px;">创建时间: {{groupItem.createDt.split(' ')[0]}}</span>
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
     <!--新建小组-->
     <Modal v-model="creatGroupShow" title="新建小组" @on-ok="createGroupSub" @on-cancel="createGroupCancel">
@@ -156,6 +163,10 @@ export default {
   created () {
     this.queryGroupList()
     this.queryPermission()
+  },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '商品管理', childNavName: '产品小组'})
   },
   methods: {
     currentChange: function (num) {
@@ -342,6 +353,7 @@ export default {
   }
 </style>
 <style scoped>
+  .clear:after{ content: ""; display: block;height: 0;visibility: hidden;clear: both;}
 .GroupSearch{
   display: flex;
   justify-content: space-between;
@@ -350,9 +362,17 @@ export default {
 }
   .groupItemTit{
     color: #555;
+    width:200px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .textIntro{
     color: #888;
+    width:200px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .createGroupCnt{
     display: flex;

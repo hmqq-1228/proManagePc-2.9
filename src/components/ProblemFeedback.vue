@@ -277,6 +277,10 @@ export default {
     this.queryProblemType()
     this.getQuestionTypeSource()
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '问题反馈', childNavName: ''})
+  },
   computed: {
     slideMenu: function () {
       var that = this

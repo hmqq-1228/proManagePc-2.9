@@ -30,7 +30,7 @@
       </span>
     </div>
     <!-- 图片预览 -->
-    <el-dialog title="截图上传" :visible.sync="slipPreShow" width="30%">
+    <el-dialog title="截图上传" :visible.sync="slipPreShow" width="40%">
       <div class="showImg">
         <img v-bind:src="slipPreSrc" alt>
       </div>

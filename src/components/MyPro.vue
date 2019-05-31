@@ -559,6 +559,10 @@ export default {
     // 初始化token
     // this.settoken()
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '我的项目', childNavName: ''})
+  },
   watch: {
     // 历史记录 显示与隐藏
     DrawerHistory: function (val, old) {
