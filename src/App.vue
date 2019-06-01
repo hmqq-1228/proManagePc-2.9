@@ -59,13 +59,19 @@
     </el-container>
     <!-- 截图上传 图片预览 -->
     <el-dialog title="截图上传" :visible.sync="GetSlipPreShow" width="40%">
-      <div class="showImg">
+      <div class="showImg" v-loading="SlipPreLoading">
         <img v-bind:src="slipPreSrc" alt>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="clipBack(false)">取 消</el-button>
         <el-button size="small" type="primary" @click="clipBack(true)">确 定</el-button>
       </span>
+    </el-dialog>
+    <!-- 图片预览 -->
+    <el-dialog title="图片预览" :visible.sync="imgPreviewShow" v-bind:class="'pre_' + getImgPreviewShow" @closed="preClose">
+      <div class="showImg">
+        <img v-bind:src="getImgPreviewSrc" alt>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -84,7 +90,10 @@ export default {
       navActive: '',
       /** 截图上传 */
       slipPreSrc: '',
-      slipPreShow: false
+      slipPreShow: false,
+      SlipPreLoading: false,
+      /** 图片预览 */
+      imgPreviewShow: false
     }
   },
   created: function () {
@@ -100,18 +109,40 @@ export default {
       that.navActive = this.$store.state.navActive
       return that.$store.state.navActive
     },
+    /** 截图上传 预览 */
     GetSlipPreShow: function () {
       var that = this
       that.slipPreShow = that.$store.state.slipPreShow
       that.slipPreSrc = that.$store.state.slipPreSrc
+      if (!that.$store.state.slipPreShow) {
+        that.SlipPreLoading = false
+      }
       return this.$store.state.slipPreShow
+    },
+    /** 附件上传 预览 */
+    getImgPreviewShow: function () {
+      var that = this
+      that.imgPreviewShow = that.$store.state.imgPreviewShow
+      return that.$store.state.imgPreviewShow
+    },
+    /** 附件上传 预览地址 */
+    getImgPreviewSrc: function () {
+      return this.$store.state.imgPreviewSrc
     }
   },
   methods: {
     tttest: function () {
-      this.$store.state.navActive = '3'
+      this.log('imgPreviewShow:', this.$store.state.imgPreviewShow)
+      // this.$store.state.navActive = '3'
+    },
+    /** 图片预览关闭 */
+    preClose: function () {
+      this.$store.state.imgPreviewShow = false
     },
     clipBack: function (boo) {
+      if (boo) {
+        this.SlipPreLoading = true
+      }
       this.$store.state.clipBackVal = boo
     },
     getUserInfo: function () {
@@ -251,8 +282,8 @@ html,body{
 #app{
   height: 100%;
 }
-div img{
-  /*width: 100%;*/
+.showImg img{
+  width: 100%;
 }
 .el-aside {
   overflow: visible !important;

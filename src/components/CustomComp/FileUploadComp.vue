@@ -11,7 +11,7 @@
       <div style="padding-top: 6px; margin-left: 15px;" v-if="clipboard">
         <!--@keydown="slipKeydown"-->
         <div style="width: 80px; height: 30px; line-height: 30px; overflow: hidden; display: inline-block; border: 1px solid #99D3F5; border-radius: 4px; padding-left: 2px;">
-          <textarea style="border: none; width: 95px; height: 100%; resize: none; font-size: 12px;" id="slipTextarea" placeholder="此处粘贴截图" v-bind:value="textareaVal" @keydown="slipKeydown"></textarea>
+          <textarea style="border: none; width: 95px; height: 100%; resize: none; font-size: 12px;" :id="slipTextareaId" placeholder="此处粘贴截图" v-bind:value="textareaVal" @keydown="slipKeydown"></textarea>
         </div>
         <!--<div contenteditable id="ieDiv" style="width: 50px; height: 50px; border: 1px solid #aaa; display: inline-block;">-->
           <!--<img src="" />-->
@@ -94,20 +94,21 @@ export default {
       slipKK: false,
       hhhh: '',
       slipPreSrc: '',
-      slipPreShow: false,
-      base64Data: ''
+      base64Data: '',
+      slipTextareaId: '',
+      callUploadBoo: false
     }
   },
   created () {
     // var that = this
     this.$store.state.uploadCount = this.$store.state.uploadCount + 1
     this.lalala = 'lala_' + this.$store.state.uploadCount
+    this.slipTextareaId = 'slipTextareaId_' + this.$store.state.uploadCount
   },
   mounted: function () {
     var that = this
-    var slipTextarea = document.getElementById('slipTextarea')
+    var slipTextarea = document.getElementById(that.slipTextareaId)
     slipTextarea.addEventListener('paste', function (event) {
-      // that.log('ctrl+v:', event)
       event.preventDefault()
       var data = event.clipboardData || window.clipboardData
       if (data.items[0].getAsFile()) {
@@ -129,7 +130,7 @@ export default {
           // 获取base64流
           that.slipPreSrc = event.target.result
           that.$store.state.slipPreSrc = event.target.result
-          // that.slipPreShow = true
+          that.$store.state.slipTextareaId = that.slipTextareaId
           that.$store.state.slipPreShow = true
           that.base64Data = event.target.result
           // that.slipImgUpload(event.target.result)
@@ -173,10 +174,13 @@ export default {
   computed: {
     getClipBackVal: function () {
       var that = this
-      that.$store.state.slipPreShow = false
+      that.callUploadBoo = this.$store.state.clipBackVal
       if (that.$store.state.clipBackVal) {
-        that.slipImgUpload(that.base64Data)
+        if (that.$store.state.slipTextareaId === that.slipTextareaId) {
+          that.slipImgUpload(that.base64Data)
+        }
       } else {
+        that.$store.state.slipPreShow = false
         // that.slipPreShow = false
       }
       return this.$store.state.clipBackVal
@@ -188,29 +192,6 @@ export default {
       if (e.keyCode === 86) {
         // console.log('lala:', 'ctrl + v')
       }
-    },
-    pasteEvent: function () {
-      // var that = this
-      // window.document.addEventListener('paste', function (event) {
-      //   console.log('lala:', 2)
-      //   var data = event.clipboardData || window.clipboardData
-      //   var blob = data.items[0].getAsFile()
-      //   // 判断是不是图片，最好通过文件类型判断
-      //   var isImg = (blob && 1) || -1
-      //   // console.log('isImg:', isImg)
-      //   var reader = new FileReader()
-      //   if (isImg >= 0) {
-      //     // 将文件读取为 DataURL
-      //     reader.readAsDataURL(blob)
-      //   }
-      //   // 文件读取完成时触发
-      //   reader.onload = function (event) {
-      //     // 获取base64流
-      //     that.base64Str = event.target.result
-      //     // that.log('base64Str:', that.base64Str)
-      //     that.slipImgUpload(event.target.result)
-      //   }
-      // })
     },
     // A
     DDD: function () {
@@ -224,16 +205,13 @@ export default {
       var that = this
       that.ajax('/file/uploadFileAjaxCopy', {baseData: baseData}).then(res => {
         if (res.code === 200) {
-          that.slipPreShow = false
-          // that.log('uploadFileAjax:', data)
-          // that.attachmentId2 = data.data.attachmentId
+          that.$store.state.slipPreShow = false
           var obj = {
             attachmentId: res.data.attachmentId,
             fileName: res.data.showName,
             previewUrl: res.data.previewUrl
           }
           that.fileListComment.push(obj)
-          // that.log('fileListComment:', that.fileListComment.length)
           that.fileListCommentLen = that.fileListComment.length
           that.$message({
             type: 'success',
@@ -257,21 +235,23 @@ export default {
       })
     },
     FilePreEmitFuc: function (previewUrl, fileName, attachmentId) {
-      this.$emit('FilePreEmit', {previewUrl, fileName, attachmentId})
+      this.log('fileName:', fileName)
+      if (previewUrl && this.isImage(fileName)) {
+        this.$store.state.imgPreviewShow = true
+        this.$store.state.imgPreviewSrc = previewUrl
+      }
+      // this.$emit('FilePreEmit', {previewUrl, fileName, attachmentId})
     },
     getFileName: function (filename) {
       var that = this
-      console.log(filename)
       var filePath = $('#' + that.lalala + '_myfile2').val()
       var arr = filePath.split('\\')
       var fileName = arr[arr.length - 1]
-      // this.uploadFileName = fileName
       if (filePath) {
         if (that.limtImg) {
           if (that.isImage(fileName)) {
             this.uploadFileName = fileName
             that.addMarkInfo4()
-            console.log(fileName)
           } else {
             this.$message.warning('请上传图片')
             this.uploadFileName = ''
@@ -301,7 +281,6 @@ export default {
               }
             }
             that.fileListCommentLen = that.fileListComment.length
-            // console.log('edit', that.fileListComment)
             $('#myfile2').val('')
           }
         })
@@ -314,7 +293,6 @@ export default {
       that.loading21 = true
       var url = that.$store.state.baseServiceUrl
       var formData = new FormData($('#' + that.lalala)[0])
-      this.log(456)
       if (formData) {
         $.ajax({
           type: 'post',
@@ -330,15 +308,12 @@ export default {
         }).then(function (data) {
           that.log('upload:', data)
           if (data.code === 200) {
-            // that.log('uploadFileAjax:', data)
-            // that.attachmentId2 = data.data.attachmentId
             var obj = {
               attachmentId: data.data.attachmentId,
               fileName: data.data.showName,
               previewUrl: data.data.previewUrl
             }
             that.fileListComment.push(obj)
-            // that.log('fileListComment:', that.fileListComment.length)
             that.fileListCommentLen = that.fileListComment.length
             that.$message({
               type: 'success',
