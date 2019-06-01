@@ -210,6 +210,17 @@ export default {
               default:
                 // h
             }
+          } else if (navType === '项目管理') {
+            switch (navData[r].menuName) {
+              case '我的项目':
+                navData[r].path = 'MyPro'
+                break
+              case '全部项目':
+                navData[r].path = 'AllCompanyPro'
+                break
+              default:
+              // h
+            }
           }
         }
         return navData
@@ -245,6 +256,10 @@ export default {
               case '我的项目':
                 res.data[i].icon = 'ios-paper'
                 res.data[i].path = 'MyPro'
+                break
+              case '项目管理':
+                res.data[i].icon = 'ios-paper'
+                res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'mix', '项目管理', '')
                 break
               case '我的任务':
                 res.data[i].icon = 'md-analytics'

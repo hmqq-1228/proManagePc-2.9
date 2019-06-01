@@ -29,6 +29,7 @@ import MyDepNew from '@/components/MyDepNew'
 import TEST from '@/components/TEST'
 import Schedule from '@/components/Schedule'
 import MyPro from '@/components/MyPro'
+import AllCompanyPro from '@/components/AllCompanyPro'
 import ProDetail from '@/components/ProDetail'
 import TestUpload from '@/components/TestUpload'
 import CompUse from '@/components/CompUse'
@@ -155,6 +156,12 @@ export default new Router({
       name: 'MyPro',
       component: MyPro
     },
+    {
+      path: '/AllCompanyPro',
+      name: 'AllCompanyPro',
+      component: AllCompanyPro
+    },
+    // AllCompanyPro
     {
       path: '/TestUpload',
       name: 'TestUpload',
