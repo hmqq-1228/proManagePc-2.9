@@ -57,6 +57,16 @@
         </el-main>
       </el-container>
     </el-container>
+    <!-- 截图上传 图片预览 -->
+    <el-dialog title="截图上传" :visible.sync="GetSlipPreShow" width="40%">
+      <div class="showImg">
+        <img v-bind:src="slipPreSrc" alt>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="clipBack(false)">取 消</el-button>
+        <el-button size="small" type="primary" @click="clipBack(true)">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -71,12 +81,16 @@ export default {
       scrollY: 'auto',
       navList: [],
       version: '',
-      navActive: ''
+      navActive: '',
+      /** 截图上传 */
+      slipPreSrc: '',
+      slipPreShow: false
     }
   },
   created: function () {
     this.getPmsVersion()
     this.queryMenu()
+    this.getUserInfo()
   },
   watch: {
   },
@@ -85,11 +99,31 @@ export default {
       var that = this
       that.navActive = this.$store.state.navActive
       return that.$store.state.navActive
+    },
+    GetSlipPreShow: function () {
+      var that = this
+      that.slipPreShow = that.$store.state.slipPreShow
+      that.slipPreSrc = that.$store.state.slipPreSrc
+      return this.$store.state.slipPreShow
     }
   },
   methods: {
     tttest: function () {
       this.$store.state.navActive = '3'
+    },
+    clipBack: function (boo) {
+      this.$store.state.clipBackVal = boo
+    },
+    getUserInfo: function () {
+      var that = this
+      this.ajax('/myProject/getUserInfo', {}).then(res => {
+        if (res.code === 200) {
+          that.$store.state.userId = res.data.ID
+          that.$store.state.userName = res.data.Name
+          that.$store.state.userLoginInfo = res.data
+          that.$store.state.jName = res.data.jName
+        }
+      })
     },
     toNavDetail: function (navData) {
       var that = this
@@ -216,6 +250,9 @@ html,body{
 }
 #app{
   height: 100%;
+}
+div img{
+  width: 100%;
 }
 .el-aside {
   overflow: visible !important;

@@ -4,7 +4,11 @@
       <div class="paiTaskTitTab">
         <div class="paiTask pai active">新建任务</div>
       </div>
-      <component v-bind:is="compArr.QuickCreateTaskComp" fileFormId="QuickCreateTaskComp" v-on:ActionResThrow="ActionResThrowFuc"></component>
+      <component v-bind:is="compArr.QuickCreateTaskComp"
+                 fileFormId="QuickCreateTaskComp"
+                 v-on:FilePreEmit="GetFilePreData"
+                 v-on:ActionResThrow="ActionResThrowFuc">
+      </component>
     </div>
     <div class="searchItem">
       <div>

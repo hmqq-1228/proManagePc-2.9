@@ -1,6 +1,6 @@
 <template>
   <div class="TTEST">
-
+    <div class="ttpos">123</div>
     <div style="height: 100px; overflow: hidden; border: 1px solid #aaa;" id="jietuWrap" class="b1"><img id="jietuImg" :src="base64Str"></div>
     <textarea @paste="listenKeydown">123</textarea>
   </div>
@@ -79,4 +79,16 @@ export default {
 </script>
 
 <style scoped>
+  .TTEST{
+    position: relative;
+  }
+  .ttpos{
+    position: fixed;
+    z-index: 500;
+    right: 0px;
+    top: 0;
+    width: 100px;
+    height: 5000px;
+    background-color: #aaa;
+  }
 </style>

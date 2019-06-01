@@ -200,15 +200,15 @@
                              :nodeId="parentId">
                   </component>
               </el-tab-pane>
-              <el-tab-pane label="加计划" name="second" v-bind:disabled="panshow">
-                  <component v-bind:is="compArr.addNewPlan"
-                     fileFormId="addNewPlan"
-                     v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
-                     :nodeId="parentId"
-                     :defaultText="defaultText"
-                     :defaultDetail="defaultDetail">
-                  </component>
-              </el-tab-pane>
+              <!--<el-tab-pane label="加计划" name="second" v-bind:disabled="panshow">-->
+                  <!--<component v-bind:is="compArr.addNewPlan"-->
+                     <!--fileFormId="addNewPlan"-->
+                     <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
+                     <!--:nodeId="parentId"-->
+                     <!--:defaultText="defaultText"-->
+                     <!--:defaultDetail="defaultDetail">-->
+                  <!--</component>-->
+              <!--</el-tab-pane>-->
           </el-tabs>
       </div>
     </div>
@@ -237,13 +237,7 @@
        暂无数据
     </div>
     <!-- Part05 start 抽屉 任务详情 -->
-    <Drawer
-      title="任务详情"
-      class="drawerScroll"
-      :closable="false"
-      width="750"
-      v-model="TaskDetailCompShow"
-    >
+    <Drawer title="任务详情" class="drawerScroll" :closable="false" width="750" v-model="TaskDetailCompShow">
       <component
         v-bind:is="compArr.TaskDetailComp"
         v-bind:taskDrawerOpen="TaskDetailCompShow"

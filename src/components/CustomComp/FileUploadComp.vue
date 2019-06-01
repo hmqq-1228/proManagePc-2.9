@@ -1,5 +1,6 @@
 <template>
   <div class="FileUploadComp" v-loading="loading21">
+    <div>{{getClipBackVal?'':''}}</div>
     <form class="FileCompForm" :id="lalala" enctype="multipart/form-data">
       <div class="FileCompFormIcon"><img src="../../../static/img/fujian.png" alt=""></div>
       <div class="FileCompIptWrap">{{buttonStr}}
@@ -7,7 +8,7 @@
         <input type="file" class="aaa" :disabled="commentDis" name="myfile" :id="lalala + '_myfile2'" @change="getFileName">
       </div>
       <!--<div class="FileCompIptText">{{uploadFileName}}</div>-->
-      <div style="padding-top: 6px; margin-left: 15px;">
+      <div style="padding-top: 6px; margin-left: 15px;" v-if="clipboard">
         <!--@keydown="slipKeydown"-->
         <div style="width: 80px; height: 30px; line-height: 30px; overflow: hidden; display: inline-block; border: 1px solid #99D3F5; border-radius: 4px; padding-left: 2px;">
           <textarea style="border: none; width: 95px; height: 100%; resize: none; font-size: 12px;" id="slipTextarea" placeholder="此处粘贴截图" v-bind:value="textareaVal" @keydown="slipKeydown"></textarea>
@@ -30,20 +31,15 @@
       </span>
     </div>
     <!-- 图片预览 -->
-    <el-dialog title="截图上传" :visible.sync="slipPreShow" width="40%">
-      <div class="showImg">
-        <img v-bind:src="slipPreSrc" alt>
-      </div>
-      <!--<div class="diaFooter" style="text-align: right">-->
-        <!--<el-button>取消</el-button>-->
-        <!--<el-button type="primary">确定</el-button>-->
+    <!--<el-dialog title="截图上传" :visible.sync="slipPreShow" width="40%">-->
+      <!--<div class="showImg">-->
+        <!--<img v-bind:src="slipPreSrc" alt>-->
       <!--</div>-->
-      <!--<span>这是一段信息</span>-->
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="slipPreShow = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="slipImgUpload(base64Data)">确 定</el-button>
-      </span>
-    </el-dialog>
+      <!--<span slot="footer" class="dialog-footer">-->
+        <!--<el-button size="small" @click="slipPreShow = false">取 消</el-button>-->
+        <!--<el-button size="small" type="primary" @click="slipImgUpload(base64Data)">确 定</el-button>-->
+      <!--</span>-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -54,6 +50,11 @@ export default {
     clearInfo: {
       type: Boolean,
       default: false
+    },
+    /** 是否支持截图上传 商品档案暂不支持 */
+    clipboard: {
+      type: Boolean,
+      default: true
     },
     fileFormId: {
       type: String,
@@ -127,7 +128,9 @@ export default {
         reader.onload = function (event) {
           // 获取base64流
           that.slipPreSrc = event.target.result
-          that.slipPreShow = true
+          that.$store.state.slipPreSrc = event.target.result
+          // that.slipPreShow = true
+          that.$store.state.slipPreShow = true
           that.base64Data = event.target.result
           // that.slipImgUpload(event.target.result)
         }
@@ -168,6 +171,16 @@ export default {
     }
   },
   computed: {
+    getClipBackVal: function () {
+      var that = this
+      that.$store.state.slipPreShow = false
+      if (that.$store.state.clipBackVal) {
+        that.slipImgUpload(that.base64Data)
+      } else {
+        // that.slipPreShow = false
+      }
+      return this.$store.state.clipBackVal
+    }
   },
   methods: {
     slipKeydown: function (e) {

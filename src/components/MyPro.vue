@@ -301,7 +301,7 @@
           ></textarea>
           <div class="cannetProject2">
             <div>
-              <component v-bind:is="FileUploadComp" fileFormId="proHistory" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+              <component v-bind:is="compArr.FileUploadComp" fileFormId="proHistory" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
             </div>
             <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
           </div>
@@ -331,7 +331,7 @@
 
 <script>
 import CommentLogs from './CustomComp/CommentLogs.vue'
-import FileUploadComp from './FileUploadComp.vue'
+import FileUploadComp from './CustomComp/FileUploadComp.vue'
 import goodsInfo from './CustomComp/goodsInfo.vue'
 import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 export default {
