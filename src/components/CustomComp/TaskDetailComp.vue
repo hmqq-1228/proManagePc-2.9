@@ -537,6 +537,7 @@ export default {
     // 关联项目
     connectProject: function (id) {
       var that = this
+      console.log('666666666', id)
       that.$emit('taskShow', id)
     },
     // 创建流程 流程选项列表

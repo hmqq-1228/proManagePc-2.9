@@ -243,6 +243,7 @@
         v-bind:taskDrawerOpen="TaskDetailCompShow"
         v-bind:modifyTaskRes="modifyTaskRes"
         v-on:FilePreEmit="GetFilePreData"
+        v-on:taskShow="taskShowFuc"
         v-on:toPlanDetail="toPlanDetailFuc"
         v-on:showEditForm="showEditFormFuc"
         v-on:ActionResThrow="ActionResThrowFuc"
@@ -483,11 +484,22 @@
         <el-button type="primary" @click="DragTimeEditOk">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="项目列表" :visible.sync="projectListShow">
+      <component v-bind:is="compArr.linkProject" v-bind:linkId="taskLinkId" v-bind:proListShow="projectListShow" v-on:dialogGoodsShow="dialogGoodsShowFuc" v-on:showFlag="showFlagFuc"></component>
+    </el-dialog>
+    <el-dialog title="提示" :visible.sync="dialogGoods" width="30%" center>
+      <span>是否完善产品信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="jumpInfo">跳过</el-button>
+        <el-button type="primary" @click="perfectInfo">去完善</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import FileUploadComp from './CustomComp/FileUploadComp.vue'
+import linkProject from './CustomComp/linkProject.vue'
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
 import ModifyPlan from './CustomComp/ModifyPlan.vue'
@@ -509,6 +521,7 @@ export default {
     CommentLogs,
     ModifyPlan,
     ModifyTask,
+    linkProject,
     FileUploadComp,
     CreatePlanOrTask,
     TaskDistribute,
@@ -567,6 +580,7 @@ export default {
       compArr: {
         ModifyTask: 'ModifyTask',
         ModifyPlan: 'ModifyPlan',
+        linkProject: 'linkProject',
         CommentLogs: 'CommentLogs',
         FileUploadComp: 'FileUploadComp',
         CreatePlanOrTask: 'CreatePlanOrTask',
@@ -580,6 +594,11 @@ export default {
         addNewPlan: 'addNewPlan',
         NewTree: 'NewTree'
       },
+      // 项目列表
+      taskLinkId: '',
+      dialogGoods: false,
+      projectListShow: false,
+      //
       // zh 树状展开收缩文字
       treeName: '收缩',
       // zh 收缩展开内容
@@ -811,6 +830,33 @@ export default {
     }
   },
   methods: {
+    // 管理项目
+    taskShowFuc: function (val) {
+      var that = this
+      that.projectListShow = true
+      console.log('888888888', val)
+      that.taskLinkId = val
+    },
+    showFlagFuc: function (val) {
+      this.projectListShow = val
+    },
+    dialogGoodsShowFuc: function (val) {
+      this.dialogGoods = val
+    },
+    // 去完善信息
+    perfectInfo () {
+      this.proId = this.$store.state.proId
+      this.$router.push('/goodsDetail')
+      this.$store.state.goPerfect = true
+      this.goodsEdit = true
+      this.dialogGoods = false
+      this.projectListShow = false
+    },
+    // 跳过
+    jumpInfo () {
+      this.dialogGoods = false
+    },
+    // --------------------------------
     onOffStatusFuc: function (obj) {
       this.onOffStatus = obj
     },
