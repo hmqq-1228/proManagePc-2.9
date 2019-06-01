@@ -252,7 +252,7 @@ html,body{
   height: 100%;
 }
 div img{
-  width: 100%;
+  /*width: 100%;*/
 }
 .el-aside {
   overflow: visible !important;
