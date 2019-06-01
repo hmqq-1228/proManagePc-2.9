@@ -1,10 +1,11 @@
 <template>
   <!--任务派发 任务分解 创建动态 折叠表单-->
   <div class="TaskDistribute">
+    <div>{{getUserName?'':''}}</div>
     <div style="position: relative;width: 100%;">
       <div v-loading="loading32">
         <div class="paiTaskIptBox" style="position: relative;">
-          <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+          <div class="selectUserDialog2" style="right: 0;top: 0;" v-if="selectUserDiaShow">
             <div class="selectUserIpt">
               <el-select v-model="taskForm2.value9" multiple filterable remote style="width: 100%;"
                          :reserve-keyword="false" placeholder="请输人员姓名或拼音(如'张三'或 'zs')"
@@ -15,7 +16,7 @@
               </el-select>
             </div>
             <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
-            <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
+            <div class="selectUserBtn" v-on:click="selectUserClick()"><el-button>确定</el-button></div>
           </div>
           <div class="selectDateDialog2"  style="right: 0;top: 0;" v-show="selectDateDiaShow2">
             <div class="selectDateBox">
@@ -56,7 +57,7 @@
             <div class="paiTaskIptRightIcon" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
             <div class="paiTaskIptRightCnt" style="max-width: 140px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
-              <span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>
+              <span v-if="taskForm2.value9.length === 0">负责人</span>
             </div>
             <div class="paiTaskIptRightIcon" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
             <div class="paiTaskIptRightCnt" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)">时间</div>
@@ -85,7 +86,7 @@
               <div class="selectMoreInfo" v-on:click="moreClick2()">
                 <i v-bind:class="moreIcon2"></i><span style="margin-left: 6px;">{{moreText2}}</span>
               </div>
-              <div class="submitBtn" v-on:click="depSub2()"><i-button type="info">创建</i-button></div>
+              <div class="submitBtn" v-on:click="depSub()"><i-button type="info">创建</i-button></div>
             </div>
           </div>
           <div class="fileUploadPre"></div>
@@ -131,7 +132,7 @@ export default {
       FileUploadArr: [],
       toShowDevided: false,
       loading32: false,
-      selectUserDiaShow2: false,
+      selectUserDiaShow: false,
       // 任务分解
       taskForm2: {
         jobName: '',
@@ -221,9 +222,6 @@ export default {
     GetFilePreData (obj) {
       this.log('GetFilePreData:', obj)
       this.$emit('FilePreEmit', obj)
-      // if (obj.previewUrl && this.isImage(obj.fileName)) {
-      //   this.showBigImage1(obj.previewUrl)
-      // }
     },
     getDefultTime () {
       var that = this
@@ -283,9 +281,8 @@ export default {
         this.options42 = []
       }
     },
-    selectUserClick2: function () {
-      this.selectUserDiaShow2 = false
-      this.log(this.taskForm2.value9)
+    selectUserClick: function () {
+      this.selectUserDiaShow = false
     },
     selectDateCancel2: function () {
       this.selectDateDiaShow2 = false
@@ -327,7 +324,7 @@ export default {
       // 时间弹窗 与 人员选择弹窗 不共存  selectUserDiaShow selectDateDiaShow
       // this.selectDateDiaShow = false
       var obj = e.currentTarget
-      this.selectUserDiaShow2 = true
+      this.selectUserDiaShow = true
       this.selectUserLeft2 = $(obj).offset().left
       this.selectUserTop2 = $(obj).offset().top
       // 所有的伸缩窗 隐藏
@@ -382,11 +379,12 @@ export default {
     //       that.pickerOptions3.disabledDate = function (time) {
     //         return time.getTime() < disabledStarTime || time.getTime() > disabledEndTime
     //       }
-    //       that.depSub2()
+    //       that.depSub()
     //     }
     //   })
     // },
-    depSub2: function () {
+    /** 点击创建 */
+    depSub: function () {
       var that = this
       that.loading32 = true
       var fileStr = ''
@@ -399,7 +397,6 @@ export default {
       }
       // 如果有任务名
       if (that.taskNameText2) {
-        // value9有值
         var selectUserStr = ''
         if (that.taskForm2.value9.length > 0) {
           for (var i = 0; i < that.taskForm2.value9.length; i++) {
@@ -410,8 +407,10 @@ export default {
             }
           }
         } else {
-          // value9没有值，取默认
-          selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
+          // that.log(777777)
+          // that.log('defImplementer.name:', that.defImplementer.name)
+          // that.log('defImplementer.id:', that.defImplementer.id)
+          // selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
         that.CommunityTaskPayload2.parentId = that.nodeId
         that.CommunityTaskPayload2.attachmentId = that.SetFileIdStr()

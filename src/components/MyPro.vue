@@ -301,7 +301,7 @@
           ></textarea>
           <div class="cannetProject2">
             <div>
-              <component v-bind:is="FileUploadComp" fileFormId="proHistory" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+              <component v-bind:is="compArr.FileUploadComp" fileFormId="proHistory" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
             </div>
             <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
           </div>
@@ -331,7 +331,7 @@
 
 <script>
 import CommentLogs from './CustomComp/CommentLogs.vue'
-import FileUploadComp from './FileUploadComp.vue'
+import FileUploadComp from './CustomComp/FileUploadComp.vue'
 import goodsInfo from './CustomComp/goodsInfo.vue'
 import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 export default {
@@ -558,6 +558,10 @@ export default {
     // this.getModelDetail()
     // 初始化token
     // this.settoken()
+  },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '我的项目', childNavName: ''})
   },
   watch: {
     // 历史记录 显示与隐藏

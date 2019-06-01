@@ -234,6 +234,10 @@ export default {
     this.getProBelong()
     this.setDefaultTime()
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '我的动态', childNavName: ''})
+  },
   computed: {
     currentTabComponent: function () {
       return this.currentTab

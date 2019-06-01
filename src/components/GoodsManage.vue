@@ -195,6 +195,10 @@ export default {
     // 默认查询分类
     this.getGoodsList()
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '商品管理', childNavName: '研发管理'})
+  },
   methods: {
     addImgWide: function () {
       if (this.imgWide < 90) {

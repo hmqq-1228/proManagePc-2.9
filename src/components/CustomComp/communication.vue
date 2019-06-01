@@ -23,6 +23,7 @@
                     <component
                       v-bind:is="compArr.FileUploadComp"
                       fileFormId="HistoryFileUpl"
+                      :clipboard="false"
                       v-on:FilePreEmit="GetFilePreData"
                       v-bind:clearInfo="IsClear"
                       v-on:FileDataEmit="GetFileInfo"
