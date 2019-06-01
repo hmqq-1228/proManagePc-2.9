@@ -44,7 +44,12 @@
       <!---->
       <div class="fileAndSubbtn">
         <div class="FileUploadCompBox">
-          <component v-bind:is="compArr.FileUploadComp" fileFormId="QuickCreateTask" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+          <component v-bind:is="compArr.FileUploadComp"
+                     fileFormId="QuickCreateTask"
+                     v-bind:clearInfo="IsClear"
+                     v-on:FilePreEmit="GetFilePreData"
+                     v-on:FileDataEmit="GetFileInfo">
+          </component>
         </div>
         <div class="moreAndSubbtn">
           <div class="selectMoreInfo" v-on:click="moreClick()">
@@ -204,6 +209,11 @@ export default {
     }
   },
   methods: {
+    // 附件 附件预览
+    GetFilePreData (obj) {
+      // this.log('GetFilePreData:', obj)
+      this.$emit('FilePreEmit', obj)
+    },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {
       var that = this

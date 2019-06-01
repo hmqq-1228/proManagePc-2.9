@@ -4,8 +4,13 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 const state = {
+  /** 截图上传 start */
+  slipPreShow: false,
+  slipPreSrc: '',
+  clipBackVal: false,
+  /** 截图上传 end */
   navList: [],
-  navActive: '4',
+  navActive: '3',
   codeArr: [],
   sortType: '1',
   goodsName: '',
@@ -45,6 +50,7 @@ const state = {
   debug: true,
   proId: '',
   menuId: '',
+  NavActiveData: {},
   spuId: '',
   navType: '',
   goodType: '',
@@ -64,9 +70,9 @@ const state = {
   // baseServiceUrl: 'http://10.0.5.29:8088'
   // baseServiceUrl: 'https://ityp.baho.cn:8094/pms2'
   // baseServiceUrl: 'https://pms.baho.cn/pms'
-  // baseServiceUrl: 'https://ityp.baho.cn:8094/pms'
+  baseServiceUrl: 'https://ityp.baho.cn:8094/pms'
   // baseServiceUrl: 'http://10.0.5.241:8089'
-  baseServiceUrl: 'http://10.0.5.240:8088'
+  // baseServiceUrl: 'http://10.0.5.240:8088'
 }
 const mutations = {
   add (state) {
@@ -103,7 +109,37 @@ const mutations = {
   setSlidNavActive: function (state, index) {
     // j
   },
-  // Example: this.$store.commit('setDateOption', {OptionObj: that.dateTimeOpt, startDate: '2019-04-10 00:00:00', endDate: '2019-04-25 00:00:00'})
+  // 设置侧边栏导航的激活
+  useNavActive: function (state, navObj) {
+    console.log('useNavActive:', navObj)
+    console.log('state.navList:', state.navList)
+    for (var t = 0; t < state.navList.length; t++) {
+      if (state.navList[t].menuName === navObj.navName) {
+        if (navObj.navName === '集团战略') {
+          state.navActive = state.proId
+          state.menuId = state.proId
+        } else if (navObj.navName === '商品管理') {
+          for (var n = 0; n < state.navList[t].dataList.length; n++) {
+            if (navObj.childNavName === state.navList[t].dataList[n].menuName) {
+              state.navActive = state.navList[t].dataList[n].menuId.toString()
+              state.menuId = state.navList[t].dataList[n].menuId.toString()
+              break
+            }
+          }
+        } else {
+          state.navActive = state.navList[t].menuId.toString()
+          state.menuId = state.navList[t].menuId.toString()
+        }
+        break
+      }
+    }
+  },
+  setNavActive: function (state, navObj) {
+    console.log('设置setNavActive')
+    state.NavActiveData = navObj
+  },
+  /** 时间限制 */
+  /** 示例: this.$store.commit('setDateOption', {OptionObj: that.dateTimeOpt, startDate: '2019-04-10 00:00:00', endDate: '2019-04-25 00:00:00'}) */
   setDateOption: function (state, obj) {
     obj.OptionObj.disabledDate = function (targetDateTime) {
       var startTime = new Date(obj.startDate).getTime()

@@ -10,8 +10,8 @@
                       <img src="../../../static/img/data.png">
                       <span style="margin-left:10px">{{item.start}} - {{item.finish}}</span>
                     </span>
-                    <div class="taskDesc" v-if="item.type==='task'">
-                         <div class="top">
+                    <div class="taskDesc" v-bind:class="item.userName?'':'noUser'" v-if="item.type==='task'">
+                         <div class="top" v-if="item.userName">
                            <span style="font-size:12px;float:left;margin-right: 15px"><Icon type="ios-person" size="24" style="color:#28558C;margin-top:-5px"/>&nbsp;{{item.userName}}</span>
                             <span v-if="item.status!=='2'&&item.dayNum">
                                <span class="residue" v-if="item.dayNum > 0" :class="{'number':item.dayNum>1}">剩余{{item.dayNum}}天</span>
@@ -19,12 +19,16 @@
                             </span>
                             <!--<div class="createPeople" v-if="item.userName" :class="{'leftDay':item.status==='2'}">{{item.userName.substr(0, 1)}}</div>-->
                          </div>
-                       <div class="down" :class="{'leftDay':item.status==='2'}">
+                       <div class="down" :class="{'leftDay':item.status==='2'}" v-if="item.userName">
                         <span><img src="../../../static/img/time.png"></span>
                         <span class="text">{{item.start}} - {{item.finish}}</span>
                        </div>
+                      <div class="down noUser" :class="{'leftDay':item.status==='2'}" v-if="!item.userName">
+                        <span><img src="../../../static/img/time.png"></span>
+                        <span class="text">{{item.start}} - {{item.finish}}</span>
+                      </div>
                     </div>
-                    <div  v-if="item.type==='task'">
+                    <div  v-if="item.type==='task' && item.userName">
                           <div class="status" :class="{'noSure':item.status==='0','noFinish':item.status==='1','finish':item.status==='2','stop':item.status==='3','overdue':item.status==='4',}"><p>{{item.statusStr}}</p></div>
                     </div>
                 </div>
@@ -175,6 +179,9 @@ export default {
   height: 55px;
   margin-top: -12px;
 }
+.taskDesc.noUser{
+  margin-top: auto;
+}
 .taskDesc .top {
   margin-left: 269px;
   display: inline-block;
@@ -212,6 +219,11 @@ export default {
   text-align: right;
   /*margin-top:5px;
   width: 200px;*/
+}
+.taskDesc .down.noUser{
+  margin-top: auto;
+  margin-left: 154px;
+  text-align: right;
 }
 .taskDesc .down img {
   /*margin-top: 8px;*/

@@ -11,9 +11,7 @@ export default {
   name: 'Wellcome',
   data () {
     return {
-      spinShow: true,
-      slideMenuData: [],
-      slideMenuGroupData: []
+      spinShow: true
     }
   },
   computed: {
@@ -28,78 +26,17 @@ export default {
           }
           that.$router.push('/goodsDetail')
         } else if (that.$store.state.navList[0].menuName === '商品管理') {
-          that.log('商品管理dataList:', that.$store.state.navList[0].dataList)
           that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
         } else {
           that.$router.push('/' + that.$store.state.navList[0].path)
         }
       }
       return this.$store.state.navList
-    },
-    querySlideMenuData: function () {
-      var that = this
-      return that.slideMenuData
     }
   },
   watch: {
-    slideMenuData (val, old) {
-      var that = this
-      if (val.length > 0) {
-        if (that.slideMenuGroupData.length > 0) {
-          that.$store.state.menuId = that.slideMenuGroupData[0].dataList[0].menuId
-          that.getProjectDetail(that.slideMenuGroupData[0].dataList[0].menuId, '1', '集团战略')
-        } else {
-          that.$store.state.menuId = val[0].menuId
-          that.getProjectDetail(val[0].menuId, '2', '', val[0].menuName)
-        }
-      } else {
-        // that.log('数组为空')
-      }
-    }
   },
   methods: {
-    testVal: function () {
-      // this.log('testVal:', this.test)
-    },
-    getProjectDetail: function (id, n, proType, proName) {
-      if (proType === '集团战略') {
-        // this.log('getProjectDetail：', '走了集团战略')
-        if (id) {
-          this.$store.state.proId = id
-          this.$store.state.navType = n
-          this.$router.push('/goodsDetail')
-        }
-      } else if (proType === '商品管理') {
-        if (proName === '档案管理') {
-          this.$router.push('/GoodsArchives')
-        } else if (proName === '研发管理') {
-          this.$router.push('/GoodsManage')
-        } else if (proName === '产品小组') {
-          this.$router.push('/GroupAdmin')
-        }
-      } else {
-        // this.log('getProjectDetail：', '没走集团战略')
-        if (proName === '我的日程') {
-          this.$router.push('/Schedule')
-        } else if (proName === '我的动态') {
-          this.$router.push('/MyDepNew')
-        } else if (proName === '我的任务') {
-          this.$router.push('/MyTask')
-        } else if (proName === '我的项目') {
-          this.$router.push('/MyPro')
-        } else if (proName === '商品管理') {
-          this.$router.push('/GoodsManage')
-        } else if (proName === '商品档案') {
-          this.$router.push('/GoodsArchives')
-        } else if (proName === '问题反馈') {
-          this.$router.push('/ProblemFeedback')
-        } else {
-          this.activeNavIndex = ''
-          this.$store.state.activeNavIndex = ''
-          this.$store.state.proId = id
-        }
-      }
-    }
   }
 }
 </script>
