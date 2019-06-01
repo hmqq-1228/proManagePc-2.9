@@ -1296,7 +1296,7 @@ export default {
       //     if (that.isImage(res.data.showName)) {
       //       res.data.isImg = true
       //     } else {
-      //       res.data.isImg = false
+      //       res.data.isImg = falsenpm
       //     }
       //     that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
       //     that.resetScro()
