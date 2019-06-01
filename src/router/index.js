@@ -5,6 +5,7 @@ import Router from 'vue-router'
  */
 import goodsDetail from '@/components/goodsDetail'
 import workPlan from '@/components/workPlan'
+import report from '@/components/report'
 // 商品档案详情
 import goodsfileDetail from '@/components/goodsfileDetail'
 import HelloWorld from '@/components/HelloWorld'
@@ -42,6 +43,11 @@ export default new Router({
     /** ProblemFeedback
      *  ===================================================== ZhangH
      */
+    {
+      path: '/report',
+      name: 'report',
+      component: report
+    },
     {
       path: '/workPlan',
       name: 'workPlan',

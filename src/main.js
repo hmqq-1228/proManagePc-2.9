@@ -10,11 +10,13 @@ import 'iview/dist/styles/iview.css'
 import router from './router'
 import $ from 'jquery'
 import ajax from './assets/ajax/ajax.js'
+import htmlToPdf from './assets/utils/htmlToPdf.js'
 Vue.config.productionTip = false
 Vue.prototype.$Bus = new Vue()
 Vue.use(ElementUI)
 Vue.use(iView)
 Vue.use(ajax)
+Vue.use(htmlToPdf)
 /* eslint-disable no-new */
 var jvm = new Vue({
   el: '#app',
