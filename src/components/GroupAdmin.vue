@@ -163,24 +163,12 @@ export default {
   created () {
     this.queryGroupList()
     this.queryPermission()
-    this.getDataAuth()
   },
   mounted: function () {
     /** 设置侧边栏激活状态 */
     this.$store.commit('setNavActive', {navName: '商品管理', childNavName: '产品小组'})
   },
   methods: {
-    getDataAuth: function () {
-      var that = this
-      that.ajax('/group/getDataAuth', {}).then(res => {
-        that.log('GroupMsg:', res)
-        if (res.code === 200) {
-          console.log('that.CreateGroupMid2', res)
-        } else {
-          that.$message(res.msg)
-        }
-      })
-    },
     currentChange: function (num) {
       this.log('currentChange:', num)
       this.pageNumber = num

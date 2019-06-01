@@ -200,6 +200,7 @@
                  v-bind:taskDrawerOpen="value4"
                  v-bind:modifyTaskRes="modifyTaskRes"
                  v-on:FilePreEmit="GetFilePreData"
+                 v-on:taskShow="taskShowFuc"
                  v-on:toPlanDetail="toPlanDetailFuc"
                  v-on:showEditForm="showEditFormFuc"
                  v-on:ActionResThrow="ActionResThrowFuc"
@@ -241,6 +242,16 @@
                  :nodeId="taskId2">
       </component>
     </Drawer>
+    <el-dialog title="项目列表" :visible.sync="projectListShow">
+      <component v-bind:is="compArr.linkProject" v-bind:linkId="taskLinkId" v-bind:proListShow="projectListShow" v-on:dialogGoodsShow="dialogGoodsShowFuc" v-on:showFlag="showFlagFuc"></component>
+    </el-dialog>
+    <el-dialog title="提示" :visible.sync="dialogGoods" width="30%" center>
+      <span>是否完善产品信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="jumpInfo">跳过</el-button>
+        <el-button type="primary" @click="perfectInfo">去完善</el-button>
+      </span>
+    </el-dialog>
     <!-- 图片预览 新加的 -->
     <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
       <div class="showImg"><img v-bind:src="commentPreviewUrl1" alt=""></div>
@@ -256,6 +267,7 @@
 import FileUploadComp from './CustomComp/FileUploadComp.vue'
 import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
 import ModifyTask from './CustomComp/ModifyTask.vue'
+import linkProject from './CustomComp/linkProject.vue'
 import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
 import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 // PlanDetailComp ModifyTask CreatePlanOrTask
@@ -265,6 +277,7 @@ export default {
   components: {
     FileUploadComp,
     ModifyTask,
+    linkProject,
     TaskDetailComp,
     PlanDetailComp,
     CreatePlanOrTask
@@ -282,10 +295,15 @@ export default {
       compArr: {
         FileUploadComp: 'FileUploadComp',
         ModifyTask: 'ModifyTask',
+        linkProject: 'linkProject',
         TaskDetailComp: 'TaskDetailComp',
         PlanDetailComp: 'PlanDetailComp',
         CreatePlanOrTask: 'CreatePlanOrTask'
       },
+      // 项目列表
+      taskLinkId: '',
+      dialogGoods: false,
+      projectListShow: false,
       // 附件上传
       FileUploadArr: [],
       IsClear: false,
@@ -601,6 +619,31 @@ export default {
     this.getUserInfo()
   },
   methods: {
+    taskShowFuc: function (val) {
+      var that = this
+      that.projectListShow = true
+      console.log('888888888', val)
+      that.taskLinkId = val
+    },
+    showFlagFuc: function (val) {
+      this.projectListShow = val
+    },
+    dialogGoodsShowFuc: function (val) {
+      this.dialogGoods = val
+    },
+    // 去完善信息
+    perfectInfo () {
+      // this.proId = this.$store.state.proId
+      this.$router.push('/goodsDetail')
+      this.$store.state.goPerfect = true
+      this.goodsEdit = true
+      this.dialogGoods = false
+      this.projectListShow = false
+    },
+    // 跳过
+    jumpInfo () {
+      this.dialogGoods = false
+    },
     // 获取光标位置
     getPosition (element) {
       let cursorPos = 0

@@ -117,6 +117,7 @@
                  v-bind:taskDrawerOpen="TaskDetailCompShow"
                  v-bind:modifyTaskRes="modifyTaskRes"
                  v-on:FilePreEmit="GetFilePreData"
+                 v-on:taskShow="taskShowFuc"
                  v-on:toPlanDetail="toPlanDetailFuc"
                  v-on:showEditForm="showEditFormFuc"
                  v-on:CompThrow="CompThrowFuc"
@@ -124,122 +125,6 @@
                  v-on:TaskDelCallback="TaskDelCallbackFuc"
                  :nodeId="currentTargetId">
       </component>
-      <!--<div class="slidTop">-->
-        <!--<div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>-->
-        <!--<div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>-->
-      <!--</div>-->
-      <!--<div class="taskMsg">-->
-        <!--<div class="taskLf">-->
-          <!--<div class="taskName">{{taskBasicMsg.jobName}}</div>-->
-          <!--<div class="taskDetail" v-bind:title="taskBasicMsg.description">{{taskBasicMsg.description}}</div>-->
-        <!--</div>-->
-        <!--<div class="taskRt">-->
-          <!--<div v-if="taskBasicMsg.status === '0'"><img src="../../static/img/unstart.png" alt=""></div>-->
-          <!--<div v-if="taskBasicMsg.status === '1'"><img src="../../static/img/doing.png" alt=""></div>-->
-          <!--<div v-if="taskBasicMsg.status === '2'"><img src="../../static/img/finish.png" alt=""></div>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<div class="taskTime">-->
-        <!--<el-collapse>-->
-          <!--<el-collapse-item style="padding: 0 10px;">-->
-            <!--<template slot="title">-->
-              <!--<img src="../../static/img/time.png" alt=""><span style="margin-left: 10px;">起止时间: {{taskBasicMsg.taskStartDate}} 到 {{taskBasicMsg.taskFinishDate}}</span>-->
-              <!--<div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum >= 0">剩余 <span style="color: #53b5ff;font-size: 16px;font-weight: bold">{{taskBasicMsg.dayNum}}</span> 天</div>-->
-              <!--<div style="margin-left: 10%;" v-if="taskBasicMsg.dayNum && taskBasicMsg.dayNum < 0"><span style="color:red;font-size: 16px;">已逾期</span></div>-->
-              <!--<div style="margin-left: 10%;" v-if="!taskBasicMsg.dayNum"><span style="color:#27CF97;font-size: 16px;">已完成</span></div>-->
-            <!--</template>-->
-            <!--<div class="managePro">-->
-              <!--<div><img src="../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span>{{taskBasicMsg.userName}}</span></div>-->
-              <!--<div><img src="../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>-->
-            <!--</div>-->
-            <!--<div class="managePro" style="margin-top: 10px;">-->
-              <!--<div><img src="../../static/img/kaishi.png" alt=""><span class="proLabel">实际开始:</span><span v-if="taskBasicMsg.dealWithDate">{{taskBasicMsg.dealWithDate}}</span><span style="color: #888" v-if="!taskBasicMsg.dealWithDate">暂未开始</span></div>-->
-              <!--<div><img src="../../static/img/jiesu.png" alt=""><span class="proLabel">实际结束:</span><span v-if="taskBasicMsg.realFinishDate">{{taskBasicMsg.realFinishDate}}</span><span style="color: #888" v-if="!taskBasicMsg.realFinishDate">暂未完成</span></div>-->
-            <!--</div>-->
-          <!--</el-collapse-item>-->
-        <!--</el-collapse>-->
-      <!--</div>-->
-      <!--<div class="cannetProject">-->
-        <!--<div style="display: inline-block"><img src="../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>-->
-        <!--<span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>-->
-        <!--<span style="color: #888;font-size: 14px;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>-->
-      <!--</div>-->
-      <!--<div class="cannetProject">-->
-        <!--<div style="display: inline-block"><img src="../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>-->
-        <!--<div style="display: inline-block">{{taskBasicMsg.projectName}}</div>-->
-      <!--</div>-->
-      <!--<div class="cannetProject">-->
-        <!--<div style="display: inline-block"><img src="../../static/img/fujian.png" alt=""><span>任务附件:</span></div>-->
-        <!--<div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">-->
-          <!--<span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">-->
-            <!--<span style="display: inline-block;">{{file.showName}}</span>-->
-            <!--<div style="display: inline-block;font-size: 12px;">-->
-              <!--&lt;!&ndash;<span style="display: inline-block;color: #53b5ff;cursor: pointer;" @click="deleteFile(file.id)">删除</span>&ndash;&gt;-->
-              <!--<span v-if="file.isImg" @click="showImagePre(file.previewUrl)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>-->
-              <!--<span style="display: inline-block;color: #53b5ff;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>-->
-            <!--</div>-->
-          <!--</span>-->
-        <!--</div>-->
-        <!--<div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>-->
-      <!--</div>-->
-      <!--<div class="cannetProject" v-if="false">-->
-        <!--<Button type="primary" style="margin-right: 30px;">Primary</Button><Button type="primary" style="margin-right: 30px;">Primary</Button><Button type="primary">Primary</Button>-->
-      <!--</div>-->
-      <!--<div class="cannetProject1">-->
-        <!--<div style="display: inline-block"><img src="../../static/img/goutong.png" alt=""><span>沟 通</span></div>-->
-      <!--</div>-->
-      <!--<div class="el-textarea" v-loading="loading8">-->
-        <!--<form id="uploadFile" enctype="multipart/form-data">-->
-          <!--<textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>-->
-          <!--<div class="cannetProject21">-->
-            <!--<component v-bind:is="FileUploadComp" fileFormId="scheduleConnect" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>-->
-            <!--<div><i-button type="info" style="margin-top: 6px;" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>-->
-          <!--</div>-->
-        <!--</form>-->
-      <!--</div>-->
-      <!--<div class="cannetProject1-1">-->
-        <!--<div style="display: inline-block"><img src="../../static/img/jilu.png" alt=""><span>沟通记录</span></div>-->
-      <!--</div>-->
-      <!--<div class="timeLine">-->
-        <!--<Timeline v-if="commentList && commentList.length > 0">-->
-          <!--<Timeline-item color="green" v-for="(comment, index) in commentList" v-bind:key="index">-->
-            <!--<p class="time">{{comment.createDate}}</p>-->
-            <!--<p class="content" v-bind:title="comment.content">{{comment.customer_name}}说: {{comment.content}}</p>-->
-            <!--<span v-for="(com, index2) in comment.attachment" v-bind:key="index2">-->
-              <!--<p class="content" v-if="com.showName">附件:-->
-                <!--<span style="display: inline-block"> {{com.showName}}</span>-->
-                <!--<span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(com.previewUrl)">预览</span>-->
-                <!--<span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>-->
-              <!--</p>-->
-            <!--</span>-->
-          <!--</Timeline-item>-->
-        <!--</Timeline>-->
-        <!--<div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>-->
-        <!--<div style="text-align: center">-->
-          <!--<Page :total="totalNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentPage($event)"></Page>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<div class="cannetProject1-1" style="margin-top: 0">-->
-        <!--<div style="display: inline-block"><img src="../../static/img/history.png" alt=""><span>操作记录</span></div>-->
-      <!--</div>-->
-      <!--<div class="timeLine">-->
-        <!--<Timeline>-->
-          <!--<Timeline-item v-for="(history, index) in historyList" v-bind:key="index">-->
-            <!--<p class="time">{{history.oTime}}</p>-->
-            <!--<p class="content">{{history.oName}}{{history.oContent}}</p>-->
-            <!--<span v-for="(his, index2) in history.attachment" v-bind:key="index2">-->
-              <!--<p class="content" v-if="his.showName"><span>附件:</span>-->
-                <!--<span style="display: inline-block"> {{his.showName}}</span>-->
-                <!--<span v-if="his.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePreCom(his.previewUrl)">预览</span>-->
-                <!--<span style="margin-left: 10px;display: inline-block;"><a v-bind:href="his.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>-->
-              <!--</p>-->
-            <!--</span>-->
-          <!--</Timeline-item>-->
-        <!--</Timeline>-->
-        <!--<div style="text-align: center">-->
-          <!--<Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>-->
-        <!--</div>-->
-      <!--</div>-->
     </Drawer>
     <!-- 任务详情 end -->
     <!--修改任务 编辑任务 任务 修改-->
@@ -254,6 +139,16 @@
                  :nodeId="currentTargetId">
       </component>
     </Drawer>
+    <el-dialog title="项目列表" :visible.sync="projectListShow">
+      <component v-bind:is="compArr.linkProject" v-bind:linkId="taskLinkId" v-bind:proListShow="projectListShow" v-on:dialogGoodsShow="dialogGoodsShowFuc" v-on:showFlag="showFlagFuc"></component>
+    </el-dialog>
+    <el-dialog title="提示" :visible.sync="dialogGoods" width="30%" center>
+      <span>是否完善产品信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="jumpInfo">跳过</el-button>
+        <el-button type="primary" @click="perfectInfo">去完善</el-button>
+      </span>
+    </el-dialog>
     <!-- 图片预览 -->
     <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
       <div class="showImg"><img v-bind:src="commentPreviewUrl1" alt=""></div>
@@ -264,13 +159,15 @@
 <script>
 import FileUploadComp from './CustomComp/FileUploadComp.vue'
 import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
+import linkProject from './CustomComp/linkProject.vue'
 import ModifyTask from './CustomComp/ModifyTask.vue'
 export default {
   name: 'Schedule',
   components: {
     FileUploadComp,
     TaskDetailComp,
-    ModifyTask
+    ModifyTask,
+    linkProject
   },
   data () {
     return {
@@ -286,6 +183,7 @@ export default {
       compArr: {
         ModifyTask: 'ModifyTask',
         ModifyPlan: 'ModifyPlan',
+        linkProject: 'linkProject',
         CommentLogs: 'CommentLogs',
         FileUploadComp: 'FileUploadComp',
         CreatePlanOrTask: 'CreatePlanOrTask',
@@ -295,6 +193,10 @@ export default {
         TaskDetailComp: 'TaskDetailComp',
         PlanDetailComp: 'PlanDetailComp'
       },
+      // 项目列表
+      taskLinkId: '',
+      dialogGoods: false,
+      projectListShow: false,
       commentPreviewUrl1: '',
       dialogShowImg1: false,
       value444: false,
@@ -638,6 +540,31 @@ export default {
     }
   },
   methods: {
+    taskShowFuc: function (val) {
+      var that = this
+      that.projectListShow = true
+      console.log('888888888', val)
+      that.taskLinkId = val
+    },
+    showFlagFuc: function (val) {
+      this.projectListShow = val
+    },
+    dialogGoodsShowFuc: function (val) {
+      this.dialogGoods = val
+    },
+    // 去完善信息
+    perfectInfo () {
+      // this.proId = this.$store.state.proId
+      this.$router.push('/goodsDetail')
+      this.$store.state.goPerfect = true
+      this.goodsEdit = true
+      this.dialogGoods = false
+      this.projectListShow = false
+    },
+    // 跳过
+    jumpInfo () {
+      this.dialogGoods = false
+    },
     GetFileInfo (obj) {
       if (obj) {
         this.IsClear = false
@@ -1362,19 +1289,19 @@ export default {
       that.TaskDetailCompShow = true
       that.getCommicateCont()
       that.getHistoryList()
-      that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
-        if (res.code === 200) {
-          that.taskBasicMsg = res.data
-          that.rid = res.data.uid
-          if (that.isImage(res.data.showName)) {
-            res.data.isImg = true
-          } else {
-            res.data.isImg = false
-          }
-          that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
-          that.resetScro()
-        }
-      })
+      // that.ajax('/leader/getTaskBasic', {uid: that.taskId}).then(res => {
+      //   if (res.code === 200) {
+      //     that.taskBasicMsg = res.data
+      //     that.rid = res.data.uid
+      //     if (that.isImage(res.data.showName)) {
+      //       res.data.isImg = true
+      //     } else {
+      //       res.data.isImg = false
+      //     }
+      //     that.downurl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.realUrl + '&showName=' + res.data.showName
+      //     that.resetScro()
+      //   }
+      // })
       // }
     },
     resetScro: function () {
