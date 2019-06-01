@@ -221,6 +221,17 @@ export default {
               default:
               // h
             }
+          } else if (navType === '工作报告') {
+            switch (navData[r].menuName) {
+              case '报告生成':
+                navData[r].path = 'workPlan'
+                break
+              case '历史报告':
+                navData[r].path = 'report'
+                break
+              default:
+              // h
+            }
           }
         }
         return navData
@@ -268,6 +279,10 @@ export default {
               case '问题反馈':
                 res.data[i].icon = 'md-help-circle'
                 res.data[i].path = 'ProblemFeedback'
+                break
+              case '工作报告':
+                res.data[i].icon = 'md-help-circle'
+                res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'mix', '工作报告', '')
                 break
               default:
                 res.data[i].icon = 'md-analytics'
