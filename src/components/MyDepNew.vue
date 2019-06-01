@@ -244,6 +244,31 @@ export default {
     }
   },
   methods: {
+    taskShowFuc: function (val) {
+      var that = this
+      that.projectListShow = true
+      console.log('888888888', val)
+      that.taskLinkId = val
+    },
+    showFlagFuc: function (val) {
+      this.projectListShow = val
+    },
+    dialogGoodsShowFuc: function (val) {
+      this.dialogGoods = val
+    },
+    // 去完善信息
+    perfectInfo () {
+      this.proId = this.$store.state.proId
+      this.$router.push('/goodsDetail')
+      this.$store.state.goPerfect = true
+      this.goodsEdit = true
+      this.dialogGoods = false
+      this.projectListShow = false
+    },
+    // 跳过
+    jumpInfo () {
+      this.dialogGoods = false
+    },
     // 创建动态
     ActionResThrowFuc: function (obj) {
       if (obj.res.code === 200) {

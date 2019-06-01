@@ -1,16 +1,17 @@
 <template>
    <div class="workPlan">
      <div class="pdf" id="pdfDom">
+       <p style="text-align: center;font-size: 13px;color:#000;margin-bottom: 20px;margin-top: 30px;letter-spacing: 2px;">工作报告</p>
        <div style="padding:10px 10px;width: 100%;height: 100%;">
-         <p style="font-size: 12px;color:#000;">{{tabCurr}}</p>
-         <div style="margin-top: 10px;" v-for="(item, index) in currentData" :key="item.uid">
+         <p style="font-size: 12px;color:#169BD5;margin-left: 10px">{{tabCurr}}</p>
+         <div style="margin-top: 10px;margin-left: -10px;" v-for="(item, index) in currentData" :key="item.uid">
            <p style="font-size: 12px;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
-           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left:0px">{{item.description}}</p>
+           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left:3px">{{item.description}}</p>
          </div>
-         <p style="font-size: 12px;color:#000;margin-top: 30px;">{{tabNext}}</p>
-         <div style="margin-top: 15px" v-for="(item, index) in nextData" :key="item.uid">
+         <p style="font-size: 12px;color:#169BD5;margin-top: 30px;margin-left: 10px">{{tabNext}}</p>
+         <div style="margin-top: 15px;margin-left: -10px;" v-for="(item, index) in nextData" :key="item.uid">
            <p style="font-size: 12px;;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
-           <p style="font-size: 12px;margin-left: 20px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 0px">{{item.description}}</p>
+           <p style="font-size: 12px;margin-left:3px;margin-top: 5px;transform: scale(0.8);line-height: 25px;">{{item.description}}</p>
          </div>
        </div>
      </div>
@@ -131,7 +132,7 @@
                <div class="planItem" style="width: 70%;text-indent: 100px">描述</div>
                <div class="planItem" style="width: 10%;text-indent: 10px" @click="addPlan"><i class="el-icon-plus" style="color:#169BD5;font-size: 18px;cursor: pointer;font-weight: bold"></i></div>
              </div>
-             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection' :list="currentData" style="width: 100%;height: 360px">
+             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection' :list="currentData" style="width: 100%;height: 350px">
                <div class="content-list" v-for="(item,index) in currentData" :key="index" @dblclick="editPlan(item)">
                  <div class="planItem contents" style="width: 20%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left: 10px" :title="item.jobName">{{item.jobName}}</div>
                  <div class="planItem contents" style="width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-indent: 40px" :title="item.description">{{item.description}}</div>
@@ -146,7 +147,7 @@
                <div class="planItem" style="width: 70%;text-indent: 100px">描述</div>
                <div class="planItem" style="width: 10%;text-indent: 10px" @click="addPlanNext"><i class="el-icon-plus" style="color:#169BD5;font-size: 18px;cursor: pointer;font-weight: bold"></i></div>
              </div>
-             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection1' :list="nextData" style="width: 100%;height: 360px">
+             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection1' :list="nextData" style="width: 100%;height: 350px">
                <div class="content-list" v-for="(item,index) in nextData" :key="index" @dblclick="editNextPlan(item)">
                  <div class="planItem contents" style="width: 20%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left: 10px" :title="item.jobName">{{item.jobName}}</div>
                  <div class="planItem contents" style="width: 55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-indent: 50px" :title="item.description">{{item.description}}</div>
@@ -534,10 +535,11 @@ export default {
       this.getPlan()
     },
     addCollection (evt) {
-      console.log(this.currentData)
+      console.log(evt)
       this.getPlan()
     },
     addCollection1 (evt) {
+      console.log(evt)
       this.getPlan()
     },
     addPlan () {
