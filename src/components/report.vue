@@ -8,8 +8,8 @@
            <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 0px">{{item.remark}}</p>
          </div>
          <p style="font-size: 12px;color:#000;margin-top: 30px;">{{nname}}</p>
-         <div style="margin-top: 15px;transform: scale(0.85)" v-for="(item, index) in detail.nextRec" :key="item.id">
-           <p style="font-size: 12px;"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.taskName}}</p>
+         <div style="margin-top: 15px" v-for="(item, index) in detail.nextRec" :key="item.id">
+           <p style="font-size: 12px;;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.taskName}}</p>
            <p style="font-size: 12px;margin-left: 20px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 0px">{{item.remark}}</p>
          </div>
        </div>

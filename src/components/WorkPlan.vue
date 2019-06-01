@@ -3,13 +3,13 @@
      <div class="pdf" id="pdfDom">
        <div style="padding:10px 10px;width: 100%;height: 100%;">
          <p style="font-size: 12px;color:#000;">{{tabCurr}}</p>
-         <div style="margin-top: 10px;" v-for="(item, index) in currentData" :key="index">
+         <div style="margin-top: 10px;" v-for="(item, index) in currentData" :key="item.uid">
            <p style="font-size: 12px;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
            <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left:0px">{{item.description}}</p>
          </div>
          <p style="font-size: 12px;color:#000;margin-top: 30px;">{{tabNext}}</p>
-         <div style="margin-top: 15px;transform: scale(0.85)" v-for="(item, index) in nextData" :key="index">
-           <p style="font-size: 12px;"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
+         <div style="margin-top: 15px" v-for="(item, index) in nextData" :key="item.uid">
+           <p style="font-size: 12px;;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
            <p style="font-size: 12px;margin-left: 20px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 0px">{{item.description}}</p>
          </div>
        </div>
@@ -127,30 +127,30 @@
          <div class="plan">
            <div class="plan-top">
              <div class="title">
-               <div class="planItem" style="width: 20%;">任务名称</div>
-               <div class="planItem" style="width: 70%;">描述</div>
-               <div class="planItem" style="width: 10%;" @click="addPlan"><i class="el-icon-plus" style="color:#169BD5;font-size: 18px;cursor: pointer;font-weight: bold"></i></div>
+               <div class="planItem" style="width: 15%;margin-left: 10px">任务名称</div>
+               <div class="planItem" style="width: 70%;text-indent: 100px">描述</div>
+               <div class="planItem" style="width: 10%;text-indent: 10px" @click="addPlan"><i class="el-icon-plus" style="color:#169BD5;font-size: 18px;cursor: pointer;font-weight: bold"></i></div>
              </div>
-             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection' :list="currentData">
+             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection' :list="currentData" style="width: 100%;height: 360px">
                <div class="content-list" v-for="(item,index) in currentData" :key="index" @dblclick="editPlan(item)">
-                 <div class="planItem contents" style="width: 20%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" :title="item.jobName">{{item.jobName}}</div>
-                 <div class="planItem contents" style="width: 70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" :title="item.description">{{item.description}}</div>
-                 <div class="planItem contents" style="width: 10%;"><i class="el-icon-close" style="color:#169BD5;font-size: 14px;cursor: pointer;font-weight: bold" @click="delPlan(index)"></i></div>
+                 <div class="planItem contents" style="width: 20%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left: 10px" :title="item.jobName">{{item.jobName}}</div>
+                 <div class="planItem contents" style="width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-indent: 40px" :title="item.description">{{item.description}}</div>
+                 <div class="planItem contents" style="width: 10%;text-indent: 30px"><i class="el-icon-close" style="color:#169BD5;font-size: 14px;cursor: pointer;font-weight: bold" @click="delPlan(index)"></i></div>
                </div>
              </draggable>
            </div>
            <p style="font-size: 14px;margin-top: 20px">{{tabNext}}</p>
            <div class="plan-top plan-bottom">
              <div class="title">
-               <div class="planItem" style="width: 20%;">任务名称</div>
-               <div class="planItem" style="width: 70%;">描述</div>
-               <div class="planItem" style="width: 10%;" @click="addPlanNext"><i class="el-icon-plus" style="color:#169BD5;font-size: 18px;cursor: pointer;font-weight: bold"></i></div>
+               <div class="planItem" style="width: 15%;margin-left: 10px">任务名称</div>
+               <div class="planItem" style="width: 70%;text-indent: 100px">描述</div>
+               <div class="planItem" style="width: 10%;text-indent: 10px" @click="addPlanNext"><i class="el-icon-plus" style="color:#169BD5;font-size: 18px;cursor: pointer;font-weight: bold"></i></div>
              </div>
-             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection1' :list="nextData">
+             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection1' :list="nextData" style="width: 100%;height: 360px">
                <div class="content-list" v-for="(item,index) in nextData" :key="index" @dblclick="editNextPlan(item)">
-                 <div class="planItem contents" style="width: 20%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" :title="item.jobName">{{item.jobName}}</div>
-                 <div class="planItem contents" style="width: 70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" :title="item.description">{{item.description}}</div>
-                 <div class="planItem contents" style="width: 10%;"><i class="el-icon-close" style="color:#169BD5;font-size: 14px;cursor: pointer;font-weight: bold" @click="delPlanNext(index)"></i></div>
+                 <div class="planItem contents" style="width: 20%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left: 10px" :title="item.jobName">{{item.jobName}}</div>
+                 <div class="planItem contents" style="width: 55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-indent: 50px" :title="item.description">{{item.description}}</div>
+                 <div class="planItem contents" style="width: 10%;text-indent: 30px"><i class="el-icon-close" style="color:#169BD5;font-size: 14px;cursor: pointer;font-weight: bold" @click="delPlanNext(index)"></i></div>
                </div>
              </draggable>
            </div>
@@ -459,6 +459,7 @@ export default {
     },
     getReport () {
       this.modal2 = true
+      this.remark = ''
     },
     // pdf生成
     generate () {
@@ -985,7 +986,7 @@ export default {
     width: 33.33333%;
     height: 100%;
     line-height: 40px;
-    text-align: center;
+    /*text-align: center;*/
     float: left;
   }
   .workPlan .plan-top .contents {
