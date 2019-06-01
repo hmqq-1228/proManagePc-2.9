@@ -1,16 +1,17 @@
 <template>
    <div class="report" style="position: relative">
      <div class="pdf" id="pdfDom" style="width: 500px;position: fixed;right:-500px;top:0" v-if="detail">
+       <p style="text-align: center;font-size: 13px;color:#000;margin-bottom: 20px;margin-top: 30px;letter-spacing: 2px;">工作报告</p>
        <div style="padding:10px 10px;width: 100%;height: 100%;">
-         <p style="font-size: 12px;color:#000;">{{name}}</p>
-         <div style="margin-top: 10px;" v-for="(item, index) in detail.lastRec" :key="item.id">
+         <p style="font-size: 12px;color:#169BD5;margin-left: 10px">{{name}}</p>
+         <div style="margin-top: 10px;margin-left: -10px;" v-for="(item, index) in detail.lastRec" :key="item.id">
            <p style="font-size: 12px;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.taskName}}</p>
-           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 0px">{{item.remark}}</p>
+           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left:3px">{{item.remark}}</p>
          </div>
-         <p style="font-size: 12px;color:#000;margin-top: 30px;">{{nname}}</p>
-         <div style="margin-top: 15px" v-for="(item, index) in detail.nextRec" :key="item.id">
+         <p style="font-size: 12px;color:#169BD5;margin-top: 30px;margin-left: 10px">{{nname}}</p>
+         <div style="margin-top: 15px;margin-left: -10px;" v-for="(item, index) in detail.nextRec" :key="item.id">
            <p style="font-size: 12px;;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.taskName}}</p>
-           <p style="font-size: 12px;margin-left: 20px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 0px">{{item.remark}}</p>
+           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 3px">{{item.remark}}</p>
          </div>
        </div>
      </div>
