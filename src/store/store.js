@@ -7,8 +7,13 @@ const state = {
   /** 截图上传 start */
   slipPreShow: false,
   slipPreSrc: '',
+  slipTextareaId: '',
   clipBackVal: false,
   /** 截图上传 end */
+  /** 图片预览 start */
+  imgPreviewShow: false,
+  imgPreviewSrc: '',
+  /** 图片预览 end */
   navList: [],
   navActive: '3',
   codeArr: [],

@@ -1,5 +1,19 @@
 <template>
    <div class="workPlan">
+     <div class="pdf" id="pdfDom">
+       <div style="padding:10px 10px;width: 100%;height: 100%;">
+         <p style="font-size: 12px;color:#000;">{{tabCurr}}</p>
+         <div style="margin-top: 10px;" v-for="(item, index) in currentData" :key="index">
+           <p style="font-size: 12px;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
+           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left:0px">{{item.description}}</p>
+         </div>
+         <p style="font-size: 12px;color:#000;margin-top: 30px;">{{tabNext}}</p>
+         <div style="margin-top: 15px;transform: scale(0.85)" v-for="(item, index) in nextData" :key="index">
+           <p style="font-size: 12px;"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
+           <p style="font-size: 12px;margin-left: 20px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 0px">{{item.description}}</p>
+         </div>
+       </div>
+     </div>
      <div class="top">
        <ul class="top-ul">
          <li v-for="item in time" :key="item.id" class="list" :class="item.id === active ? 'active' : ''" @click="choseTime(item)">{{item.name}}</li>
@@ -79,11 +93,11 @@
                         </div>
                         <el-rate v-model="item.jobLevelNum" style="float: right" :disabled="true"></el-rate>
                     </div>
-                   <div class="planbottom">
+                   <div class="planbottom" :title="item.description">
                      <Icon type="ios-paper-outline" style="color:#169BD5;font-size: 18px;"/>
                      <span style="margin-left: 5px;line-height: 20px;">任务描述：<span>{{item.description}}</span></span>
                    </div>
-                   <div style="color:#169BD5;position: absolute;right:20px;bottom:10px;font-size: 14px;">详情</div>
+                   <!--<div style="color:#169BD5;position: absolute;right:20px;bottom:10px;font-size: 14px;">详情</div>-->
                  </div>
              </draggable>
            </div>
@@ -106,8 +120,8 @@
          <div class="current">
             <span style="font-size: 14px;line-height:40px;">{{tabCurr}}</span>
             <div style="float: right">
-               <Button type="info" size="small" style="margin-right: 10px">预览</Button>
-               <Button type="info" size="small" style="">生成</Button>
+               <!--<Button type="info" size="small" style="margin-right: 10px" @click="getPdf('#pdfDom',htmlTitle)">预览</Button>-->
+               <Button type="info" size="small" style="" @click="getReport()">生成</Button>
             </div>
          </div>
          <div class="plan">
@@ -179,6 +193,21 @@
          <Button type="primary" @click="okNext('formValidate1')">确定</Button>
        </div>
      </Modal>
+     <Modal
+       v-model="modal2"
+       title="备注"
+       @on-ok="ok"
+       @on-cancel="cancel">
+       <Form :label-width="50">
+         <FormItem label="备注" prop="remark">
+           <Input v-model="remark" placeholder="请输入" type="textarea"/>
+         </FormItem>
+       </Form>
+       <div slot="footer">
+         <Button @click="closeRemark">取消</Button>
+         <Button type="primary" @click="submit">确定</Button>
+       </div>
+     </Modal>
      <el-dialog
        title="提示"
        :visible.sync="dialogVisible"
@@ -224,11 +253,14 @@
 </style>
 <script>
 import draggable from 'vuedraggable'
+import html2Canvas from 'html2canvas'
+import JsPDF from 'jspdf'
 // import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
 export default {
   name: 'WorkPlan',
   data () {
     return {
+      htmlTitle: '日报',
       compArr: {
         TaskDetailComp: 'TaskDetailComp'
       },
@@ -239,23 +271,23 @@ export default {
       time: [
         {
           id: 1,
-          name: '日'
+          name: '日报'
         },
         {
           id: 2,
-          name: '周'
+          name: '周报'
         },
         {
           id: 3,
-          name: '月'
+          name: '月报'
         },
         {
           id: 4,
-          name: '季度'
+          name: '季度报'
         },
         {
           id: 5,
-          name: '年'
+          name: '年报'
         },
         {
           id: 6,
@@ -344,7 +376,9 @@ export default {
       tabNext: '明天',
       // 任务详情
       TaskDetailCompShow: false,
-      modifyTaskRes: ''
+      modifyTaskRes: '',
+      remark: '',
+      modal2: false
     }
   },
   components: {
@@ -377,6 +411,73 @@ export default {
     //   that.value444 = true
     //   that.TaskDetailCompShow = false
     // },
+    getPdfs (dom, title) {
+      var c = document.createElement('canvas')
+      var opts = {
+        scale: 2,
+        canvas: c,
+        logging: true,
+        width: document.querySelector(dom).getBoundingClientRect().width,
+        height: document.querySelector(dom).getBoundingClientRect().height
+      }
+      c.width = document.querySelector(dom).getBoundingClientRect().width * 2
+      c.height = document.querySelector(dom).getBoundingClientRect().height * 2
+      c.getContext('2d').scale(2, 2)
+      html2Canvas(document.querySelector(dom), opts).then(function (canvas) {
+        let contentWidth = canvas.width
+        let contentHeight = canvas.height
+        let pageHeight = contentWidth / 592.28 * 841.89
+        let leftHeight = contentHeight
+        let position = 0
+        let imgWidth = 595.28
+        let imgHeight = 592.28 / contentWidth * contentHeight
+        let pageData = canvas.toDataURL('image/jpeg', 1.0)
+        let PDF = new JsPDF('', 'pt', 'a4')
+        if (leftHeight < pageHeight) {
+          PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
+        } else {
+          while (leftHeight > 0) {
+            PDF.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+            leftHeight -= pageHeight
+            position -= 841.89
+            if (leftHeight > 0) {
+              PDF.addPage()
+            }
+          }
+        }
+        PDF.save(title + '.pdf')
+      }
+      )
+    },
+    closeRemark () {
+      this.modal2 = false
+      this.remark = ''
+      // this.generate()
+    },
+    submit () {
+      this.generate()
+    },
+    getReport () {
+      this.modal2 = true
+    },
+    // pdf生成
+    generate () {
+      let obj = {
+        timeType: this.active,
+        remark: this.remark,
+        lastRec: this.currentData,
+        nextRec: this.nextData
+      }
+      this.ajax('/report/addReport', JSON.stringify(obj)).then(res => {
+        if (res.code === 200) {
+          this.modal2 = false
+          // this.$message.success(res.msg)
+          this.getPdfs('#pdfDom', this.htmlTitle)
+        } else {
+          this.$message.warning(res.msg)
+        }
+      })
+    },
     // 一件转入
     allSelect () {
       let status = ''
@@ -504,26 +605,32 @@ export default {
           case 1:
             this.tabCurr = '今天'
             this.tabNext = '明天'
+            this.htmlTitle = '日报'
             break
           case 2:
             this.tabCurr = '本周'
             this.tabNext = '下周'
+            this.htmlTitle = '周报'
             break
           case 3:
             this.tabCurr = '本月'
             this.tabNext = '下月'
+            this.htmlTitle = '月报'
             break
           case 4:
             this.tabCurr = '本季度'
             this.tabNext = '下季度'
+            this.htmlTitle = '季度报'
             break
           case 5:
             this.tabCurr = '今年'
             this.tabNext = '明年'
+            this.htmlTitle = '年报'
             break
           case 6:
             this.tabCurr = '本期'
             this.tabNext = '下期'
+            this.htmlTitle = '期报'
             break
         }
         this.getPlan()
@@ -558,26 +665,32 @@ export default {
         case 1:
           this.tabCurr = '今天'
           this.tabNext = '明天'
+          this.htmlTitle = '日报'
           break
         case 2:
           this.tabCurr = '本周'
           this.tabNext = '下周'
+          this.htmlTitle = '周报'
           break
         case 3:
           this.tabCurr = '本月'
           this.tabNext = '下月'
+          this.htmlTitle = '月报'
           break
         case 4:
           this.tabCurr = '本季度'
           this.tabNext = '下季度'
+          this.htmlTitle = '季度报'
           break
         case 5:
           this.tabCurr = '今年'
           this.tabNext = '明年'
+          this.htmlTitle = '年报'
           break
         case 6:
           this.tabCurr = '本期'
           this.tabNext = '下期'
+          this.htmlTitle = '期报'
           break
       }
       this.getPlan()
@@ -676,6 +789,7 @@ export default {
 
 <style scoped>
   .workPlan {
+    position: relative;
   }
   .workPlan .timeSelect {
     margin-top: 15px;
@@ -701,7 +815,7 @@ export default {
     line-height: 27px;
     text-align: center;
     color:#333;
-    font-size: 14px;
+    font-size: 12px;
     float: left;
     margin-left: 15px;
     background: #fff;
@@ -819,8 +933,14 @@ export default {
   }
   .workPlan .planbottom {
     width: 100%;
+    height: 45px;
     padding:10px 10px 10px 10px;
     margin-top: 25px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient: vertical;
   }
   .workPlan .bottom-right {
     width: 420px;
@@ -829,7 +949,16 @@ export default {
     /*right:0;*/
     height: 800px;
     padding-right:15px;
+    /*position: relative;*/
     /*background: pink;*/
+  }
+  .workPlan .pdf {
+    width: 500px;
+    position: fixed;
+    right:-500px;
+    top:150px;
+    z-index:100;
+    font-size: 12px;
   }
   .workPlan .current {
     width: 100%;
@@ -844,6 +973,7 @@ export default {
     height: 400px;
     border:1px solid #ccc;
     overflow: auto;
+    background: #fff;
   }
   .workPlan .plan-top .title {
     width: 100%;
