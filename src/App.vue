@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div>{{getNavActive?'':''}}</div>
+    <div>{{getNavActive?'':''}}{{GetSlipPreShow?'' : ''}}</div>
     <el-container>
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
@@ -58,7 +58,7 @@
       </el-container>
     </el-container>
     <!-- 截图上传 图片预览 -->
-    <el-dialog title="截图上传" :visible.sync="GetSlipPreShow" width="40%">
+    <el-dialog title="截图上传" :visible.sync="slipPreShow" width="40%" :show-close="false">
       <div class="showImg" v-loading="SlipPreLoading">
         <img v-bind:src="slipPreSrc" alt>
       </div>
@@ -142,6 +142,9 @@ export default {
     clipBack: function (boo) {
       if (boo) {
         this.SlipPreLoading = true
+      } else {
+        this.$store.state.slipPreShow = false
+        // this.slipPreShow = this.$store.state.slipPreShow
       }
       this.$store.state.clipBackVal = boo
     },

@@ -205,6 +205,7 @@ export default {
       var that = this
       that.ajax('/file/uploadFileAjaxCopy', {baseData: baseData}).then(res => {
         if (res.code === 200) {
+          that.$store.state.clipBackVal = false
           that.$store.state.slipPreShow = false
           var obj = {
             attachmentId: res.data.attachmentId,
