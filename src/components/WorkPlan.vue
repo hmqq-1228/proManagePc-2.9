@@ -568,27 +568,32 @@ export default {
     addCollection (evt) {
       this.getPlan()
       let arr = []
-      this.currentData.forEach((item, index) => {
-        if (item.uid === evt.added.element.uid) {
-          arr.push(index)
-          if (arr.length > 1) {
-            this.currentData.splice(index, 1)
+      if (evt.added) {
+        this.currentData.forEach((item, index) => {
+          if (item.uid === evt.added.element.uid) {
+            arr.push(index)
+            if (arr.length > 1) {
+              this.currentData.splice(index, 1)
+            }
           }
-        }
-      })
+        })
+      }
       console.log(evt)
     },
     addCollection1 (evt) {
       this.getPlan()
       let arr = []
-      this.nextData.forEach((item, index) => {
-        if (item.uid === evt.added.element.uid) {
-          arr.push(index)
-          if (arr.length > 1) {
-            this.nextData.splice(index, 1)
+      console.log(evt)
+      if (evt.added) {
+        this.nextData.forEach((item, index) => {
+          if (item.uid === evt.added.element.uid) {
+            arr.push(index)
+            if (arr.length > 1) {
+              this.nextData.splice(index, 1)
+            }
           }
-        }
-      })
+        })
+      }
     },
     addPlan () {
       this.modal = true

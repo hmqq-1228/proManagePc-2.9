@@ -284,7 +284,7 @@ export default {
                 res.data[i].path = 'ProblemFeedback'
                 break
               case '工作报告':
-                res.data[i].icon = 'md-help-circle'
+                res.data[i].icon = 'ios-list-box'
                 res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'mix', '工作报告', '')
                 break
               default:
