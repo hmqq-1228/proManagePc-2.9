@@ -76,7 +76,7 @@
         <div style="display: inline-block"><img src="../../../static/img/fujian.png" alt=""><span>任务附件:</span></div>
         <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
           <span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">
-            <span style="display: inline-block;">{{file.showName}}</span>
+            <span style="display: inline-block;font-size: 12px;">{{file.showName}}</span>
             <span v-if="file.isImg" @click="showImagePre(file.previewUrl, file.showName)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
             <span style="display: inline-block;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
           </span>
@@ -211,6 +211,7 @@
           <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
             <p class="time">{{history.oTime}}</p>
             <p class="content">{{history.oName}}{{history.oContent}}</p>
+            <p class="content" v-if="history.comment" style="color: #e8be68;">备注: {{history.comment}}</p>
             <span v-for="(his, index2) in history.attachment" v-bind:key="index2">
               <p class="content" v-if="his.showName"><span>附件:</span>
                 <span style="display: inline-block"> {{his.showName}}</span>

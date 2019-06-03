@@ -18,8 +18,8 @@
       <div style="float: left; width: 50%; padding-left: 15px; box-sizing: border-box;" v-for="groupItem in GroupList" v-bind:key="groupItem.id">
         <Card :bordered="true" style="margin-bottom: 15px;" @click.native="toGroupDetail(groupItem.id)">
           <p class="groupItemTit" slot="title" :title="groupItem.name">{{groupItem.name}}</p>
-          <a href="#" slot="extra" @click.prevent="updateGroup($event, groupItem.id)" style="margin-right: 20px;">修改</a>
-          <a href="#" slot="extra" @click.prevent="deleteGroup($event, groupItem.id)">删除</a>
+          <a href="#" slot="extra" v-if="groupItem.showMenu === 1" @click.prevent="updateGroup($event, groupItem.id)" style="margin-right: 20px;">修改</a>
+          <a href="#" slot="extra" v-if="groupItem.showMenu === 1" @click.prevent="deleteGroup($event, groupItem.id)">删除</a>
           <div style="display: flex; justify-content: space-between;">
             <div style="width: 50%">
               <p class="textIntro" :title="groupItem.description">{{groupItem.description}}</p>
@@ -59,8 +59,7 @@
         </div>
       </div>
     </Modal>
-    <!---->
-    新建小组
+    <!-- 新建小组-->
     <Modal v-model="creatGroupShow2" title="新建小组2" @on-ok="createGroupSub2" @on-cancel="createGroupCancel2">
       <div class="createGroupCnt">
         <div class="createGroupCntItem">小组名称:</div>
