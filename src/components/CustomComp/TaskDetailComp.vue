@@ -15,7 +15,15 @@
       <div class="taskMsg">
         <div class="taskLf">
           <div class="taskName">{{taskBasicMsg.jobName}}</div>
-          <div class="taskDetail" v-bind:title="taskBasicMsg.description">{{taskBasicMsg.description}}</div>
+          <div class="taskDetail">
+            <div class="taskDetailCnt" v-bind:title="taskBasicMsg.description">
+              {{taskBasicMsg.description}}
+            </div>
+            <div class="taskDetailCntMore" v-on:click="taskIntroMore" v-if="taskBasicMsg.description && taskBasicMsg.description.length > 112">
+              <Icon v-if="!taskIntroMoreOpen" size="16" type="ios-arrow-down" />
+              <Icon v-if="taskIntroMoreOpen" size="16" type="ios-arrow-up" />
+            </div>
+          </div>
         </div>
         <div class="taskRt">
           <div v-if="taskBasicMsg.status === '0'"><img src="../../../static/img/unstart.png" alt=""></div>
@@ -278,6 +286,7 @@ export default {
   },
   data () {
     return {
+      taskIntroMoreOpen: false,
       peopleList: [],
       // 组织架构人员
       options42: [],
@@ -369,6 +378,13 @@ export default {
     }
   },
   watch: {
+    taskIntroMoreOpen: function (val, oV) {
+      if (val) {
+        $('.taskDetailCnt').css('display', 'block')
+      } else {
+        $('.taskDetailCnt').css('display', '-webkit-box')
+      }
+    },
     modifyTaskRes: function (val, oV) {
       if (val) {
         this.$emit('CompThrow', false)
@@ -382,12 +398,14 @@ export default {
         that.toDetail(that.nodeId)
         that.TaskConnectProcessList()
         that.getPeople()
+        // that.taskIntroMoreOpen = true
       } else {
         that.concelTransfer()
         that.showDrawer = false
         that.toShowDevided2 = false
         that.taskFinishedVisible = false
         that.projectStopeVisible2 = false
+        that.taskIntroMoreOpen = false
       }
     },
     commitComent: function (val, oVal) {
@@ -441,6 +459,15 @@ export default {
   //   })
   // },
   methods: {
+    taskIntroMore: function () {
+      this.log($('.taskDetailCnt').html())
+      this.taskIntroMoreOpen = !this.taskIntroMoreOpen
+      // if (this.taskIntroMoreOpen) {
+      //   $('.taskDetailCnt').css('display', 'block')
+      // } else {
+      //   $('.taskDetailCnt').css('display', '-webkit-box')
+      // }
+    },
     getNextPlan: function (pid) {
       this.$store.state.proId = pid
       this.$router.push('/goodsDetail')
@@ -1183,6 +1210,7 @@ export default {
   }
   .taskLf{
     padding: 10px;
+    padding-bottom: unset;
     width: 80%;
   }
   .taskName{
@@ -1191,6 +1219,8 @@ export default {
     font-family: '黑体';
   }
   .taskDetail{
+  }
+  .taskDetailCnt{
     font-size: 14px;
     margin-top: 10px;
     text-indent: 2em;
@@ -1199,6 +1229,14 @@ export default {
     text-overflow:ellipsis;
     -webkit-line-clamp: 3;
     overflow: hidden;
+  }
+  .taskDetailCntMore{
+    color: #515a6e;
+    text-align: center;
+  }
+  .taskDetailCntMore:hover{
+    color: #2D9CFF;
+    /*background: rgba(0,0,0,0.1);*/
   }
   .taskRt{
     width: 20%;
