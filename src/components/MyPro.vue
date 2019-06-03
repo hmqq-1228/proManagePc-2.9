@@ -2,8 +2,13 @@
   <div class="MyPro">
     <div class="MyProCnt">
       <div class="MyProHeader">
-        <div class="MyProHeaItem search">
-          <Input search enter-button @on-search="searchPro" v-model="searchProVal" placeholder="请输入要查找的项目" />
+        <div>
+          <div class="MyProHeaItem search">
+            <Input search enter-button @on-search="searchPro" v-model="searchProVal" placeholder="请输入要查找的项目" />
+          </div>
+          <div class="MyProHeaItem search">
+            <Input search enter-button @on-search="searchProManager" v-model="searchProManagerVal" placeholder="请搜索项目负责人姓名" />
+          </div>
         </div>
         <div class="MyProHeaItem addBtn"><Button type="primary" v-on:click="newAdd()">新增项目</Button></div>
       </div>
@@ -425,6 +430,7 @@ export default {
       logPageNum: 1,
       // 搜索项目
       searchProVal: '',
+      searchProManagerVal: '',
       // 是否选择了"新建项目模板"
       isModel: false,
       duration: 100,
@@ -491,6 +497,7 @@ export default {
       myProjectViewPayload: {
         // 项目名称，模糊查询
         projectName: '',
+        projectManager: '',
         userId: this.$store.state.userId,
         // 项目状态（0:未开始； 2：进行中:3：已完成;"":全部）
         status: '',
@@ -613,6 +620,10 @@ export default {
       // if (val) {
       //   this.queryMyProjectView()
       // }
+    },
+    searchProManagerVal: function (val, oV) {
+      this.myProjectViewPayload.projectManager = val
+      this.queryMyProjectView()
     },
     statusVal: function (val1, val2) {
       if (val1) {
@@ -996,7 +1007,14 @@ export default {
     // 新增搜索项目
     searchPro: function (iptName) {
       this.log('iptName:', iptName)
+      this.myProjectViewPayload.pageNum = 1
       this.myProjectViewPayload.projectName = iptName
+      this.queryMyProjectView()
+    },
+    searchProManager: function (iptName) {
+      this.log('iptName:', iptName)
+      this.myProjectViewPayload.pageNum = 1
+      this.myProjectViewPayload.projectManager = iptName
       this.queryMyProjectView()
     },
     // 新增 查询用户信息
@@ -1417,13 +1435,16 @@ export default {
   }
   .MyProHeader{
     display: flex;
-    padding: 20px 10px;
+    padding: 10px;
     justify-content: space-between;
     background-color: #f5f8fa;
   }
-  .MyProHeaItem{}
+  .MyProHeaItem.search:nth-of-type(2){
+    margin-left: 20px;
+  }
   .MyProHeaItem.search{
     width: 400px;
+    display: inline-block;
   }
   .selectBox{
     padding: 20px 10px;
