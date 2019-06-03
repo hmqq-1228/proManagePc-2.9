@@ -18,18 +18,36 @@ export default {
     listenerNavList: function () {
       var that = this
       if (that.$store.state.navList.length > 0) {
-        if (that.$store.state.navList[0].menuName === '集团战略') {
-          if (that.$store.state.proId) {
-            // j
-          } else {
-            that.$store.state.proId = that.$store.state.navList[0].dataList[0].menuId
-          }
-          that.$router.push('/goodsDetail')
-        } else if (that.$store.state.navList[0].menuName === '商品管理') {
-          that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
-        } else {
-          that.$router.push('/' + that.$store.state.navList[0].path)
+        switch (that.$store.state.navList[0].menuName) {
+          case '集团战略':
+            if (that.$store.state.proId) {
+              // j
+            } else {
+              that.$store.state.proId = that.$store.state.navList[0].dataList[0].menuId
+            }
+            that.$router.push('/goodsDetail')
+            break
+          case '商品管理':
+            that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
+            break
+          case '工作报告':
+            that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
+            break
+          default:
+            that.$router.push('/' + that.$store.state.navList[0].path)
         }
+        // if (that.$store.state.navList[0].menuName === '集团战略') {
+        //   if (that.$store.state.proId) {
+        //     // j
+        //   } else {
+        //     that.$store.state.proId = that.$store.state.navList[0].dataList[0].menuId
+        //   }
+        //   that.$router.push('/goodsDetail')
+        // } else if (that.$store.state.navList[0].menuName === '商品管理') {
+        //   that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
+        // } else {
+        //   that.$router.push('/' + that.$store.state.navList[0].path)
+        // }
       }
       return this.$store.state.navList
     }

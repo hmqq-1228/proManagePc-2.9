@@ -1,16 +1,17 @@
 <template>
    <div class="workPlan">
      <div class="pdf" id="pdfDom">
+       <p style="text-align: center;font-size: 13px;color:#000;margin-bottom: 20px;margin-top: 30px;letter-spacing: 2px;">工作报告</p>
        <div style="padding:10px 10px;width: 100%;height: 100%;">
-         <p style="font-size: 12px;color:#000;">{{tabCurr}}</p>
-         <div style="margin-top: 10px;" v-for="(item, index) in currentData" :key="item.uid">
+         <p style="font-size: 12px;color:#169BD5;margin-left: 10px">{{tabCurr}}</p>
+         <div style="margin-top: 10px;margin-left: -10px;" v-for="(item, index) in currentData" :key="item.uid+'_'+index">
            <p style="font-size: 12px;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
-           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left:0px">{{item.description}}</p>
+           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left:3px">{{item.description}}</p>
          </div>
-         <p style="font-size: 12px;color:#000;margin-top: 30px;">{{tabNext}}</p>
-         <div style="margin-top: 15px" v-for="(item, index) in nextData" :key="item.uid">
+         <p style="font-size: 12px;color:#169BD5;margin-top: 30px;margin-left: 10px">{{tabNext}}</p>
+         <div style="margin-top: 15px;margin-left: -10px;" v-for="(item, index) in nextData" :key="item.uid+'_'+index">
            <p style="font-size: 12px;;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
-           <p style="font-size: 12px;margin-left: 20px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 0px">{{item.description}}</p>
+           <p style="font-size: 12px;margin-left:3px;margin-top: 5px;transform: scale(0.8);line-height: 25px;">{{item.description}}</p>
          </div>
        </div>
      </div>
@@ -72,7 +73,7 @@
             <div class="first" :class="type === 1 ? 'active' : ''" @click="getTab(1)">{{tabCurr}}工作安排</div>
             <div class="first last" :class="type === 2 ? 'active' : ''" @click="getTab(2)">{{tabNext}}工作安排</div>
           </div>
-         <div class="content" v-if="planList.length>0">
+         <div class="content">
            <div class="statusTab">
              <ul>
                <li v-for="item in currentStatus" :key="item.id" :class="item.id === current ? 'active':''" @click="tabStatus(item)">{{item.name}}</li>
@@ -81,8 +82,8 @@
                </li>
              </ul>
            </div>
-           <div class="planList">
-             <draggable :options="{group:{name:'Mission',put:false},animation: 200}" class="planList" :list="planList">
+           <div class="planList" v-if="planList.length>0">
+             <draggable v-bind="{group:{name:'Mission',put:false},animation: 200}" class="planList" v-model="planList" :sort="false" @start="start">
                  <div class="plans" v-for="(item, index) in planList" :key="index">
                     <div class="plantop">
                        <span style="font-size: 14px;float: left">{{item.jobName}}</span>
@@ -101,9 +102,9 @@
                  </div>
              </draggable>
            </div>
-         </div>
-         <div v-else style="text-align: center;font-size: 14px;width: 100%;height: 850px;border-right: 1px solid #ccc;line-height: 800px;">
-            暂无数据
+           <div v-else style="text-align: center;font-size: 14px;width: 100%;height: 850px;line-height: 800px;">
+             暂无数据
+           </div>
          </div>
          <div style="text-align: center" v-if="planList.length>0">
            <el-pagination
@@ -121,7 +122,10 @@
             <span style="font-size: 14px;line-height:40px;">{{tabCurr}}</span>
             <div style="float: right">
                <!--<Button type="info" size="small" style="margin-right: 10px" @click="getPdf('#pdfDom',htmlTitle)">预览</Button>-->
-               <Button type="info" size="small" style="" @click="getReport()">生成</Button>
+               <Button type="info" size="small" style="" :loading="loading">
+                 <span v-if="!loading" @click="getReport()">生成</span>
+                 <span v-else>生成中...</span>
+               </Button>
             </div>
          </div>
          <div class="plan">
@@ -131,7 +135,7 @@
                <div class="planItem" style="width: 70%;text-indent: 100px">描述</div>
                <div class="planItem" style="width: 10%;text-indent: 10px" @click="addPlan"><i class="el-icon-plus" style="color:#169BD5;font-size: 18px;cursor: pointer;font-weight: bold"></i></div>
              </div>
-             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection' :list="currentData" style="width: 100%;height: 360px">
+             <draggable v-bind="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection' v-model="currentData" :sort="true" style="width: 100%;height: 350px">
                <div class="content-list" v-for="(item,index) in currentData" :key="index" @dblclick="editPlan(item)">
                  <div class="planItem contents" style="width: 20%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left: 10px" :title="item.jobName">{{item.jobName}}</div>
                  <div class="planItem contents" style="width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-indent: 40px" :title="item.description">{{item.description}}</div>
@@ -146,7 +150,7 @@
                <div class="planItem" style="width: 70%;text-indent: 100px">描述</div>
                <div class="planItem" style="width: 10%;text-indent: 10px" @click="addPlanNext"><i class="el-icon-plus" style="color:#169BD5;font-size: 18px;cursor: pointer;font-weight: bold"></i></div>
              </div>
-             <draggable :options="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection1' :list="nextData" style="width: 100%;height: 360px">
+             <draggable v-bind="{group:{name:'Mission',put:true},animation: 200}" @change='addCollection1' v-model="nextData" :sort="true" style="width: 100%;height: 350px">
                <div class="content-list" v-for="(item,index) in nextData" :key="index" @dblclick="editNextPlan(item)">
                  <div class="planItem contents" style="width: 20%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left: 10px" :title="item.jobName">{{item.jobName}}</div>
                  <div class="planItem contents" style="width: 55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-indent: 50px" :title="item.description">{{item.description}}</div>
@@ -260,7 +264,7 @@ export default {
   name: 'WorkPlan',
   data () {
     return {
-      htmlTitle: '日报',
+      htmlTitle: '周报',
       compArr: {
         TaskDetailComp: 'TaskDetailComp'
       },
@@ -308,7 +312,7 @@ export default {
           name: '已完成'
         }
       ],
-      active: 1,
+      active: 2,
       // 提示窗
       dialogVisible: false,
       checked: false,
@@ -372,13 +376,14 @@ export default {
           return false
         }
       },
-      tabCurr: '今天',
-      tabNext: '明天',
+      tabCurr: '本周',
+      tabNext: '下周',
       // 任务详情
       TaskDetailCompShow: false,
       modifyTaskRes: '',
       remark: '',
-      modal2: false
+      modal2: false,
+      loading: false
     }
   },
   components: {
@@ -411,7 +416,10 @@ export default {
     //   that.value444 = true
     //   that.TaskDetailCompShow = false
     // },
+    start (evt) {
+    },
     getPdfs (dom, title) {
+      let that = this
       var c = document.createElement('canvas')
       var opts = {
         scale: 2,
@@ -446,6 +454,9 @@ export default {
           }
         }
         PDF.save(title + '.pdf')
+        setTimeout(() => {
+          that.loading = false
+        }, 3000)
       }
       )
     },
@@ -472,6 +483,7 @@ export default {
       this.ajax('/report/addReport', JSON.stringify(obj)).then(res => {
         if (res.code === 200) {
           this.modal2 = false
+          this.loading = true
           // this.$message.success(res.msg)
           this.getPdfs('#pdfDom', this.htmlTitle)
         } else {
@@ -534,11 +546,29 @@ export default {
       this.getPlan()
     },
     addCollection (evt) {
-      console.log(this.currentData)
       this.getPlan()
+      let arr = []
+      this.currentData.forEach((item, index) => {
+        if (item.uid === evt.added.element.uid) {
+          arr.push(index)
+          if (arr.length > 1) {
+            this.currentData.splice(index, 1)
+          }
+        }
+      })
+      console.log(evt)
     },
     addCollection1 (evt) {
       this.getPlan()
+      let arr = []
+      this.nextData.forEach((item, index) => {
+        if (item.uid === evt.added.element.uid) {
+          arr.push(index)
+          if (arr.length > 1) {
+            this.nextData.splice(index, 1)
+          }
+        }
+      })
     },
     addPlan () {
       this.modal = true
@@ -712,6 +742,37 @@ export default {
         this.startDate = ''
         this.endDate = ''
       }
+      if (this.type === 2) {
+        this.currentStatus = [
+          {
+            id: -1,
+            name: '全部'
+          },
+          {
+            id: 0,
+            name: '未开始'
+          },
+          {
+            id: 1,
+            name: '进行中'
+          }
+        ]
+      } else {
+        this.currentStatus = [
+          {
+            id: -1,
+            name: '全部'
+          },
+          {
+            id: 1,
+            name: '进行中'
+          },
+          {
+            id: 2,
+            name: '已完成'
+          }
+        ]
+      }
       this.getPlan()
     },
     ok (name) {
@@ -719,7 +780,6 @@ export default {
         if (valid) {
           this.modal = false
           if (this.currentData.length > 0) {
-            console.log(this.formValidate)
             if (JSON.stringify(this.editId) === '{}') {
               this.currentData.push(this.formValidate)
             } else {
@@ -733,7 +793,7 @@ export default {
             this.currentData.push(this.formValidate)
           }
         } else {
-          this.$Message.error('Fail!')
+          this.$Message.error('请输入完整信息')
         }
       })
     },
