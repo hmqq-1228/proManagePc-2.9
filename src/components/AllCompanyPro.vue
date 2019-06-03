@@ -568,7 +568,7 @@ export default {
   },
   mounted: function () {
     /** 设置侧边栏激活状态 */
-    this.$store.commit('setNavActive', {navName: '我的项目', childNavName: ''})
+    this.$store.commit('setNavActive', {navName: '项目管理', childNavName: '全部项目'})
   },
   watch: {
     // 历史记录 显示与隐藏

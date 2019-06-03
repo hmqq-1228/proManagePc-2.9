@@ -490,9 +490,6 @@ export default {
   },
   created: function () {
     // var that = this
-    /** 设置面包屑 */
-    this.$store.commit('setRouterName', {name: '我的日程', parentName: 'TaskPlan', url: '/'})
-    // this.$router.push('/Schedule')
     var dateObj = new Date()
     this.year = dateObj.getFullYear()
     this.month = dateObj.getMonth() + 1
