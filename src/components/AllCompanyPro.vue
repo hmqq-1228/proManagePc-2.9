@@ -1551,8 +1551,8 @@ export default {
     border: 1px solid #3a8ee6;
   }
   .taskStateBiaoNew.stoped{
-    color: #e97474;
-    border: 1px solid #e97474;
+    color: #ccc;
+    border: 1px solid #ccc;
   }
   /*新建模板*/
   .cartHover:hover{

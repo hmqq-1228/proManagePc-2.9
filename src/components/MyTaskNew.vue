@@ -669,12 +669,12 @@ export default {
     border: 1px solid #3a8ee6;
   }
   .taskStateBiaoNew.stoped{
-    color: #e97474;
-    border: 1px solid #e97474;
-  }
-  .taskStateBiaoNew.overTime{
     color: #ccc;
     border: 1px solid #ccc;
+  }
+  .taskStateBiaoNew.overTime{
+    color: #e97474;
+    border: 1px solid #e97474;
   }
   .searchItem{
     margin-top: 10px;
