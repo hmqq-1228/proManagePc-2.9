@@ -44,11 +44,11 @@
         <div class="createGroupCntItem">负责人:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-autocomplete style="width: 100%"
-            v-model="CreateGroupSearchManager"
-            :fetch-suggestions="queryNewGroupManager"
-            placeholder="搜索小组负责人"
-            :trigger-on-focus="false"
-            @select="CreateGroupManagerSelect($event)"
+                           v-model="CreateGroupSearchManager"
+                           :fetch-suggestions="queryNewGroupManager"
+                           placeholder="搜索小组负责人"
+                           :trigger-on-focus="false"
+                           @select="CreateGroupManagerSelect($event)"
           ></el-autocomplete>
         </div>
       </div>

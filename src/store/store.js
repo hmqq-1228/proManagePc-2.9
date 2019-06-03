@@ -116,8 +116,6 @@ const mutations = {
   },
   // 设置侧边栏导航的激活
   useNavActive: function (state, navObj) {
-    console.log('useNavActive:', navObj)
-    console.log('state.navList:', state.navList)
     for (var t = 0; t < state.navList.length; t++) {
       if (state.navList[t].menuName === navObj.navName) {
         if (navObj.navName === '集团战略') {
@@ -131,6 +129,14 @@ const mutations = {
               break
             }
           }
+        } else if (navObj.navName === '项目管理') {
+          for (var p = 0; p < state.navList[t].dataList.length; p++) {
+            if (navObj.childNavName === state.navList[t].dataList[p].menuName) {
+              state.navActive = state.navList[t].dataList[p].menuId.toString()
+              state.menuId = state.navList[t].dataList[p].menuId.toString()
+              break
+            }
+          }
         } else {
           state.navActive = state.navList[t].menuId.toString()
           state.menuId = state.navList[t].menuId.toString()
@@ -140,7 +146,6 @@ const mutations = {
     }
   },
   setNavActive: function (state, navObj) {
-    console.log('设置setNavActive')
     state.NavActiveData = navObj
   },
   /** 时间限制 */

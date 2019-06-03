@@ -52,26 +52,26 @@ const install = function (Vue, options) {
       }
     }
   }
-  // 判断是否是图片
-  Vue.prototype.isImage = function (fileName) {
-    if (fileName) {
-      var geshi = fileName.substr(-4).indexOf('.') > -1 ? fileName.toLowerCase().substr(-3) : fileName.toLowerCase().substr(-4)
-    }
-    var isImg = false
-    for (var i = 0; i < store.state.fileFormat.length; i++) {
-      if (store.state.fileFormat[i] === geshi) {
-        isImg = true
-      } else {
-        isImg = false
-      }
-    }
-    return isImg
-  }
   Vue.prototype.alert = function (test) {
     if (store.state.debug) {
       return window.alert(test)
     }
   }
+  // Vue.prototype.isImage = function (fileName) {
+  //   if (fileName) {
+  //     var geshi = fileName.substr(-4).indexOf('.') > -1 ? fileName.toLowerCase().substr(-3) : fileName.toLowerCase().substr(-4)
+  //   }
+  //   var isImg = false
+  //   for (var i = 0; i < store.state.fileFormat.length; i++) {
+  //     if (store.state.fileFormat[i] === geshi) {
+  //       isImg = true
+  //     } else {
+  //       isImg = false
+  //     }
+  //   }
+  //   return isImg
+  // }
+  // 判断是否是图片
   Vue.prototype.isImage = function (fileName) {
     var geshi = fileName.substr(-4).indexOf('.') > -1 ? fileName.toLowerCase().substr(-3) : fileName.toLowerCase().substr(-4)
     var isImg = false
@@ -81,6 +81,13 @@ const install = function (Vue, options) {
       }
     }
     return isImg
+  }
+  // 图片预览
+  Vue.prototype.isImage = function (previewUrl, fileName) {
+    if (previewUrl && this.isImage(fileName)) {
+      store.state.imgPreviewShow = true
+      store.state.imgPreviewSrc = previewUrl
+    }
   }
   // 检测浏览器类型
   Vue.prototype.testBrowser = function () {

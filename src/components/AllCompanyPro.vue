@@ -568,7 +568,7 @@ export default {
   },
   mounted: function () {
     /** 设置侧边栏激活状态 */
-    this.$store.commit('setNavActive', {navName: '我的项目', childNavName: ''})
+    this.$store.commit('setNavActive', {navName: '项目管理', childNavName: '全部项目'})
   },
   watch: {
     // 历史记录 显示与隐藏
@@ -1551,8 +1551,8 @@ export default {
     border: 1px solid #3a8ee6;
   }
   .taskStateBiaoNew.stoped{
-    color: #e97474;
-    border: 1px solid #e97474;
+    color: #ccc;
+    border: 1px solid #ccc;
   }
   /*新建模板*/
   .cartHover:hover{
