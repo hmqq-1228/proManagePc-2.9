@@ -42,7 +42,7 @@
               <div style="margin-left: 10%;" v-if="!taskBasicMsg.dayNum"><span v-bind:class="'topState' + taskBasicMsg.status">{{taskBasicMsg.statusStr}}</span></div>
             </template>
             <div class="managePro">
-              <div><img src="../../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span>{{taskBasicMsg.userName}}</span></div>
+              <div><img src="../../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span style="color: #888;" v-if="!taskBasicMsg.userName">无负责人</span><span v-if="taskBasicMsg.userName">{{taskBasicMsg.userName}}</span></div>
               <div><img src="../../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>
             </div>
             <div class="managePro" style="margin-top: 10px;">
