@@ -68,7 +68,10 @@
          <Icon type="ios-alarm-outline" style="color:#169BD5;font-size: 18px;line-height: 40px"/>
          <span style="margin-left: 5px;line-height: 20px;line-height: 40px">{{detail.createDt}}</span>
        </div>
-       <p style="font-size: 14px;margin-top: 15px;">{{name}}工作安排<Button type="info" size="small" style="float: right" @click="getPdf('#pdfDom',getStatus(detail))">生成</Button></p>
+       <p style="font-size: 14px;margin-top: 15px;">{{name}}工作安排<Button type="info" size="small" :loading="loading" style="float: right" @click="getPdfs('#pdfDom',getStatus(detail))">
+          <span v-if="!loading">生成</span>
+          <span v-else>生成中...</span></Button>
+       </p>
        <div class="plan-top" style="width: 100%;height:400px;border: 1px solid #ccc;margin-top:10px;font-size: 14px;overflow: auto">
          <div class="title" style="width: 100%;height: 40px;background:#EBEBEB;border-bottom: 1px solid #ccc;">
            <div class="planItem" style="width: 35%;float: left;line-height: 40px;margin-left: 15px;">任务名称</div>
@@ -103,10 +106,13 @@
 <style>
 </style>
 <script>
+import html2Canvas from 'html2canvas'
+import JsPDF from 'jspdf'
 export default {
   name: 'report',
   data () {
     return {
+      loading: false,
       time: [
         {
           id: 0,
@@ -163,6 +169,49 @@ export default {
     }
   },
   methods: {
+    getPdfs (dom, title) {
+      let that = this
+      that.loading = true
+      var c = document.createElement('canvas')
+      var opts = {
+        scale: 2,
+        canvas: c,
+        logging: true,
+        width: document.querySelector(dom).getBoundingClientRect().width,
+        height: document.querySelector(dom).getBoundingClientRect().height
+      }
+      c.width = document.querySelector(dom).getBoundingClientRect().width * 2
+      c.height = document.querySelector(dom).getBoundingClientRect().height * 2
+      c.getContext('2d').scale(2, 2)
+      html2Canvas(document.querySelector(dom), opts).then(function (canvas) {
+        let contentWidth = canvas.width
+        let contentHeight = canvas.height
+        let pageHeight = contentWidth / 592.28 * 841.89
+        let leftHeight = contentHeight
+        let position = 0
+        let imgWidth = 595.28
+        let imgHeight = 592.28 / contentWidth * contentHeight
+        let pageData = canvas.toDataURL('image/jpeg', 1.0)
+        let PDF = new JsPDF('', 'pt', 'a4')
+        if (leftHeight < pageHeight) {
+          PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
+        } else {
+          while (leftHeight > 0) {
+            PDF.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+            leftHeight -= pageHeight
+            position -= 841.89
+            if (leftHeight > 0) {
+              PDF.addPage()
+            }
+          }
+        }
+        PDF.save(title + '.pdf')
+        setTimeout(() => {
+          that.loading = false
+        }, 3000)
+      }
+      )
+    },
     planDetail (item) {
       this.reportShow = true
       this.reportId = item.id
