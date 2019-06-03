@@ -147,7 +147,7 @@ export default {
       createDate: '',
       planList: [1, 2, 3, 4],
       total: 0,
-      pageSize: 20,
+      pageSize: 24,
       pageNum: 1,
       list: [],
       reportShow: false,

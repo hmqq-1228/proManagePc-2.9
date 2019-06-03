@@ -122,8 +122,8 @@
             <span style="font-size: 14px;line-height:40px;">{{tabCurr}}</span>
             <div style="float: right">
                <!--<Button type="info" size="small" style="margin-right: 10px" @click="getPdf('#pdfDom',htmlTitle)">预览</Button>-->
-               <Button type="info" size="small" style="" :loading="loading">
-                 <span v-if="!loading" @click="getReport()">生成</span>
+               <Button type="info" size="small" style="" :loading="loading" @click="getReport()">
+                 <span v-if="!loading">生成</span>
                  <span v-else>生成中...</span>
                </Button>
             </div>
@@ -525,24 +525,44 @@ export default {
     // 当前开始时间
     cstart (val) {
       this.currStart = val
+      if (this.type === 1) {
+        this.startDate = val
+      } else {
+        this.startDate = ''
+      }
       this.$store.commit('setDateOption', {OptionObj: this.dateTimeOpt1, startDate: this.currStart, endDate: this.currEnd})
       this.getPlan()
     },
     // 当前结束时间
     cend (val) {
       this.currEnd = val
+      if (this.type === 1) {
+        this.endDate = val
+      } else {
+        this.endDate = ''
+      }
       this.getPlan()
       // this.$store.commit('setDateOption', {OptionObj: this.dateTimeOpt1, startDate: this.currStart, endDate: this.currEnd})
     },
     // 下期开始时间
     nstart (val) {
       this.nextStart = val
+      if (this.type === 2) {
+        this.startDate = val
+      } else {
+        this.startDate = ''
+      }
       this.$store.commit('setDateOption', {OptionObj: this.dateTimeOpt3, startDate: this.nextStart})
       this.getPlan()
     },
     // 下期结束时间
     nend (val) {
       this.nextEnd = val
+      if (this.type === 2) {
+        this.endDate = val
+      } else {
+        this.endDate = ''
+      }
       this.getPlan()
     },
     addCollection (evt) {
