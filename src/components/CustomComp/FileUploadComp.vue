@@ -107,36 +107,38 @@ export default {
   },
   mounted: function () {
     var that = this
-    var slipTextarea = document.getElementById(that.slipTextareaId)
-    slipTextarea.addEventListener('paste', function (event) {
-      event.preventDefault()
-      var data = event.clipboardData || window.clipboardData
-      if (data.items[0].getAsFile()) {
-        that.log('截图内容')
-      } else {
-        that.$Message.warning('此处只可粘贴截图内容')
-        that.textareaVal = ''
-        // that.log('此处只可粘贴截图内容')
-      }
-      var blob = data.items[0].getAsFile()
-      // that.log('blob:', blob)
-      // 判断是不是图片，最好通过文件类型判断
-      if (blob && !that.commentDis) {
-        var reader = new FileReader()
-        // 将文件读取为 DataURL
-        reader.readAsDataURL(blob)
-        // 文件读取完成时触发
-        reader.onload = function (event) {
-          // 获取base64流
-          that.slipPreSrc = event.target.result
-          that.$store.state.slipPreSrc = event.target.result
-          that.$store.state.slipTextareaId = that.slipTextareaId
-          that.$store.state.slipPreShow = true
-          that.base64Data = event.target.result
-          // that.slipImgUpload(event.target.result)
+    if (this.clipboard) {
+      var slipTextarea = document.getElementById(that.slipTextareaId)
+      slipTextarea.addEventListener('paste', function (event) {
+        event.preventDefault()
+        var data = event.clipboardData || window.clipboardData
+        if (data.items[0].getAsFile()) {
+          that.log('截图内容')
+        } else {
+          that.$Message.warning('此处只可粘贴截图内容')
+          that.textareaVal = ''
+          // that.log('此处只可粘贴截图内容')
         }
-      }
-    })
+        var blob = data.items[0].getAsFile()
+        // that.log('blob:', blob)
+        // 判断是不是图片，最好通过文件类型判断
+        if (blob && !that.commentDis) {
+          var reader = new FileReader()
+          // 将文件读取为 DataURL
+          reader.readAsDataURL(blob)
+          // 文件读取完成时触发
+          reader.onload = function (event) {
+            // 获取base64流
+            that.slipPreSrc = event.target.result
+            that.$store.state.slipPreSrc = event.target.result
+            that.$store.state.slipTextareaId = that.slipTextareaId
+            that.$store.state.slipPreShow = true
+            that.base64Data = event.target.result
+            // that.slipImgUpload(event.target.result)
+          }
+        }
+      })
+    }
   },
   watch: {
     textareaVal (val, old) {
