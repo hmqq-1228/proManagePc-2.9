@@ -390,7 +390,7 @@
       </div>
     </Drawer>
     <!--新增 添加计划或者任务 start-->
-    <Drawer class="drawerScroll" title="计划表单" :closable="false" width="40%" v-model="bgCoverShow">
+    <Drawer class="drawerScroll" :closable="false" width="40%" v-model="bgCoverShow">
       <component
         v-bind:is="compArr.CreatePlanOrTask"
         v-bind:DrawerOpen="bgCoverShow"
