@@ -51,10 +51,15 @@ export default {
       type: Boolean,
       default: false
     },
-    /** 是否支持截图上传 商品档案暂不支持 */
+    /** 是否支持截图上传 由父组件传值设定 商品档案暂不支持 */
     clipboard: {
       type: Boolean,
       default: true
+    },
+    /** 商品档案截图上传 父组件传值'1', 非商品档案可不传 */
+    goodsFlag: {
+      type: String,
+      default: '0'
     },
     fileFormId: {
       type: String,
@@ -205,7 +210,7 @@ export default {
     },
     slipImgUpload: function (baseData) {
       var that = this
-      that.ajax('/file/uploadFileAjaxCopy', {baseData: baseData}).then(res => {
+      that.ajax('/file/uploadFileAjaxCopy', {baseData: baseData, goodsFlag: that.goodsFlag}).then(res => {
         if (res.code === 200) {
           that.$store.state.clipBackVal = false
           that.$store.state.slipPreShow = false

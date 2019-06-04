@@ -62,16 +62,16 @@
           <!--</div>-->
         <!--</div>-->
         <div style="padding: 0px;" class="clear">
-          <div style="margin-bottom: 15px; float: left; width: 50%; min-width: 571px; padding-right: 20px;box-sizing: border-box;" v-for="item in projectViewData" :key="item.projectUID">
+          <div style="margin-bottom: 15px; float: left; width: 50%; min-width: 571px; padding-right: 20px;box-sizing: border-box;" v-for="item in projectViewData" :key="item.projectUID" @click.stop="toProDetail(item.projectUID)">
             <Card :bordered="true">
               <div class="groupItemTit" slot="title" :title="item.projectName">
                 <div class="groupItemTitCnt" @click="toProDetail(item.projectUID)"><span style="color: #888; font-weight: normal">{{item.projectType}}</span>：{{item.projectName}}</div>
                 <div class="taskStateBiaoNew" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
               </div>
-              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.prevent="stopePro(item.projectUID)" style="margin-left: 6px;">暂停</a>
-              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.prevent="startPro(item.projectUID)" style="margin-left: 6px;">开启</a>
-              <a href="#" slot="extra" @click.prevent="responsePro(item.projectUID)" style="margin-left: 6px;">回复</a>
-              <a href="#" slot="extra" v-if="item.isDelProject" @click.prevent="delPro(item.projectUID, item.projectType)" style="margin-left: 6px;">删除</a>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.stop="stopePro(item.projectUID)" style="margin-left: 6px;">暂停</a>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.stop="startPro(item.projectUID)" style="margin-left: 6px;">开启</a>
+              <a href="#" slot="extra" @click.stop="responsePro(item.projectUID)" style="margin-left: 6px;">回复</a>
+              <a href="#" slot="extra" v-if="item.isDelProject" @click.stop="delPro(item.projectUID, item.projectType)" style="margin-left: 6px;">删除</a>
               <div style="display: flex; justify-content: space-between;">
                 <div style="width: 50%; display: flex;">
                   <div class="textIntro">负责人：{{item.projectManager}}</div>

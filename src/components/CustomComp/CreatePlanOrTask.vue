@@ -166,7 +166,7 @@ export default {
           { required: true, message: '请输入名称', trigger: 'blur' }
         ],
         userArr: [
-          { required: true, message: '请选择任务指派人', trigger: 'change' }
+          { required: false, message: '请选择任务指派人', trigger: 'change' }
         ],
         jobLevel: [
           { required: true, message: '请选择任务等级', trigger: 'change' }
@@ -198,7 +198,7 @@ export default {
           { required: true, message: '请输入名称', trigger: 'blur' }
         ],
         userArr: [
-          { required: true, message: '请选择任务指派人', trigger: 'change' }
+          { required: false, message: '请选择任务指派人', trigger: 'change' }
         ],
         jobLevel: [
           { required: true, message: '请选择任务等级', trigger: 'change' }
