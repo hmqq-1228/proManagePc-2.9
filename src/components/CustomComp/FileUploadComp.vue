@@ -238,12 +238,7 @@ export default {
       })
     },
     FilePreEmitFuc: function (previewUrl, fileName, attachmentId) {
-      this.log('fileName:', fileName)
-      if (previewUrl && this.isImage(fileName)) {
-        this.$store.state.imgPreviewShow = true
-        this.$store.state.imgPreviewSrc = previewUrl
-      }
-      // this.$emit('FilePreEmit', {previewUrl, fileName, attachmentId})
+      this.imgPreview(previewUrl, fileName)
     },
     getFileName: function (filename) {
       var that = this

@@ -322,7 +322,7 @@ export default {
       var that = this
       this.ajax('/question/getQuestionTypeSource', {menuId: that.$store.state.menuId}).then(res => {
         // this.log('选择所属项目:', res)
-        that.log('optionsTask', that.optionsTask)
+        // that.log('optionsTask', that.optionsTask)
         if (res.code === 200) {
           that.optionsTask = res.data
           that.optionsValue = res.data[0].value
@@ -354,7 +354,7 @@ export default {
       this.ajax('/question/getQuestionList', that.myTaskViewPayload).then(res => {
         that.log('getQuestionList:', res)
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           for (var i = 0; i < res.data.list.length; i++) {
             if (res.data.list[i].status === '0') {
               res.data.list[i].tagStyle = 'noStart'

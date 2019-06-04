@@ -213,7 +213,7 @@ export default {
       var that = this
       that.ajax('/question/getQuestionType', {typeCode: e}).then(res => {
         if (res.code === 200) {
-          this.log('getAllProject222:', res)
+          // this.log('getAllProject222:', res)
           // this.getProjectTime(this.projectBelong)
           that.defImplementer.name = res.data[0].userName
           that.defImplementer.id = res.data[0].userId
@@ -224,7 +224,7 @@ export default {
       var that = this
       that.ajax('/question/getQuestionType', {}).then(res => {
         if (res.code === 200) {
-          this.log('getAllProject:', res)
+          // this.log('getAllProject:', res)
           this.options = res.data
           // this.getProjectTime(this.projectBelong)
         }

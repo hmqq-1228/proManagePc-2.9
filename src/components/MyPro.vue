@@ -217,7 +217,7 @@
             <!--<div v-if="!ruleForm.showName" style="color: #999;font-size: 12px;">暂无附件</div>-->
             <div v-if="!ruleForm.showName">
               <!--附件上传 组件 引入附件上传组件  v-bind:clearInfo=""-->
-              <component v-bind:is="FileUploadComp" fileFormId="createPro" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+              <component v-bind:is="compArr.FileUploadComp" fileFormId="createPro" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
               <!--<a v-bind:href="ruleForm.downloadUrl" download="项目附件">{{ruleForm.showName}}-->
                 <!--<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i>-->
               <!--</a>-->

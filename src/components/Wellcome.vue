@@ -36,18 +36,6 @@ export default {
           default:
             that.$router.push('/' + that.$store.state.navList[0].path)
         }
-        // if (that.$store.state.navList[0].menuName === '集团战略') {
-        //   if (that.$store.state.proId) {
-        //     // j
-        //   } else {
-        //     that.$store.state.proId = that.$store.state.navList[0].dataList[0].menuId
-        //   }
-        //   that.$router.push('/goodsDetail')
-        // } else if (that.$store.state.navList[0].menuName === '商品管理') {
-        //   that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
-        // } else {
-        //   that.$router.push('/' + that.$store.state.navList[0].path)
-        // }
       }
       return this.$store.state.navList
     }
