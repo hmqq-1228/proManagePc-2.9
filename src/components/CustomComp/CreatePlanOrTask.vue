@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import FileUploadComp from '../FileUploadComp.vue'
+import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 // nodeId
 export default {
   name: 'CreatePlanOrTask',
