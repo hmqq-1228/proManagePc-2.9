@@ -25,7 +25,8 @@
               <p class="textIntro" :title="groupItem.description">{{groupItem.description}}</p>
             </div>
             <div style="width: 50%; text-align: right; color: #888">
-              <span>负责人: {{groupItem.userName.split(' ')[0]}}</span>
+              <span v-if="groupItem.userName">负责人: {{groupItem.userName.split(' ')[0]}}</span>
+              <span v-if="!groupItem.userName">负责人: 无负责人</span>
               <span style="margin-left: 15px;">创建时间: {{groupItem.createDt.split(' ')[0]}}</span>
             </div>
           </div>
