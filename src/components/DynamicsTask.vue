@@ -114,7 +114,7 @@
             <div class="taskStateBiao" v-bind:class="taskItem.tagStyle">{{taskItem.statusStr}}</div>
           </div>
           <div class="dateAndLikeTags">
-            <div class="tabsCntTextDate">{{taskItem.createDate}}</div>
+            <div class="tabsCntTextDate">{{taskItem.createDate}} 创建</div>
             <div class="tabsCntLikeTags">
               <div class="likeTagsItem" v-on:click="responseBtn(taskItem, taskIndex)"><i class="el-icon-edit"></i>回复</div>
             </div>

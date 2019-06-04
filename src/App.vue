@@ -509,6 +509,6 @@ padding: 8px 20px;
   color: #e97474;
 }
 .tabbox .el-table td, .el-table th{
-  padding: 10px 0;
+  padding: 8px 0;
 }
 </style>
