@@ -44,7 +44,7 @@
     <!--新建任务开始-->
     <div class="cannetProject1" style="display:flex;justify-content: space-between">
       <div style="display: inline-block"><img src="../../../static/img/delTask.png" alt=""><span>添加子任务</span></div>
-      <div @click="addChild(planMsg.id, 3)" style="font-size: 14px;color: #409EFF;cursor: pointer;font-weight: normal"><i class="el-icon-circle-plus-outline"></i> 添加子计划</div>
+      <!--<div @click="addChild(planMsg.id, 3)" style="font-size: 14px;color: #409EFF;cursor: pointer;font-weight: normal"><i class="el-icon-circle-plus-outline"></i> 添加子计划</div>-->
     </div>
     <component v-bind:is="compArr.AddNewTask"
                fileFormId="AddNewTask"

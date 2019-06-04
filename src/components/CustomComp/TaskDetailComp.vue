@@ -1147,7 +1147,7 @@ export default {
         that.$emit('ActionResThrow', {res: res, actionName: 'finishTask'})
         that.taskFinishedVisible = false
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           that.toDetail()
           // that.selectProjectId()
           that.getHistoryList()

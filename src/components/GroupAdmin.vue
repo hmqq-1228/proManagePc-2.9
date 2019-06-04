@@ -35,13 +35,13 @@
     <!--新建小组-->
     <Modal v-model="creatGroupShow" title="新建小组" @on-ok="createGroupSub" @on-cancel="createGroupCancel">
       <div class="createGroupCnt">
-        <div class="createGroupCntItem">小组名称:</div>
+        <div class="createGroupCntItem"><span style="color: #f00;">* </span>小组名:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-input placeholder="请输入小组名称" v-model="createGroupName"></el-input>
         </div>
       </div>
       <div class="createGroupCnt">
-        <div class="createGroupCntItem">负责人:</div>
+        <div class="createGroupCntItem"><span style="color: #f00;">* </span>负责人:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-autocomplete style="width: 100%"
                            v-model="CreateGroupSearchManager"
@@ -62,13 +62,13 @@
     <!-- 新建小组-->
     <Modal v-model="creatGroupShow2" title="新建小组2" @on-ok="createGroupSub2" @on-cancel="createGroupCancel2">
       <div class="createGroupCnt">
-        <div class="createGroupCntItem">小组名称:</div>
+        <div class="createGroupCntItem"><span style="color: #f00;">* </span>小组名:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-input placeholder="请输入小组名称" v-model="createGroupName2"></el-input>
         </div>
       </div>
       <div class="createGroupCnt">
-        <div class="createGroupCntItem">负责人:</div>
+        <div class="createGroupCntItem"><span style="color: #f00;">* </span>负责人:</div>
         <div class="createGroupCntItem GroupCntItemVal">
           <el-autocomplete style="width: 100%"
                            v-model="CreateGroupSearchManager2"
@@ -94,6 +94,7 @@
         layout="prev, pager, next"
         :page-size="10"
         :total="totalRow"
+        :current-page="pageNumber"
         @current-change="currentChange"
         :hide-on-single-page="true">
       </el-pagination>
@@ -156,6 +157,7 @@ export default {
     },
     GroupSelectVal: function (val, old) {
       this.log('GroupSelectVal:', val)
+      this.pageNumber = 1
       this.queryGroupList()
     }
   },
@@ -184,28 +186,36 @@ export default {
     createGroupSub: function () {
       var that = this
       // that.DrawerMember = true
-      this.ajax('/group/addGroup', {userId: that.CreateGroupMid, userName: that.CreateGroupSearchManager, groupName: that.createGroupName, description: that.createGroupDes}).then(res => {
-        that.log('addGroup:', res)
-        if (res.code === 200) {
-          that.queryGroupList()
-          // that.GroupList = res.data.list
-        } else {
-          that.$message(res.msg)
-        }
-      })
+      if (that.CreateGroupMid && that.createGroupName) {
+        this.ajax('/group/addGroup', {userId: that.CreateGroupMid, userName: that.CreateGroupSearchManager, groupName: that.createGroupName, description: that.createGroupDes}).then(res => {
+          that.log('addGroup:', res)
+          if (res.code === 200) {
+            that.queryGroupList()
+            // that.GroupList = res.data.list
+          } else {
+            that.$message(res.msg)
+          }
+        })
+      } else {
+        that.$message.warning('请完善小组必填信息！')
+      }
     },
     createGroupSub2: function () {
       var that = this
       // that.DrawerMember = true
-      this.ajax('/group/editGroup', {groupId: that.Gid, userId: that.CreateGroupMid2, userName: that.CreateGroupSearchManager2, groupName: that.createGroupName2, description: that.createGroupDes2}).then(res => {
-        that.log('addGroup:', res)
-        if (res.code === 200) {
-          that.queryGroupList()
-          // that.GroupList = res.data.list
-        } else {
-          that.$message(res.msg)
-        }
-      })
+      if (that.CreateGroupMid2 && that.createGroupName2) {
+        this.ajax('/group/editGroup', {groupId: that.Gid, userId: that.CreateGroupMid2, userName: that.CreateGroupSearchManager2, groupName: that.createGroupName2, description: that.createGroupDes2}).then(res => {
+          that.log('addGroup:', res)
+          if (res.code === 200) {
+            that.queryGroupList()
+            // that.GroupList = res.data.list
+          } else {
+            that.$message(res.msg)
+          }
+        })
+      } else {
+        that.$message.warning('请完善小组必填信息！')
+      }
     },
     createGroupCancel: function () {},
     createGroupCancel2: function () {},

@@ -1867,7 +1867,7 @@ export default {
       }
       that.ajax('/myTask/finishTask', {remark: that.commitComentF, attachmentId: fileStr, taskId: that.taskId}).then(res => {
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           that.toDetail()
           that.selectProjectId()
           that.getHistoryList()

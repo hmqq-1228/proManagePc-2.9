@@ -189,7 +189,8 @@
         <Timeline>
           <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
             <p class="time">{{history.oTime}}</p>
-            <p class="content">{{history.oName}}，{{history.oContent}}</p>
+            <p class="content"><span style="color: #333;">{{history.oName}}</span>，{{history.oContent}}</p>
+            <p class="content" v-if="history.comment" style="color: #e8be68;">备注: {{history.comment}}</p>
             <span v-for="(his, index2) in history.attachment" v-bind:key="index2">
               <p class="content" v-if="his.showName"><span>附件:</span>
                 <span style="display: inline-block"> {{his.showName}}</span>
@@ -1364,6 +1365,7 @@ export default {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
+    color: #888;
   }
   .paiTaskIptWrap input{
     width: 100%;

@@ -12,7 +12,7 @@
         </div>
         <div class="MyProHeaItem addBtn"><Button type="primary" v-on:click="newAdd()">新增项目</Button></div>
       </div>
-      <!--条件选择-->
+      <!--条件选择 全公司项目 与我相关 @我的 我参与的 我创建的 我负责的-->
       <div class="selectBox">
         <Select v-model="model1" style="width:200px" class="select1">
           <Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -447,16 +447,20 @@ export default {
       // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
       selectList1: [
         {
-          value: 'all',
-          label: '全部项目'
+          value: '6',
+          label: '全公司项目'
         },
         {
-          value: '2',
-          label: '我负责的'
+          value: '0',
+          label: '与我相关'
         },
         {
           value: '1',
           label: '我创建的'
+        },
+        {
+          value: '2',
+          label: '我负责的'
         },
         {
           value: '3',
@@ -476,7 +480,7 @@ export default {
           label: '全部项目'
         }
       ],
-      model1: 'all',
+      model1: '6',
       model2: 'all',
       dialogShowImg: false,
       commentPreviewUrl: '',
@@ -502,7 +506,7 @@ export default {
         // 项目状态（0:未开始； 2：进行中:3：已完成;"":全部）
         status: '',
         pageNum: 1,
-        // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
+        // 类型（0: 与我相关 1:我创建的；2:我负责的; 3:我参与的; 6: 全公司项目）
         type: '',
         // 项目类型 公司项目:'0' 部门项目:'1' 小组项目:'2' 个人项目:'3' 集团战略:'4' 产品研发:'5'  全部: ''
         projectType: '',
@@ -628,9 +632,11 @@ export default {
       this.queryMyProjectView()
     },
     statusVal: function (val1, val2) {
+      this.log('val1:', val1)
       if (val1) {
         this.myProjectViewPayload.status = val1
       } else {
+        this.log('val1::', val1)
         this.myProjectViewPayload.status = ''
       }
       this.myProjectViewPayload.pageNum = 1
@@ -638,10 +644,11 @@ export default {
     },
     model1: function (val1, val2) {
       this.log('model1-val1:', val1)
-      if (val1 && val1 !== 'all') {
+      if (val1) {
         this.log('走了：', val1)
         this.myProjectViewPayload.type = val1
       } else {
+        this.log('model1-val1::', val1)
         this.myProjectViewPayload.type = ''
       }
       this.myProjectViewPayload.pageNum = 1
@@ -651,6 +658,7 @@ export default {
       if (val1 && val1 !== 'all') {
         this.myProjectViewPayload.projectType = val1
       } else {
+        this.log(999999)
         this.myProjectViewPayload.projectType = ''
       }
       this.myProjectViewPayload.pageNum = 1
@@ -1042,8 +1050,11 @@ export default {
     // 查询个人项目列表 (项目卡片)
     queryMyProjectView () {
       var that = this
-      this.ajax('/myProject/myProjectView', that.myProjectViewPayload).then(res => {
-        // console.log('项目卡片', res)
+      if (!that.myProjectViewPayload.type) {
+        that.myProjectViewPayload.type = that.selectList1[0].value
+      }
+      this.ajax('/myProject/myProjectViewLeader', that.myProjectViewPayload).then(res => {
+        console.log('项目卡片', res)
         if (res.code === 200) {
           // res.data.list
           this.pageTotalRow = res.data.totalRow

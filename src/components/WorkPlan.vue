@@ -419,6 +419,10 @@ export default {
       return this.$store.state.jName
     }
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '工作报告', childNavName: '报告生成'})
+  },
   methods: {
     // // 任务详情组件
     // // 附件 附件预览

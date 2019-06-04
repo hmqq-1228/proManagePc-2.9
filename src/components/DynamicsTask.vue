@@ -114,7 +114,7 @@
             <div class="taskStateBiao" v-bind:class="taskItem.tagStyle">{{taskItem.statusStr}}</div>
           </div>
           <div class="dateAndLikeTags">
-            <div class="tabsCntTextDate">{{taskItem.createDate}}</div>
+            <div class="tabsCntTextDate">{{taskItem.createDate}} 创建</div>
             <div class="tabsCntLikeTags">
               <div class="likeTagsItem" v-on:click="responseBtn(taskItem, taskIndex)"><i class="el-icon-edit"></i>回复</div>
             </div>
@@ -910,7 +910,7 @@ export default {
         that.log('getTaskCommunityList:', res)
         if (res.code === 200) {
           this.taskTotalRow = res.data.totalRow
-          this.log('334455:', res.data.list)
+          // this.log('334455:', res.data.list)
           for (var i = 0; i < res.data.list.length; i++) {
             if (res.data.list[i].status === '0') {
               res.data.list[i].tagStyle = 'noStart'

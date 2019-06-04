@@ -361,7 +361,7 @@ export default {
       var that = this
       this.ajax('/myTask/myTaskView', that.myTaskViewPayload).then(res => {
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           for (var i = 0; i < res.data.list.length; i++) {
             // res.data.list[i].startDate = res.data.list[i].startDate.split(' ')[0]
             // res.data.list[i].endDate = res.data.list[i].endDate.split(' ')[0]
