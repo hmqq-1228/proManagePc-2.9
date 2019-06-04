@@ -267,10 +267,14 @@ export default {
         console.log('dateLimit-res:', res)
         if (res.code === 200) {
           if (res.data.start) {
+            that.log('1123:', res.data.start)
+            that.log(1123)
             var st = res.data.start.split(' ')[0] + ' 00:00:00'
+            that.log(11023)
             that.form.date1 = res.data.start
             that.addTaskForm.date1 = res.data.start
           }
+          // var st = res.data.start
           var et = res.data.finish
           var sT = new Date(st)
           var eT = new Date(et)
@@ -365,6 +369,7 @@ export default {
           if (valid) {
             for (var i = 0; i < that.value9.length; i++) {
               var lian = i === (that.value9.length - 1) ? '' : '_'
+              that.log(1223)
               that.user = that.user + that.value9[i].split('_')[0] + '-' + that.value9[i].split('_')[1] + lian
             }
             // this.log('user:', user)
