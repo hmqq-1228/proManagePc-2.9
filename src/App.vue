@@ -139,22 +139,7 @@ export default {
     /** 监听路有变化 */
     getPath () {
       // var that = this
-      console.log(this.$route.path)
-      // switch (that.$route.path) {
-      //   case '/WorkPlan':
-      //     that.$store.commit('setNavActive', {navName: '工作报告', childNavName: '报告生成'})
-      //     break
-      //   case '/report':
-      //     that.$store.commit('setNavActive', {navName: '工作报告', childNavName: '历史报告'})
-      //     break
-      //   // case '工作报告':
-      //   //   that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
-      //   //   break
-      //   default:
-      //     // that.$router.push('/' + that.$store.state.navList[0].path)
-      // }
-      // this.$store.commit('setNavActive', {navName: '我的日程', childNavName: ''})
-      // this.$store.commit('setNavActive', {navName: '项目管理', childNavName: '我的项目'})
+      // console.log(this.$route.path)
     },
     /** 图片预览关闭 */
     preClose: function () {
