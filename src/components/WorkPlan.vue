@@ -2,16 +2,22 @@
    <div class="workPlan">
      <div class="pdf" id="pdfDom">
        <p style="text-align: center;font-size: 13px;color:#000;margin-bottom: 20px;margin-top: 30px;letter-spacing: 2px;">工作报告</p>
+       <div style="text-align: center">
+         <p style="font-size: 12px;transform: scale(0.8)">
+           <span><i style="color:#169BD5">姓名：</i><span>{{getUser}}</span></span>
+           <span style="margin-left: 30px;"><i style="color:#169BD5">职位：</i><span>{{getjname}}</span></span>
+         </p>
+       </div>
        <div style="padding:10px 10px;width: 100%;height: 100%;">
          <p style="font-size: 12px;color:#169BD5;margin-left: 10px">{{tabCurr}}</p>
          <div style="margin-top: 10px;margin-left: -10px;" v-for="(item, index) in currentData" :key="item.uid+'_'+index">
            <p style="font-size: 12px;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
-           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left:3px">{{item.description}}</p>
+           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.75);line-height: 25px;margin-left:-10px;">{{item.description}}</p>
          </div>
          <p style="font-size: 12px;color:#169BD5;margin-top: 30px;margin-left: 10px">{{tabNext}}</p>
          <div style="margin-top: 15px;margin-left: -10px;" v-for="(item, index) in nextData" :key="item.uid+'_'+index">
            <p style="font-size: 12px;;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.jobName}}</p>
-           <p style="font-size: 12px;margin-left:3px;margin-top: 5px;transform: scale(0.8);line-height: 25px;">{{item.description}}</p>
+           <p style="font-size: 12px;margin-left:-10px;margin-top: 5px;transform: scale(0.75);line-height: 25px;">{{item.description}}</p>
          </div>
        </div>
      </div>
@@ -73,7 +79,7 @@
             <div class="first" :class="type === 1 ? 'active' : ''" @click="getTab(1)">{{tabCurr}}工作安排</div>
             <div class="first last" :class="type === 2 ? 'active' : ''" @click="getTab(2)">{{tabNext}}工作安排</div>
           </div>
-         <div class="content">
+         <div class="content" style="width: 100%;min-height: 800px;border-right: 1px solid #ccc">
            <div class="statusTab">
              <ul>
                <li v-for="item in currentStatus" :key="item.id" :class="item.id === current ? 'active':''" @click="tabStatus(item)">{{item.name}}</li>
@@ -264,6 +270,8 @@ export default {
   name: 'WorkPlan',
   data () {
     return {
+      username: this.$store.state.userName,
+      jName: this.$store.state.jName,
       htmlTitle: '周报',
       compArr: {
         TaskDetailComp: 'TaskDetailComp'
@@ -401,6 +409,15 @@ export default {
     this.$store.commit('setDateOption', {OptionObj: this.dateTimeOpt1, startDate: this.currStart, endDate: this.currEnd})
     this.$store.commit('setDateOption', {OptionObj: this.dateTimeOpt2, startDate: this.nextStart})
     this.$store.commit('setDateOption', {OptionObj: this.dateTimeOpt3, startDate: this.nextStart})
+  },
+  computed: {
+    // console.log(this.$store.state.userName)
+    getUser () {
+      return this.$store.state.userName
+    },
+    getjname () {
+      return this.$store.state.jName
+    }
   },
   mounted: function () {
     /** 设置侧边栏激活状态 */
@@ -955,7 +972,7 @@ export default {
   }
   .workPlan .content {
     width: 100%;
-    min-height: 700px;
+    min-height: 800px;
     border-right: 1px solid #ccc;
   }
   .workPlan .content .statusTab {
@@ -1049,6 +1066,7 @@ export default {
     top:150px;
     z-index:100;
     font-size: 12px;
+    /*background: pink;*/
   }
   .workPlan .current {
     width: 100%;

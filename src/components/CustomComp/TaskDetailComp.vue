@@ -56,7 +56,7 @@
         <div style="display: inline-block"><img src="../../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
         <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}, </span>
         <span style="font-size: 14px;color: #888;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
-        <span class="bainProject" @click="connectProject(taskBasicMsg.uid)">关联项目</span>
+        <span class="bainProject" v-if="taskBasicMsg.showMenu > 0" @click="connectProject(taskBasicMsg.uid)">关联项目</span>
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
@@ -191,7 +191,7 @@
             <span v-for="(com, index2) in comment.attachment" v-bind:key="index2">
               <p class="content" v-if="com.showName">附件:
                 <span style="display: inline-block"> {{com.showName}}</span>
-                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="(com.previewUrl, com.showName)">预览</span>
+                <span v-if="com.isImg" style="display: inline-block;color: #53b5ff;margin-left: 10px;cursor: pointer;" @click="showImagePre(com.previewUrl, com.showName)">预览</span>
                 <span style="margin-left: 10px;display: inline-block;"><a v-bind:href="com.downloadUrl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
               </p>
             </span>
@@ -1033,7 +1033,8 @@ export default {
     },
     showImagePre: function (previewUrl, showName) {
       // this.log('showName:', showName)
-      this.$emit('FilePreEmit', {previewUrl: previewUrl, fileName: showName})
+      this.imgPreview(previewUrl, showName)
+      // this.$emit('FilePreEmit', {previewUrl: previewUrl, fileName: showName})
     },
     // 任务分解
     DistributeFormVisibleFuc: function (res) {

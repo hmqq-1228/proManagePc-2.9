@@ -2,16 +2,22 @@
    <div class="report" style="position: relative">
      <div class="pdf" id="pdfDom" style="width: 500px;position: fixed;right:-500px;top:0" v-if="detail">
        <p style="text-align: center;font-size: 13px;color:#000;margin-bottom: 20px;margin-top: 30px;letter-spacing: 2px;">工作报告</p>
+       <div style="text-align: center">
+         <p style="font-size: 12px;transform: scale(0.8)">
+           <span><i style="color:#169BD5">姓名：</i><span>{{getUser}}</span></span>
+           <span style="margin-left: 30px;"><i style="color:#169BD5">职位：</i><span>{{getjname}}</span></span>
+         </p>
+       </div>
        <div style="padding:10px 10px;width: 100%;height: 100%;">
          <p style="font-size: 12px;color:#169BD5;margin-left: 10px">{{name}}</p>
          <div style="margin-top: 10px;margin-left: -10px;" v-for="(item, index) in detail.lastRec" :key="item.id">
            <p style="font-size: 12px;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.taskName}}</p>
-           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left:3px">{{item.remark}}</p>
+           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.75);line-height: 25px;margin-left:-10px">{{item.remark}}</p>
          </div>
          <p style="font-size: 12px;color:#169BD5;margin-top: 30px;margin-left: 10px">{{nname}}</p>
          <div style="margin-top: 15px;margin-left: -10px;" v-for="(item, index) in detail.nextRec" :key="item.id">
            <p style="font-size: 12px;;transform: scale(0.85)"><span style="color:#000;font-weight: bold">{{index+1}}、</span>{{item.taskName}}</p>
-           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.8);line-height: 25px;margin-left: 3px">{{item.remark}}</p>
+           <p style="font-size: 12px;margin-top: 5px;transform: scale(0.75);line-height: 25px;margin-left: -10px">{{item.remark}}</p>
          </div>
        </div>
      </div>
@@ -112,6 +118,8 @@ export default {
   name: 'report',
   data () {
     return {
+      username: this.$store.state.userName,
+      jName: this.$store.state.jName,
       loading: false,
       time: [
         {
@@ -170,6 +178,15 @@ export default {
       if (val === false) {
         this.detail = {}
       }
+    }
+  },
+  computed: {
+    // console.log(this.$store.state.userName)
+    getUser () {
+      return this.$store.state.userName
+    },
+    getjname () {
+      return this.$store.state.jName
     }
   },
   methods: {
