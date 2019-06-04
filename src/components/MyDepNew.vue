@@ -408,7 +408,7 @@ export default {
       var that = this
       that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         if (res.code === 200) {
-          this.log('getAllProjectByUser:', res)
+          // this.log('getAllProjectByUser:', res)
           this.projectBelong = res.data.length > 0 ? res.data[0].projectUID : ''
           this.options = res.data
           this.getProjectTime(this.projectBelong)

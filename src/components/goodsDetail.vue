@@ -707,9 +707,9 @@ export default {
     }
   },
   created: function () {
-    this.log(10010)
+    // this.log(10010)
     if (this.$route.params.proId || this.$store.state.proId || localStorage.getItem('proId')) {
-      this.log(112233)
+      // this.log(112233)
       this.proId = this.$route.params.proId || this.$store.state.proId || localStorage.getItem('proId')
       this.$store.state.proId = this.proId
       localStorage.setItem('proId', this.proId)

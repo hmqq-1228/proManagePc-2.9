@@ -161,6 +161,10 @@ export default {
   created () {
     this.getPlan()
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '工作报告', childNavName: '历史报告'})
+  },
   watch: {
     reportShow (val) {
       if (val === false) {

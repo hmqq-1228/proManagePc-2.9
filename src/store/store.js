@@ -137,6 +137,14 @@ const mutations = {
               break
             }
           }
+        } else if (navObj.navName === '工作报告') {
+          for (var k = 0; k < state.navList[t].dataList.length; k++) {
+            if (navObj.childNavName === state.navList[t].dataList[k].menuName) {
+              state.navActive = state.navList[t].dataList[k].menuId.toString()
+              state.menuId = state.navList[t].dataList[k].menuId.toString()
+              break
+            }
+          }
         } else {
           state.navActive = state.navList[t].menuId.toString()
           state.menuId = state.navList[t].menuId.toString()

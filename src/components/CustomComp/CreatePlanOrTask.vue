@@ -3,47 +3,47 @@
     <!--<button v-on:click="testLimit">TEST</button>-->
     <div class="bgCoverTabs">
       <el-tabs v-model="activeNameBgCover" @tab-click="handleClickPlanTask">
-        <el-tab-pane label="增加计划" name="first" v-bind:disabled="panshow">
-          <!--计划form-->
-          <div class="planTaskBox">
-            <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-              <el-form-item label="计划名称" prop="name" maxlength="100" width="100" style="margin-bottom: 30px;">
-                <el-input class="planNameIpt" v-model="form.name" style="width: 300px;" maxlength="20"></el-input>
-              </el-form-item>
-              <el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">
-                <el-col :span="20">
-                  <el-date-picker type="datetime"
-                                  :picker-options="pickerOptionsPlan"
-                                  format="yyyy-MM-dd HH:mm:ss"
-                                  value-format="yyyy-MM-dd HH:mm:ss"
-                                  placeholder="选择日期"
-                                  v-model="form.date1" style="width: 300px;"
-                  ></el-date-picker>
-                </el-col>
-              </el-form-item>
-              <el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">
-                <el-col :span="20">
-                  <el-date-picker type="datetime"
-                                  :picker-options="pickerOptionsPlan"
-                                  format="yyyy-MM-dd HH:mm:ss"
-                                  value-format="yyyy-MM-dd HH:mm:ss"
-                                  placeholder="选择日期"
-                                  v-model="form.date2" style="width: 300px;"
-                  ></el-date-picker>
-                </el-col>
-              </el-form-item>
-              <el-form-item label="计划描述" prop="description" maxlength="100" width="100" style="margin-bottom: 30px;">
-                <el-input class="planNameIpt" type="textarea" :rows="2" v-model="form.description" style="width: 300px;"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="onPlanSubmit('form')">立即创建</el-button>
-                <el-button @click="onPlanTaskCancel()">取消</el-button>
-              </el-form-item>
-            </el-form>
-          </div>
-          <!---->
-        </el-tab-pane>
-        <el-tab-pane label="增加任务" name="second">
+        <!--<el-tab-pane label="增加计划" name="first" v-bind:disabled="panshow">-->
+          <!--&lt;!&ndash;计划form&ndash;&gt;-->
+          <!--<div class="planTaskBox">-->
+            <!--<el-form ref="form" :model="form" :rules="rules" label-width="80px">-->
+              <!--<el-form-item label="计划名称" prop="name" maxlength="100" width="100" style="margin-bottom: 30px;">-->
+                <!--<el-input class="planNameIpt" v-model="form.name" style="width: 300px;" maxlength="20"></el-input>-->
+              <!--</el-form-item>-->
+              <!--<el-form-item label="开始时间" prop="date1" style="margin-bottom: 30px;">-->
+                <!--<el-col :span="20">-->
+                  <!--<el-date-picker type="datetime"-->
+                                  <!--:picker-options="pickerOptionsPlan"-->
+                                  <!--format="yyyy-MM-dd HH:mm:ss"-->
+                                  <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                  <!--placeholder="选择日期"-->
+                                  <!--v-model="form.date1" style="width: 300px;"-->
+                  <!--&gt;</el-date-picker>-->
+                <!--</el-col>-->
+              <!--</el-form-item>-->
+              <!--<el-form-item label="结束时间" prop="date2" style="margin-bottom: 30px;">-->
+                <!--<el-col :span="20">-->
+                  <!--<el-date-picker type="datetime"-->
+                                  <!--:picker-options="pickerOptionsPlan"-->
+                                  <!--format="yyyy-MM-dd HH:mm:ss"-->
+                                  <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                  <!--placeholder="选择日期"-->
+                                  <!--v-model="form.date2" style="width: 300px;"-->
+                  <!--&gt;</el-date-picker>-->
+                <!--</el-col>-->
+              <!--</el-form-item>-->
+              <!--<el-form-item label="计划描述" prop="description" maxlength="100" width="100" style="margin-bottom: 30px;">-->
+                <!--<el-input class="planNameIpt" type="textarea" :rows="2" v-model="form.description" style="width: 300px;"></el-input>-->
+              <!--</el-form-item>-->
+              <!--<el-form-item>-->
+                <!--<el-button type="primary" @click="onPlanSubmit('form')">立即创建</el-button>-->
+                <!--<el-button @click="onPlanTaskCancel()">取消</el-button>-->
+              <!--</el-form-item>-->
+            <!--</el-form>-->
+          <!--</div>-->
+          <!--&lt;!&ndash;&ndash;&gt;-->
+        <!--</el-tab-pane>-->
+        <el-tab-pane label="增加任务" name="first">
           <!--任务form-->
           <div class="planTaskBox" style="position: relative;padding-top: 0;">
             <el-form ref="addTaskForm" :rules="taskRules" :model="addTaskForm" label-width="80px">

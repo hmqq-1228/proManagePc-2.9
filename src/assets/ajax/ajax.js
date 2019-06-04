@@ -83,7 +83,7 @@ const install = function (Vue, options) {
     return isImg
   }
   // 图片预览
-  Vue.prototype.isImage = function (previewUrl, fileName) {
+  Vue.prototype.imgPreview = function (previewUrl, fileName) {
     if (previewUrl && this.isImage(fileName)) {
       store.state.imgPreviewShow = true
       store.state.imgPreviewSrc = previewUrl

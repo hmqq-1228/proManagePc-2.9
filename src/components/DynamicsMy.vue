@@ -1120,7 +1120,7 @@ export default {
         that.log('getTaskCommunityList:', res)
         if (res.code === 200) {
           this.taskTotalRow = res.data.totalRow
-          this.log('334455:', res.data.list)
+          // this.log('334455:', res.data.list)
           for (var i = 0; i < res.data.list.length; i++) {
             if (res.data.list[i].status === '0') {
               res.data.list[i].tagStyle = 'noStart'
@@ -1972,7 +1972,7 @@ export default {
       }
       that.ajax('/myTask/finishTask', {remark: that.commitComentF, attachmentId: fileStr, taskId: that.taskId2}).then(res => {
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           that.toDetail(that.taskId2)
           that.getTaskList()
           that.getHistoryList()

@@ -102,6 +102,7 @@ export default {
     this.getUserInfo()
   },
   watch: {
+    '$route': 'getPath'
   },
   computed: {
     getNavActive: function () {
@@ -134,6 +135,26 @@ export default {
     tttest: function () {
       this.log('imgPreviewShow:', this.$store.state.imgPreviewShow)
       // this.$store.state.navActive = '3'
+    },
+    /** 监听路有变化 */
+    getPath () {
+      // var that = this
+      console.log(this.$route.path)
+      // switch (that.$route.path) {
+      //   case '/WorkPlan':
+      //     that.$store.commit('setNavActive', {navName: '工作报告', childNavName: '报告生成'})
+      //     break
+      //   case '/report':
+      //     that.$store.commit('setNavActive', {navName: '工作报告', childNavName: '历史报告'})
+      //     break
+      //   // case '工作报告':
+      //   //   that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
+      //   //   break
+      //   default:
+      //     // that.$router.push('/' + that.$store.state.navList[0].path)
+      // }
+      // this.$store.commit('setNavActive', {navName: '我的日程', childNavName: ''})
+      // this.$store.commit('setNavActive', {navName: '项目管理', childNavName: '我的项目'})
     },
     /** 图片预览关闭 */
     preClose: function () {
@@ -246,7 +267,7 @@ export default {
       // auth/getMenuList
       this.ajax('/auth/getMenuList', {}).then(res => {
         // this.ajax('/myTask/getProjectList', {}).then(res => {
-        this.log('请求侧边栏:', res)
+        // this.log('请求侧边栏:', res)
         if (res.code === 200) {
           for (var i = 0; i < res.data.length; i++) {
             // 设置图标

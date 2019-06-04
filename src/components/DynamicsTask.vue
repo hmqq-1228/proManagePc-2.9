@@ -910,7 +910,7 @@ export default {
         that.log('getTaskCommunityList:', res)
         if (res.code === 200) {
           this.taskTotalRow = res.data.totalRow
-          this.log('334455:', res.data.list)
+          // this.log('334455:', res.data.list)
           for (var i = 0; i < res.data.list.length; i++) {
             if (res.data.list[i].status === '0') {
               res.data.list[i].tagStyle = 'noStart'
