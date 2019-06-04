@@ -56,7 +56,8 @@
             <div class="paiTaskIptRightIcon" style="cursor: pointer" v-on:click="selectUser2($event)"><i class="el-icon-edit-outline"></i></div>
             <div class="paiTaskIptRightCnt" v-on:click="selectUser2($event)">
               <span v-if="taskForm2.value9.length > 0" v-for="user in taskForm2.value9" :key="user"> {{user.split('-')[0]}}</span>
-              <span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>
+              <!--<span v-if="taskForm2.value9.length === 0">{{getUserName}}</span>-->
+              <span v-if="taskForm2.value9.length === 0">负责人</span>
             </div>
             <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)"><i class="el-icon-date"></i></div>
             <div class="paiTaskIptRightCnt" :title="selDateStart2 + ' 到 ' + selDateEnd2" v-on:click="selectDate2($event)">时间</div>
@@ -372,7 +373,7 @@ export default {
           }
         } else {
           // value9没有值，取默认
-          selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
+          // selectUserStr = that.defImplementer.name + '-' + that.defImplementer.id
         }
         // that.CommunityTaskPayload2.projectUID = that.$store.state.proId
         that.CommunityTaskPayload2.parentId = that.nodeId
