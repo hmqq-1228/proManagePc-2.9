@@ -191,6 +191,7 @@
       </div>
       <!--dddd-->
       <div style="margin-top:20px;" v-if="planList.length > 0 ">
+          <el-tooltip class="item" effect="dark" content="Right Top 提示文字" placement="right-start">123</el-tooltip>
           <el-tabs v-model="activeName">
               <el-tab-pane label="加任务" name="first">
                   <component v-bind:is="compArr.AddNewTask"
@@ -200,15 +201,18 @@
                              :nodeId="parentId">
                   </component>
               </el-tab-pane>
-              <!--<el-tab-pane label="加计划" name="second" v-bind:disabled="panshow">-->
-                  <!--<component v-bind:is="compArr.addNewPlan"-->
-                     <!--fileFormId="addNewPlan"-->
-                     <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
-                     <!--:nodeId="parentId"-->
-                     <!--:defaultText="defaultText"-->
-                     <!--:defaultDetail="defaultDetail">-->
-                  <!--</component>-->
-              <!--</el-tab-pane>-->
+            <!--<el-tooltip class="item" effect="dark" content="Right Top 提示文字" placement="right-start">123-->
+              <el-tab-pane label="加计划" name="second" v-bind:disabled="false">
+                <div style="padding-left: 20px; color: #cf9236">温馨提示:新增计划功能已与新增任务功能合并，新增任务可不指派人员</div>
+                    <!--<component v-bind:is="compArr.addNewPlan"-->
+                       <!--fileFormId="addNewPlan"-->
+                       <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
+                       <!--:nodeId="parentId"-->
+                       <!--:defaultText="defaultText"-->
+                       <!--:defaultDetail="defaultDetail">-->
+                    <!--</component>-->
+              </el-tab-pane>
+              <!--</el-tooltip>-->
           </el-tabs>
       </div>
     </div>

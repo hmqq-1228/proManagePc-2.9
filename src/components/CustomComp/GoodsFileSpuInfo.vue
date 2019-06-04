@@ -137,7 +137,7 @@
               <!--<i-input class="iptTest" v-model="groupNameVal" v-on:input="preExtraInput('groupNameVal',{groupName: groupNameVal},'editBase')" v-on:on-keydown="textValChange('groupNameVal',{groupName: groupNameVal},'editBase', $event)" :readonly="!baseInfoEditStatus" placeholder="请输入小组名称" style="max-width: 250px" >-->
                 <!--<Icon class="haha" id="groupNameVal" v-show="baseInfoEditStatus" @click="editBaseSpuInfo({groupName: groupNameVal}, 'groupNameVal')" type="md-checkmark-circle" slot="suffix" />-->
               <!--</i-input>-->
-              <div class="jiagouInfo" v-show="!groupId && baseInfoEditStatus">请先创建产品小组</div>
+              <div class="jiagouInfo" v-show="!groupId && baseInfoEditStatus">请先绑定产品小组</div>
               <div class="jiagou" v-show="groupId && baseInfoEditStatus && groupManageShow > 0" @click="member">成员管理</div>
             </div>
           </div>
