@@ -56,7 +56,7 @@
         <div style="display: inline-block"><img src="../../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
         <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}, </span>
         <span style="font-size: 14px;color: #888;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
-        <span class="bainProject" @click="connectProject(taskBasicMsg.uid)">关联项目</span>
+        <span class="bainProject" v-if="taskBasicMsg.showMenu > 0" @click="connectProject(taskBasicMsg.uid)">关联项目</span>
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
