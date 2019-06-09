@@ -243,6 +243,7 @@ export default {
       })
     },
     FilePreEmitFuc: function (previewUrl, fileName, attachmentId) {
+      this.log(123321123)
       this.imgPreview(previewUrl, fileName)
     },
     getFileName: function (filename) {

@@ -85,7 +85,7 @@
           </el-option>
         </el-select>
       </div>
-      <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="userSelectVal.length===0"></div>
+      <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="userSelectVal.length===0">问题指向人，此项不选则默认自己</div>
       <div class="selectUserBtn" v-on:click="selectUserClick()"><el-button>确定</el-button></div>
     </div>
     <!--发动态 时间选择 -->

@@ -1,5 +1,6 @@
 <template>
   <div class="MyPro">
+    <div>{{getSelectProjectType?getSelectProjectType : ''}}</div>
     <div class="MyProCnt">
       <div class="MyProHeader">
         <div>
@@ -554,9 +555,18 @@ export default {
     // activeNavIndex: this.$store.state.activeNavIndex,
     // j
     var that = this
+    // projectType
+    // if (that.$route.params.projectType) {
+    //   this.model2 = that.$route.params.projectType
+    //   that.myProjectViewPayload.projectType = that.$route.params.projectType
+    // } else {
+    //   this.model2 = 'all'
+    //   that.myProjectViewPayload.projectType = ''
+    // }
     this.proTypeList = this.proTypeList.concat(that.$store.state.projectType)
     // 查询个人项目列表
-    this.queryMyProjectView()
+    this.log(11111)
+    // this.queryMyProjectView()
     // j
     // this.queryProjectTypeList()
     // 查询用户信息
@@ -569,6 +579,16 @@ export default {
   mounted: function () {
     /** 设置侧边栏激活状态 */
     this.$store.commit('setNavActive', {navName: '项目管理', childNavName: '我的项目'})
+  },
+  computed: {
+    getSelectProjectType: function () {
+      var that = this
+      that.log('abcdefg')
+      that.model2 = that.$store.state.selectProjectType
+      that.myProjectViewPayload.projectType = that.$store.state.selectProjectType
+      this.queryMyProjectView()
+      return this.$store.state.selectProjectType
+    }
   },
   watch: {
     // 历史记录 显示与隐藏
@@ -612,9 +632,11 @@ export default {
     },
     pageNum: function (val, old) {
       this.myProjectViewPayload.pageNum = val
+      this.log(22222)
       this.queryMyProjectView()
     },
     searchProVal: function (val, old) {
+      this.log(33333)
       this.myProjectViewPayload.projectName = val
       this.queryMyProjectView()
       // if (val) {
@@ -623,6 +645,7 @@ export default {
     },
     searchProManagerVal: function (val, oV) {
       this.myProjectViewPayload.projectManager = val
+      this.log(4444)
       this.queryMyProjectView()
     },
     statusVal: function (val1, val2) {
@@ -632,6 +655,7 @@ export default {
         this.myProjectViewPayload.status = ''
       }
       this.myProjectViewPayload.pageNum = 1
+      this.log(555555)
       this.queryMyProjectView()
     },
     model1: function (val1, val2) {
@@ -643,6 +667,7 @@ export default {
         this.myProjectViewPayload.type = ''
       }
       this.myProjectViewPayload.pageNum = 1
+      this.log(666666)
       this.queryMyProjectView()
     },
     model2: function (val1, val2) {
@@ -652,6 +677,7 @@ export default {
         this.myProjectViewPayload.projectType = ''
       }
       this.myProjectViewPayload.pageNum = 1
+      this.log(77777)
       this.queryMyProjectView()
     }
   },
@@ -1006,7 +1032,7 @@ export default {
     },
     // 新增搜索项目
     searchPro: function (iptName) {
-      this.log('iptName:', iptName)
+      this.log(888888)
       this.myProjectViewPayload.pageNum = 1
       this.myProjectViewPayload.projectName = iptName
       this.queryMyProjectView()
@@ -1015,6 +1041,7 @@ export default {
       this.log('iptName:', iptName)
       this.myProjectViewPayload.pageNum = 1
       this.myProjectViewPayload.projectManager = iptName
+      this.log(9999999)
       this.queryMyProjectView()
     },
     // 新增 查询用户信息
@@ -1042,6 +1069,8 @@ export default {
     // 查询个人项目列表 (项目卡片)
     queryMyProjectView () {
       var that = this
+      that.log(886)
+      this.log('that.myProjectViewPayload:', that.myProjectViewPayload)
       this.ajax('/myProject/myProjectView', that.myProjectViewPayload).then(res => {
         // console.log('项目卡片', res)
         if (res.code === 200) {

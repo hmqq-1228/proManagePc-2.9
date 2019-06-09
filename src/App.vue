@@ -58,9 +58,11 @@
       </el-container>
     </el-container>
     <!-- 截图上传 图片预览 -->
-    <el-dialog title="截图上传" :visible.sync="slipPreShow" width="40%" :show-close="false">
-      <div class="showImg" v-loading="SlipPreLoading">
-        <img v-bind:src="slipPreSrc" alt>
+    <el-dialog title="截图上传" :visible.sync="slipPreShow" :show-close="false">
+      <div class="clear" style="text-align: center">
+        <div class="showImg" v-loading="SlipPreLoading" style="display: inline-block">
+          <img v-bind:src="slipPreSrc" alt>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="clipBack(false)">取 消</el-button>
@@ -68,9 +70,16 @@
       </span>
     </el-dialog>
     <!-- 图片预览 -->
-    <el-dialog title="图片预览" :visible.sync="imgPreviewShow" v-bind:class="'pre_' + getImgPreviewShow" @closed="preClose">
-      <div class="showImg">
-        <img v-bind:src="getImgPreviewSrc" alt>
+    <el-dialog title="图片预览" :width="imgPreviewWidth + '%'" :visible.sync="imgPreviewShow" v-bind:class="'pre_' + getImgPreviewShow" @closed="preClose">
+      <div class="addMinusBox">
+        <div class="addMinusItem add" v-on:click="addMinus('add')"><i class="el-icon-zoom-in"></i></div>
+        <div class="addMinusItem minus" v-on:click="addMinus('Minus')"><i class="el-icon-zoom-out"></i></div>
+        <div class="addMinusItem back" v-on:click="addMinus('back')"><i class="el-icon-refresh"></i></div>
+      </div>
+      <div class="showImgBox clear" style="text-align: center">
+        <div class="showImgs" style="display: inline-block">
+          <img v-bind:src="getImgPreviewSrc" @load="imgPreLoad" alt>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -93,6 +102,8 @@ export default {
       slipPreShow: false,
       SlipPreLoading: false,
       /** 图片预览 */
+      imgPreviewWidth: 50,
+      showImgSouseWidth: '',
       imgPreviewShow: false
     }
   },
@@ -133,8 +144,45 @@ export default {
   },
   methods: {
     tttest: function () {
-      this.log('imgPreviewShow:', this.$store.state.imgPreviewShow)
+      this.log('addMinus::::', $('.showImgs').width())
+      // this.log('imgPreviewShow:', this.$store.state.imgPreviewShow)
       // this.$store.state.navActive = '3'
+    },
+    imgPreLoad: function () {
+      /** 图片原尺寸 */
+      // this.log('addMinus:11:', $('.showImg').width())
+      this.showImgSouseWidth = $('.showImgs').width()
+    },
+    addMinus: function (type) {
+      // this.log('addMinus:', $('.showImg').width())
+      var that = this
+      if (type === 'add') {
+        this.log('addMinus:', $('.showImgs').width())
+        var showImgBox = $('.showImgBox').width()
+        var showImgNext = Math.ceil($('.showImgs').width() + $('.showImgs').width() * 0.1)
+        this.log('showImgBox:', showImgBox)
+        this.log('showImgNext:', showImgNext)
+        if (showImgNext < showImgBox) {
+          $('.showImgs').css('width', showImgNext + 'px')
+        } else {
+          $('.showImgs').css('width', '100%')
+          if (this.imgPreviewWidth < 100) {
+            this.imgPreviewWidth = this.imgPreviewWidth + 10
+          }
+        }
+      } else if (type === 'Minus') {
+        if (this.imgPreviewWidth > 50) {
+          this.imgPreviewWidth = this.imgPreviewWidth - 10
+        } else {
+          var showImgNextMinus = Math.ceil($('.showImgs').width() - $('.showImgs').width() * 0.1)
+          if (showImgNextMinus > 0) {
+            $('.showImgs').css('width', showImgNextMinus + 'px')
+          }
+        }
+      } else {
+        that.imgPreviewWidth = 50
+        $('.showImgs').css('width', that.showImgSouseWidth + 'px')
+      }
     },
     /** 监听路有变化 */
     getPath () {
@@ -143,6 +191,9 @@ export default {
     },
     /** 图片预览关闭 */
     preClose: function () {
+      this.imgPreviewWidth = 50
+      this.showImgSouseWidth = ''
+      $('.showImgs').css('width', 'auto')
       this.$store.state.imgPreviewShow = false
     },
     clipBack: function (boo) {
@@ -168,11 +219,16 @@ export default {
     toNavDetail: function (navData) {
       var that = this
       that.log('navData:', navData)
-      if (navData.navType === '集团战略') {
-        this.$store.state.proId = navData.menuId
+      var param = ''
+      if (navData.menuName === '集团战略') {
+        // this.$store.state.proId = navData.menuId
+        /** 如果是集团战略 */
+        that.$store.state.selectProjectType = '4'
+      } else {
+        that.$store.state.selectProjectType = ''
       }
       this.$store.state.menuId = navData.menuId
-      that.$router.push('/' + navData.path)
+      that.$router.push('/' + navData.path + param)
     },
     getPmsVersion: function () {
       var that = this
@@ -259,7 +315,8 @@ export default {
             switch (res.data[i].menuName) {
               case '集团战略':
                 res.data[i].icon = 'ios-ribbon-outline'
-                res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'singlePath', '集团战略', 'goodsDetail')
+                res.data[i].path = 'MyPro'
+                // res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'singlePath', '集团战略', 'goodsDetail')
                 break
               case '商品管理':
                 res.data[i].icon = 'md-cart'
@@ -310,6 +367,21 @@ export default {
 </script>
 
 <style>
+  .clear:after{ content: ""; display: block;height: 0;visibility: hidden;clear: both;}
+  .addMinusBox{ position: absolute; top: 15px; left: 50%; margin-left: -50px; display: flex; justify-content: center}
+  .addMinusItem{
+    font-size: 20px;
+  }
+  .addMinusItem.minus{
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  .addMinusItem.add{
+    transform: rotate(90deg)
+  }
+  .addMinusItem:hover{
+    color: #2D9CFF;
+  }
 *{
   padding: 0;
   margin: 0;
@@ -321,7 +393,7 @@ html,body{
 #app{
   height: 100%;
 }
-.showImg img{
+.showImg,.showImgs img{
   width: 100%;
 }
 .el-aside {

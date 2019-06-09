@@ -157,6 +157,11 @@ export default new Router({
       component: MyPro
     },
     {
+      path: '/MyPro/:projectType',
+      name: 'MyProType',
+      component: MyPro
+    },
+    {
       path: '/AllCompanyPro',
       name: 'AllCompanyPro',
       component: AllCompanyPro
