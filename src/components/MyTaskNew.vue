@@ -1,8 +1,8 @@
 <template>
-  <div class="MyTaskNew">
-    <div class="contentTop" v-loading="loading3">
+  <div class="MyTaskNew" style="padding-left: 20px">
+    <div class="contentTop" v-loading="loading3" style="margin-top: 15px;">
       <div class="paiTaskTitTab">
-        <div class="paiTask pai active">新建任务</div>
+        <div class="paiTask pai active">派任务</div>
       </div>
       <component v-bind:is="compArr.QuickCreateTaskComp"
                  fileFormId="QuickCreateTaskComp"
@@ -648,6 +648,13 @@ export default {
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+  }
+  .paiTask{
+    font-size: 16px;
+    margin-right: 15px;
+  }
+  .paiTask.active{
+    font-weight: bold;
   }
   .taskStateBiaoNew{
     text-align: center;

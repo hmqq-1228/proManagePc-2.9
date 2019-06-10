@@ -100,8 +100,8 @@
           <div class="childTaskName" @click="toDetail(childTask.id)"><Icon type="md-copy" size="16" color="#409EFF"/> {{childTask.questionName}}</div>
           <div class="childTaskMsg">
             <div style="width: 60px;" v-bind:class="'childTaskStyle' + childTask.status">{{childTask.statusStr}}</div>
-            <div style="width: 100px;" v-if="childTask.dayNum >= 0">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
-            <div style="width: 100px;" v-if="childTask.dayNum < 0">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
+            <div style="width: 100px;" v-if="childTask.dayNum >= 0 && childTask.status !== 2">剩余 <span style="color: #13ce66;font-size: 18px;">{{childTask.dayNum}}</span> 天</div>
+            <div style="width: 100px;" v-if="childTask.dayNum < 0 && childTask.status !== 2">逾期 <span style="color: #f00;font-size: 18px;">{{Math.abs(childTask.dayNum)}}</span> 天</div>
             <div style="width: 160px;">{{childTask.userName}}</div>
             <div style="margin-right: 0" class="taskDel" @click="childTaskDelete(childTask.id)"><Icon type="md-close" size="18"/></div>
           </div>
