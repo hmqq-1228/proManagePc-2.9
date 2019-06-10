@@ -74,10 +74,10 @@ const state = {
   fileFormat: ['jpg', 'jpeg', 'png', 'gif'],
   // baseServiceUrl: 'http://10.0.5.29:8088'
   // baseServiceUrl: 'https://ityp.baho.cn:8094/pms2'
-  baseServiceUrl: 'https://pms.baho.cn/pms'
+  // baseServiceUrl: 'https://pms.baho.cn/pms'
   // baseServiceUrl: 'https://ityp.baho.cn:8094/pms'
   // baseServiceUrl: 'http://10.0.5.241:8089'
-  // baseServiceUrl: 'http://10.0.5.240:8088'
+  baseServiceUrl: 'http://10.0.5.240:8088'
 }
 const mutations = {
   add (state) {

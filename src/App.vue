@@ -1,10 +1,14 @@
 <template>
-  <div id="app">
+  <div id="app" @click.stop="hidePanel">
     <div>{{getNavActive?'':''}}{{GetSlipPreShow?'' : ''}}</div>
     <el-container>
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
           <div @click="tttest()">贝豪实业项目管理中心</div>
+          <div class="message" @click.stop="showMsg" @mouseover="mouseOver">
+            <Icon type="md-notifications-outline" style="font-size: 24px"/>
+            <div class="number"><p style="font-size: 12px;transform: scale(0.8)">{{msgObj.totalNum}}</p></div>
+          </div>
         </div>
       </el-header>
       <el-container>
@@ -73,6 +77,20 @@
         <img v-bind:src="getImgPreviewSrc" alt>
       </div>
     </el-dialog>
+    <div class="msglist" v-if="msgShow" @mouseleave="mouseLeave">
+      <div class="title">
+        新消息({{msgObj.totalNum}})
+      </div>
+      <div class="allMsg" v-for="(item,index) in msgObj.msgList" :key="index">
+        <span>{{item.createDt}}</span>
+        <span style="color:#2F64A5;margin-left: 10px;margin-right: 10px;">{{item.senderName}}</span>
+        <span>{{item.remark}}</span>
+        <span style="color:#2F64A5;float:right;margin-right:15px;cursor: pointer" @click="jumpDetail(item)">查看详情</span>
+      </div>
+      <div class="viewAll" @click="jumpMsg">
+        <span class="text">查看全部</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -93,13 +111,18 @@ export default {
       slipPreShow: false,
       SlipPreLoading: false,
       /** 图片预览 */
-      imgPreviewShow: false
+      imgPreviewShow: false,
+      // 消息列表
+      msgObj: {},
+      // 消息弹窗
+      msgShow: false
     }
   },
   created: function () {
     this.getPmsVersion()
     this.queryMenu()
     this.getUserInfo()
+    this.getMsg()
   },
   watch: {
     '$route': 'getPath'
@@ -132,6 +155,42 @@ export default {
     }
   },
   methods: {
+    mouseOver () {
+      this.msgShow = true
+    },
+    mouseLeave () {
+      this.msgShow = false
+    },
+    // 点击任意区域弹窗消失
+    hidePanel (event) {
+      let sp2 = document.querySelector('.msglist')
+      if (sp2) {
+        if (!sp2.contains(event.target)) {
+          this.msgShow = false
+        }
+      }
+    },
+    showMsg () {
+      this.msgShow = true
+    },
+    getMsg () {
+      this.ajax('/msg/getNewMsg', {}).then(res => {
+        if (res.code === 200) {
+          this.msgObj = res.data
+        }
+      })
+    },
+    // 消息跳到详情
+    jumpDetail (item) {
+      if (item.detailUrl !== '') {
+        window.location.href = item.detailUrl
+      } else {
+        this.$router.push('/msgCenter')
+      }
+    },
+    jumpMsg () {
+      this.$router.push('/msgCenter')
+    },
     tttest: function () {
       this.log('imgPreviewShow:', this.$store.state.imgPreviewShow)
       // this.$store.state.navActive = '3'
@@ -379,6 +438,71 @@ padding: 8px 20px;
     background-color: #28558c;
     display: flex;
     justify-content: space-between;
+  }
+  .header .message {
+    width: 30px;
+    height: 30px;
+    /*background: pink;*/
+    float: left;
+    text-align: center;
+    line-height: 30px;
+    margin-top: 15px;
+    position: relative;
+    cursor: pointer;
+  }
+  .header .message:hover.msglist{
+    display: block;
+  }
+  .header .message .number {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    right:-5px;
+    top:0;
+    background: red;
+    border-radius: 100px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 17px;
+  }
+  .msglist {
+    width: 450px;
+    /*height: 300px;*/
+    background: #fff;
+    border: 1px solid #f2f2f2;
+    border-radius: 2px;
+    position: fixed;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    top:60px;
+    right:50px;
+    display: block;
+  }
+  .msglist .title {
+    width:100%;
+    height: 35px;
+    background: #005999;
+    color:#fff;
+    font-size: 14px;
+    text-align: center;
+    line-height: 35px;
+  }
+  .msglist .allMsg {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #f2f2f2;
+    line-height: 40px;
+    padding-left: 10px;
+  }
+  .msglist .viewAll {
+     width: 100%;
+     height: 40px;
+     line-height: 40px;
+     color:#169BD5;
+     cursor: pointer;
+  }
+  .msglist .viewAll .text {
+     float: right;
+     margin-right: -45px;
   }
   .LoginInfo .LoginWellcome{
     font-size: 14px;

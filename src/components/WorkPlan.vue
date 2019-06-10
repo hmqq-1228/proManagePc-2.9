@@ -439,6 +439,7 @@ export default {
     // },
     start (evt) {
     },
+    // 生成pdf
     getPdfs (dom, title) {
       let that = this
       var c = document.createElement('canvas')
