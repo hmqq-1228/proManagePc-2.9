@@ -7,7 +7,10 @@
           <div @click="tttest()">贝豪实业项目管理中心</div>
           <div class="message" @click.stop="showMsg" @mouseover="mouseOver">
             <Icon type="md-notifications-outline" style="font-size: 24px"/>
-            <div class="number" v-if="msgObj.totalNum > 0"><p style="font-size: 12px;transform: scale(0.8)">{{msgObj.totalNum}}</p></div>
+            <div class="number" v-if="msgObj.totalNum > 0">
+              <p style="font-size: 12px;transform: scale(0.8)" v-if="msgObj.totalNum < 100">{{msgObj.totalNum}}</p>
+              <p style="font-size: 12px;transform: scale(0.8)" v-else>99+</p>
+            </div>
           </div>
         </div>
       </el-header>
@@ -91,9 +94,9 @@
         新消息({{msgObj.totalNum}})
       </div>
       <div class="allMsg" v-for="(item,index) in msgObj.msgList" :key="index">
-        <span>{{item.createDt}}</span>
-        <span style="color:#2F64A5;margin-left: 10px;margin-right: 10px;">{{item.senderName}}</span>
-        <span>{{item.remark}}</span>
+        <span style="float:left;">{{item.createDt}}</span>
+        <span style="color:#2F64A5;margin-left: 10px;margin-right: 10px;float: left">{{item.senderName}}</span>
+        <p style="float: left;width: 200px;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;">{{item.remark}}</p>
         <span style="color:#2F64A5;float:right;margin-right:15px;cursor: pointer" @click="jumpDetail(item)">查看详情</span>
       </div>
       <div class="viewAll" @click="jumpMsg">
@@ -133,6 +136,9 @@ export default {
     this.getPmsVersion()
     this.queryMenu()
     this.getUserInfo()
+    this.$Bus.$on('getMsg', msgObj => {
+      this.msgObj = msgObj
+    })
     this.getMsg()
   },
   watch: {
@@ -518,7 +524,7 @@ padding: 8px 20px;
     justify-content: space-between;
   }
   .header .message {
-    width: 30px;
+    width: 35px;
     height: 30px;
     /*background: pink;*/
     float: left;
@@ -532,7 +538,7 @@ padding: 8px 20px;
     display: block;
   }
   .header .message .number {
-    width: 15px;
+    min-width: 15px;
     height: 15px;
     position: absolute;
     right:-5px;

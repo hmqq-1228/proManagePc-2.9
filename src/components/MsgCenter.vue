@@ -135,6 +135,11 @@ export default {
         if (res.code === 200) {
           this.$message.success(res.msg)
           this.getMsgPage()
+          this.ajax('/msg/getNewMsg', {}).then(res => {
+            if (res.code === 200) {
+              this.$Bus.$emit('getMsg', res.data)
+            }
+          })
         } else {
           this.$message.warning(res.msg)
         }
@@ -145,7 +150,16 @@ export default {
       if (item.detailUrl !== '') {
         window.location.href = item.detailUrl
       } else {
-        this.$router.push('/msgCenter')
+        if (item.detailFlag === '标记已读') {
+          this.ajax('/msg/readMsg', {msgId: item.id}).then(res => {
+            if (res.code === 200) {
+              this.getMsgPage()
+            }
+          })
+        } else {
+          this.$router.push('/msgCenter')
+        }
+
       }
     }
   }

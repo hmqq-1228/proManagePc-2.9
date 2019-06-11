@@ -27,8 +27,8 @@
         <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">
           <div class="memListItem">{{mem.peopleRoleText}}</div>
           <div class="memListItem">{{mem.userName}}</div>
-          <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
-          <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
+          <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, 1)"></Checkbox></div>
+          <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, 2)"></Checkbox></div>
           <div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>
         </div>
       </div>
