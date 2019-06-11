@@ -649,7 +649,6 @@ export default {
       var that = this
       if (id) {
         that.taskId = id
-        that.getTaskChildList(id)
         that.ajax('/myTask/queryTaskDetail', {taskId: id}).then(res => {
           that.$emit('getChildrenId', id)
           this.log('queryTaskDetail：', res)
@@ -677,8 +676,11 @@ export default {
             that.resetScro()
             that.taskComment.uid = id
             that.taskHistoryList.uid = id
+            that.getTaskChildList(id)
             that.getHistoryList()
             that.getCommicateCont()
+          } else if (res.code === 505) {
+            that.$Message.warning(res.msg)
           }
         })
       } else {

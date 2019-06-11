@@ -462,11 +462,11 @@ export default {
         {
           value: '3',
           label: '我参与的'
-        },
-        {
-          value: '4',
-          label: '@我的'
         }
+        // {
+        //   value: '4',
+        //   label: '@我的'
+        // }
       ],
       // 项目分类列表
       proTypeListPure: this.$store.state.projectType,
