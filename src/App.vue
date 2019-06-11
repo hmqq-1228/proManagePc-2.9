@@ -560,6 +560,7 @@ padding: 8px 20px;
     top:60px;
     right:50px;
     display: block;
+    z-index:99;
   }
   .msglist .title {
     width:100%;
