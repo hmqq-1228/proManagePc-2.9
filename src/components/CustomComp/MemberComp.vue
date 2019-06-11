@@ -233,6 +233,11 @@ export default {
     checkBoxChangeEdit (checked, id, role) {
       var that = this
       this.log('权限编辑查看：', checked + '-' + id + '-' + role)
+      if (checked === true) {
+        role = 2
+      } else if (checked === false) {
+        role = 1
+      }
       this.ajax('/myProject/editRole', JSON.stringify({projectUID: that.proId, projectOrg: [{id: id, role: role}]})).then(res => {
         // that.log('editRole:', res)
       })
