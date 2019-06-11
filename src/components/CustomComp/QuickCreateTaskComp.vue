@@ -34,6 +34,7 @@
                 :value="item.projectUID">
               </el-option>
             </el-select>
+            <!--<el-button type="primary" size="small">请选择项目</el-button>-->
             <span style="color:red" v-if="options.length===0">&nbsp;&nbsp;请新建一个项目</span>
           </div>
         </div>
