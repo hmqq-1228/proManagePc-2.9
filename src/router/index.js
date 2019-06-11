@@ -30,6 +30,7 @@ import MyDepNew from '@/components/MyDepNew'
 import TEST from '@/components/TEST'
 import Schedule from '@/components/Schedule'
 import MyPro from '@/components/MyPro'
+import MyProGroup from '@/components/MyProGroup'
 import AllCompanyPro from '@/components/AllCompanyPro'
 import ProDetail from '@/components/ProDetail'
 import TestUpload from '@/components/TestUpload'
@@ -161,6 +162,11 @@ export default new Router({
       path: '/MyPro',
       name: 'MyPro',
       component: MyPro
+    },
+    {
+      path: '/MyProGroup',
+      name: 'MyProGroup',
+      component: MyProGroup
     },
     {
       path: '/MyPro/:projectType',

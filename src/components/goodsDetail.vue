@@ -1309,6 +1309,8 @@ export default {
           // that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
           // zh获取默认数据
           that.getTree()
+        } else if (res.code === 505) {
+          this.$Message.warning(res.msg)
         }
       })
     },
