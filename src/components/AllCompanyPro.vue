@@ -10,7 +10,7 @@
             <Input search enter-button @on-search="searchProManager" v-model="searchProManagerVal" placeholder="请搜索项目负责人姓名" />
           </div>
         </div>
-        <div class="MyProHeaItem addBtn"><Button type="primary" v-on:click="newAdd()">新增项目</Button></div>
+        <!--<div class="MyProHeaItem addBtn"><Button type="primary" v-on:click="newAdd()">新增项目</Button></div>-->
       </div>
       <!--条件选择 全公司项目 与我相关 @我的 我参与的 我创建的 我负责的-->
       <div class="selectBox">
@@ -465,11 +465,11 @@ export default {
         {
           value: '3',
           label: '我参与的'
-        },
-        {
-          value: '4',
-          label: '@我的'
         }
+        // {
+        //   value: '4',
+        //   label: '@我的'
+        // }
       ],
       // 项目分类列表
       proTypeListPure: this.$store.state.projectType,
