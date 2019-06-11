@@ -246,7 +246,16 @@
          </div>
        </div>
        <div style="width: 100%;height: 50px;float: left;text-align: center;margin-top: 15px" v-if="skuList.length>0">
-         <Page :total="total" :page-size="pageSize" show-elevator style="margin: 0 auto;" size="small" @on-change="changePage"/>
+         <!--<Page :total="total" :page-size="pageSize"  show-elevator style="margin: 0 auto;" size="small" @on-change="changePage"/>-->
+         <el-pagination
+           small
+           layout="total, prev, pager, next, jumper"
+           :total="total"
+           @current-change="changePage"
+           :page-size="pageSize"
+           background
+         >
+         </el-pagination>
        </div>
        <div class="listNone" v-if="skuList.length===0">暂无相关的SKU信息</div>
      </div>

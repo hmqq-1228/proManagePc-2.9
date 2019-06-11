@@ -115,10 +115,11 @@
          <div style="text-align: center" v-if="planList.length>0">
            <el-pagination
              small
-             layout="prev, pager, next"
+             layout="total, prev, pager, next, jumper"
              :total="total"
              @current-change="currentPage1"
              :page-size="pageSize"
+             background
            >
            </el-pagination>
          </div>
@@ -439,6 +440,7 @@ export default {
     // },
     start (evt) {
     },
+    // 生成pdf
     getPdfs (dom, title) {
       let that = this
       var c = document.createElement('canvas')
