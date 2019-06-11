@@ -7,18 +7,21 @@
      </div>
      <div class="bottom">
         <div class="tabs">
-          <div class="first" :class="type === 1 ? 'active': ''" @click="chooseType(1)">未读</div>
-          <div class="first" :class="type === 2 ? 'active': ''" @click="chooseType(2)">已读</div>
+          <div class="first" :class="type === 0 ? 'active': ''" @click="chooseType(0)">未读</div>
+          <div class="first" :class="type === 1 ? 'active': ''" @click="chooseType(1)">已读</div>
         </div>
         <div class="statusTab">
           <ul>
             <li v-for="item in statusList" :key="item.id" :class="item.id === status?'active':''" @click="getStatus(item)">{{item.name}}</li>
-            <li style="color:#169BD5">全部标记已读</li>
+            <li style="color:#67C23A" @click="tagAll" v-if="type === 0">全部标记已读</li>
+            <!--<li>-->
+              <!--<el-button type="text">全部标记已读</el-button>-->
+            <!--</li>-->
           </ul>
         </div>
        <div class="content" v-if="list.length > 0">
          <div class="list" v-for="item in list" :key="item.id">
-           <p class="desc"><span style="color:#169BD5">{{item.senderName}}</span>&nbsp;&nbsp;&nbsp;&nbsp;{{item.remark}}<span style="color:#169BD5;margin-left: 15px;cursor: pointer">{{item.detailFlag}}</span></p>
+           <p class="desc"><span style="color:#169BD5">{{item.senderName}}</span>&nbsp;&nbsp;&nbsp;&nbsp;{{item.remark}}<span style="color:#169BD5;margin-left: 15px;cursor: pointer" @click="jumpDetail(item)">{{item.detailFlag}}</span></p>
            <p class="desc" style="padding-top: 10px"><Icon type="ios-alarm-outline" style="color:#169BD5;font-size: 18px;;margin-right: 10px;"/>{{item.createDt}}</p>
          </div>
        </div>
@@ -27,6 +30,7 @@
        </div>
        <div style="text-align: center;margin-top: 20px;" v-if="list.length > 0">
          <el-pagination
+           small
            @change="handleCurrentChange"
            :page-size="20"
            layout="total, prev, pager, next, jumper"
@@ -70,7 +74,7 @@ export default {
         }
       ],
       active: 0,
-      type: 1,
+      type: 0,
       statusList: [
         {
           id: 0,
@@ -124,6 +128,25 @@ export default {
     handleCurrentChange (val) {
       this.pageNum = val
       this.getMsgPage()
+    },
+    // 全部标记已读
+    tagAll () {
+      this.ajax('/msg/dealAllUnRead', {type: this.active, style: this.status, readFlag: this.type}).then(res => {
+        if (res.code === 200) {
+          this.$message.success(res.msg)
+          this.getMsgPage()
+        } else {
+          this.$message.warning(res.msg)
+        }
+      })
+    },
+    // 调到详情
+    jumpDetail (item) {
+      if (item.detailUrl !== '') {
+        window.location.href = item.detailUrl
+      } else {
+        this.$router.push('/msgCenter')
+      }
     }
   }
 }
@@ -204,7 +227,7 @@ export default {
  .msgcenter .statusTab ul li {
    list-style: none;
    float: left;
-   margin-right: 15px;
+   margin-right: 20px;
    cursor: pointer;
  }
  .msgcenter .statusTab ul .active {

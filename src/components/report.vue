@@ -57,7 +57,8 @@
      <div style="text-align: center" v-if="list.length > 0">
        <el-pagination
          small
-         layout="prev, pager, next"
+         background
+         layout="total, prev, pager, next, jumper"
          :total="total"
          @current-change="currentPage1"
          :page-size="pageSize"

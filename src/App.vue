@@ -7,7 +7,7 @@
           <div @click="tttest()">贝豪实业项目管理中心</div>
           <div class="message" @click.stop="showMsg" @mouseover="mouseOver">
             <Icon type="md-notifications-outline" style="font-size: 24px"/>
-            <div class="number"><p style="font-size: 12px;transform: scale(0.8)">{{msgObj.totalNum}}</p></div>
+            <div class="number" v-if="msgObj.totalNum > 0"><p style="font-size: 12px;transform: scale(0.8)">{{msgObj.totalNum}}</p></div>
           </div>
         </div>
       </el-header>
@@ -156,7 +156,11 @@ export default {
   },
   methods: {
     mouseOver () {
-      this.msgShow = true
+      if (this.msgObj.totalNum > 0) {
+        this.msgShow = true
+      } else {
+        this.msgShow = false
+      }
     },
     mouseLeave () {
       this.msgShow = false
@@ -171,7 +175,9 @@ export default {
       }
     },
     showMsg () {
-      this.msgShow = true
+      if (this.msgObj.totalNum === 0) {
+        this.$router.push('/msgCenter')
+      }
     },
     getMsg () {
       this.ajax('/msg/getNewMsg', {}).then(res => {
