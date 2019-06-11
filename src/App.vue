@@ -565,7 +565,8 @@ padding: 8px 20px;
   .msglist .title {
     width:100%;
     height: 35px;
-    background: #005999;
+    /*background: #2DB7F5;*/
+    background: #2D8CF0;
     color:#fff;
     font-size: 14px;
     text-align: center;
