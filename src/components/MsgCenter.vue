@@ -159,7 +159,6 @@ export default {
         } else {
           this.$router.push('/msgCenter')
         }
-
       }
     }
   }

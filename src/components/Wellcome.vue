@@ -17,7 +17,9 @@ export default {
   computed: {
     listenerNavList: function () {
       var that = this
+      that.log('dd:', that.$store.state.navList)
       if (that.$store.state.navList.length > 0) {
+        that.log('mmname:', that.$store.state.navList[0].menuName)
         switch (that.$store.state.navList[0].menuName) {
           // case '集团战略':
           //   if (that.$store.state.proId) {
@@ -27,7 +29,13 @@ export default {
           //   }
           //   that.$router.push('/goodsDetail')
           //   break
-          case '商品管理' || '工作报告' || '项目管理':
+          case '商品管理':
+            that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
+            break
+          case '工作报告':
+            that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
+            break
+          case '项目管理':
             that.$router.push('/' + that.$store.state.navList[0].dataList[0].path)
             break
           default:
