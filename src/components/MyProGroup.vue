@@ -11,17 +11,17 @@
             <Input search enter-button @on-search="searchProManager" v-model="searchProManagerVal" placeholder="请搜索项目负责人姓名" />
           </div>
         </div>
-        <div class="MyProHeaItem addBtn"><Button type="primary" v-on:click="newAdd()">新增项目</Button></div>
+        <!--<div class="MyProHeaItem addBtn"><Button type="primary" v-on:click="newAdd()">新增项目</Button></div>-->
       </div>
       <!--条件选择-->
-      <div class="selectBox">
-        <Select v-model="model1" style="width:200px" class="select1">
-          <Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-        <Select v-model="model2" style="width:200px">
-          <Option v-for="item in proTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-      </div>
+      <!--<div class="selectBox">-->
+        <!--<Select v-model="model1" style="width:200px" class="select1">-->
+          <!--<Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+        <!--</Select>-->
+        <!--<Select v-model="model2" style="width:200px">-->
+          <!--<Option v-for="item in proTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+        <!--</Select>-->
+      <!--</div>-->
       <!--tabs 切换-->
       <div class="tabsTit">
         <Tabs v-model="statusVal">
@@ -510,7 +510,7 @@ export default {
         // 类型（1:我创建的；2:我负责的; 3:我参与的;"":全部）
         type: '',
         // 项目类型 公司项目:'0' 部门项目:'1' 小组项目:'2' 个人项目:'3' 集团战略:'4' 产品研发:'5'  全部: ''
-        projectType: '',
+        projectType: '4',
         // 项目分类记录id
         projectClassifyId: '',
         pageSize: 10
@@ -586,7 +586,7 @@ export default {
   },
   mounted: function () {
     /** 设置侧边栏激活状态 */
-    this.$store.commit('setNavActive', {navName: '项目管理', childNavName: '我的项目'})
+    this.$store.commit('setNavActive', {navName: '集团战略', childNavName: ''})
   },
   computed: {
     getSelectProjectType: function () {

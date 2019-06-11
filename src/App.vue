@@ -386,7 +386,7 @@ export default {
             switch (res.data[i].menuName) {
               case '集团战略':
                 res.data[i].icon = 'ios-ribbon-outline'
-                res.data[i].path = 'MyPro'
+                res.data[i].path = 'MyProGroup'
                 // res.data[i].dataList = that.NavItemSet(res.data[i].dataList, 'singlePath', '集团战略', 'goodsDetail')
                 break
               case '商品管理':
