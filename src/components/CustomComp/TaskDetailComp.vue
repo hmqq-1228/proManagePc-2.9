@@ -273,7 +273,7 @@
 </template>
 
 <script>
-import FileUploadComp from '././FileUploadComp.vue'
+import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 import ModifyTask from './ModifyTask.vue'
 import TaskDistribute from './TaskDistribute.vue'
 export default {

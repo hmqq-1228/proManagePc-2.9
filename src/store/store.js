@@ -71,11 +71,14 @@ const state = {
     {label: '集团战略', value: '4'},
     {label: '产品研发', value: '5'}
   ],
+  /** 选中的项目类型 主要区分集团战略和非集团战略 */
+  selectProjectType: '',
   fileFormat: ['jpg', 'jpeg', 'png', 'gif'],
   // baseServiceUrl: 'http://10.0.5.29:8088'
   // baseServiceUrl: 'https://ityp.baho.cn:8094/pms2'
   // baseServiceUrl: 'https://pms.baho.cn/pms'
   baseServiceUrl: 'https://ityp.baho.cn:8094/pms'
+  // 郭宋恒
   // baseServiceUrl: 'http://10.0.5.241:8089'
   // baseServiceUrl: 'http://10.0.5.240:8088'
 }
@@ -118,7 +121,7 @@ const mutations = {
   useNavActive: function (state, navObj) {
     for (var t = 0; t < state.navList.length; t++) {
       if (state.navList[t].menuName === navObj.navName) {
-        if (navObj.navName === '集团战略') {
+        if (navObj.navName === '集团战略(作废)') {
           state.navActive = state.proId
           state.menuId = state.proId
         } else if (navObj.navName === '商品管理') {
