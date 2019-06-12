@@ -228,6 +228,7 @@ export default {
           // that.memberList = res.data.memberList
           that.proDetailMsg = res.data
           that.Mid = res.data.projectManagerID
+          that.formValidate.delivery = res.data.orgFlag
           that.formValidate.proManager = res.data.projectManager
           // that.startPlanDate = res.data.startDate.split(' ')[0]
           // that.endPlanDate = res.data.endDate.split(' ')[0]
