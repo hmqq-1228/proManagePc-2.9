@@ -34,8 +34,9 @@
                 <!--:value="item.projectUID">-->
               <!--</el-option>-->
             <!--</el-select>-->
-            <el-input v-model="proName" placeholder="请选择关联项目" readonly="readonly" style="width: 150px;"></el-input>
-            <el-button type="primary" size="small" @click="selectPro" style="margin-left: 10px;">请选择项目</el-button>
+            <el-input v-model="proName" placeholder="请选择关联项目" readonly="readonly" style="width: 150px;float: left"></el-input>
+            <!--<el-button type="primary" size="small" @click="selectPro" style="margin-left: 10px;">请选择项目</el-button>-->
+            <div style="width: 40px;height: 28px;background:#2D8CF0;text-align: center;line-height: 28px;color:#fff;float: left;margin-top: 1px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;cursor: pointer" @click="selectPro" title="选择项目"><Icon type="ios-search" style="font-size: 16px;"/></div>
             <span style="color:red" v-if="options.length===0">&nbsp;&nbsp;请新建一个项目</span>
           </div>
         </div>

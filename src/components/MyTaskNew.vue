@@ -43,9 +43,9 @@
         <!--</el-select>-->
         <Input v-model="proName" placeholder="请选择项目" style="width: 150px;position: relative;float: left" readonly="readonly"/>
         <!--<Input enter-button="选择项目" placeholder="请选择项目"  @click="selectPro"/>-->
-        <Icon type="ios-close-circle-outline" style="position: absolute;font-size: 16px;cursor: pointer;right: 75px;top:8px" v-if="close" @click="reduction"/>
+        <Icon type="ios-close-circle-outline" style="position: absolute;font-size: 16px;cursor: pointer;right: 50px;top:8px" v-if="close" @click="reduction"/>
         <!--<el-button type="primary" size="small">选择项目</el-button>-->
-        <div style="width: 60px;height: 30px;background:#2D8CF0;text-align: center;line-height: 30px;color:#fff;float: left;margin-top: 1px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;cursor: pointer" @click="selectPro">选择项目</div>
+        <div style="width: 40px;height: 30px;background:#2D8CF0;text-align: center;line-height: 30px;color:#fff;float: left;margin-top: 1px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;cursor: pointer" @click="selectPro" title="选择项目"><Icon type="ios-search" style="font-size: 16px;"/></div>
         <!--<Button type="primary" size="small" @click="selectPro">选择项目</Button>-->
       </div>
       <div>
@@ -162,7 +162,7 @@
     </el-dialog>
     <!--选择项目-->
     <el-dialog title="项目列表" :visible.sync="selectProject">
-      <component v-bind:is="compArr.Myproject"  @ok="ok" @cancel="cancel" :url="url" @dbClick="ok">
+      <component v-bind:is="compArr.Myproject"  @ok="ok" @cancel="cancel" @dbClick="ok">
       </component>
     </el-dialog>
   </div>
