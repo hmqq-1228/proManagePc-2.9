@@ -69,24 +69,24 @@
                 <div class="groupItemTitCnt" @click="toProDetail(item.projectUID)"><span style="color: #888; font-weight: normal">{{item.projectType}}</span>：{{item.projectName}}</div>
                 <div class="taskStateBiaoNew" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
               </div>
-              <a href="#" slot="extra" v-if="item.attentionStatus === 2" @click.stop="attention(1, item)">
+              <a href="#" slot="extra" v-if="item.attentionStatus === 2" @click.stop="attention(1, item)" title="关注">
                 <!--没有关注-->
-                <Icon type="md-heart-outline" style="font-size: 18px;color:red;"/>
+                <Icon type="md-heart-outline" style="font-size: 18px"/>
               </a>
-              <a href="#" slot="extra" v-if="item.attentionStatus === 1" @click.stop="attention(2, item)">
+              <a href="#" slot="extra" v-if="item.attentionStatus === 1" @click.stop="attention(2, item)" title="取消关注">
                 <!--已关注-->
-                <Icon type="md-heart" style="font-size: 18px;color:red;"/>
+                <Icon type="md-heart" style="font-size: 18px;color: red"/>
               </a>
-              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.stop="stopePro(item.projectUID)" style="margin-left: 10px;">
+              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.stop="stopePro(item.projectUID)" style="margin-left: 10px;" title="暂停">
                 <Icon type="ios-pause" style="font-size: 20px;"/>
               </a>
-              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.stop="startPro(item.projectUID)" style="margin-left: 10px;">
+              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.stop="startPro(item.projectUID)" style="margin-left: 10px;" title="开启">
                 <Icon type="ios-play" style="font-size: 20px;"/>
               </a>
-              <a href="#" slot="extra" @click.stop="responsePro(item.projectUID)" style="margin-left: 10px;">
+              <a href="#" slot="extra" @click.stop="responsePro(item.projectUID)" style="margin-left: 10px;" title="回复">
                 <Icon type="ios-create" style="font-size: 20px;"/>
               </a>
-              <a href="#" slot="extra" v-if="item.isDelProject" @click.stop="delPro(item.projectUID, item.projectType)" style="margin-left: 10px;padding-top: 3px">
+              <a href="#" slot="extra" v-if="item.isDelProject" @click.stop="delPro(item.projectUID, item.projectType)" style="margin-left: 10px;padding-top: 3px" title="删除">
                 <Icon type="ios-trash" style="font-size: 20px;color:#2D8CF0"/>
               </a>
               <div style="display: flex; justify-content: space-between;">

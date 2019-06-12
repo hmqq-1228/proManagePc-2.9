@@ -34,7 +34,7 @@
                 :value="item.projectUID">
               </el-option>
             </el-select>
-            <!--<el-button type="primary" size="small">请选择项目</el-button>-->
+            <el-button type="primary" size="small">请选择项目</el-button>
             <span style="color:red" v-if="options.length===0">&nbsp;&nbsp;请新建一个项目</span>
           </div>
         </div>
@@ -111,21 +111,29 @@
       </div>
     </div>
     <!---->
+    <!--选择项目-->
+    <component v-bind:is="compArr.Myproject" v-show="selectProject">
+    </component>
   </div>
 </template>
 
 <script>
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
+import Myproject from '../CustomComp/Myproject.vue'
 export default {
   name: 'QuickCreateTaskComp',
   components: {
-    FileUploadComp
+    FileUploadComp,
+    Myproject
   },
   data () {
     return {
+      // 选择项目
+      selectProject: false,
       isTrue: false,
       compArr: {
-        FileUploadComp: 'FileUploadComp'
+        FileUploadComp: 'FileUploadComp',
+        Myproject: 'Myproject'
       },
       ruleForm: {},
       // 选择时间
