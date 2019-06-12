@@ -286,6 +286,8 @@ export default {
   },
   data () {
     return {
+      // 是否有权限查看所属项目
+      projectAuth: '1',
       taskIntroMoreOpen: false,
       peopleList: [],
       // 组织架构人员
@@ -556,9 +558,14 @@ export default {
       })
     },
     toProjectDetail: function (id) {
+      var that = this
       if (id) {
-        this.$store.state.proId = id
-        this.$router.push('/goodsDetail')
+        if (that.projectAuth === '1') {
+          this.$store.state.proId = id
+          this.$router.push('/goodsDetail')
+        } else {
+          this.$Message.warning('权限不足，无法查看所属项目')
+        }
       }
     },
     // 关联项目
@@ -656,6 +663,7 @@ export default {
             that.taskBasicMsg = res.data
             that.rid = res.data.uid
             that.currentNodeId = id
+            that.projectAuth = res.data.projectAuth
             // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
             // var et = res.data.taskFinishDate
             // var sT = new Date(st)
