@@ -1,6 +1,6 @@
 <template>
   <div class="MyPro">
-    <div>{{getSelectProjectType?'' : ''}}</div>
+    <!--<div>dd:{{getSelectProjectType?'' : ''}}</div>-->
     <div class="MyProCnt">
       <div class="MyProHeader">
         <div>
@@ -69,10 +69,26 @@
                 <div class="groupItemTitCnt" @click="toProDetail(item.projectUID)"><span style="color: #888; font-weight: normal">{{item.projectType}}</span>：{{item.projectName}}</div>
                 <div class="taskStateBiaoNew" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
               </div>
-              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.stop="stopePro(item.projectUID)" style="margin-left: 6px;">暂停</a>
-              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.stop="startPro(item.projectUID)" style="margin-left: 6px;">开启</a>
-              <a href="#" slot="extra" @click.stop="responsePro(item.projectUID)" style="margin-left: 6px;">回复</a>
-              <a href="#" slot="extra" v-if="item.isDelProject" @click.stop="delPro(item.projectUID, item.projectType)" style="margin-left: 6px;">删除</a>
+              <a href="#" slot="extra" v-if="item.attentionStatus === 2" @click.stop="attention(1, item)" title="关注">
+                <!--没有关注-->
+                <Icon type="md-heart-outline" style="font-size: 18px"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.attentionStatus === 1" @click.stop="attention(2, item)" title="取消关注">
+                <!--已关注-->
+                <Icon type="md-heart" style="font-size: 18px;color: red"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.stop="stopePro(item.projectUID)" style="margin-left: 10px;" title="暂停">
+                <Icon type="ios-pause" style="font-size: 20px;"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.stop="startPro(item.projectUID)" style="margin-left: 10px;" title="开启">
+                <Icon type="ios-play" style="font-size: 20px;"/>
+              </a>
+              <a href="#" slot="extra" @click.stop="responsePro(item.projectUID)" style="margin-left: 10px;" title="回复">
+                <Icon type="ios-create" style="font-size: 20px;"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.isDelProject" @click.stop="delPro(item.projectUID, item.projectType)" style="margin-left: 10px;padding-top: 3px" title="删除">
+                <Icon type="ios-trash" style="font-size: 20px;color:#2D8CF0"/>
+              </a>
               <div style="display: flex; justify-content: space-between;">
                 <div style="width: 50%; display: flex;">
                   <div class="textIntro">负责人：{{item.projectManager}}</div>
@@ -466,6 +482,10 @@ export default {
         {
           value: '3',
           label: '我参与的'
+        },
+        {
+          value: '5',
+          label: '我关注的'
         }
         // {
         //   value: '4',
@@ -573,8 +593,7 @@ export default {
     // }
     this.proTypeList = this.proTypeList.concat(that.$store.state.projectType)
     // 查询个人项目列表
-    this.log(11111)
-    // this.queryMyProjectView()
+    this.queryMyProjectView()
     // j
     // this.queryProjectTypeList()
     // 查询用户信息
@@ -591,7 +610,7 @@ export default {
   computed: {
     getSelectProjectType: function () {
       var that = this
-      that.log('abcdefg')
+      that.log('abcdefg', that.$store.state.selectProjectType)
       that.model2 = that.$store.state.selectProjectType
       that.myProjectViewPayload.projectType = that.$store.state.selectProjectType
       this.queryMyProjectView()
@@ -675,7 +694,6 @@ export default {
         this.myProjectViewPayload.type = ''
       }
       this.myProjectViewPayload.pageNum = 1
-      this.log(666666)
       this.queryMyProjectView()
     },
     model2: function (val1, val2) {
@@ -685,7 +703,6 @@ export default {
         this.myProjectViewPayload.projectType = ''
       }
       this.myProjectViewPayload.pageNum = 1
-      this.log(77777)
       this.queryMyProjectView()
     }
   },
@@ -697,6 +714,14 @@ export default {
     }
   },
   methods: {
+    // 关注
+    attention (type, item) {
+      this.ajax('/myProject/attention', {status: type, linkId: item.projectUID}).then(res => {
+        if (res.code === 200) {
+          this.queryMyProjectView()
+        }
+      })
+    },
     // 获取当前光标的位置
     getPosition (element) {
       let cursorPos = 0

@@ -26,14 +26,16 @@
         <div class="relationHeader">
           <div class="proBelong">
             <!--所属项目 <i class="el-icon-arrow-down"></i>-->
-            <el-select v-model="projectBelong" placeholder="请选择关联项目">
-              <el-option
-                v-for="item in options"
-                :key="item.projectUID"
-                :label="item.projectName"
-                :value="item.projectUID">
-              </el-option>
-            </el-select>
+            <!--<el-select v-model="projectBelong" placeholder="请选择关联项目">-->
+              <!--<el-option-->
+                <!--v-for="item in options"-->
+                <!--:key="item.projectUID"-->
+                <!--:label="item.projectName"-->
+                <!--:value="item.projectUID">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+            <el-input v-model="proName" placeholder="请选择关联项目" readonly="readonly" style="width: 150px;"></el-input>
+            <el-button type="primary" size="small" @click="selectPro" style="margin-left: 10px;">请选择项目</el-button>
             <span style="color:red" v-if="options.length===0">&nbsp;&nbsp;请新建一个项目</span>
           </div>
         </div>
@@ -110,21 +112,33 @@
       </div>
     </div>
     <!---->
+    <!--选择项目-->
+    <el-dialog title="项目列表" :visible.sync="selectProject">
+      <component v-bind:is="compArr.Myproject" :tableData="tableData" @ok="ok" @cancel="cancel">
+      </component>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
+import Myproject from '../CustomComp/Myproject.vue'
 export default {
   name: 'QuickCreateTaskComp',
   components: {
-    FileUploadComp
+    FileUploadComp,
+    Myproject
   },
   data () {
     return {
+      // 选择项目
+      selectProject: false,
+      // 我的项目
+      tableData: [],
       isTrue: false,
       compArr: {
-        FileUploadComp: 'FileUploadComp'
+        FileUploadComp: 'FileUploadComp',
+        Myproject: 'Myproject'
       },
       ruleForm: {},
       // 选择时间
@@ -180,12 +194,17 @@ export default {
         // 附件id
         attachmentId: '',
         pStr: ''
-      }
+      },
+      pageNum: 1,
+      projectType: '',
+      projectName: '',
+      proName: ''
     }
   },
   created () {
     this.getUserInfo()
     this.getProBelong()
+    this.getProjectList()
   },
   watch: {
     projectBelong: function (newQuestion, oldQuestion) {
@@ -209,6 +228,34 @@ export default {
     }
   },
   methods: {
+    getProjectList: function () {
+      var that = this
+      that.ajax('/myProject/myProjectView', {
+        pageNum: this.pageNum,
+        pageSize: 10,
+        projectType: this.projectType,
+        projectName: this.projectName
+      }).then(res => {
+        if (res.code === 200) {
+          this.proName = res.data.list[0].projectName
+          this.projectBelong = res.data.list[0].projectUID
+        } else {
+          that.$message.warning(res.msg)
+        }
+      })
+    },
+    ok (selectData) {
+      this.proName = selectData.projectName
+      this.projectBelong = selectData.projectUID
+      this.selectProject = false
+    },
+    cancel () {
+      this.selectProject = false
+    },
+    // 选择项目
+    selectPro () {
+      this.selectProject = true
+    },
     // 附件 附件预览
     GetFilePreData (obj) {
       // this.log('GetFilePreData:', obj)
