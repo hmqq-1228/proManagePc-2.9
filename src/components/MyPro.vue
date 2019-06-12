@@ -1,6 +1,6 @@
 <template>
   <div class="MyPro">
-    <div>{{getSelectProjectType?'' : ''}}</div>
+    <!--<div>dd:{{getSelectProjectType?'' : ''}}</div>-->
     <div class="MyProCnt">
       <div class="MyProHeader">
         <div>
@@ -593,8 +593,7 @@ export default {
     // }
     this.proTypeList = this.proTypeList.concat(that.$store.state.projectType)
     // 查询个人项目列表
-    this.log(11111)
-    // this.queryMyProjectView()
+    this.queryMyProjectView()
     // j
     // this.queryProjectTypeList()
     // 查询用户信息
@@ -611,7 +610,7 @@ export default {
   computed: {
     getSelectProjectType: function () {
       var that = this
-      that.log('abcdefg')
+      that.log('abcdefg', that.$store.state.selectProjectType)
       that.model2 = that.$store.state.selectProjectType
       that.myProjectViewPayload.projectType = that.$store.state.selectProjectType
       this.queryMyProjectView()
@@ -695,7 +694,6 @@ export default {
         this.myProjectViewPayload.type = ''
       }
       this.myProjectViewPayload.pageNum = 1
-      this.log(666666)
       this.queryMyProjectView()
     },
     model2: function (val1, val2) {
@@ -705,7 +703,6 @@ export default {
         this.myProjectViewPayload.projectType = ''
       }
       this.myProjectViewPayload.pageNum = 1
-      this.log(77777)
       this.queryMyProjectView()
     }
   },
