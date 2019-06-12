@@ -393,8 +393,9 @@ export default {
     },
     getProjectList: function () {
       var that = this
-      console.log('999999999', that.linkId)
       that.getProjectPayload.taskId = that.linkId
+      that.log('getProjectPayload:', that.getProjectPayload)
+      that.log('linkId:', that.linkId)
       that.ajax('/myProject/getRelateProject', that.getProjectPayload).then(res => {
         if (res.code === 200) {
           that.tableData = res.data.list
