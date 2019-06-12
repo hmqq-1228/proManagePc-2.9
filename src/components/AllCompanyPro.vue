@@ -68,10 +68,18 @@
                 <div class="groupItemTitCnt" @click="toProDetail(item.projectUID)"><span style="color: #888; font-weight: normal">{{item.projectType}}</span>：{{item.projectName}}</div>
                 <div class="taskStateBiaoNew" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
               </div>
-              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.stop="stopePro(item.projectUID)" style="margin-left: 6px;">暂停</a>
-              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.stop="startPro(item.projectUID)" style="margin-left: 6px;">开启</a>
-              <a href="#" slot="extra" @click.stop="responsePro(item.projectUID)" style="margin-left: 6px;">回复</a>
-              <a href="#" slot="extra" v-if="item.isDelProject" @click.stop="delPro(item.projectUID, item.projectType)" style="margin-left: 6px;">删除</a>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.stop="stopePro(item.projectUID)" style="margin-left: 6px;" title="暂停">
+                <Icon type="ios-pause" style="font-size: 20px;"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.stop="startPro(item.projectUID)" style="margin-left: 6px;" title="开启">
+                <Icon type="ios-play" style="font-size: 20px;"/>
+              </a>
+              <a href="#" slot="extra" @click.stop="responsePro(item.projectUID)" style="margin-left: 6px;" title="回复">
+                <Icon type="ios-create" style="font-size: 20px;"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.isDelProject" @click.stop="delPro(item.projectUID, item.projectType)" style="margin-left: 6px;" title="删除">
+                <Icon type="ios-trash" style="font-size: 20px;color:#2D8CF0"/>
+              </a>
               <div style="display: flex; justify-content: space-between;">
                 <div style="width: 50%; display: flex;">
                   <div class="textIntro">负责人：{{item.projectManager}}</div>
