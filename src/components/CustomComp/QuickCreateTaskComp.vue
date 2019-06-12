@@ -112,8 +112,7 @@
     </div>
     <!---->
     <!--选择项目-->
-    <component v-bind:is="compArr.Myproject" v-show="selectProject">
-    </component>
+    <!--<component v-bind:is="compArr.Myproject" v-show="selectProject"></component>-->
   </div>
 </template>
 
