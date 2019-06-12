@@ -1102,7 +1102,6 @@ export default {
     // 查询个人项目列表 (项目卡片)
     queryMyProjectView () {
       var that = this
-      that.log(886)
       this.log('that.myProjectViewPayload:', that.myProjectViewPayload)
       this.ajax('/myProject/myProjectView', that.myProjectViewPayload).then(res => {
         // console.log('项目卡片', res)

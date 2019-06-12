@@ -64,7 +64,7 @@
                   <Icon type="ios-image"/>
                 </div>
                 <div style="margin-left: 10px; color: #28558c; display: flex;">
-                  <div>附件2:</div>
+                  <div>附件:</div>
                   <!--dddd-->
                   <div v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0" style="display: flex">
                     <div class="proFileListPre"

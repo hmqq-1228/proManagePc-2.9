@@ -161,13 +161,13 @@ export default {
     }
   },
   created () {
-    this.queryProDetail()
+    // this.log(6666666666)
+    // this.queryProDetail()
   },
   watch: {
     ProBaseInfoShow (val, old) {
       var that = this
       if (val) {
-        // console.log('id', this.proId)
         that.$store.state.proId = that.proId
         this.queryProDetail()
       }
