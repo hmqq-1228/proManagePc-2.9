@@ -32,15 +32,18 @@
         </el-select>
       </div>
       <div>
-        <el-select v-model="optionsValue3" placeholder="请选择" @change="taskOfProject($event)">
-          <el-option label="全部项目" value=""></el-option>
-          <el-option
-            v-for="item in projectList"
-            :key="item.projectUID"
-            :label="item.projectName"
-            :value="item.projectName">
-          </el-option>
-        </el-select>
+        <!--<el-select v-model="optionsValue3" placeholder="请选择" @change="taskOfProject($event)">-->
+          <!--<el-option label="全部项目" value=""></el-option>-->
+          <!--<el-option-->
+            <!--v-for="item in projectList"-->
+            <!--:key="item.projectUID"-->
+            <!--:label="item.projectName"-->
+            <!--:value="item.projectName">-->
+          <!--</el-option>-->
+        <!--</el-select>-->
+        <Input v-model="proName" placeholder="请选择项目" style="width: 150px" readonly="readonly"/>
+        <!--<el-button type="primary" size="small">选择项目</el-button>-->
+        <Button type="primary" size="small" @click="selectPro">选择项目</Button>
       </div>
       <div>
         <el-input placeholder="请输入搜索内容" v-model="input3">
@@ -154,6 +157,11 @@
         <el-button type="primary" @click="perfectInfo">去完善</el-button>
       </span>
     </el-dialog>
+    <!--选择项目-->
+    <el-dialog title="项目列表" :visible.sync="selectProject">
+      <component v-bind:is="compArr.Myproject"  @ok="ok" @cancel="cancel" :url="url">
+      </component>
+    </el-dialog>
   </div>
 </template>
 
@@ -166,6 +174,7 @@ import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
 import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
 import QuickCreateTaskComp from './CustomComp/QuickCreateTaskComp.vue'
+import Myproject from './CustomComp/Myproject.vue'
 // ModifyTask
 export default {
   name: 'MyTaskNew',
@@ -177,10 +186,15 @@ export default {
     PlanDetailComp,
     TaskDetailComp,
     CreatePlanOrTask,
-    QuickCreateTaskComp
+    QuickCreateTaskComp,
+    Myproject
   },
   data () {
     return {
+      // 选择项目
+      selectProject: false,
+      proName: '全部项目',
+      url: '/myProject/getTaskProjectPage',
       compArr: {
         goodsInfo: 'goodsInfo',
         linkProject: 'linkProject',
@@ -189,7 +203,8 @@ export default {
         PlanDetailComp: 'PlanDetailComp',
         TaskDetailComp: 'TaskDetailComp',
         CreatePlanOrTask: 'CreatePlanOrTask',
-        QuickCreateTaskComp: 'QuickCreateTaskComp'
+        QuickCreateTaskComp: 'QuickCreateTaskComp',
+        Myproject: 'Myproject'
       },
       IsClear: false,
       proFileList: [],
@@ -324,6 +339,21 @@ export default {
     }
   },
   methods: {
+    ok (selectData) {
+      var that = this
+      that.myTaskViewPayload.pageNum = 1
+      this.proName = selectData.projectName
+      that.myTaskViewPayload.projectName = selectData.projectName
+      that.queryMyTaskView()
+      this.selectProject = false
+    },
+    cancel () {
+      this.selectProject = false
+    },
+    // 选择项目
+    selectPro () {
+      this.selectProject = true
+    },
     showFlagFuc: function (val) {
       this.projectListShow = val
     },
