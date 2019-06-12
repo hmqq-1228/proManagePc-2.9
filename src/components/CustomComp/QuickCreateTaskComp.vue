@@ -114,7 +114,7 @@
     <!---->
     <!--选择项目-->
     <el-dialog title="项目列表" :visible.sync="selectProject">
-      <component v-bind:is="compArr.Myproject" :tableData="tableData" @ok="ok" @cancel="cancel">
+      <component v-bind:is="compArr.Myproject" :tableData="tableData" @ok="ok" @cancel="cancel" @dbClick="ok">
       </component>
     </el-dialog>
   </div>
@@ -237,6 +237,7 @@ export default {
         projectName: this.projectName
       }).then(res => {
         if (res.code === 200) {
+          this.options = res.data.list
           if (res.data.list.length > 0) {
             this.proName = res.data.list[0].projectName
             this.projectBelong = res.data.list[0].projectUID

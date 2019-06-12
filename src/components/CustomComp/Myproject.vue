@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="tabbox">
-      <Table highlight-row ref="currentRowTable" :columns="columns3" :data="tableData" @on-current-change="tableSelect"></Table>
+      <Table highlight-row ref="currentRowTable" :columns="columns3" :data="tableData" @on-current-change="tableSelect" @on-row-dblclick="dbClick"></Table>
       <div style="text-align: center;margin-top: 20px;">
         <el-pagination
           background
@@ -160,6 +160,9 @@ export default {
     // 新建 是否选择模板 ok
     ok () {
       this.$emit('ok', this.selectData)
+    },
+    dbClick (tableData) {
+      this.$emit('dbClick', tableData)
     },
     // 新建 是否选择模板 no
     cancel () {
