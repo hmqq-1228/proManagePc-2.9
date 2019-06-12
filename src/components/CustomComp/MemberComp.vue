@@ -19,7 +19,7 @@
       <div class="memTblTitle">
         <div class="tblTitItem">角色</div>
         <div class="tblTitItem">姓名</div>
-        <div class="tblTitItem">查看</div>
+        <!--<div class="tblTitItem">查看</div>-->
         <div class="tblTitItem">编辑</div>
         <div class="tblTitItem" title="清空全部" style="color: #409EFF;cursor: pointer;" v-on:click="delMember(0)">清空</div>
       </div>
@@ -27,7 +27,7 @@
         <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">
           <div class="memListItem">{{mem.peopleRoleText}}</div>
           <div class="memListItem">{{mem.userName}}</div>
-          <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
+          <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
           <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
           <div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>
         </div>
@@ -353,7 +353,7 @@ export default {
     border-bottom: 1px solid #eee;
   }
   .tblTitItem{
-    width: 20%;
+    width: 25%;
     line-height: 32px;
   }
   .memTblList{
@@ -370,7 +370,7 @@ export default {
     background-color: #ebf7ff;
   }
   .memListItem{
-    width: 20%;
+    width: 25%;
     line-height: 32px;
   }
   .organizationalBox{
