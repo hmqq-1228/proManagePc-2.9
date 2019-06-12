@@ -1087,7 +1087,7 @@ export default {
       var that = this
       that.log(886)
       this.log('that.myProjectViewPayload:', that.myProjectViewPayload)
-      this.ajax('/myProject/myProjectView', that.myProjectViewPayload).then(res => {
+      this.ajax('/myProject/organizeStrategy', that.myProjectViewPayload).then(res => {
         // console.log('项目卡片', res)
         if (res.code === 200) {
           // res.data.list

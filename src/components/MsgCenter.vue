@@ -154,6 +154,11 @@ export default {
           this.ajax('/msg/readMsg', {msgId: item.id}).then(res => {
             if (res.code === 200) {
               this.getMsgPage()
+              this.ajax('/msg/getNewMsg', {}).then(res => {
+                if (res.code === 200) {
+                  this.$Bus.$emit('getMsg', res.data)
+                }
+              })
             }
           })
         } else {

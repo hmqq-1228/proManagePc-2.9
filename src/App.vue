@@ -96,7 +96,7 @@
       <div class="allMsg" v-for="(item,index) in msgObj.msgList" :key="index">
         <span style="float:left;">{{item.createDt}}</span>
         <span style="color:#2F64A5;margin-left: 10px;margin-right: 10px;float: left">{{item.senderName}}</span>
-        <p style="float: left;width: 200px;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;">{{item.remark}}</p>
+        <p style="float: left;width: 200px;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;" :title="item.remark">{{item.remark}}</p>
         <span style="color:#2F64A5;float:right;margin-right:15px;cursor: pointer" @click="jumpDetail(item)">查看详情</span>
       </div>
       <div class="viewAll" @click="jumpMsg">

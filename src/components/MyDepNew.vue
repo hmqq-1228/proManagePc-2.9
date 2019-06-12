@@ -231,7 +231,7 @@ export default {
   created () {
     // debugger
     this.getUserInfo()
-    this.getProBelong()
+    // this.getProBelong()
     this.setDefaultTime()
   },
   mounted: function () {
@@ -404,17 +404,17 @@ export default {
       return year + '-' + month + '-' + date + ' ' + h + ':' + m + ':' + '00'
     },
     // 获取所属项目
-    getProBelong: function () {
-      var that = this
-      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
-        if (res.code === 200) {
-          // this.log('getAllProjectByUser:', res)
-          this.projectBelong = res.data.length > 0 ? res.data[0].projectUID : ''
-          this.options = res.data
-          this.getProjectTime(this.projectBelong)
-        }
-      })
-    },
+    // getProBelong: function () {
+    //   var that = this
+    //   that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
+    //     if (res.code === 200) {
+    //       // this.log('getAllProjectByUser:', res)
+    //       this.projectBelong = res.data.length > 0 ? res.data[0].projectUID : ''
+    //       this.options = res.data
+    //       this.getProjectTime(this.projectBelong)
+    //     }
+    //   })
+    // },
     getProjectTime: function (id) {
       var that = this
       that.proId = id
@@ -620,7 +620,7 @@ export default {
       this.taskForm.value9 = []
       this.levelValue = 3
       $('#myfile').val('')
-      this.getProBelong()
+      // this.getProBelong()
       this.moreClick()
     },
     remoteMethod (query) {

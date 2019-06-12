@@ -31,7 +31,7 @@
           </el-option>
         </el-select>
       </div>
-      <div>
+      <div style="position: relative" @mouseover="mouseOver" @mouseleave="mouseleave">
         <!--<el-select v-model="optionsValue3" placeholder="请选择" @change="taskOfProject($event)">-->
           <!--<el-option label="全部项目" value=""></el-option>-->
           <!--<el-option-->
@@ -41,7 +41,8 @@
             <!--:value="item.projectName">-->
           <!--</el-option>-->
         <!--</el-select>-->
-        <Input v-model="proName" placeholder="请选择项目" style="width: 150px" readonly="readonly"/>
+        <Input v-model="proName" placeholder="请选择项目" style="width: 150px;position: relative" readonly="readonly"/>
+        <Icon type="ios-close-circle-outline" style="position: absolute;font-size: 16px;cursor: pointer;right: 75px;top:8px" v-if="close" @click="reduction"/>
         <!--<el-button type="primary" size="small">选择项目</el-button>-->
         <Button type="primary" size="small" @click="selectPro">选择项目</Button>
       </div>
@@ -191,6 +192,7 @@ export default {
   },
   data () {
     return {
+      close: false,
       // 选择项目
       selectProject: false,
       proName: '全部项目',
@@ -339,6 +341,17 @@ export default {
     }
   },
   methods: {
+    reduction () {
+      this.proName = '全部项目'
+      this.myTaskViewPayload.projectName = ''
+      this.queryMyTaskView()
+    },
+    mouseOver () {
+      this.close = true
+    },
+    mouseleave () {
+      this.close = false
+    },
     ok (selectData) {
       var that = this
       that.myTaskViewPayload.pageNum = 1
