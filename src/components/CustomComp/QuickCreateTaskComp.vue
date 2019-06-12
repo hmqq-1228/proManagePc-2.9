@@ -237,8 +237,10 @@ export default {
         projectName: this.projectName
       }).then(res => {
         if (res.code === 200) {
-          this.proName = res.data.list[0].projectName
-          this.projectBelong = res.data.list[0].projectUID
+          if (res.data.list.length > 0) {
+            this.proName = res.data.list[0].projectName
+            this.projectBelong = res.data.list[0].projectUID
+          }
         } else {
           that.$message.warning(res.msg)
         }
@@ -319,9 +321,9 @@ export default {
       that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
         if (res.code === 200) {
           // this.log('getAllProject:', res)
-          this.projectBelong = res.data[0].projectUID
-          this.options = res.data
-          this.getProjectTime(this.projectBelong)
+          // this.projectBelong = res.data[0].projectUID
+          // this.options = res.data
+          // this.getProjectTime(this.projectBelong)
         }
       })
     },
