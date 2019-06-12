@@ -335,6 +335,7 @@ export default {
     },
     handleSubmit (name) {
       var that = this
+      this.log(222)
       this.$refs[name].validate((valid) => {
         if (valid) {
           that.editBaseInfoPayload.projectUID = that.proId
@@ -343,7 +344,7 @@ export default {
           that.editBaseInfoPayload.projectManager = that.formValidate.proManager
           that.editBaseInfoPayload.projectManagerID = that.Mid
           that.editBaseInfoPayload.introduction = that.formValidate.desc
-          that.editBaseInfoPayload.orgFlag = that.ruleForm.delivery
+          that.editBaseInfoPayload.orgFlag = that.formValidate.delivery
           that.editBaseInfoPayload.projectClassifyId = that.formValidate.projectClassifyId
           that.editBaseInfoPayload.startDate = that.DateFormat(that.formValidate.startDate)
           that.editBaseInfoPayload.endDate = that.DateFormat(that.formValidate.endDate)
