@@ -34,6 +34,17 @@
       <FormItem label="项目简介" prop="desc">
         <Input v-model="formValidate.desc" type="textarea" placeholder="请输入项目简介" />
       </FormItem>
+      <FormItem label="自动加入" prop="delivery">
+        <i-switch v-model="formValidate.delivery" size="large">
+          <!--<span slot="open">On</span>-->
+          <!--<span slot="close">Off</span>-->
+        </i-switch>
+        <span style="color: #cf9236; font-size: 12px; margin-left: 10px;">{{formValidate.deliveryTips}}</span>
+      </FormItem>
+      <!--<el-form-item label="自动加入" prop="delivery">-->
+        <!--<el-switch v-model="formValidate.delivery"></el-switch>-->
+        <!--<span style="color: #cf9236; font-size: 12px; margin-left: 10px;">{{formValidate.deliveryTips}}</span>-->
+      <!--</el-form-item>-->
       <!--基本信息 项目附件-->
       <FormItem label="项目附件" prop="desc2">
         <component v-bind:is="compArr.FileUploadComp" v-on:FilePreEmit="GetFilePreData" v-bind:FileDataList="proFileList" fileFormId="ProBaseInfo" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
@@ -102,6 +113,7 @@ export default {
         projectManager: '',
         projectManagerID: '',
         introduction: '',
+        orgFlag: '',
         startDate: '',
         endDate: '',
         formIds: '',
@@ -129,6 +141,8 @@ export default {
         startDate: '',
         endDate: '',
         desc: '',
+        delivery: true,
+        deliveryTips: '注：是否将该项目下的任务负责人自动加入项目小组',
         classify: ''
       },
       ruleValidate: {
@@ -155,8 +169,11 @@ export default {
         ],
         desc: [
           { required: false, message: '请简要填写项目描述', trigger: 'blur' },
-          { type: 'string', min: 5, message: '简介不得少于5个字符', trigger: 'blur' }
+          { type: 'string', min: 0, message: '请输入简介', trigger: 'blur' }
         ]
+        // delivery: [
+        //   { required: false, message: '任务负责人是否自动加入项目小组', trigger: 'change' }
+        // ]
       }
     }
   },
@@ -318,6 +335,7 @@ export default {
     },
     handleSubmit (name) {
       var that = this
+      this.log(222)
       this.$refs[name].validate((valid) => {
         if (valid) {
           that.editBaseInfoPayload.projectUID = that.proId
@@ -326,6 +344,7 @@ export default {
           that.editBaseInfoPayload.projectManager = that.formValidate.proManager
           that.editBaseInfoPayload.projectManagerID = that.Mid
           that.editBaseInfoPayload.introduction = that.formValidate.desc
+          that.editBaseInfoPayload.orgFlag = that.formValidate.delivery
           that.editBaseInfoPayload.projectClassifyId = that.formValidate.projectClassifyId
           that.editBaseInfoPayload.startDate = that.DateFormat(that.formValidate.startDate)
           that.editBaseInfoPayload.endDate = that.DateFormat(that.formValidate.endDate)
