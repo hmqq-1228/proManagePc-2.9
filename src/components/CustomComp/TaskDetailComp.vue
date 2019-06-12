@@ -651,7 +651,7 @@ export default {
         that.taskId = id
         that.ajax('/myTask/queryTaskDetail', {taskId: id}).then(res => {
           that.$emit('getChildrenId', id)
-          this.log('queryTaskDetail：', res)
+          this.log('queryTaskDetail：：', res)
           if (res.code === 200) {
             that.taskBasicMsg = res.data
             that.rid = res.data.uid
