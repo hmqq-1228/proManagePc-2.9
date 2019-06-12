@@ -152,8 +152,8 @@ export default {
     // 新增 增加项目组成员
     addMember () {
       var that = this
-      that.loadingMan = true
       if (that.taskForm.value9.length > 0) {
+        that.loadingMan = true
         for (var i = 0; i < that.taskForm.value9.length; i++) {
           var obj = {Name: '', ID: ''}
           obj.Name = that.taskForm.value9[i].split('-')[0]
@@ -176,13 +176,15 @@ export default {
             that.loadingMan = false
           }
         })
+      } else {
+        that.$message.warning('添加成员不能为空！')
       }
     },
     // 删除成员
     delMember (memId) {
       var that = this
-      that.loadingMan = true
       if (memId || memId === 0) {
+        that.loadingMan = true
         that.ajax('/myProject/delMembersById', {
           projectUID: that.proId,
           id: memId
@@ -240,6 +242,13 @@ export default {
       }
       this.ajax('/myProject/editRole', JSON.stringify({projectUID: that.proId, projectOrg: [{id: id, role: role}]})).then(res => {
         // that.log('editRole:', res)
+        if (res.code === 200) {
+          that.$message.success(res.msg)
+        } else {
+          that.$message.warning(res.msg)
+          that.proGrpMemList = []
+          that.queryProGroupMember()
+        }
       })
     },
     checkChangeSee (checked, id, role) {
