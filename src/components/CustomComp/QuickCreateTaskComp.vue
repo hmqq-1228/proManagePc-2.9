@@ -319,15 +319,14 @@ export default {
     },
     // 获取所属项目
     getProBelong: function () {
-      var that = this
-      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
-        if (res.code === 200) {
-          // this.log('getAllProject:', res)
-          // this.projectBelong = res.data[0].projectUID
-          // this.options = res.data
-          // this.getProjectTime(this.projectBelong)
-        }
-      })
+      // that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
+      //   if (res.code === 200) {
+      //     // this.log('getAllProject:', res)
+      //     // this.projectBelong = res.data[0].projectUID
+      //     // this.options = res.data
+      //     // this.getProjectTime(this.projectBelong)
+      //   }
+      // })
     },
     getProjectTime: function (id) {
       var that = this
