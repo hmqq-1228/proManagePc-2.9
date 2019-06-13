@@ -261,8 +261,8 @@
       <div class="stopeTitle">任务开启</div>
       <div class="modelCon">确定开启任务且修改时间吗?</div>
       <div>
-        <el-button type="primary" @click="startTaskOnly()">开启不修改时间</el-button>
-        <el-button type="primary" @click="startEditTask()">开启修改时间</el-button>
+        <el-button size="small" @click="startTaskOnly()">开启不修改时间</el-button>
+        <el-button type="primary" size="small" @click="startEditTask()">开启修改时间</el-button>
       </div>
     </div>
     <!--<Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">-->
@@ -1552,7 +1552,7 @@ export default {
     left: 25%;
     padding: 10px;
     border-radius: 10px;
-    background: rgba(0,0,0,0.2);
+    background-color: #bbb;
     z-index: 999999;
   }
   .stopeTitle{
