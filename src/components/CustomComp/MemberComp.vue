@@ -29,7 +29,7 @@
           <div class="memListItem">{{mem.userName}}</div>
           <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
           <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
-          <div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>
+          <div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4' || mem.peopleRole === '3'" v-on:click="delMember(mem.id)">x</div>
         </div>
       </div>
     </div>
