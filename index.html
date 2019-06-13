@@ -4,8 +4,87 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>项目中心</title>
+    <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <style>
+      body{
+        position: relative;
+      }
+      #browserTips{
+        text-align: center;
+        display: none;
+        position: absolute;
+        width: 100%;
+        left: 0;
+        top: 100px;
+      }
+      .browsersBox{
+        height: 150px;
+        background-color: #f5f8fa;
+        border-top: 2px solid #ddd;
+        border-bottom: 2px solid #ddd;
+        display: flex;
+        justify-content: center;
+      }
+      .browserItem{
+        width: 90px;
+        font-size: 12px;
+        color: #333;
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+      .browserItem img{
+        width: 100%;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
+    <div id="browserTips">
+      <h3>因IE浏览器兼容性不佳，建议换用以下任意一种浏览器打开</h3>
+      <div class="browsersBox">
+        <div class="browserItem"><img src="static/img/googleBrowser.png" /><span>谷歌浏览器</span></div>
+        <div class="browserItem"><img src="static/img/qqBrowser.png" /><span>QQ浏览器</span></div>
+        <div class="browserItem"><img src="static/img/360Browser.png" /><span>360浏览器</span></div>
+        <div class="browserItem"><img src="static/img/ucBrowser.png" /><span>UC浏览器</span></div>
+        <div class="browserItem"><img src="static/img/firefoxBrowser.png" /><span>火狐浏览器</span></div>
+        <div class="browserItem"><img src="static/img/liebaoBrowser.png" /><span>猎豹浏览器</span></div>
+        <div class="browserItem"><img src="static/img/opBrowser.png" /><span>欧朋浏览器</span></div>
+        <div class="browserItem"><img src="static/img/safriBrowser.png" /><span>苹果浏览器</span></div>
+      </div>
+    </div>
   </body>
 </html>
+<script type="text/javascript">
+  function browserTest(){
+    var userAgent = navigator.userAgent
+    //判断是否Opera浏览器
+    if (userAgent.indexOf("Opera") > -1) {
+      return "Opera"
+    }
+    //判断是否Firefox浏览器
+    if (userAgent.indexOf("Firefox") > -1) {
+      return "FF"
+    }
+    //判断是否chorme浏览器
+    if (userAgent.indexOf("Chrome") > -1){
+      return "Chrome"
+    }
+    //判断是否Safari浏览器
+    if (userAgent.indexOf("Safari") > -1) {
+      return "Safari"
+    }
+    //判断是否IE浏览器
+    if (userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera) {
+      return "IE"
+    }
+    //判断是否Edge浏览器
+    if (userAgent.indexOf("Trident") > -1) {
+      return "Edge"
+    }
+  }
+  $(document).ready(function(){
+    if (!$('#app').text() && (browserTest() === 'IE' || browserTest() === 'Edge')) {
+      $('#browserTips').fadeIn()
+    }
+  })
+</script>

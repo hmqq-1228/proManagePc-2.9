@@ -1,23 +1,15 @@
 <template>
   <div class="ProDetail goodsDetail" style="position: relative;margin-top: 15px;">
-    <!--<div @click="ttttttt()"><button>TTTTTTT</button></div>-->
     <div>{{goPerfect?'':''}}</div>
-    <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
+    <div>{{getStoreProId?'':''}} {{nodeDragRefresh?'':''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
     <div class="fileModel" v-if="showFileModel">
-      <div style="text-align: center;height: 30px;line-height: 30px;color: #999;border-bottom: 1px solid #f1f1f1">共<span style="color: chocolate;font-size: 16px;font-weight: bold;">{{proDetailMsg.fileList.length}}</span> 个附件
-      </div>
+      <!--dddd-->
+      <div style="text-align: center;height: 30px;line-height: 30px;color: #999;border-bottom: 1px solid #f1f1f1">共<span style="color: chocolate;font-size: 16px;font-weight: bold;">{{proDetailMsg.fileList.length}}</span> 个附件</div>
       <div class="fileItem" v-for="fileItem in proDetailMsg.fileList" :key="fileItem.previewUrl">
-        <div
-          style="width: 60%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;"
-          :title="fileItem.showName"
-        >{{fileItem.showName}}</div>
+        <div style="width: 60%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" :title="fileItem.showName">{{fileItem.showName}}</div>
         <div class="fileDone">
-          <div
-            style="width: 50%;cursor: pointer"
-            v-if="fileItem.isImg"
-            @click="showImagePre(fileItem.previewUrl, fileItem.showName)"
-          >预览</div>
+          <div style="width: 50%;cursor: pointer" v-if="fileItem.isImg" @click="showImagePre(fileItem.previewUrl, fileItem.showName)">预览</div>
           <div style="width: 50%;">
             <a v-bind:download="fileItem.showName" v-bind:href="fileItem.downloadUrl">下载</a>
           </div>
@@ -73,6 +65,7 @@
                 </div>
                 <div style="margin-left: 10px; color: #28558c; display: flex;">
                   <div>附件:</div>
+                  <!--dddd-->
                   <div v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0" style="display: flex">
                     <div class="proFileListPre"
                          :title="fileItem.showName"
@@ -90,19 +83,13 @@
                       </div>
                     </div>
                   </div>
-                  <!--<span v-if="proDetailMsg.fileList && proDetailMsg.fileList.length > 0">-->
-                    <!--<span style="cursor: pointer;color: #409EFF;font-size: 14px;" @click="showFileModelClick()">查看附件</span>-->
-                  <!--</span>-->
                   <div style="color: #aaa;font-size: 14px" v-if="!proDetailMsg.fileList || proDetailMsg.fileList.length === 0">暂无附件</div>
                 </div>
               </div>
               <div class="editHistoryBtn" style="margin-top: 8px; color: #2d8cf0;">
                 <span v-if="archives">
                    <Icon size="18" style="margin-top: -3px;" type="ios-paper-outline"/>
-                   <span
-                     style="margin-right: 10px; margin-left: 5px;"
-                    v-on:click="proGoodsEditClick()"
-                   >查看档案</span>
+                   <span style="margin-right: 10px; margin-left: 5px;" v-on:click="proGoodsEditClick()">查看档案</span>
                 </span>
                 <Icon size="20" style="margin-top: -3px;" type="ios-create-outline" />
                 <span style="margin-right: 10px; margin-left: 5px;" v-on:click="proBaseEditClick()">基本信息</span>
@@ -126,12 +113,9 @@
           <div class="memName">
             <Icon size="30" type="ios-person-outline"/>
           </div>
+          <!--dddd-->
           <div class="memBox">
-            <div
-              v-if="memberList.length > 0"
-              v-for="(member, memIndex) in memberList"
-              v-bind:key="member.userName + '-' + memIndex"
-            >{{member.userName}}</div>
+            <div v-if="memberList.length > 0" v-for="(member, memIndex) in memberList" v-bind:key="member.userName + '-' + memIndex">{{member.userName}}</div>
             <div class="moreBtn" v-on:click="moreMemberClick()">
               <Button size="small" style="width: 84px;" type="primary">更多 / 编辑</Button>
             </div>
@@ -178,8 +162,8 @@
       </div>
       <!-- 一级计划 项目计划 start -->
       <div class="planList">
-        <!--<div class="planName" v-on:click="toGoodsDetail2">-->
         <div class="planName">
+        <!--<div class="planName">-->
           <!-- 项
           <br>目
           <br>计
@@ -190,6 +174,7 @@
           <div class="plan-list addPlan" v-on:click="addNode(firstPlanId)">
              <i class="el-icon-plus"></i>
           </div>
+          <!--dddd-->
           <div v-for="(plan, index) in planList" v-bind:key="index" class="plan-all">
               <div class="plan-list"
                     v-if="planList.length > 0"
@@ -202,45 +187,49 @@
                 <div class="planDetail" @click="showPlanDetail(plan.id, 'QueryFirstLevelChild', $event,)"><i class="el-icon-edit"></i></div>
               </div>
           </div>
-         <!--  <Button
-            style="width: 84px; margin-top: 16px; margin-left: 20px; position: absolute; right: 1px;"
-            size="small"
-            type="primary"
-            v-on:click="FistLevelPlanDetail()"
-          >添加 / 编辑</Button> -->
         </div>
       </div>
+      <!--dddd-->
       <div style="margin-top:20px;" v-if="planList.length > 0 ">
+          <el-tooltip class="item" effect="dark" content="Right Top 提示文字" placement="right-start">123</el-tooltip>
           <el-tabs v-model="activeName">
               <el-tab-pane label="加任务" name="first">
                   <component v-bind:is="compArr.AddNewTask"
-                     fileFormId="GetUploadCount1"
-                     v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
-                     :nodeId="parentId"
-                     >
+                             fileFormId="GetUploadCount1"
+                             v-on:FilePreEmit="GetFilePreData"
+                             v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
+                             :nodeId="parentId">
                   </component>
               </el-tab-pane>
-              <el-tab-pane label="加计划" name="second" v-bind:disabled="panshow">
-                  <component v-bind:is="compArr.addNewPlan"
-                     fileFormId="addNewPlan"
-                     v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
-                     :nodeId="parentId"
-                     :defaultText="defaultText"
-                     :defaultDetail="defaultDetail">
-                  </component>
+            <!--<el-tooltip class="item" effect="dark" content="Right Top 提示文字" placement="right-start">123-->
+              <el-tab-pane label="加计划" name="second" v-bind:disabled="false">
+                <div style="padding-left: 20px; color: #cf9236">温馨提示:新增计划功能已与新增任务功能合并，新增任务可不指派人员</div>
+                    <!--<component v-bind:is="compArr.addNewPlan"-->
+                       <!--fileFormId="addNewPlan"-->
+                       <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
+                       <!--:nodeId="parentId"-->
+                       <!--:defaultText="defaultText"-->
+                       <!--:defaultDetail="defaultDetail">-->
+                    <!--</component>-->
               </el-tab-pane>
+              <!--</el-tooltip>-->
           </el-tabs>
       </div>
     </div>
     <!-- Part01 end -->
     <!-- Part02 start 项目详情 title -->
+    <!--dddd-->
     <div class="devide">
       <div class="proTreeHeader">
         <div>详情</div>
-        <div v-if="listTree.length > 0" style="padding-right: 6px">
-           <el-button type="text" @click="slideTree" v-if="showName">展开</el-button>
-           <el-button type="text" @click="slideTree1" v-else>收缩</el-button>
-          <!-- <Button size="small" type="primary" style="width: 84px;" v-on:click="addNode(activeId)">+ 计划 / 任务</Button> -->
+        <div style="padding-right: 6px; display: flex">
+          <div style="margin-right: 15px;">
+            <el-button type="text" @click="showTree">树形结构</el-button>
+          </div>
+          <div v-if="listTree.length > 0">
+            <el-button type="text" @click="slideTree" v-if="showName">展开</el-button>
+            <el-button type="text" @click="slideTree1" v-else>收缩</el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -252,18 +241,13 @@
        暂无数据
     </div>
     <!-- Part05 start 抽屉 任务详情 -->
-    <Drawer
-      title="任务详情"
-      class="drawerScroll"
-      :closable="false"
-      width="750"
-      v-model="TaskDetailCompShow"
-    >
+    <Drawer title="任务详情" class="drawerScroll" :closable="false" width="750" v-model="TaskDetailCompShow">
       <component
         v-bind:is="compArr.TaskDetailComp"
         v-bind:taskDrawerOpen="TaskDetailCompShow"
         v-bind:modifyTaskRes="modifyTaskRes"
         v-on:FilePreEmit="GetFilePreData"
+        v-on:taskShow="taskShowFuc"
         v-on:toPlanDetail="toPlanDetailFuc"
         v-on:showEditForm="showEditFormFuc"
         v-on:ActionResThrow="ActionResThrowFuc"
@@ -349,15 +333,27 @@
     <!--新增 抽屉 一级计划详情 end -->
     <!--新增 抽屉 查看历史记录 start-->
     <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
-      <div class="el-textarea" v-loading="loadingRe">
+      <div @click="hidePanel">
+         <div class="el-textarea" v-loading="loadingRe">
         <!--enctype="multipart/form-data"-->
         <form id="uploadFile">
+          <div class="peopleList" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+              <Input prefix="ios-search-outline" placeholder="请输人员姓名或拼音(如'张三'或 'zs')" style="width: 270px"  autofocus v-model="searchPeople" v-focus ref="re"/>
+              <ul>
+                <li v-for="(item, index) in options42" :key="index" @click="checkPeople(item)">{{item.Name + ' (' + item.jName + ')'}}</li>
+              </ul>
+          </div>
           <textarea
             name="content"
             class="el-textarea__inner"
             id="textArea"
             type="text"
             v-model="commitComent"
+            v-on:input="inputFunt"
+            @keyup.delete ="deleteText"
+            @keyup.shift.50="inputConent"
+            @click="getTxt1CursorPosition"
+            v-focus
           ></textarea>
           <div class="hisFileUplBox">
             <div style="display: inline-block">
@@ -377,7 +373,7 @@
         </form>
       </div>
       <!--操作记录 历史记录-->
-      <div class="discription lis" style="margin-top: 15px;">
+         <div class="discription lis" style="margin-top: 15px;">
         <!-- 历史记录 评论 引入组件-->
         <component
           v-bind:is="compArr.CommentLogs"
@@ -395,9 +391,10 @@
           ></Page>
         </div>
       </div>
+      </div>
     </Drawer>
-    <!--新增 添加计划或者任务 start-->
-    <Drawer class="drawerScroll" title="计划表单" :closable="false" width="40%" v-model="bgCoverShow">
+    <!--新增 添加计划或者任务 增加任务 增加计划 start-->
+    <Drawer class="drawerScroll" :closable="false" width="40%" v-model="bgCoverShow">
       <component
         v-bind:is="compArr.CreatePlanOrTask"
         v-bind:DrawerOpen="bgCoverShow"
@@ -463,11 +460,50 @@
       <div class="menu">功能4</div>
       <div class="menu">功能5</div>
     </div>
+    <!--新增 抽屉 编辑计划 修改计划 start-->
+    <Drawer class="drawerScroll" title="编辑树形结构" :closable="false" width="50%" v-model="TreeStructureShow">
+      <component v-bind:is="compArr.NewTree"
+                 v-bind:proId="proId"
+                 v-bind:onOffStatusT="onOffStatus"
+                 v-bind:DrawerOpen="TreeStructureShow"
+                 v-bind:treeNodeLevel="treeNodeLevel"
+                 v-bind:newTreeList="newTreeList" v-on:onOffStatusEmit="onOffStatusFuc">
+      </component>
+    </Drawer>
+    <!-- 节点拖动 时间选择 -->
+    <el-dialog title="提示: 此次编辑会同步更新节点下所有子级时间" :visible.sync="timeDialogVisible" width="30%">
+      <div>
+        <!--<button type="button" @click="resettt">setddd</button>-->
+        <el-form ref="nodeDragTimeEdit" :model="nodeDragTimeEdit" label-width="80px">
+          <el-form-item label="开始时间">
+            <el-date-picker v-model="nodeDragTimeEdit.start" :picker-options="nodeDragOption" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择开始日期时间"></el-date-picker>
+          </el-form-item>
+          <el-form-item label="结束时间">
+            <el-date-picker v-model="nodeDragTimeEdit.finish" :picker-options="nodeDragOption" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择结束日期时间"></el-date-picker>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="DragTimeEditCancel">取 消</el-button>
+        <el-button type="primary" @click="DragTimeEditOk">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="项目列表" :visible.sync="projectListShow">
+      <component v-bind:is="compArr.linkProject" v-bind:linkId="taskLinkId" v-bind:proListShow="projectListShow" v-on:dialogGoodsShow="dialogGoodsShowFuc" v-on:showFlag="showFlagFuc"></component>
+    </el-dialog>
+    <el-dialog title="提示" :visible.sync="dialogGoods" width="30%" center>
+      <span>是否完善产品信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="jumpInfo">跳过</el-button>
+        <el-button type="primary" @click="perfectInfo">去完善</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import FileUploadComp from './FileUploadComp.vue'
+import FileUploadComp from './CustomComp/FileUploadComp.vue'
+import linkProject from './CustomComp/linkProject.vue'
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import CreatePlanOrTask from './CustomComp/CreatePlanOrTask.vue'
 import ModifyPlan from './CustomComp/ModifyPlan.vue'
@@ -481,6 +517,7 @@ import PlanDetailComp from './CustomComp/PlanDetailComp.vue'
 import tree from './CustomComp/tree.vue'
 import AddNewTask from './CustomComp/AddNewTask.vue'
 import addNewPlan from './CustomComp/addNewPlan.vue'
+import NewTree from './CustomComp/NewTree.vue'
 // DrawerComp
 export default {
   name: 'ProDetail',
@@ -488,6 +525,7 @@ export default {
     CommentLogs,
     ModifyPlan,
     ModifyTask,
+    linkProject,
     FileUploadComp,
     CreatePlanOrTask,
     TaskDistribute,
@@ -498,11 +536,41 @@ export default {
     tree,
     AddNewTask,
     addNewPlan,
-    ProBaseInfo
+    ProBaseInfo,
+    NewTree
   },
   data () {
     return {
+      onOffStatus: -1,
+      // 光标位置
+      position: 0,
+      // 搜索组织架构人员
+      searchPeople: '',
+      // @成员
+      peopleList: [],
       // refshPlan: false
+      nodeDragTimeEdit: {
+        start: '',
+        finish: ''
+      },
+      startlimit: this.$store.state.defaultParentStart,
+      // 节点
+      nodeDragOption: {
+        disabledDate: function (currentDateTime) {
+          return false
+        }
+      },
+      // timeDialogVisible: false,
+      // 节点级别
+      treeNodeLevel: 0,
+      TreeStructureShow: false,
+      loading22: false,
+      // 获取默认的人员
+      options42: [],
+      // @人员
+      peopleValue: [],
+      // 判断是否出现@人员
+      selectUserDiaShow2: false,
       // 点击任务详情删除是否默认第一个
       isChangeActive: false,
       showName: false,
@@ -516,6 +584,7 @@ export default {
       compArr: {
         ModifyTask: 'ModifyTask',
         ModifyPlan: 'ModifyPlan',
+        linkProject: 'linkProject',
         CommentLogs: 'CommentLogs',
         FileUploadComp: 'FileUploadComp',
         CreatePlanOrTask: 'CreatePlanOrTask',
@@ -526,8 +595,14 @@ export default {
         TaskDetailComp: 'TaskDetailComp',
         PlanDetailComp: 'PlanDetailComp',
         AddNewTask: 'AddNewTask',
-        addNewPlan: 'addNewPlan'
+        addNewPlan: 'addNewPlan',
+        NewTree: 'NewTree'
       },
+      // 项目列表
+      taskLinkId: '',
+      dialogGoods: false,
+      projectListShow: false,
+      //
       // zh 树状展开收缩文字
       treeName: '收缩',
       // zh 收缩展开内容
@@ -626,164 +701,32 @@ export default {
       },
       // 新增 添加评论
       addProjectCommentPayload: {
-        projectUID: '',
+        // projectUID: '',
         content: '',
-        attachmentId: ''
+        attachmentId: '',
+        memberList: []
       },
-      listTree: [
-        {
-          id: 1,
-          name: '一级菜单',
-          type: 'plan',
-          children: [{
-            id: 2,
-            name: '二级菜单',
-            type: 'plan',
-            children: [{
-              id: 3,
-              name: '三级菜单',
-              type: 'task'
-            },
-            {
-              id: 4,
-              name: '三级菜单',
-              type: 'plan'
-            },
-            {
-              id: 5,
-              name: '三级菜单',
-              type: 'task'
-            }]
-          },
-          {
-            id: 6,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 7,
-            name: '二级菜单',
-            type: 'task'
-          }]
-        },
-        {
-          id: 2,
-          name: '一级菜单',
-          type: 'task',
-          children: [{
-            id: 8,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 9,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 10,
-            name: '二级菜单',
-            type: 'task',
-            children: [{
-              id: 11,
-              name: '三级菜单',
-              type: 'task',
-              children: [{
-                id: 12,
-                name: '四级菜单',
-                type: 'task',
-                children: [{
-                  id: 13,
-                  name: '五级菜单',
-                  type: 'task'
-                }]
-              },
-              {
-                id: 13,
-                name: '四级菜单',
-                type: 'task'
-              },
-              {
-                id: 14,
-                name: '四级菜单',
-                type: 'task'
-              }]
-            },
-            {
-              id: 15,
-              name: '三级菜单',
-              type: 'task'
-            },
-            {
-              id: 16,
-              name: '三级菜单',
-              type: 'task'
-            }]
-          }]
-        },
-        {
-          id: 3,
-          name: '一级菜单',
-          type: 'task',
-          children: [{
-            id: 1.1,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 1.2,
-            name: '二级菜单',
-            type: 'task'
-          },
-          {
-            id: 1.3,
-            name: '二级菜单',
-            type: 'task'
-          }]
-        }
-      ]
+      newTreeList: [],
+      listTree: []
     }
   },
   created: function () {
-    if (this.$store.state.proId || this.$route.params.proId) {
-      this.proId = this.$store.state.proId || this.$route.params.proId
+    // this.log(10010)
+    if (this.$route.params.proId || this.$store.state.proId || localStorage.getItem('proId')) {
+      // this.log(112233)
+      this.proId = this.$route.params.proId || this.$store.state.proId || localStorage.getItem('proId')
       this.$store.state.proId = this.proId
-      // this.queryProDetail()
+      localStorage.setItem('proId', this.proId)
     }
-    // this.$store.commit('uploadCountAdd', {})
-    // this.getTreeList()
-    // this.getPlanTree(this.activeId)
+  },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    // this.$store.commit('setNavActive', {navName: '集团战略', childNavName: '产品小组'})
   },
   watch: {
     proId: function (val, oVal) {
       var that = this
-      // this.currentProId = val
-      // this.currentType = this.type
       localStorage.setItem('proId', val)
-      var findId = false
-      for (
-        var t = 0; that.$store.state.slideMenuGroup.length > 0 &&
-        t < that.$store.state.slideMenuGroup[0].projectList.length;
-        t++
-      ) {
-        if (
-          that.$store.state.slideMenuGroup[0].projectList[t].projectUID ===
-          that.proId
-        ) {
-          findId = true
-          that.$store.state.activeNavIndex = 'group_0_' + t
-        }
-      }
-      if (!findId) {
-        for (var p = 0; p < that.$store.state.slideMenu.length; p++) {
-          if (
-            that.$store.state.slideMenu[p].projectType ===
-            localStorage.getItem('generalMenuActive')
-          ) {
-            that.$store.state.activeNavIndex = 'general_' + p
-          }
-        }
-      }
       if (val) {
         that.activeId = ''
       }
@@ -795,9 +738,22 @@ export default {
       } else {
         this.butnDisabled = true
       }
+      let str = val.charAt(val.length - 1)
+      if (str === '@') {
+        this.selectUserDiaShow2 = true
+        this.searchPeople = ''
+        if (this.selectUserDiaShow2) {
+          setTimeout(() => {
+            this.$refs['re'].focus()
+          }, 200)
+        }
+      } else {
+        this.selectUserDiaShow2 = false
+      }
     },
     planList: function (val, old) {
       var that = this
+      // this.log('goods:planList==:', val)
       if (val) {
         that.FirstLevelPlanList = []
         for (var i = 0; i < val.length; i++) {
@@ -820,33 +776,18 @@ export default {
       if (val === false) {
         that.$store.state.goPerfect = false
       }
+    },
+    searchPeople: function (val, old) {
+      if (val) {
+        this.getPeople()
+      }
+      if (val === '') {
+        this.searchPeople = ''
+        this.getPeople()
+      }
     }
   },
   computed: {
-    slideMenuGroup: function () {
-      var that = this
-      if (!this.$route.params.proId && !that.$store.state.proId) {
-        if (
-          that.$store.state.slideMenuGroup.length > 0 &&
-          that.$store.state.slideMenuGroup[0].projectList.length > 0
-        ) {
-          if (localStorage.getItem('proId')) {
-            that.$store.state.proId = localStorage.getItem('proId')
-            that.proId = localStorage.getItem('proId')
-          } else {
-            that.$store.state.proId =
-              that.$store.state.slideMenuGroup[0].projectList[0].projectUID
-            that.proId =
-              that.$store.state.slideMenuGroup[0].projectList[0].projectUID
-            localStorage.setItem('proId', that.proId)
-            that.$store.state.activeNavIndex = 'group_0_0'
-          }
-        }
-      } else {
-        // that.log(555555)
-      }
-      return that.$store.state.slideMenuGroup
-    },
     goPerfect: function () {
       var that = this
       // console.log(that.$store.state.goPerfect)
@@ -863,36 +804,240 @@ export default {
       // this.log('that.proId:', that.proId)
       return this.$store.state.proId
     },
-    slideMenu: function () {
+    timeDialogVisible: function () {
       var that = this
-      if (!this.$route.params.proId && !that.$store.state.proId) {
-        if (
-          that.$store.state.slideMenuGroup.length === 0 &&
-          that.$store.state.slideMenu.length > 0
-        ) {
-          if (localStorage.getItem('proId')) {
-            that.$store.state.proId = localStorage.getItem('proId')
-            that.proId = localStorage.getItem('proId')
-          } else {
-            // that.$store.state.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
-            // that.proId = that.$store.state.slideMenu[0].projectList[0].projectUID
-            // localStorage.setItem('proId', that.proId)
-          }
-        }
+      // that.timeDialogVisibleShow = true
+      that.nodeDragTimeEdit.start = this.$store.state.defaultParentStart
+      that.nodeDragTimeEdit.finish = this.$store.state.defaultParentFinish
+      this.resettt()
+      // that.$store.commit('setDateOption', {OptionObj: that.nodeDragOption, startDate: that.nodeDragTimeEdit.start, endDate: that.nodeDragTimeEdit.finish})
+      return this.$store.state.timeDialogVisible
+    },
+    nodeDragRefresh: function () {
+      var that = this
+      if (that.$store.state.nodeDragRefresh) {
+        // this.log('watch:nodeDragRefresh:', this.$store.state.nodeDragRefresh)
+        that.newTreeList = []
+        this.queryNewTree()
+        this.getTree()
+        this.queryProDetail()
+        that.$store.state.nodeDragRefresh = false
       }
-      return that.$store.state.slideMenu
+      return this.$store.state.nodeDragRefresh
+    }
+  },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        el.focus()
+      }
     }
   },
   methods: {
-    toGoodsDetail2: function () {
-      this.$router.push('/goodsDetail2')
+    // 管理项目
+    taskShowFuc: function (val) {
+      var that = this
+      that.projectListShow = true
+      console.log('888888888', val)
+      that.taskLinkId = val
+    },
+    showFlagFuc: function (val) {
+      this.projectListShow = val
+    },
+    dialogGoodsShowFuc: function (val) {
+      this.dialogGoods = val
+    },
+    // 去完善信息
+    perfectInfo () {
+      this.proId = this.$store.state.proId
+      this.$router.push('/goodsDetail')
+      this.$store.state.goPerfect = true
+      this.goodsEdit = true
+      this.dialogGoods = false
+      this.projectListShow = false
+    },
+    // 跳过
+    jumpInfo () {
+      this.dialogGoods = false
+    },
+    // --------------------------------
+    onOffStatusFuc: function (obj) {
+      this.onOffStatus = obj
+    },
+    resettt: function () {
+      var that = this
+      setTimeout(function () {
+        that.$store.commit('setDateOption', {OptionObj: that.nodeDragOption, startDate: that.nodeDragTimeEdit.start, endDate: that.nodeDragTimeEdit.finish})
+      }, 1000)
+    },
+    DragTimeEditCancel: function () {
+      this.$store.state.timeDialogVisible = false
+      this.$store.state.dragResetDate = false
+      this.newTreeList = []
+      this.queryNewTree()
+    },
+    DragTimeEditOk: function () {
+      var that = this
+      // this.log('nodeDragTimeEdit.start:', this.nodeDragTimeEdit.start)
+      // this.log('nodeDragTimeEdit.finish:', this.nodeDragTimeEdit.finish)
+      if (that.nodeDragTimeEdit.start) {
+        this.$store.state.resetDragStart = that.nodeDragTimeEdit.start
+      } else {
+        this.$store.state.resetDragStart = this.$store.state.defaultParentStart
+      }
+      if (that.nodeDragTimeEdit.finish) {
+        this.$store.state.resetDragFinish = that.nodeDragTimeEdit.finish
+      } else {
+        this.$store.state.resetDragFinish = this.$store.state.defaultParentFinish
+      }
+      // this.$store.state.dragResetDate = true
+      this.$store.state.timeDialogVisible = false
+      var dragData = that.$store.state.currentDraggedData
+      var start = this.$store.state.resetDragStart
+      var finish = this.$store.state.resetDragFinish
+      // that.$store.state.currentDraggedData = {
+      //   draggedNodeId: data,
+      //   parentNodeId: newTreeItem.id,
+      //   insertIndex: 1
+      // }
+      that.ajax('/myProject/moveStructure', {id: dragData.draggedNodeId, parentId: dragData.parentNodeId, sortCode: dragData.insertIndex, startTime: start, endTime: finish}).then(res => {
+        that.log('moveStructure:', res)
+        if (res.code === 200) {
+          that.queryNewTree()
+          that.getTree()
+        }
+      })
+    },
+    // updateTree: function (targetId, parentId, nodeIndex, start, finish) {
+    //   var that = this
+    //   that.ajax('/myProject/moveStructure', {id: targetId, parentId: parentId, sortCode: nodeIndex, startTime: start, endTime: finish}).then(res => {
+    //     that.log('moveStructure:', res)
+    //   })
+    // },
+    showTree: function () {
+      this.TreeStructureShow = true
+      this.queryNewTree()
+    },
+    // 获取当前光标的位置
+    getPosition (element) {
+      let cursorPos = 0
+      if (document.selection) { // IE
+        var selectRange = document.selection.createRange()
+        selectRange.moveStart('character', -element.value.length)
+        cursorPos = selectRange.text.length
+      } else if (element.selectionStart || element.selectionStart === '0') {
+        cursorPos = element.selectionStart
+      }
+      this.position = cursorPos
+    },
+    // 调取获取光标的位置
+    getTxt1CursorPosition (e) {
+      this.getPosition(e.target)
+    },
+    // 设置光标位置
+    setCaretPosition (ctrl, pos) {
+      if (ctrl.setSelectionRange) {
+        ctrl.focus()
+        ctrl.setSelectionRange(pos, pos)
+        console.log(ctrl.setSelectionRange)
+      } else if (ctrl.createTextRange) {
+        console.log(2)
+        var range = ctrl.createTextRange()
+        range.collapse(true)
+        range.moveEnd('character', pos)
+        range.moveStart('character', pos)
+        range.select()
+      }
+    },
+    setPos: function (o) {
+      if (o.setSelectionRange) { // W3C
+        setTimeout(function () {
+          o.setSelectionRange(2, 2)
+          o.focus()
+        }, 100)
+      } else if (o.createTextRange) { // IE
+        var textRange = o.createTextRange()
+        textRange.moveStart('character', 1)
+        textRange.moveEnd('character', 0)
+        textRange.select()
+      }
+    },
+    // 点击任意区域取消弹窗
+    hidePanel (event) {
+      let sp2 = document.querySelector('.peopleList')
+      if (sp2) {
+        if (!sp2.contains(event.target)) {
+          this.selectUserDiaShow2 = false
+        }
+      }
+    },
+    // 键盘删除事件
+    deleteText () {
+      // this.log(123)
+      let content = this.commitComent
+      let content1 = this.commitComent
+      let delBefore = content.substring(0, this.position)
+      let delAfter = content1.substring(this.position)
+      let position = delBefore.lastIndexOf('@', this.position)
+      let str = delBefore.substring(position, this.position)
+      this.peopleList.forEach((item, index) => {
+        if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
+          let textarea = this.commitComent
+          let contentB = textarea.substring(0, position)
+          let ele = document.querySelector('.el-textarea__inner')
+          this.setPos(ele)
+          this.commitComent = contentB + delAfter
+        }
+      })
+    },
+    // 点击获取@人员
+    checkPeople (item) {
+      let that = this
+      that.peopleList.push(item)
+      that.selectUserDiaShow2 = false
+      $('.el-textarea__inner').focus()
+      // that.commitComent = that.commitComent + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0'
+      let content1 = that.commitComent
+      let content2 = that.commitComent
+      let before = content1.substring(0, that.position)
+      let after = content2.substring(that.position)
+      let ele = document.querySelector('.el-textarea__inner')
+      that.setPos(ele)
+      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
+    },
+    // 获取默认的人员
+    getPeople () {
+      let that = this
+      that.ajax('/myProject/autoCompleteNames', {projectManager: that.searchPeople, projectId: that.proId}).then(res => {
+        if (res.code === 200) {
+          that.options42 = res.data
+          this.loading22 = false
+        }
+      })
+    },
+    remoteMethod2 (query) {
+
+    },
+    // 检测历史记录输入功能
+    inputFunt (e) {
+      this.getTxt1CursorPosition(e)
+    },
+    // 获取@的事件
+    inputConent () {
+      this.selectUserDiaShow2 = true
+      this.searchPeople = ''
+      if (this.selectUserDiaShow2) {
+        setTimeout(() => {
+          this.$refs['re'].focus()
+        }, 200)
+      }
     },
     // 测试右键
     rightKey: function (e) {
       this.log('e.:', e.offsetX)
       e.preventDefault()
 
-      // 获取我们自定义的右键菜单
+      // 获取我们自定义的右键菜单p
       var menu = document.querySelector('#menu')
 
       // 根据事件对象中鼠标点击的位置，进行定位
@@ -966,6 +1111,7 @@ export default {
     getTree () {
       let that = this
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.activeId }).then(res => {
+        this.log('getPlanAndTaskTree:', res)
         if (res.code === 200) {
           that.listTree = []
           that.treeName = '收缩'
@@ -973,8 +1119,41 @@ export default {
           that.listTree.forEach((item, index) => {
             item['show'] = true
           })
+        } else {
+          if (that.activeId !== '') {
+            that.$message.error(res.msg)
+          }
         }
       })
+    },
+    queryNewTree (proDetRes) {
+      let that = this
+      that.ajax('/myProject/getProjectTree', { firstPlanId: that.firstPlanId }).then(res => {
+        if (res.code === 200) {
+          that.log('查询新树：', res)
+          that.newTreeList = []
+          res.data[0].type = 'rootPlan'
+          res.data[0].start = '2010-01-01 00:00:00'
+          res.data[0].finish = '2100-01-01 00:00:00'
+          // res.data[0].dateTimeFlag = 'native'
+          // that.checkDateTime(res.data[0].children, res.data[0].start, res.data[0].finish)
+          that.newTreeList = res.data
+          // that.TreeJsonDataName = JSON.stringify(that.newTreeList)
+        }
+      })
+    },
+    checkDateTime: function (childrenList, parentStart, parentFinish) {
+      if (childrenList.length > 0) {
+        var parentStartStamp = new Date(parentStart).getTime()
+        var parentFinishStamp = new Date(parentFinish).getTime()
+        for (var i = 0; i < childrenList.length; i++) {
+          var childStartDateStamp = new Date(childrenList[i].start).getTime()
+          var childFinishDateStamp = new Date(childrenList[i].finish).getTime()
+          if (childStartDateStamp < parentStartStamp || childFinishDateStamp > parentFinishStamp) {
+            childrenList[i].dateTimeFlag = 'over'
+          }
+        }
+      }
     },
     // zh展开树状结构
     slideTree () {
@@ -1007,7 +1186,6 @@ export default {
       // this.selectProjectId(nodeId, flag, e)
       this.currentNodeId = nodeId
       this.isChangeActive = true
-      console.log('idddddd', this.currentNodeId)
       if (nodeId.substring(0, 1) === 'J') {
         that.TaskDetailCompShow = true
       } else {
@@ -1022,10 +1200,11 @@ export default {
       this.showFileModel = false
     },
     showImagePre: function (url, showName) {
-      if (this.isImage(showName)) {
-        this.dialogFormVisible = true
-        this.showFileUrl = url
-      }
+      this.imgPreview(url, showName)
+      // if (this.isImage(showName)) {
+      //   this.dialogFormVisible = true
+      //   this.showFileUrl = url
+      // }
     },
     showEditFormFuc: function (id) {
       var that = this
@@ -1046,7 +1225,9 @@ export default {
     },
     // 附件 附件预览
     GetFilePreData (obj) {
+      this.log(112233)
       if (obj.previewUrl && this.isImage(obj.fileName)) {
+        this.log('obj::', obj)
         this.showBigImage1(obj.previewUrl)
       }
     },
@@ -1083,7 +1264,15 @@ export default {
       // console.log(1111111111111111111)
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId}).then(res => {
+        that.log('getProjectDetail:', res)
         if (res.code === 200) {
+          // this.log('getProjectDetail:', res)
+          /** 设置侧边栏激活状态 */
+          var navActiveType = res.data.projectType === '集团战略' ? '集团战略' : '我的项目'
+          that.log('navActiveType:', navActiveType)
+          that.$store.commit('setNavActive', {navName: navActiveType})
+          that.$store.commit('useNavActive', {navName: navActiveType})
+          // res.data.projectType
           that.memberList = res.data.memberList
           that.proDetailMsg = res.data
           that.startPlanDate = res.data.startDate.split(' ')[0]
@@ -1102,12 +1291,7 @@ export default {
             } else {
               res.data.fileList[i].isImg = false
             }
-            res.data.fileList[i].downloadUrl =
-              that.$store.state.baseServiceUrl +
-              '/file/downloadFile?realUrl=' +
-              res.data.fileList[i].realUrl +
-              '&showName=' +
-              res.data.fileList[i].showName
+            res.data.fileList[i].downloadUrl = that.$store.state.baseServiceUrl + '/file/downloadFile?realUrl=' + res.data.fileList[i].realUrl + '&showName=' + res.data.fileList[i].showName
           }
           if (res.data.planOrJobList.length > 0) {
             // that.log('activeId:', that.activeId)
@@ -1125,6 +1309,8 @@ export default {
           // that.selectProjectId(that.activeId, 'QueryFirstLevelChild')
           // zh获取默认数据
           that.getTree()
+        } else if (res.code === 505) {
+          this.$Message.warning(res.msg)
         }
       })
     },
@@ -1208,6 +1394,7 @@ export default {
     openHisDrawer () {
       this.DrawerHistory = true
       this.getHistoryCont()
+      this.getPeople()
     },
     // 历史记录 获取历史记录
     getHistoryCont () {
@@ -1253,10 +1440,14 @@ export default {
       that.addProjectCommentPayload.contentId = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
+      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')') !== -1)
+      that.addProjectCommentPayload.memberList = that.peopleList
+      console.log(that.peopleList)
       if (that.commitComent) {
-        that.ajax('/comment/addComment', that.addProjectCommentPayload).then(res => {
+        that.ajax('/comment/addComment', JSON.stringify(that.addProjectCommentPayload)).then(res => {
           if (res.code === 200) {
             that.IsClear = true
+            that.peopleList = []
             that.$message({
               type: 'success',
               message: res.msg
@@ -1345,11 +1536,14 @@ export default {
         that.queryProDetail()
         // that. = that.planList[0].id
         that.getTree()
-        if (that.isChangeActive) {
-          that.activeId = ''
-        }
+        // if (that.isChangeActive) {
+        //   that.activeId = ''
+        // }
         if (type === '1') {
           that.value444 = false
+          if (that.isChangeActive) {
+            that.activeId = ''
+          }
         } else {
           that.value444 = true
         }
@@ -1364,15 +1558,23 @@ export default {
         })
       }
     },
-    TaskDelCallbackFuc: function (res) {
+    TaskDelCallbackFuc: function (res, type) {
       var that = this
       if (res.code === 200) {
         that.queryProDetail()
-        if (that.isChangeActive) {
-          that.activeId = ''
+        // if (that.isChangeActive) {
+        //   that.activeId = ''
+        // }
+        if (type === '1') {
+          that.TaskDetailCompShow = false
+          if (that.isChangeActive) {
+            that.activeId = ''
+          }
+        } else {
+          that.TaskDetailCompShow = true
         }
         // that.activeId = that.planList[0].id
-        that.TaskDetailCompShow = false
+        // that.TaskDetailCompShow = false
         that.$message({
           message: '删除成功！',
           type: 'success'
@@ -1974,4 +2176,47 @@ div img {
     line-height: 25px;
     padding: 0 10px;
   }
+  .selectUserDialog2{
+    width: 300px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .selectUserBtn{
+    text-align: center;
+    margin-top: 20px;
+  }
+  .selectDateItem{
+    margin-top: 20px;
+  }
+  .peopleList {
+    width:300px;
+    height: 370px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+.peopleList ul {
+  list-style: none;
+  width:270px;
+  max-height:300px;
+  overflow: auto;
+  margin-top:10px;
+}
+.peopleList ul li{
+  list-style: none;
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #f2f2f2;
+  cursor: pointer;
+}
+.peopleList ul li:hover{
+  background: #f5f8fa;
+}
 </style>

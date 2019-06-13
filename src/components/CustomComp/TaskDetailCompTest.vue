@@ -337,7 +337,7 @@ export default {
     },
     taskDrawerOpen: function (val, oV) {
       var that = this
-      this.log(123)
+      // this.log(123)
       that.drawerKK = val
       if (val) {
         that.showDrawer = true

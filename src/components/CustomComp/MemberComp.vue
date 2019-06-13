@@ -19,7 +19,7 @@
       <div class="memTblTitle">
         <div class="tblTitItem">角色</div>
         <div class="tblTitItem">姓名</div>
-        <div class="tblTitItem">查看</div>
+        <!--<div class="tblTitItem">查看</div>-->
         <div class="tblTitItem">编辑</div>
         <div class="tblTitItem" title="清空全部" style="color: #409EFF;cursor: pointer;" v-on:click="delMember(0)">清空</div>
       </div>
@@ -27,7 +27,7 @@
         <div class="memTblListItem" v-for="mem in proGrpMemList" :key="mem.userID">
           <div class="memListItem">{{mem.peopleRoleText}}</div>
           <div class="memListItem">{{mem.userName}}</div>
-          <div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>
+          <!--<div class="memListItem"><Checkbox v-bind:value="true" @on-change="checkChangeSee($event, mem.id, mem.role)"></Checkbox></div>-->
           <div class="memListItem"><Checkbox v-bind:value="mem.role === '2'" @on-change="checkBoxChangeEdit($event, mem.id, mem.role)"></Checkbox></div>
           <div class="memListItem" style="cursor: pointer;" v-if="mem.peopleRole === '4'" v-on:click="delMember(mem.id)">x</div>
         </div>
@@ -152,14 +152,14 @@ export default {
     // 新增 增加项目组成员
     addMember () {
       var that = this
-      that.loadingMan = true
       if (that.taskForm.value9.length > 0) {
+        that.loadingMan = true
         for (var i = 0; i < that.taskForm.value9.length; i++) {
           var obj = {Name: '', ID: ''}
           obj.Name = that.taskForm.value9[i].split('-')[0]
           obj.ID = that.taskForm.value9[i].split('-')[1]
           that.addMemPayload.hrocPeople.push(obj)
-          console.log('hrocPeople', that.addMemPayload.hrocPeople)
+          that.log('hrocPeople', that.addMemPayload.hrocPeople)
         }
         that.addMemPayload.projectUID = this.proId
         this.ajax('/myProject/addMembers', JSON.stringify(that.addMemPayload)).then(res => {
@@ -176,13 +176,15 @@ export default {
             that.loadingMan = false
           }
         })
+      } else {
+        that.$message.warning('添加成员不能为空！')
       }
     },
     // 删除成员
     delMember (memId) {
       var that = this
-      that.loadingMan = true
       if (memId || memId === 0) {
+        that.loadingMan = true
         that.ajax('/myProject/delMembersById', {
           projectUID: that.proId,
           id: memId
@@ -233,8 +235,20 @@ export default {
     checkBoxChangeEdit (checked, id, role) {
       var that = this
       this.log('权限编辑查看：', checked + '-' + id + '-' + role)
+      if (checked === true) {
+        role = 2
+      } else if (checked === false) {
+        role = 1
+      }
       this.ajax('/myProject/editRole', JSON.stringify({projectUID: that.proId, projectOrg: [{id: id, role: role}]})).then(res => {
         // that.log('editRole:', res)
+        if (res.code === 200) {
+          that.$message.success(res.msg)
+        } else {
+          that.$message.warning(res.msg)
+          that.proGrpMemList = []
+          that.queryProGroupMember()
+        }
       })
     },
     checkChangeSee (checked, id, role) {
@@ -339,7 +353,7 @@ export default {
     border-bottom: 1px solid #eee;
   }
   .tblTitItem{
-    width: 20%;
+    width: 25%;
     line-height: 32px;
   }
   .memTblList{
@@ -356,7 +370,7 @@ export default {
     background-color: #ebf7ff;
   }
   .memListItem{
-    width: 20%;
+    width: 25%;
     line-height: 32px;
   }
   .organizationalBox{

@@ -8,15 +8,17 @@
           <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入新建任务名称" /></div>
         </div>
         <div class="paiTaskIptRight">
-          <div class="paiTaskIptRightIcon" v-on:click="selectUser($event)"><i class="el-icon-edit-outline"></i></div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer" v-on:click="selectUser($event)"><i class="el-icon-edit-outline"></i></div>
           <div class="paiTaskIptRightCnt" v-on:click="selectUser($event)">
             <!--<span v-for="user in taskForm.value9" :key="user"> {{user?user.split('-')[0]:defImplementerName}}</span>-->
             <span v-if="userSelectVal.length > 0" v-for="user in userSelectVal" :key="user"> {{user.split('-')[0]}}</span>
             <span v-if="userSelectVal.length === 0">{{defImplementer.name}}</span>
           </div>
-          <div class="paiTaskIptRightIcon" v-on:click="selectDate($event)"><i class="el-icon-date"></i></div>
-          <div class="paiTaskIptRightCnt" v-on:click="selectDate($event)">时间</div>
-          <div class="paiTaskIptRightIcon" v-on:click="selectLevel($event)"><i class="el-icon-bell"></i></div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="selDateStart + ' 到 ' + selDateEnd" v-on:click="selectDate($event)"><i class="el-icon-date"></i></div>
+          <div class="paiTaskIptRightCnt" :title="selDateStart + ' 到 ' + selDateEnd" v-on:click="selectDate($event)">时间</div>
+          <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="'等级:' + levelValue" v-on:click="selectLevel($event)">
+            <div style="width: 24px;height: 24px;padding-left: 4px;"><div class="levelNum">{{levelValue}}</div></div>
+          </div>
         </div>
       </div>
       <!---->
@@ -24,14 +26,18 @@
         <div class="relationHeader">
           <div class="proBelong">
             <!--所属项目 <i class="el-icon-arrow-down"></i>-->
-            <el-select v-model="projectBelong" placeholder="请选择关联项目">
-              <el-option
-                v-for="item in options"
-                :key="item.projectUID"
-                :label="item.projectName"
-                :value="item.projectUID">
-              </el-option>
-            </el-select>
+            <!--<el-select v-model="projectBelong" placeholder="请选择关联项目">-->
+              <!--<el-option-->
+                <!--v-for="item in options"-->
+                <!--:key="item.projectUID"-->
+                <!--:label="item.projectName"-->
+                <!--:value="item.projectUID">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+            <el-input v-model="proName" placeholder="请选择关联项目" readonly="readonly" style="width: 150px;float: left"></el-input>
+            <!--<el-button type="primary" size="small" @click="selectPro" style="margin-left: 10px;">请选择项目</el-button>-->
+            <div style="width: 40px;height: 28px;background:#2D8CF0;text-align: center;line-height: 28px;color:#fff;float: left;margin-top: 1px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;cursor: pointer" @click="selectPro" title="选择项目"><Icon type="ios-search" style="font-size: 16px;"/></div>
+            <span style="color:red" v-if="options.length===0">&nbsp;&nbsp;请新建一个项目</span>
           </div>
         </div>
         <div class="relationIntro">
@@ -41,14 +47,19 @@
       <!---->
       <div class="fileAndSubbtn">
         <div class="FileUploadCompBox">
-          <component v-bind:is="compArr.FileUploadComp" fileFormId="QuickCreateTask" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+          <component v-bind:is="compArr.FileUploadComp"
+                     fileFormId="QuickCreateTask"
+                     v-bind:clearInfo="IsClear"
+                     v-on:FilePreEmit="GetFilePreData"
+                     v-on:FileDataEmit="GetFileInfo">
+          </component>
         </div>
         <div class="moreAndSubbtn">
           <div class="selectMoreInfo" v-on:click="moreClick()">
             <i v-bind:class="moreIcon"></i><span style="margin-left: 6px;">{{moreText}}</span>
           </div>
-          <div class="submitBtn" v-on:click="depSub()">
-            <el-button type="primary">发布</el-button>
+          <div class="submitBtn">
+            <el-button type="primary" :disabled="options.length===0" v-on:click="depSub()">发布</el-button>
           </div>
         </div>
       </div>
@@ -70,7 +81,7 @@
           </el-option>
         </el-select>
       </div>
-      <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="userSelectVal.length===0">* 如果此项不选，则默认自己</div>
+      <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="userSelectVal.length===0"></div>
       <div class="selectUserBtn" v-on:click="selectUserClick()"><el-button>确定</el-button></div>
     </div>
     <!--发动态 时间选择 -->
@@ -102,20 +113,33 @@
       </div>
     </div>
     <!---->
+    <!--选择项目-->
+    <el-dialog title="项目列表" :visible.sync="selectProject">
+      <component v-bind:is="compArr.Myproject" :tableData="tableData" @ok="ok" @cancel="cancel" @dbClick="ok">
+      </component>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import FileUploadComp from '../CustomComp/FileUploadComp.vue'
+import Myproject from '../CustomComp/Myproject.vue'
 export default {
   name: 'QuickCreateTaskComp',
   components: {
-    FileUploadComp
+    FileUploadComp,
+    Myproject
   },
   data () {
     return {
+      // 选择项目
+      selectProject: false,
+      // 我的项目
+      tableData: [],
+      isTrue: false,
       compArr: {
-        FileUploadComp: 'FileUploadComp'
+        FileUploadComp: 'FileUploadComp',
+        Myproject: 'Myproject'
       },
       ruleForm: {},
       // 选择时间
@@ -171,12 +195,17 @@ export default {
         // 附件id
         attachmentId: '',
         pStr: ''
-      }
+      },
+      pageNum: 1,
+      projectType: '',
+      projectName: '',
+      proName: ''
     }
   },
   created () {
     this.getUserInfo()
     this.getProBelong()
+    this.getProjectList()
   },
   watch: {
     projectBelong: function (newQuestion, oldQuestion) {
@@ -200,6 +229,42 @@ export default {
     }
   },
   methods: {
+    getProjectList: function () {
+      var that = this
+      that.ajax('/myProject/myProjectView', {
+        pageNum: this.pageNum,
+        pageSize: 10,
+        projectType: this.projectType,
+        projectName: this.projectName
+      }).then(res => {
+        if (res.code === 200) {
+          this.options = res.data.list
+          if (res.data.list.length > 0) {
+            this.proName = res.data.list[0].projectName
+            this.projectBelong = res.data.list[0].projectUID
+          }
+        } else {
+          that.$message.warning(res.msg)
+        }
+      })
+    },
+    ok (selectData) {
+      this.proName = selectData.projectName
+      this.projectBelong = selectData.projectUID
+      this.selectProject = false
+    },
+    cancel () {
+      this.selectProject = false
+    },
+    // 选择项目
+    selectPro () {
+      this.selectProject = true
+    },
+    // 附件 附件预览
+    GetFilePreData (obj) {
+      // this.log('GetFilePreData:', obj)
+      this.$emit('FilePreEmit', obj)
+    },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {
       var that = this
@@ -250,18 +315,18 @@ export default {
     // 选择时间确定
     selectDateOk: function () {
       this.selectDateDiaShow = false
+      this.selectDateDiaShow = false
     },
     // 获取所属项目
     getProBelong: function () {
-      var that = this
-      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
-        if (res.code === 200) {
-          // this.log('getAllProject:', res)
-          this.projectBelong = res.data[0].projectUID
-          this.options = res.data
-          this.getProjectTime(this.projectBelong)
-        }
-      })
+      // that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
+      //   if (res.code === 200) {
+      //     // this.log('getAllProject:', res)
+      //     // this.projectBelong = res.data[0].projectUID
+      //     // this.options = res.data
+      //     // this.getProjectTime(this.projectBelong)
+      //   }
+      // })
     },
     getProjectTime: function (id) {
       var that = this
@@ -617,6 +682,18 @@ export default {
   }
   .selectDateItem{
     margin-top: 20px;
+  }
+  .levelNum{
+    margin-top: 4px;
+    width: 20px;
+    text-align: center;
+    height: 20px;
+    color: chocolate;
+    line-height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
   }
   /**/
 </style>

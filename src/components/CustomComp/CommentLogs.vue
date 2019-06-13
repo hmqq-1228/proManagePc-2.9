@@ -30,8 +30,9 @@ export default {
   },
   methods: {
     showImagePreCom: function (previewUrl, fileName) {
-      this.log(123)
-      this.$emit('FilePreEmit', {previewUrl, fileName})
+      // this.log(123)
+      this.imgPreview(previewUrl, fileName)
+      // this.$emit('FilePreEmit', {previewUrl, fileName})
       // if (url) {
       //   this.commentPreviewUrl = url
       //   this.dialogShowImg = true

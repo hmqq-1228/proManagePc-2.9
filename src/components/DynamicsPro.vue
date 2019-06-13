@@ -1,5 +1,5 @@
 <template>
-  <div class="DynamicsPro">
+  <div class="DynamicsPro" @click="hidePanel">
     <!---->
     <div class="tabsSelectTagBox">
       <div class="tabsSelectTagLeft">
@@ -154,12 +154,28 @@
               <!--<div class="likeTagsItem"><i class="el-icon-goods"></i>打赏</div>-->
               <!--<div class="likeTagsItem"><i class="el-icon-star-off"></i>收藏</div>-->
               <!--<div class="likeTagsItem"><i class="el-icon-edit-outline"></i>回复</div>-->
-              <div class="likeTagsItem" v-on:click="responseBtn(taskItem.projectUID, taskIndex)"><i class="el-icon-edit"></i>回复</div>
+              <div class="likeTagsItem" v-on:click="responseBtn(taskItem, taskIndex)"><i class="el-icon-edit"></i>回复</div>
             </div>
           </div>
           <!--添加评论-->
           <div class="responseArea" v-bind:style="{ height: taskItem.responseHeight + 'px'}">
-            <textarea name="content" v-bind:id="'textArea' + '_' + taskItem.projectUID + '_' + taskIndex" v-model="textareaVal" placeholder="请输入回复内容"></textarea>
+            <div class="peopleList" style="right: 0;top:20px;" v-if="taskItem.show">
+              <Input prefix="ios-search-outline" placeholder="请输人员姓名或拼音(如'张三'或 'zs')" style="width: 270px" autofocus v-model="searchPeople" ref="re"/>
+              <ul>
+                <li v-for="(item, index) in options42" :key="index" @click="checkPeople(taskItem, item, taskIndex)">{{item.Name + ' (' + item.jName + ')'}}</li>
+              </ul>
+            </div>
+            <textarea
+              name="content"
+              v-bind:id="'textArea' + '_' + taskItem.uid + '_' + taskIndex"
+              class="textArea"
+              v-model="textareaVal"
+              placeholder="请输入回复内容"
+              v-on:input="inputFunt"
+              @keyup.shift.50="inputConent(taskItem, taskIndex)"
+              @click="getTxt1CursorPosition"
+              @keyup.delete ="deleteText">
+            </textarea>
             <div class="resAreaOther">
               <div>
                 <component v-bind:is="compArr.FileUploadComp" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
@@ -243,12 +259,18 @@ import FileUploadComp from './CustomComp/FileUploadComp.vue'
 import 'swiper/dist/css/swiper.min.css'
 export default {
   name: 'DynamicsPro',
-  props: ['recall', 'refresh'],
+  props: ['recall', 'refresh', 'proId'],
   components: {
     FileUploadComp
   },
   data () {
     return {
+      items: {},
+      peopleList: [],
+      // 组织架构人员
+      options42: [],
+      // 搜索人员
+      searchPeople: '',
       msg: '任务动态',
       compArr: {
         FileUploadComp: 'FileUploadComp'
@@ -352,6 +374,30 @@ export default {
         // 抛出信息，告知父组件已刷新，将开关关闭
         this.$emit('CompThrow', false)
       }
+    },
+    textareaVal: function (val, oVal) {
+      let that = this
+      let str = val.charAt(val.length - 1)
+      if (str === '@') {
+        that.items.show = true
+        that.searchPeople = ''
+        if (that.items.show) {
+          setTimeout(() => {
+            that.$refs.re[0].focus()
+          }, 200)
+        }
+      } else {
+        that.items.show = false
+      }
+    },
+    searchPeople: function (val, old) {
+      if (val) {
+        this.getPeople()
+      }
+      if (val === '') {
+        this.searchPeople = ''
+        this.getPeople()
+      }
     }
   },
   created () {
@@ -366,6 +412,99 @@ export default {
     this.log(mySwiper)
   },
   methods: {
+    // 获取光标位置
+    getPosition (element) {
+      let cursorPos = 0
+      if (document.selection) { // IE
+        var selectRange = document.selection.createRange()
+        selectRange.moveStart('character', -element.value.length)
+        cursorPos = selectRange.text.length
+      } else if (element.selectionStart || element.selectionStart === '0') {
+        cursorPos = element.selectionStart
+      }
+      this.position = cursorPos
+    },
+    // 光标位置
+    getTxt1CursorPosition (e) {
+      this.getPosition(e.target)
+    },
+    // 点击任意区域弹窗消失
+    hidePanel (event) {
+      let sp2 = document.querySelector('.peopleList')
+      if (sp2) {
+        if (!sp2.contains(event.target)) {
+          this.taskList.forEach((item, index) => {
+            item.show = false
+            this.$set(this.taskList, index, item)
+          })
+        }
+      }
+    },
+    // 键盘删除事件
+    deleteText () {
+      let content = this.textareaVal
+      let content1 = this.textareaVal
+      let delBefore = content.substring(0, this.position)
+      let delAfter = content1.substring(this.position)
+      let position = delBefore.lastIndexOf('@', this.position)
+      let str = delBefore.substring(position, this.position)
+      this.peopleList.forEach((item, index) => {
+        if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
+          let textarea = this.textareaVal
+          let contentB = textarea.substring(0, position)
+          this.textareaVal = contentB + delAfter
+        }
+      })
+    },
+    // 检测历史记录输入功能
+    inputFunt (e) {
+      // let str = this.textareaVal.charAt(this.textareaVal.length - 1)
+      // if (str === '@') {
+      //   // item.show = true
+      //   this.searchPeople = ''
+      //   setTimeout(() => {
+      //     this.$refs['re'].focus()
+      //   }, 200)
+      // } else {
+      //   // item.show = false
+      // }
+      this.getTxt1CursorPosition(e)
+    },
+    // 触发@事件
+    inputConent (item, index) {
+      let that = this
+      item.show = true
+      that.$set(that.taskList, item, index)
+      that.searchPeople = ''
+      if (item.show) {
+        setTimeout(() => {
+          that.$refs.re[0].focus()
+        }, 200)
+      }
+    },
+    // 点击获取@人员
+    checkPeople (task, item, index) {
+      let that = this
+      that.peopleList.push(item)
+      task.show = false
+      document.getElementById('textArea' + '_' + task.uid + '_' + index).focus()
+      // that.commitComent = that.commitComent + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0'
+      let content1 = that.textareaVal
+      let content2 = that.textareaVal
+      let before = content1.substring(0, that.position)
+      let after = content2.substring(that.position)
+      that.textareaVal = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
+    },
+    // 获取默认的人员
+    getPeople () {
+      let that = this
+      that.ajax('/myProject/autoCompleteNames', {projectManager: that.searchPeople, projectId: that.proId}).then(res => {
+        if (res.code === 200) {
+          that.options42 = res.data
+          // this.loading22 = false
+        }
+      })
+    },
     // 获取附件上传组件发来的附件信息
     GetFileInfo (obj) {
       if (obj) {
@@ -513,6 +652,9 @@ export default {
             }
           }
           that.taskList = res.data.list
+          that.taskList.forEach((item, index) => {
+            item['show'] = false
+          })
           that.testSwiper()
           // 控制nodata图片显示与隐藏
           if (!that.taskList || that.taskList.length === 0) {
@@ -585,12 +727,15 @@ export default {
       }
     },
     handleSelect (item) {
-      // console.log(item.userId)
       this.Mid = item.userId
     },
-    responseBtn: function (id, index) {
+    responseBtn: function (item, index) {
       var that = this
+      let id = item.projectUID
+      that.textareaVal = ''
+      that.items = item
       that.currentTaskItemId = id
+      that.getPeople()
       var c = -1
       var obj = {}
       $('#textArea' + '_' + id + '_' + index).focus()
@@ -626,10 +771,18 @@ export default {
     responseOk: function (taskId) {
       var that = this
       that.currentTaskItemId = taskId
+      that.peopleList = that.peopleList.filter(item => that.textareaVal.indexOf(item.Name + '(' + item.jName + ')') !== -1)
+      let obj = {
+        content: that.textareaVal,
+        attachmentId: that.SetFileIdStr(),
+        contentId: taskId,
+        memberList: that.peopleList
+      }
       if ($.trim(that.textareaVal)) {
-        that.ajax('/comment/addComment', {content: that.textareaVal, attachmentId: that.SetFileIdStr(), contentId: taskId}).then(res => {
+        that.ajax('/comment/addComment', JSON.stringify(obj)).then(res => {
           if (res.code === 200) {
             that.IsClear = true
+            that.peopleList = []
             that.$message({
               type: 'success',
               message: res.msg
@@ -760,6 +913,7 @@ export default {
     display: flex;
     padding: 15px 0;
     border-bottom: 1px solid #eee;
+    position: relative;
   }
   .headPicBox{
     width: 70px;
@@ -1300,5 +1454,32 @@ export default {
   }
   .progressItem:last-child .yangtuo{
     display: none;
+  }
+  .peopleList {
+    width:300px;
+    height: 370px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .peopleList ul {
+    list-style: none;
+    width:270px;
+    max-height:300px;
+    overflow: auto;
+    margin-top:10px;
+  }
+  .peopleList ul li{
+    list-style: none;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f2f2f2;
+    cursor: pointer;
+  }
+  .peopleList ul li:hover{
+    background: #f5f8fa;
   }
 </style>

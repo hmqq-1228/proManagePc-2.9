@@ -99,7 +99,7 @@
                     </el-option>
                   </el-select>
                 </div>
-                <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
+                <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0"></div>
                 <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
               </div>
               <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">
@@ -779,7 +779,7 @@ export default {
       })
     },
     delUploadFile: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       // that.$confirm('确认删除此附件，确定删除？', '', {
       //   confirmButtonText: '确定',
@@ -797,7 +797,7 @@ export default {
         }
       }
       that.fileListEditLen = that.fileListEdit.length
-      console.log('edit', that.fileListEdit)
+      that.log('edit', that.fileListEdit)
       $('#myfileEdit').val('')
       //     }
       //   })
@@ -806,7 +806,7 @@ export default {
       // })
     },
     delUploadFileComment: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -824,7 +824,7 @@ export default {
               }
             }
             that.fileListCommentLen = that.fileListComment.length
-            console.log('edit', that.fileListComment)
+            that.log('edit', that.fileListComment)
             $('#myfile2').val('')
           }
         })
@@ -833,7 +833,7 @@ export default {
       })
     },
     delUploadFileFinish: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -850,7 +850,7 @@ export default {
               }
             }
             that.fileListFinishLen = that.fileListFinish.length
-            console.log('edit', that.fileListFinish)
+            that.log('edit', that.fileListFinish)
             $('#myfileF').val('')
           }
         })
@@ -859,7 +859,7 @@ export default {
       })
     },
     delUploadFileTran: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -876,7 +876,7 @@ export default {
               }
             }
             that.fileListTransLen = that.fileListTrans.length
-            console.log('edit', that.fileListTrans)
+            that.log('edit', that.fileListTrans)
             $('#myfileTransfer').val('')
           }
         })
@@ -885,7 +885,7 @@ export default {
       })
     },
     delUploadFileDel: function (id) {
-      console.log('id', id)
+      // console.log('id', id)
       var that = this
       that.$confirm('确认删除此附件，确定删除？', '', {
         confirmButtonText: '确定',
@@ -902,7 +902,7 @@ export default {
               }
             }
             that.fileListLen2 = that.fileList2.length
-            console.log('edit', that.fileList2)
+            // console.log('edit', that.fileList2)
             $('#myfileDel').val('')
           }
         })
@@ -1013,7 +1013,7 @@ export default {
     // 抽屉
     delTask: function (id) {
       var that = this
-      console.log('id', id)
+      that.log('id', id)
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1038,7 +1038,7 @@ export default {
       that.modifyTaskVisible = true
       that.ajax('/myTask/queryTaskDetailSingle', {taskId: id}).then(res => {
         // this.token = res._jfinal_token
-        console.log('queryTaskDetailSingle', res)
+        that.log('queryTaskDetailSingle', res)
         that.detailTaskform.jobName = res.data.jobName
         that.detailTaskform.jobLevel = parseInt(res.data.jobLevel)
         that.detailTaskform.taskStartDate = res.data.taskStartDate
@@ -1593,7 +1593,7 @@ export default {
     // ----------
     showDetailPage: function (data) {
       var that = this
-      console.log('dataaaaa:', data)
+      that.log('dataaaaa:', data)
       // that.resetScro()
       if (data.type === '2') {
         that.taskId = data.id
@@ -1626,7 +1626,7 @@ export default {
     },
     childTaskDelete: function (id) {
       var that = this
-      console.log('id', id)
+      // console.log('id', id)
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1767,7 +1767,7 @@ export default {
     // 任务开始
     startTask: function (id) {
       var that = this
-      console.log('id', id)
+      that.log('id', id)
       that.$confirm('确定后将开始此任务，确定开始？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1867,7 +1867,7 @@ export default {
       }
       that.ajax('/myTask/finishTask', {remark: that.commitComentF, attachmentId: fileStr, taskId: that.taskId}).then(res => {
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           that.toDetail()
           that.selectProjectId()
           that.getHistoryList()
@@ -1979,7 +1979,7 @@ export default {
     addMarkInfo () {
       var that = this
       that.loading2 = true
-      console.log('comment', that.fileListComment)
+      that.log('comment', that.fileListComment)
       var fileStr = ''
       for (var j = 0; j < this.fileListComment.length; j++) {
         if (j === that.fileListComment.length - 1) {

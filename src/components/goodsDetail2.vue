@@ -1,6 +1,7 @@
 <template>
   <div class="ProDetail goodsDetail" style="position: relative;margin-top: 15px;">
     <!--<div @click="ttttttt()"><button>TTTTTTT</button></div>-->
+    <div>{{TreeJsonDataName?'':''}}</div>
     <div>{{goPerfect?'':''}}</div>
     <div>{{getStoreProId?'':''}} {{slideMenu?'':''}} {{slideMenuGroup ? '' : ''}}</div>
     <!-- Part01 start 项目标题 项目简介 项目一级计划 基本信息入口 历史记录入口 等-->
@@ -99,15 +100,6 @@
                 <span style="margin-left: 5px;" v-on:click="openHisDrawer">历史记录</span>
               </div>
             </div>
-            <!--<div class="imgBox" v-if="proDetailMsg.state === '0'">-->
-              <!--<img src="../../static/img/unstart.png" alt>-->
-            <!--</div>-->
-            <!--<div class="imgBox" v-if="proDetailMsg.state === '2'">-->
-              <!--<img src="../../static/img/doing.png" alt>-->
-            <!--</div>-->
-            <!--<div class="imgBox" v-if="proDetailMsg.state === '3'">-->
-              <!--<img src="../../static/img/finish.png" alt>-->
-            <!--</div>-->
           </div>
         </div>
       <!-- 项目成员列表 -->
@@ -147,15 +139,6 @@
             <img src="../../static/img/my.png" alt>
           </div>
           <div style="margin-left: 10px;">{{proDetailMsg.projectManager}} {{startPlanDate}} 到 {{endPlanDate}}</div>
-          <!--<div class="imgBox" v-if="proDetailMsg.state === '0'">-->
-            <!--<img src="../../static/img/unstart.png" alt>-->
-          <!--</div>-->
-          <!--<div class="imgBox" v-if="proDetailMsg.state === '2'">-->
-            <!--<img src="../../static/img/doing.png" alt>-->
-          <!--</div>-->
-          <!--<div class="imgBox" v-if="proDetailMsg.state === '3'">-->
-            <!--<img src="../../static/img/finish.png" alt>-->
-          <!--</div>-->
         </div>
       </div>
       <!-- 展开与收起 -->
@@ -198,27 +181,27 @@
           >添加 / 编辑</Button> -->
         </div>
       </div>
-      <div style="margin-top:20px;" v-if="planList.length > 0 ">
-          <el-tabs v-model="activeName">
-              <el-tab-pane label="加任务" name="first">
-                  <component v-bind:is="compArr.AddNewTask"
-                     fileFormId="GetUploadCount1"
-                     v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
-                     :nodeId="parentId"
-                     >
-                  </component>
-              </el-tab-pane>
-              <el-tab-pane label="加计划" name="second" v-bind:disabled="panshow">
-                  <component v-bind:is="compArr.addNewPlan"
-                     fileFormId="addNewPlan"
-                     v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
-                     :nodeId="parentId"
-                     :defaultText="defaultText"
-                     :defaultDetail="defaultDetail">
-                  </component>
-              </el-tab-pane>
-          </el-tabs>
-      </div>
+      <!--<div style="margin-top:20px;" v-if="planList.length > 0 ">-->
+          <!--<el-tabs v-model="activeName">-->
+              <!--<el-tab-pane label="加任务" name="first">-->
+                  <!--<component v-bind:is="compArr.AddNewTask"-->
+                     <!--fileFormId="GetUploadCount1"-->
+                     <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
+                     <!--:nodeId="parentId"-->
+                     <!--&gt;-->
+                  <!--</component>-->
+              <!--</el-tab-pane>-->
+              <!--<el-tab-pane label="加计划" name="second" v-bind:disabled="panshow">-->
+                  <!--<component v-bind:is="compArr.addNewPlan"-->
+                     <!--fileFormId="addNewPlan"-->
+                     <!--v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"-->
+                     <!--:nodeId="parentId"-->
+                     <!--:defaultText="defaultText"-->
+                     <!--:defaultDetail="defaultDetail">-->
+                  <!--</component>-->
+              <!--</el-tab-pane>-->
+          <!--</el-tabs>-->
+      <!--</div>-->
     </div>
     <!-- Part01 end -->
     <!-- Part02 start 项目详情 title -->
@@ -236,8 +219,9 @@
     <!--<div v-if="listTree.length>0 && planList.length > 0">-->
        <!--<tree :list="listTree" @showDetailPage="showDetailPage" :show="show"></tree>-->
     <!--</div>-->
-    <div>
+    <div class="NewTreeCompWrap">
       <component v-bind:is="compArr.NewTree"
+                 v-bind:treeNodeLevel="treeNodeLevel"
                  v-bind:proId="proId"
                  v-bind:firstPlanId="firstPlanId"
                  v-bind:newTreeList="newTreeList"
@@ -479,6 +463,7 @@ import tree from './CustomComp/tree.vue'
 import AddNewTask from './CustomComp/AddNewTask.vue'
 import addNewPlan from './CustomComp/addNewPlan.vue'
 import NewTree from './CustomComp/NewTree.vue'
+import TreeJsonData from '../assets/testData/TreeJsonData.js'
 // DrawerComp
 export default {
   name: 'ProDetail2',
@@ -501,6 +486,9 @@ export default {
   },
   data () {
     return {
+      // 节点级别
+      treeNodeLevel: 0,
+      TreeJsonDataName: '',
       // j
       TreeNodeId: '',
       // refshPlan: false
@@ -799,6 +787,7 @@ export default {
     },
     planList: function (val, old) {
       var that = this
+      // this.log('planList---:', val)
       if (val) {
         that.FirstLevelPlanList = []
         for (var i = 0; i < val.length; i++) {
@@ -807,8 +796,7 @@ export default {
             planType: val[i].type === '1' ? '计划' : '任务',
             planStartDate: val[i].start.split(' ')[0],
             planFinishDate: val[i].finish.split(' ')[0],
-            planDateDur:
-              val[i].start.split(' ')[0] + ' 至 ' + val[i].finish.split(' ')[0],
+            planDateDur: val[i].start.split(' ')[0] + ' 至 ' + val[i].finish.split(' ')[0],
             planId: val[i].id,
             description: val[i].description ? val[i].description : ''
           }
@@ -885,6 +873,10 @@ export default {
     }
   },
   methods: {
+    ttttttt: function () {
+      this.TreeJsonDataName = JSON.stringify(TreeJsonData)
+      this.log('男儿当自强：', TreeJsonData)
+    },
     // 测试右键
     rightKey: function (e) {
       this.log('e.:', e.offsetX)
@@ -979,6 +971,25 @@ export default {
     queryNewTree (proDetRes) {
       let that = this
       // that.log('firstPlanId:', that.firstPlanId)
+      that.ajax('/myProject/getProjectTree', { firstPlanId: that.firstPlanId }).then(res => {
+        if (res.code === 200) {
+          // that.log('查询新树：', res)
+          that.listTree = []
+          that.listTree = res.data
+          if (proDetRes) {
+            that.newTreeList = []
+            res.data[0].type = 'rootPlan'
+            that.newTreeList = res.data
+            // this.log('that.newTreeList:', that.newTreeList)
+            that.TreeJsonDataName = JSON.stringify(that.newTreeList)
+          }
+        }
+      })
+    },
+    // 备份
+    queryNewTreeNew (proDetRes) {
+      let that = this
+      // that.log('firstPlanId:', that.firstPlanId)
       that.ajax('/myProject/getPlanAndTaskTree', { id: that.firstPlanId }).then(res => {
         if (res.code === 200) {
           that.log('查询新树：', res)
@@ -986,6 +997,7 @@ export default {
           that.listTree = res.data
           // that.log(111111)
           that.log('proDetRes:::', proDetRes)
+          // for () {}
           if (proDetRes) {
             var obj = {
               children: res.data,
@@ -1000,6 +1012,7 @@ export default {
             }
             that.newTreeList = []
             that.newTreeList.push(obj)
+            that.TreeJsonDataName = JSON.stringify(that.newTreeList)
           }
         }
       })
@@ -1108,7 +1121,7 @@ export default {
       var that = this
       that.ajax('/myProject/getProjectDetail', {projectUID: that.$store.state.proId})
         .then(res => {
-          that.log('getProjectDetail:', res)
+          // that.log('getProjectDetail:', res)
           if (res.code === 200) {
             // that.queryNewTree(res)
             that.memberList = res.data.memberList

@@ -64,11 +64,14 @@
         </el-radio-group>
       </div>
     </div>
-    <div class="goodList">
+    <div class="goodList" v-loading="goodsLoading">
       <div v-if="goodList.length > 0" class="goodItem" v-for="(good, index) in goodList" v-bind:key="index">
         <div class="goodItemCon">
           <div class="goodImg" @click="toGoodsManage(good.projectId)">
-            <div class="goodImg2" v-if="good.attachment[0]" @mouseover="showGoodsManage()"><img :src="good.activeImgUrl" alt=""></div>
+            <div style="position: relative;" class="goodImg2 showIcon" v-if="good.attachment[0]">
+              <img :src="good.activeImgUrl" alt="">
+              <div class="showImageIcon" @click="showGoodsManage($event, good.activeImgUrl)"><Icon size="16" type="ios-expand" /></div>
+            </div>
             <div class="goodImg2" v-if="!good.attachment[0]"><img src="../../static/img/defult.png" alt=""></div>
           </div>
           <div class="goodSlider" style="height: 40px;">
@@ -80,20 +83,20 @@
             <div class="active" v-if="good.attachment.length === 0"><img src="../../static/img/defult.png" alt=""></div>
           </div>
           <div class="goodInfo" @click="toGoodsManage(good.projectId)">
-            <div>编码: <span v-if="good.goodsCode">{{good.goodsCode}}</span><span v-if="!good.goodsCode" style="color: #999;font-size: 12px;">无编码</span></div>
+            <div class="goodTypeName" :title="good.goodsCode">编码: <span v-if="good.goodsCode">{{good.goodsCode}}</span><span v-if="!good.goodsCode" style="color: #999;font-size: 12px;">无编码</span></div>
             <div class="goodTypeName" :title="good.name">品名: <span v-if="good.name">{{good.name}}</span><span v-if="!good.name" style="color: #999;font-size: 12px;">未命名</span></div>
             <div class="goodTypeName" :title="good.projectName">项目: <span v-if="good.projectName">{{good.projectName}}</span><span v-if="!good.projectName" style="color: #999;font-size: 12px;">无项目</span></div>
-            <div>分类: <span v-if="good.categoryName">{{good.categoryName}}</span><span v-if="!good.categoryName" style="color: #999;font-size: 12px;">未分类</span></div>
+            <div class="goodTypeName" :title="good.categoryName">分类: <span v-if="good.categoryName">{{good.categoryName}}</span><span v-if="!good.categoryName" style="color: #999;font-size: 12px;">未分类</span></div>
             <div>进度: <span>{{good.developProgress}}</span></div>
           </div>
         </div>
       </div>
       <div v-if="goodList.length === 0" class="noDate">暂无数据</div>
     </div>
-    <el-dialog title="提示" :visible.sync="dialogVisible" :width="imgWide + '%'">
-      <div style="font-size: 12px;color: #409EFF;text-align: center;">
-        <span style="display: inline-block;cursor: pointer;" @click="addImgWide()">放大</span>&nbsp;&nbsp;&nbsp;&nbsp;
-        <span style="display: inline-block;cursor: pointer;" @click="delImgWide()">缩小</span>
+    <el-dialog title="图片预览" :visible.sync="dialogVisible" :width="imgWide + '%'">
+      <div class="controlImgWidth" style="position: absolute;top: 15px;left: 45%">
+        <div @click="addImgWide()">放大</div>
+        <div @click="delImgWide()">缩小</div>
       </div>
       <div><img :src="goodsImgUrl" alt=""></div>
     </el-dialog>
@@ -119,6 +122,7 @@ export default {
       goodsImgUrl: '',
       currentPage: 1,
       dialogVisible: false,
+      goodsLoading: false,
       inputVal: '',
       radioVal: '创建时间',
       goodTags: [],
@@ -191,21 +195,30 @@ export default {
     // 默认查询分类
     this.getGoodsList()
   },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '商品管理', childNavName: '研发管理'})
+  },
   methods: {
     addImgWide: function () {
-      this.imgWide = this.imgWide + 10
+      if (this.imgWide < 90) {
+        this.imgWide = this.imgWide + 10
+      }
     },
     delImgWide: function () {
-      this.imgWide = this.imgWide - 10
+      if (this.imgWide > 30) {
+        this.imgWide = this.imgWide - 10
+      }
     },
-    // previewGoodsManageImg: function (url) {
-    //   if (url) {
-    //     this.goodsImgUrl = url
-    //     this.dialogVisible = true
-    //   } else {
-    //     this.$message.warning('暂无商品图片')
-    //   }
-    // },
+    showGoodsManage: function (e, url) {
+      e.stopPropagation()
+      if (url) {
+        this.goodsImgUrl = url
+        this.dialogVisible = true
+      } else {
+        this.$message.warning('暂无商品图片')
+      }
+    },
     toGoodsManage: function (goodId) {
       if (goodId) {
         this.$store.state.proId = goodId
@@ -231,19 +244,10 @@ export default {
       that.getGoodList.developProgress = str
       that.getGoodsList()
     },
-    // // 查询  分类级别
-    // getGoodsListTag: function () {
-    //   var that = this
-    //   that.ajax('/goods/getDownByCategory', {}).then(res => {
-    //     if (res.code === 200) {
-    //       that.goodTags = res.data
-    //       this.getGoodsList()
-    //     }
-    //   })
-    // },
     // 查询商品列表
     getGoodsList: function (type, code) {
       var that = this
+      that.goodsLoading = true
       if (type && code) {
         that.getGoodList.categoryType = that.$store.state.goodType
         that.getGoodList.code = that.$store.state.goodCode
@@ -251,6 +255,7 @@ export default {
           if (res.code === 200) {
             that.goodList = res.data.list
             that.goodListTotal = res.data.totalRow
+            that.goodsLoading = false
             for (var i = 0; i < res.data.list.length; i++) {
               if (res.data.list[i].attachment.length > 0) {
                 res.data.list[i].activeImgUrl = res.data.list[i].attachment[0].previewUrl
@@ -265,6 +270,7 @@ export default {
           if (res.code === 200) {
             that.goodList = res.data.list
             that.goodListTotal = res.data.totalRow
+            that.goodsLoading = false
             for (var i = 0; i < res.data.list.length; i++) {
               if (res.data.list[i].attachment.length > 0) {
                 res.data.list[i].activeImgUrl = res.data.list[i].attachment[0].previewUrl
@@ -497,4 +503,34 @@ export default {
   .goodInfo>div .statuStyle2{
     color: #13ce66;
   }
+  .goodImg2.showIcon div{
+    display: none;
+  }
+  .goodImg2.showIcon:hover div{
+    display: block;
+  }
+  .showImageIcon{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(0,0,0,0.3);
+    padding: 2px;
+    color: #fff;
+  }
+  .controlImgWidth{
+    font-size: 12px;
+    color: #409EFF;
+    width: 100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+  }
+  .controlImgWidth > div{
+    width: 40px;
+    cursor: pointer;
+    text-align: center;
+  }
+  /*.showImageIcon.showIcon{*/
+    /*display: block;*/
+  /*}*/
 </style>

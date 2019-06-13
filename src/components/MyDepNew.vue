@@ -14,7 +14,7 @@
             <el-tabs v-model="currentTab" @tab-click="handleClick">
               <el-tab-pane v-bind:label="tab.tabName" v-bind:name="tab.tabComp" v-for="tab in tabs" v-bind:key="tab.tabComp"></el-tab-pane>
             </el-tabs>
-            <component v-bind:is="currentTabComponent" v-bind:refresh="isRefresh" v-on:CompThrow="CompThrowFuc" v-bind:recall="isRecall"></component>
+            <component v-bind:is="currentTabComponent" v-bind:refresh="isRefresh" v-on:CompThrow="CompThrowFuc" v-bind:recall="isRecall" :proId="proId"></component>
           </div>
         </div>
       </div>
@@ -30,7 +30,7 @@
           </el-option>
         </el-select>
       </div>
-      <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm.value9.length===0">* 如果此项不选，则默认自己</div>
+      <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm.value9.length===0"></div>
       <div class="selectUserBtn" v-on:click="selectUserClick()"><el-button>确定</el-button></div>
     </div>
     <!--发动态 时间选择 -->
@@ -94,6 +94,7 @@ export default {
       compArr: {
         QuickCreateTaskComp: 'QuickCreateTaskComp'
       },
+      proId: '',
       // 接收到的组件数组 新组件
       FileUploadArr: [],
       // 是否让子组件(任务动态、项目动态刷新)
@@ -230,8 +231,12 @@ export default {
   created () {
     // debugger
     this.getUserInfo()
-    this.getProBelong()
+    // this.getProBelong()
     this.setDefaultTime()
+  },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '我的动态', childNavName: ''})
   },
   computed: {
     currentTabComponent: function () {
@@ -239,6 +244,31 @@ export default {
     }
   },
   methods: {
+    taskShowFuc: function (val) {
+      var that = this
+      that.projectListShow = true
+      console.log('888888888', val)
+      that.taskLinkId = val
+    },
+    showFlagFuc: function (val) {
+      this.projectListShow = val
+    },
+    dialogGoodsShowFuc: function (val) {
+      this.dialogGoods = val
+    },
+    // 去完善信息
+    perfectInfo () {
+      this.proId = this.$store.state.proId
+      this.$router.push('/goodsDetail')
+      this.$store.state.goPerfect = true
+      this.goodsEdit = true
+      this.dialogGoods = false
+      this.projectListShow = false
+    },
+    // 跳过
+    jumpInfo () {
+      this.dialogGoods = false
+    },
     // 创建动态
     ActionResThrowFuc: function (obj) {
       if (obj.res.code === 200) {
@@ -374,19 +404,20 @@ export default {
       return year + '-' + month + '-' + date + ' ' + h + ':' + m + ':' + '00'
     },
     // 获取所属项目
-    getProBelong: function () {
-      var that = this
-      that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
-        if (res.code === 200) {
-          // this.log('getAllProject:', res)
-          this.projectBelong = res.data[0].projectUID
-          this.options = res.data
-          this.getProjectTime(this.projectBelong)
-        }
-      })
-    },
+    // getProBelong: function () {
+    //   var that = this
+    //   that.ajax('/myProject/getAllProjectByUser', {}).then(res => {
+    //     if (res.code === 200) {
+    //       // this.log('getAllProjectByUser:', res)
+    //       this.projectBelong = res.data.length > 0 ? res.data[0].projectUID : ''
+    //       this.options = res.data
+    //       this.getProjectTime(this.projectBelong)
+    //     }
+    //   })
+    // },
     getProjectTime: function (id) {
       var that = this
+      that.proId = id
       that.ajax('/myProject/getProjectDetail', {projectUID: id}).then(res => {
         if (res.code === 200) {
           // that.log('projectBelong', res)
@@ -589,7 +620,7 @@ export default {
       this.taskForm.value9 = []
       this.levelValue = 3
       $('#myfile').val('')
-      this.getProBelong()
+      // this.getProBelong()
       this.moreClick()
     },
     remoteMethod (query) {

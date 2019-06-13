@@ -1,71 +1,66 @@
 <template>
   <div class="TEST">
-    <div style="width: 600px; height: 600px; background-color: #eee;"></div>
-    <div v-on:click="TestBtnClick">TEST BTN</div>
-    <!-- 任务详情 start -->
-    <component v-show="value4" v-bind:is="compArr.TaskDetailCompTest"
-               v-bind:taskDrawerOpen="value4"
-               v-on:CommonThrow="CommonThrowFuc"
-               :nodeId="taskId2">
-    </component>
-    <!--<Drawer class="drawerScroll" :closable="false" width="750%" v-model="value4">-->
-      <!--<component v-bind:is="compArr.TaskDetailComp"-->
-                 <!--v-bind:taskDrawerOpen="value4"-->
-                 <!--v-bind:modifyTaskRes="modifyTaskRes"-->
-                 <!--v-on:FilePreEmit="GetFilePreData"-->
-                 <!--v-on:toPlanDetail="toPlanDetailFuc"-->
-                 <!--v-on:showEditForm="showEditFormFuc"-->
-                 <!--v-on:ActionResThrow="ActionResThrowFuc"-->
-                 <!--v-on:TaskDelCallback="TaskDelCallbackFuc"-->
-                 <!--:nodeId="taskId2">-->
-      <!--</component>-->
-    <!--</Drawer>-->
+    <el-date-picker
+      v-model="obj.timeValue"
+      type="datetime"
+      :picker-options="dateTimeOpt"
+      format="yyyy-MM-dd HH:mm:ss"
+      value-format="yyyy-MM-dd HH:mm:ss"
+      placeholder="选择日期时间">
+    </el-date-picker>
+    <button type="button" @click="ChangeOpt">ChangeOpt</button>
   </div>
 </template>
 
 <script>
-import TaskDetailComp from './CustomComp/TaskDetailComp.vue'
-import TaskDetailCompTest from './CustomComp/TaskDetailCompTest.vue'
 export default {
   name: 'TEST',
-  components: {
-    TaskDetailComp,
-    TaskDetailCompTest
-  },
   data () {
     return {
-      compArr: {
-        TaskDetailComp: 'TaskDetailComp',
-        TaskDetailCompTest: 'TaskDetailCompTest'
+      msg: '',
+      timeValue: '',
+      obj: {
+        timeValue: ''
       },
-      value4: false,
-      taskId2: 'J8a33ea31fc514b61ad14bb15b65856c9'
+      num: 5,
+      dateTimeOpt: {
+        disabledDate: function (currentDateTime) {
+          return false
+        }
+      }
     }
   },
   created () {
     // j
   },
+  watch: {
+    timeValue: function (val, old) {
+      this.log('timeValue:', val)
+    }
+  },
   methods: {
-    TestBtnClick: function () {
-      this.value4 = true
-    },
-    // test start
-    TestMethod: function () {
-      var arr = []
-      for (var i = 0; i < arr.length; i++) {
-        this.log(arr[i].name)
-      }
-    },
-    // test end
-    CommonThrowFuc: function (obj) {
-      if (obj.type === 'drawerKK') {
-        this.value4 = obj.drawerKK
-      }
+    ChangeOpt: function () {
+      var that = this
+      that.$store.commit('setDateOption', {OptionObj: that.dateTimeOpt, startDate: '2019-04-10 00:00:00', endDate: '2019-04-25 00:00:00'})
     }
   }
 }
 </script>
 
 <style scoped>
-
+  .box{
+    height: 100%;
+    padding: 50px;
+  }
+  .box1{
+    width: 500px;
+    height: 500px;
+    background-color: #aaa;
+  }
+  .box2{
+    background-color: #bbb;
+  }
+  .box3{
+    background-color: #ccc;
+  }
 </style>

@@ -1,9 +1,15 @@
 <template>
   <div class="MyPro">
+    <!--<div>dd:{{getSelectProjectType?'' : ''}}</div>-->
     <div class="MyProCnt">
       <div class="MyProHeader">
-        <div class="MyProHeaItem search">
-          <Input search enter-button @on-search="searchPro" v-model="searchProVal" placeholder="请输入要查找的项目" />
+        <div>
+          <div class="MyProHeaItem search">
+            <Input search enter-button @on-search="searchPro" v-model="searchProVal" placeholder="请输入要查找的项目" />
+          </div>
+          <div class="MyProHeaItem search">
+            <Input search enter-button @on-search="searchProManager" v-model="searchProManagerVal" placeholder="请搜索项目负责人姓名" />
+          </div>
         </div>
         <div class="MyProHeaItem addBtn"><Button type="primary" v-on:click="newAdd()">新增项目</Button></div>
       </div>
@@ -23,58 +29,116 @@
           <TabPane label="进行中" name="2"></TabPane>
           <TabPane label="已完成" name="3"></TabPane>
           <TabPane label="未开始" name="0"></TabPane>
+          <TabPane label="已暂停" name="4"></TabPane>
         </Tabs>
       </div>
-      <div class="content">
-        <div class="cntItem" v-for="item in projectViewData" :key="item.projectUID">
-          <div class="cntItemLeft" @click="toProDetail(item.projectUID)">
-            <div class="proTit">项目名称: {{item.projectName}}</div>
-            <div class="proPrincipals">负责人: {{item.projectManager}}</div>
-            <div class="proDuration">{{item.startDate}} 至 {{item.endDate}}</div>
-          </div>
-          <div class="cntItemRight">
-            <div class="proType"><span>项目类型: {{item.projectType}}</span></div>
-            <div class="proType">
-              <div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum < 0 && item.state != '3'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(item.dayNum)}}</span> 天</div>
-              <div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum >= 0 && item.state != '3'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{item.dayNum}}</span> 天</div>
-              <div style="text-align: right;font-size: 12px;color: #3a8ee6;font-weight: bold;display: inline-block" v-if="item.state === '3'">项目已完成</div>
-            </div>
-            <div class="proPregress">
-              <i-circle :percent="item.proportion" :size="60">
-                <span class="demo-Circle-inner" v-if="item.proportion < 50" style="font-size:18px;color: chocolate;">{{item.proportion}}%</span>
-                <span class="demo-Circle-inner" v-if="item.proportion >= 50 && item.proportion < 80" style="font-size:18px;color: #409EFF;">{{item.proportion}}%</span>
-                <span class="demo-Circle-inner" v-if="item.proportion >= 80" style="font-size:18px;color: #13ce66;">{{item.proportion}}%</span>
-              </i-circle>
-            </div>
-            <div style="text-align: right; padding-right: 30px;">
-              <Button size="small" style="margin-left: 15px;" @click="responsePro(item.projectUID)">回复</Button>
-              <Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID, item.projectType)">删除</Button>
-            </div>
-            <div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
+      <div class="content" style="margin-top: 15px;">
+        <!--<div class="cntItem" v-if="false" v-for="item in projectViewData" :key="item.projectUID">-->
+          <!--<div class="cntItemLeft" @click="toProDetail(item.projectUID)">-->
+            <!--<div class="proTit">项目名称: {{item.projectName}}</div>-->
+            <!--<div class="proPrincipals">负责人: {{item.projectManager}}</div>-->
+            <!--<div class="proDuration">{{item.startDate}} 至 {{item.endDate}}</div>-->
+          <!--</div>-->
+          <!--<div class="cntItemRight">-->
+            <!--<div class="proType"><span>项目类型: {{item.projectType}}</span></div>-->
+            <!--<div class="proType">-->
+              <!--<div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum < 0 && item.state != '3'">已逾期 <span style="font-size: 18px;color: #f00;font-weight: bold;">{{Math.abs(item.dayNum)}}</span> 天</div>-->
+              <!--<div style="text-align: right;font-size: 12px;display: inline-block" v-if="item.dayNum >= 0 && item.state != '3'">剩余 <span style="font-size: 18px;color: #27CF97;font-weight: bold;">{{item.dayNum}}</span> 天</div>-->
+              <!--<div style="text-align: right;font-size: 12px;color: #3a8ee6;font-weight: bold;display: inline-block" v-if="item.state === '3'">项目已完成</div>-->
+            <!--</div>-->
+            <!--<div class="proPregress">-->
+              <!--<i-circle :percent="item.proportion" :size="60">-->
+                <!--<span class="demo-Circle-inner" v-if="item.proportion < 50" style="font-size:18px;color: chocolate;">{{item.proportion}}%</span>-->
+                <!--<span class="demo-Circle-inner" v-if="item.proportion >= 50 && item.proportion < 80" style="font-size:18px;color: #409EFF;">{{item.proportion}}%</span>-->
+                <!--<span class="demo-Circle-inner" v-if="item.proportion >= 80" style="font-size:18px;color: #13ce66;">{{item.proportion}}%</span>-->
+              <!--</i-circle>-->
+            <!--</div>-->
+            <!--<div style="text-align: right; padding-right: 30px;">-->
+              <!--<Button size="small" v-if="item.timeoutButton === 1" style="margin-left: 15px;" @click="stopePro(item.projectUID)">暂停</Button>-->
+              <!--<Button size="small" v-if="item.timeoutButton === 2" style="margin-left: 15px;" @click="startPro(item.projectUID)">开启</Button>-->
+              <!--<Button size="small" @click="responsePro(item.projectUID)">回复</Button>-->
+              <!--<Button v-if="item.isDelProject" size="small" @click="delPro(item.projectUID, item.projectType)">删除</Button>-->
+            <!--</div>-->
+            <!--<div class="taskStateBiao" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <div style="padding: 0px;" class="clear">
+          <div style="margin-bottom: 15px; float: left; width: 50%; min-width: 571px; padding-right: 20px;box-sizing: border-box;" @click.stop="toProDetail(item.projectUID)" v-for="item in projectViewData" :key="item.projectUID">
+            <Card :bordered="true">
+              <div class="groupItemTit" slot="title" :title="item.projectName">
+                <div class="groupItemTitCnt" @click="toProDetail(item.projectUID)"><span style="color: #888; font-weight: normal">{{item.projectType}}</span>：{{item.projectName}}</div>
+                <div class="taskStateBiaoNew" v-bind:class="item.tagStyle">{{item.statusInfo}}</div>
+              </div>
+              <a href="#" slot="extra" v-if="item.attentionStatus === 2" @click.stop="attention(1, item)" title="关注">
+                <!--没有关注-->
+                <Icon type="md-heart-outline" style="font-size: 18px"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.attentionStatus === 1" @click.stop="attention(2, item)" title="取消关注">
+                <!--已关注-->
+                <Icon type="md-heart" style="font-size: 18px;color: red"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 1" @click.stop="stopePro(item.projectUID)" style="margin-left: 10px;" title="暂停">
+                <Icon type="ios-pause" style="font-size: 20px;"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.timeoutButton === 2" @click.stop="startPro(item.projectUID)" style="margin-left: 10px;" title="开启">
+                <Icon type="ios-play" style="font-size: 20px;"/>
+              </a>
+              <a href="#" slot="extra" @click.stop="responsePro(item.projectUID)" style="margin-left: 10px;" title="回复">
+                <Icon type="ios-create" style="font-size: 20px;"/>
+              </a>
+              <a href="#" slot="extra" v-if="item.isDelProject" @click.stop="delPro(item.projectUID, item.projectType)" style="margin-left: 10px;padding-top: 3px" title="删除">
+                <Icon type="ios-trash" style="font-size: 20px;color:#2D8CF0"/>
+              </a>
+              <div style="display: flex; justify-content: space-between;">
+                <div style="width: 50%; display: flex;">
+                  <div class="textIntro">负责人：{{item.projectManager}}</div>
+                  <div style="width: 150px; margin-left: 10px;">
+                    <Progress :percent="item.proportion" :stroke-width="5" status="active" />
+                  </div>
+                </div>
+                <div style="width: 50%; text-align: right; color: #888"><span style="margin-left: 15px;">{{item.startDate}} 至 {{item.endDate}}</span></div>
+              </div>
+            </Card>
           </div>
         </div>
         <div class="nodata" v-if="projectViewData.length === 0">
           <div style="width:165px; margin: 0 auto; margin-top: 50px;"><img src="../../static/img/nodata.png" /></div>
           <div style="text-align: center; color: #666; margin-top: 15px; font-size: 14px;">暂无数据</div>
         </div>
-        <!--<div class="cntItem">-->
-          <!--<div class="cntItemLeft">-->
-            <!--<div class="proTit">项目名称: 贝豪集团2019战略项目规划</div>-->
-            <!--<div class="proPrincipals">负责人: 张三</div>-->
-            <!--<div class="proDuration">2019-02-25 至 2019-02-28</div>-->
-          <!--</div>-->
-          <!--<div class="cntItemRight">-->
-            <!--<div class="proType"><span>剩余时间: 3天</span><span>项目类型: 集团项目</span></div>-->
-            <!--<div class="proPregress">-->
-              <!--<i-circle :percent="80" :size="70">-->
-                <!--<span class="demo-Circle-inner" style="font-size:24px">80%</span>-->
-              <!--</i-circle>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
       </div>
     </div>
+    <el-dialog
+      title="项目暂停"
+      :visible.sync="projectStopeVisible"
+      width="350px"
+      center>
+      <span style="font-size: 15px;">请选择您要暂停项目的方式</span>
+      <span slot="footer" class="dialog-footer">
+    <el-button type="primary" size="mini" @click="stopeProject(stopeId, '1')">只暂停项目</el-button>
+    <el-button type="primary" size="mini" @click="stopeProject(stopeId, '2')">暂停项目和任务</el-button>
+  </span>
+    </el-dialog>
+    <el-dialog
+      title="项目开启"
+      :visible.sync="projectStopeVisible2"
+      width="350px"
+      center>
+      <span style="font-size: 15px;">确定开启项目且修改时间吗？</span>
+      <span slot="footer" class="dialog-footer">
+    <el-button type="primary" size="mini" @click="startProject(stopeId)">开启不修改时间</el-button>
+    <el-button type="primary" size="mini" @click="startEditProject()">开启修改时间</el-button>
+  </span>
+    </el-dialog>
     <!--新建项目 对话框-->
+    <Drawer title="基本信息" width="740" :closable="false" v-model="DrawerBaseEdit">
+      <component v-bind:is="compArr.ProBaseInfo"
+                 fileFormId="stopeBaseInfoEdit"
+                 v-on:FilePreEmit="GetFilePreData"
+                 v-bind:ProBaseInfoShow="DrawerBaseEdit"
+                 v-on:ProBaseInfoCallback="ProBaseInfoFuc"
+                 :proId="stopeId">
+      </component>
+    </Drawer>
     <div>
       <Modal v-model="newAddDialog" title="新建项目" width="620" @on-ok="ok" @on-cancel="cancel">
         <div style="padding-bottom: 10px;">
@@ -166,11 +230,15 @@
           <el-form-item class="proIntroduce" label="项目简介" prop="introduction" style="clear: both;">
             <el-input type="textarea" style="" rows = '4' v-model="ruleForm.introduction"></el-input>
           </el-form-item>
+          <el-form-item label="自动加入" prop="delivery">
+            <el-switch v-model="ruleForm.delivery"></el-switch>
+            <span style="color: #cf9236; font-size: 12px; margin-left: 10px;">{{ruleForm.deliveryTips}}</span>
+          </el-form-item>
           <el-form-item label="项目附件" v-if="!ruleForm.showName">
             <!--<div v-if="!ruleForm.showName" style="color: #999;font-size: 12px;">暂无附件</div>-->
             <div v-if="!ruleForm.showName">
               <!--附件上传 组件 引入附件上传组件  v-bind:clearInfo=""-->
-              <component v-bind:is="FileUploadComp" fileFormId="createPro" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+              <component v-bind:is="compArr.FileUploadComp" fileFormId="createPro" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
               <!--<a v-bind:href="ruleForm.downloadUrl" download="项目附件">{{ruleForm.showName}}-->
                 <!--<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i>-->
               <!--</a>-->
@@ -194,12 +262,7 @@
       <div class="showImg"><img v-bind:src="commentPreviewUrl" alt=""></div>
     </el-dialog>
     <!-- 完善产品信息 -->
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogGoods"
-      width="30%"
-      center
-    >
+    <el-dialog title="提示" :visible.sync="dialogGoods" width="30%" center>
       <span>是否完善产品信息？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="jumpInfo">跳过</el-button>
@@ -240,26 +303,45 @@
     <!--抽屉 回复 历史记录-->
     <!--新增 抽屉 查看历史记录 start-->
     <Drawer title="历史记录" width="740" :closable="false" v-model="DrawerHistory">
-      <div class="el-textarea" v-loading="historyLoading">
+      <div @click="hidePanel">
+         <div class="el-textarea" v-loading="historyLoading">
         <!--enctype="multipart/form-data"-->
         <form id="uploadFile">
-          <textarea name="content" class="el-textarea__inner" id="textArea" type="text" v-model="commitComent"></textarea>
+          <div class="peopleList" style="right: 0;top: 0;" v-if="selectUserDiaShow2">
+            <Input prefix="ios-search-outline" placeholder="请输人员姓名或拼音(如'张三'或 'zs')" style="width: 270px"  autofocus v-model="searchPeople" v-focus ref="re"/>
+            <ul>
+              <li v-for="(item, index) in options42" :key="index" @click="checkPeople(item)">{{item.Name + ' (' + item.jName + ')'}}</li>
+            </ul>
+          </div>
+          <textarea
+            name="content"
+            class="el-textarea__inner"
+            id="textArea"
+            type="text"
+            v-model="commitComent"
+            v-on:input="inputFunt"
+            @keyup.delete ="deleteText"
+            @keyup.shift.50="inputConent"
+            @click="getTxt1CursorPosition"
+            v-focus
+          ></textarea>
           <div class="cannetProject2">
             <div>
-              <component v-bind:is="FileUploadComp" fileFormId="proHistory" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
+              <component v-bind:is="compArr.FileUploadComp" fileFormId="proHistory" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
             </div>
             <div><i-button type="info" v-bind:disabled="butnDisabled" @click="addMarkInfo()">回复</i-button></div>
           </div>
         </form>
       </div>
-      <!--操作记录-->
-      <div class="discription lis" style="margin-top: 15px;">
+         <!--操作记录-->
+         <div class="discription lis" style="margin-top: 15px;">
         <!-- 历史记录 评论 引入组件-->
         <component v-bind:is="compArr.CommentLogs" fileFormId="ProCommentLogs" v-on:FilePreEmit="GetFilePreData" :commentList="taskLogs"></component>
         <!--<button v-on:click="setCurrentPage">Test</button>-->
         <div style="text-align: center">
           <Page :total="commentTotalNum" size="small" :page-size="10" show-total ref="currentPageNum" @on-change="commentPageChange($event)"></Page>
         </div>
+      </div>
       </div>
     </Drawer>
     <el-dialog title="图片预览" :visible.sync="dialogShowImg1">
@@ -275,17 +357,33 @@
 
 <script>
 import CommentLogs from './CustomComp/CommentLogs.vue'
-import FileUploadComp from './FileUploadComp.vue'
+import FileUploadComp from './CustomComp/FileUploadComp.vue'
 import goodsInfo from './CustomComp/goodsInfo.vue'
+import ProBaseInfo from './CustomComp/ProBaseInfo.vue'
 export default {
   name: 'MyPro',
   components: {
     FileUploadComp,
     CommentLogs,
+    ProBaseInfo,
     goodsInfo
   },
   data () {
     return {
+      // 光标位置
+      position: 0,
+      // 搜索组织架构人员
+      searchPeople: '',
+      // @成员
+      peopleList: [],
+      // refshPlan: false
+      loading22: false,
+      // 获取默认的人员
+      options42: [],
+      // @人员
+      peopleValue: [],
+      // 判断是否出现@人员
+      selectUserDiaShow2: false,
       // 完善茶品信息
       dialogGoods: false,
       // 商品信息
@@ -295,7 +393,11 @@ export default {
       dialogShowImg1: false,
       // 加载转圈
       createProLoading: false,
+      projectStopeVisible: false,
+      projectStopeVisible2: false,
+      stopeId: '',
       // shi
+      DrawerBaseEdit: false,
       pageN: 1,
       // 附件上传 是否让子组件清空文件
       IsClear: false,
@@ -308,6 +410,7 @@ export default {
       compArr: {
         CommentLogs: 'CommentLogs',
         FileUploadComp: 'FileUploadComp',
+        ProBaseInfo: 'ProBaseInfo',
         goodsInfo: 'goodsInfo'
       },
       // 新建项目 表单
@@ -348,6 +451,7 @@ export default {
       logPageNum: 1,
       // 搜索项目
       searchProVal: '',
+      searchProManagerVal: '',
       // 是否选择了"新建项目模板"
       isModel: false,
       duration: 100,
@@ -378,7 +482,15 @@ export default {
         {
           value: '3',
           label: '我参与的'
+        },
+        {
+          value: '5',
+          label: '我关注的'
         }
+        // {
+        //   value: '4',
+        //   label: '@我的'
+        // }
       ],
       // 项目分类列表
       proTypeListPure: this.$store.state.projectType,
@@ -410,6 +522,7 @@ export default {
       myProjectViewPayload: {
         // 项目名称，模糊查询
         projectName: '',
+        projectManager: '',
         userId: this.$store.state.userId,
         // 项目状态（0:未开始； 2：进行中:3：已完成;"":全部）
         status: '',
@@ -425,7 +538,8 @@ export default {
       ruleForm: {
         projectName: '',
         projectManager: '',
-        delivery: false,
+        delivery: true,
+        deliveryTips: '注：是否将该项目下的任务负责人自动加入项目小组',
         projectType: '公司项目',
         showName: '',
         downloadUrl: '',
@@ -448,6 +562,9 @@ export default {
         projectType: [
           { required: true, message: '请输入项目类型', trigger: 'change' }
         ],
+        delivery: [
+          { required: false, message: '任务负责人是否自动加入项目小组', trigger: 'change' }
+        ],
         value2: [
           { required: true, message: '请选择日期', trigger: 'change' }
         ],
@@ -466,6 +583,14 @@ export default {
     // activeNavIndex: this.$store.state.activeNavIndex,
     // j
     var that = this
+    // projectType
+    // if (that.$route.params.projectType) {
+    //   this.model2 = that.$route.params.projectType
+    //   that.myProjectViewPayload.projectType = that.$route.params.projectType
+    // } else {
+    //   this.model2 = 'all'
+    //   that.myProjectViewPayload.projectType = ''
+    // }
     this.proTypeList = this.proTypeList.concat(that.$store.state.projectType)
     // 查询个人项目列表
     this.queryMyProjectView()
@@ -477,6 +602,20 @@ export default {
     // this.getModelDetail()
     // 初始化token
     // this.settoken()
+  },
+  mounted: function () {
+    /** 设置侧边栏激活状态 */
+    this.$store.commit('setNavActive', {navName: '项目管理', childNavName: '我的项目'})
+  },
+  computed: {
+    getSelectProjectType: function () {
+      var that = this
+      that.log('abcdefg', that.$store.state.selectProjectType)
+      that.model2 = that.$store.state.selectProjectType
+      that.myProjectViewPayload.projectType = that.$store.state.selectProjectType
+      this.queryMyProjectView()
+      return this.$store.state.selectProjectType
+    }
   },
   watch: {
     // 历史记录 显示与隐藏
@@ -496,17 +635,45 @@ export default {
       } else {
         this.butnDisabled = true
       }
+      let str = val.charAt(val.length - 1)
+      if (str === '@') {
+        this.selectUserDiaShow2 = true
+        this.searchPeople = ''
+        if (this.selectUserDiaShow2) {
+          setTimeout(() => {
+            this.$refs['re'].focus()
+          }, 200)
+        }
+      } else {
+        this.selectUserDiaShow2 = false
+      }
+    },
+    searchPeople: function (val, old) {
+      if (val) {
+        this.getPeople()
+      }
+      if (val === '') {
+        this.searchPeople = ''
+        this.getPeople()
+      }
     },
     pageNum: function (val, old) {
       this.myProjectViewPayload.pageNum = val
+      this.log(22222)
       this.queryMyProjectView()
     },
     searchProVal: function (val, old) {
+      this.log(33333)
       this.myProjectViewPayload.projectName = val
       this.queryMyProjectView()
       // if (val) {
       //   this.queryMyProjectView()
       // }
+    },
+    searchProManagerVal: function (val, oV) {
+      this.myProjectViewPayload.projectManager = val
+      this.log(4444)
+      this.queryMyProjectView()
     },
     statusVal: function (val1, val2) {
       if (val1) {
@@ -515,6 +682,7 @@ export default {
         this.myProjectViewPayload.status = ''
       }
       this.myProjectViewPayload.pageNum = 1
+      this.log(555555)
       this.queryMyProjectView()
     },
     model1: function (val1, val2) {
@@ -538,7 +706,132 @@ export default {
       this.queryMyProjectView()
     }
   },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        el.focus()
+      }
+    }
+  },
   methods: {
+    // 关注
+    attention (type, item) {
+      this.ajax('/myProject/attention', {status: type, linkId: item.projectUID}).then(res => {
+        if (res.code === 200) {
+          this.queryMyProjectView()
+        }
+      })
+    },
+    // 获取当前光标的位置
+    getPosition (element) {
+      let cursorPos = 0
+      if (document.selection) { // IE
+        var selectRange = document.selection.createRange()
+        selectRange.moveStart('character', -element.value.length)
+        cursorPos = selectRange.text.length
+      } else if (element.selectionStart || element.selectionStart === '0') {
+        cursorPos = element.selectionStart
+      }
+      this.position = cursorPos
+    },
+    // 调取获取光标的位置
+    getTxt1CursorPosition (e) {
+      this.getPosition(e.target)
+    },
+    // 设置光标位置
+    setCaretPosition (ctrl, pos) {
+      if (ctrl.setSelectionRange) {
+        ctrl.focus()
+        ctrl.setSelectionRange(pos, pos)
+        console.log(ctrl.setSelectionRange)
+      } else if (ctrl.createTextRange) {
+        console.log(2)
+        var range = ctrl.createTextRange()
+        range.collapse(true)
+        range.moveEnd('character', pos)
+        range.moveStart('character', pos)
+        range.select()
+      }
+    },
+    setPos: function (o) {
+      if (o.setSelectionRange) { // W3C
+        setTimeout(function () {
+          o.setSelectionRange(2, 2)
+          o.focus()
+        }, 100)
+      } else if (o.createTextRange) { // IE
+        var textRange = o.createTextRange()
+        textRange.moveStart('character', 1)
+        textRange.moveEnd('character', 0)
+        textRange.select()
+      }
+    },
+    // 点击任意区域取消弹窗
+    hidePanel (event) {
+      let sp2 = document.querySelector('.peopleList')
+      if (sp2) {
+        if (!sp2.contains(event.target)) {
+          this.selectUserDiaShow2 = false
+        }
+      }
+    },
+    // 键盘删除事件
+    deleteText () {
+      let content = this.commitComent
+      let content1 = this.commitComent
+      let delBefore = content.substring(0, this.position)
+      let delAfter = content1.substring(this.position)
+      let position = delBefore.lastIndexOf('@', this.position)
+      let str = delBefore.substring(position, this.position)
+      this.peopleList.forEach((item, index) => {
+        if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
+          let textarea = this.commitComent
+          let contentB = textarea.substring(0, position)
+          let ele = document.querySelector('.el-textarea__inner')
+          this.setPos(ele)
+          this.commitComent = contentB + delAfter
+        }
+      })
+    },
+    // 点击获取@人员
+    checkPeople (item) {
+      let that = this
+      that.peopleList.push(item)
+      that.selectUserDiaShow2 = false
+      $('.el-textarea__inner').focus()
+      // that.commitComent = that.commitComent + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0'
+      let content1 = that.commitComent
+      let content2 = that.commitComent
+      let before = content1.substring(0, that.position)
+      let after = content2.substring(that.position)
+      let ele = document.querySelector('.el-textarea__inner')
+      that.setPos(ele)
+      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
+    },
+    // 获取默认的人员
+    getPeople () {
+      let that = this
+      that.ajax('/myProject/autoCompleteNames', {projectManager: that.searchPeople, projectId: that.proId}).then(res => {
+        if (res.code === 200) {
+          that.options42 = res.data
+          this.loading22 = false
+        }
+      })
+    },
+    // 检测历史记录输入功能
+    inputFunt (e) {
+      this.getTxt1CursorPosition(e)
+    },
+    // 获取@的事件
+    inputConent () {
+      this.selectUserDiaShow2 = true
+      this.searchPeople = ''
+      if (this.selectUserDiaShow2) {
+        setTimeout(() => {
+          this.$refs['re'].focus()
+        }, 200)
+      }
+    },
     setCurrentPage () {
       // this.currentPageNum = 1
       this.$refs['currentPageNum'].currentPage = 1
@@ -623,11 +916,14 @@ export default {
       that.addProjectCommentPayload.contentId = that.proId
       that.addProjectCommentPayload.content = that.commitComent
       that.addProjectCommentPayload.attachmentId = that.SetFileIdStr()
+      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')') !== -1)
+      that.addProjectCommentPayload.memberList = that.peopleList
       if (that.commitComent) {
-        that.ajax('/comment/addComment', that.addProjectCommentPayload).then(res => {
+        that.ajax('/comment/addComment', JSON.stringify(that.addProjectCommentPayload)).then(res => {
           that.log('addProjectComment:', res)
           if (res.code === 200) {
             that.IsClear = true
+            that.peopleList = []
             that.$message({
               type: 'success',
               message: res.msg
@@ -694,6 +990,9 @@ export default {
     responsePro: function (pId) {
       this.proId = pId
       this.DrawerHistory = true
+      this.commitComent = ''
+      this.peopleList = []
+      this.getPeople()
       this.getHistoryCont()
     },
     // 删除项目
@@ -721,10 +1020,61 @@ export default {
         }
       })
     },
+    // 暂停项目
+    stopePro: function (pId) {
+      var that = this
+      that.projectStopeVisible = true
+      that.stopeId = pId
+    },
+    stopeProject: function (id, type) {
+      var that = this
+      this.ajax('/myProject/timeoutProject', {projectId: id, projectOnly: type}).then(res => {
+        if (res.code === 200) {
+          that.queryMyProjectView()
+          that.$message.success(res.msg)
+          that.projectStopeVisible = false
+        } else {
+          that.$message.warning(res.msg)
+          that.projectStopeVisible = false
+        }
+      })
+    },
+    // 开启项目
+    startPro: function (pId) {
+      var that = this
+      that.projectStopeVisible2 = true
+      that.stopeId = pId
+    },
+    startProject: function (id) {
+      var that = this
+      that.ajax('/myProject/timeonProject', {projectId: id}).then(res => {
+        if (res.code === 200) {
+          that.queryMyProjectView()
+          that.$message.success('项目已开启')
+          that.projectStopeVisible2 = false
+        } else {
+          that.$message.warning(res.msg)
+          that.projectStopeVisible2 = false
+        }
+      })
+    },
+    startEditProject: function () {
+      var that = this
+      that.DrawerBaseEdit = true
+      that.projectStopeVisible2 = false
+    },
     // 新增搜索项目
     searchPro: function (iptName) {
-      this.log('iptName:', iptName)
+      this.log(888888)
+      this.myProjectViewPayload.pageNum = 1
       this.myProjectViewPayload.projectName = iptName
+      this.queryMyProjectView()
+    },
+    searchProManager: function (iptName) {
+      this.log('iptName:', iptName)
+      this.myProjectViewPayload.pageNum = 1
+      this.myProjectViewPayload.projectManager = iptName
+      this.log(9999999)
       this.queryMyProjectView()
     },
     // 新增 查询用户信息
@@ -752,6 +1102,7 @@ export default {
     // 查询个人项目列表 (项目卡片)
     queryMyProjectView () {
       var that = this
+      this.log('that.myProjectViewPayload:', that.myProjectViewPayload)
       this.ajax('/myProject/myProjectView', that.myProjectViewPayload).then(res => {
         // console.log('项目卡片', res)
         if (res.code === 200) {
@@ -770,6 +1121,9 @@ export default {
             } else if (res.data.list[i].state === '3') {
               res.data.list[i].tagStyle = 'finished'
               res.data.list[i].statusInfo = '已完成'
+            } else if (res.data.list[i].state === '4') {
+              res.data.list[i].tagStyle = 'stoped'
+              res.data.list[i].statusInfo = '已暂停'
             }
           }
           that.projectViewData = res.data.list
@@ -929,6 +1283,7 @@ export default {
                 projectManager: this.ruleForm.projectManager,
                 modelId: that.modId,
                 introduction: this.ruleForm.introduction,
+                orgFlag: that.ruleForm.delivery,
                 // 附件ID
                 attachmentId: that.SetFileIdStr(),
                 // 如果项目类型是产品研发 projectClassifyId为研发下的分类ID
@@ -985,6 +1340,20 @@ export default {
     jumpInfo () {
       this.$router.push('/goodsDetail')
     },
+    ProBaseInfoFuc: function (res) {
+      var that = this
+      if (res.code === 200) {
+        that.$Message.success('修改成功!')
+        that.DrawerBaseEdit = false
+        that.startProject(that.stopeId)
+        // that.queryMyProjectView()
+      } else {
+        that.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
     // 商品上传成功后续
     ProBaseInfoCallbackFuc (res) {
       var that = this
@@ -1015,6 +1384,7 @@ export default {
                 projectManager: that.ruleForm.projectManager,
                 projectManagerID: that.Mid,
                 introduction: that.ruleForm.introduction,
+                orgFlag: that.ruleForm.delivery,
                 attachmentId: that.SetFileIdStr(),
                 // 如果类型是产品研发，下面的分类id
                 projectClassifyId: that.ruleForm.projectClassifyId
@@ -1087,20 +1457,57 @@ export default {
 }
 </script>
 
+<style>
+  .ivu-card{
+    box-shadow:0 1px 6px rgba(0,0,0,.1)
+  }
+  .ivu-card:hover{
+    box-shadow:0 1px 6px rgba(45,140,240,.6)
+  }
+  .ivu-card .groupItemTit{
+    display: flex;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .ivu-card:hover .groupItemTit{
+    color: #2d8cf0;
+  }
+</style>
 <style scoped>
 .MyProCnt{
   min-width: 600px;
   /*max-width: 1000px;*/
 }
+  .clear:after{ content: ""; display: block;height: 0;visibility: hidden;clear: both;}
+  .groupItemTit{
+    color: #555;
+  }
+  .groupItemTitCnt{
+    max-width:250px;
+    font-size: 16px;
+    overflow:hidden;
+    cursor: pointer;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .textIntro{
+    width: 100px;
+    color: #888;
+  }
   .MyProHeader{
     display: flex;
-    padding: 20px 10px;
+    padding: 10px;
     justify-content: space-between;
     background-color: #f5f8fa;
   }
-  .MyProHeaItem{}
+  .MyProHeaItem.search:nth-of-type(2){
+    margin-left: 20px;
+  }
   .MyProHeaItem.search{
     width: 400px;
+    display: inline-block;
   }
   .selectBox{
     padding: 20px 10px;
@@ -1183,6 +1590,32 @@ export default {
   }
   .taskStateBiao.finished{
     background-color: #3a8ee6;
+  }
+  .taskStateBiao.stoped{
+    background-color: #e97474;
+  }
+  .taskStateBiaoNew{
+    text-align: center;
+    padding: 0px 5px;
+    font-size: 12px;
+    margin-left: 10px;
+    border-radius: 6px;
+  }
+  .taskStateBiaoNew.noStart{
+    color: #ffb400;
+    border: 1px solid #ffb400;
+  }
+  .taskStateBiaoNew.isDoing{
+    color: #13ce66;
+    border: 1px solid #13ce66;
+  }
+  .taskStateBiaoNew.finished{
+    color: #3a8ee6;
+    border: 1px solid #3a8ee6;
+  }
+  .taskStateBiaoNew.stoped{
+    color: #ccc;
+    border: 1px solid #ccc;
   }
   /*新建模板*/
   .cartHover:hover{
@@ -1335,6 +1768,33 @@ export default {
   .showImg>img{
     width: 100%;
   }
+.peopleList {
+  width:300px;
+  height: 370px;
+  padding: 20px 10px;
+  background-color: #fff;
+  position: absolute;
+  z-index: 200;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+}
+.peopleList ul {
+  list-style: none;
+  width:270px;
+  max-height:300px;
+  overflow: auto;
+  margin-top:10px;
+}
+.peopleList ul li{
+  list-style: none;
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #f2f2f2;
+  cursor: pointer;
+}
+.peopleList ul li:hover{
+  background: #f5f8fa;
+}
   /*历史记录 start*/
   /*历史记录 end*/
 </style>

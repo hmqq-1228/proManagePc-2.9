@@ -103,7 +103,7 @@ export default {
   },
   watch: {
     nodeId (val, old) {
-      console.log('nodeId:', val)
+      // this.log('nodeId:', val)
       if (val) {
         this.getPlanTaskDetail()
       }
@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     GetFilePreData (obj) {
-      this.log(123)
+      // this.log(123)
       this.$emit('FilePreEmit', obj)
     },
     levelChange: function (rateval) {

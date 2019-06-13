@@ -1,24 +1,35 @@
 <template>
-  <div class="TaskDetailComp">
+  <div class="TaskDetailComp" @click="hidePanel">
       <!--<button @click="testData">TEST</button>-->
       <div>{{taskEdit?'':''}}</div>
       <div class="slidTop">
-        <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
+        <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" style="float: left;margin-top: 6px;" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.jobLevel" disabled/></span></div>
-        <div style="display: flex;justify-content: space-between">
-          <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-          <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+        <div>
+          <div style="display: flex;justify-content: space-between" v-if="taskBasicMsg.status !== '3'">
+            <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true" @click="delTask(taskBasicMsg.uid)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+            <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          </div>
         </div>
       </div>
       <div class="taskMsg">
         <div class="taskLf">
           <div class="taskName">{{taskBasicMsg.jobName}}</div>
-          <div class="taskDetail" v-bind:title="taskBasicMsg.description">{{taskBasicMsg.description}}</div>
+          <div class="taskDetail">
+            <div class="taskDetailCnt" v-bind:title="taskBasicMsg.description">
+              {{taskBasicMsg.description}}
+            </div>
+            <div class="taskDetailCntMore" v-on:click="taskIntroMore" v-if="taskBasicMsg.description && taskBasicMsg.description.length > 112">
+              <Icon v-if="!taskIntroMoreOpen" size="16" type="ios-arrow-down" />
+              <Icon v-if="taskIntroMoreOpen" size="16" type="ios-arrow-up" />
+            </div>
+          </div>
         </div>
         <div class="taskRt">
           <div v-if="taskBasicMsg.status === '0'"><img src="../../../static/img/unstart.png" alt=""></div>
           <div v-if="taskBasicMsg.status === '1'"><img src="../../../static/img/doing.png" alt=""></div>
           <div v-if="taskBasicMsg.status === '2'"><img src="../../../static/img/finish.png" alt=""></div>
+          <div v-if="taskBasicMsg.status === '3'"><img src="../../../static/img/stope.png" alt=""></div>
         </div>
       </div>
       <div class="taskTime">
@@ -31,7 +42,7 @@
               <div style="margin-left: 10%;" v-if="!taskBasicMsg.dayNum"><span v-bind:class="'topState' + taskBasicMsg.status">{{taskBasicMsg.statusStr}}</span></div>
             </template>
             <div class="managePro">
-              <div><img src="../../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span>{{taskBasicMsg.userName}}</span></div>
+              <div><img src="../../../static/img/fuzeren.png" alt=""><span class="proLabel">负责人:</span><span style="color: #888;" v-if="!taskBasicMsg.userName">无负责人</span><span v-if="taskBasicMsg.userName">{{taskBasicMsg.userName}}</span></div>
               <div><img src="../../../static/img/faqiren.png" alt=""><span class="proLabel">创建人:</span><span>{{taskBasicMsg.createrName}}</span></div>
             </div>
             <div class="managePro" style="margin-top: 10px;">
@@ -41,10 +52,11 @@
           </el-collapse-item>
         </el-collapse>
       </div>
-      <div class="cannetProject">
+      <div class="cannetProjectFile">
         <div style="display: inline-block"><img src="../../../static/img/guanlian.png" alt=""><span>关联项目:</span></div>
-        <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}</span>
+        <span class="linkProject" v-if="taskBasicMsg.reProjectList.length > 0" v-for="(project, index) in taskBasicMsg.reProjectList" v-bind:key="index" @click="getNextPlan(project.projectUID)">{{project.projectName}}, </span>
         <span style="font-size: 14px;color: #888;" v-if="!taskBasicMsg.reProjectList || taskBasicMsg.reProjectList.length === 0" >未关联项目</span>
+        <span class="bainProject" v-if="taskBasicMsg.showMenu > 0" @click="connectProject(taskBasicMsg.uid)">关联项目</span>
       </div>
       <div class="cannetProject">
         <div style="display: inline-block"><img src="../../../static/img/xiangmu.png" alt=""><span>所属项目:</span></div>
@@ -55,37 +67,44 @@
         <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.parentTaskName" @click="toDetail(taskBasicMsg.parentTaskID)">{{taskBasicMsg.parentTaskName}}</div>
         <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.parentTaskName">无父级任务</div>
       </div>
-    <div class="cannetProject">
-      <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
-      <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.planName" @click="toPlanDetail(taskBasicMsg.planUID)">{{taskBasicMsg.planName}}</div>
-      <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.planName">无父级计划</div>
-    </div>
+      <div class="cannetProject">
+        <div style="display: inline-block"><img src="../../../static/img/taskFa.png" alt=""><span>父级计划:</span></div>
+        <div style="display: inline-block;color: #409EFF;cursor: pointer;" v-if="taskBasicMsg.planName" @click="toPlanDetail(taskBasicMsg.planUID)">{{taskBasicMsg.planName}}</div>
+        <div style="display: inline-block;color: #888;" v-if="!taskBasicMsg.planName">无父级计划</div>
+      </div>
       <div class="cannetProjectFile">
         <div style="display: inline-block"><img src="../../../static/img/fujian.png" alt=""><span>任务附件:</span></div>
         <div style="display: inline-block;font-size: 14px;line-height: 26px;" v-if="taskBasicMsg.attachment">
           <span v-for="(file, index) in taskBasicMsg.attachment" v-bind:key="index" style="margin-left: 10px;">
-            <span style="display: inline-block;">{{file.showName}}</span>
+            <span style="display: inline-block;font-size: 12px;">{{file.showName}}</span>
             <span v-if="file.isImg" @click="showImagePre(file.previewUrl, file.showName)" style="display: inline-block;color: #53b5ff;cursor: pointer;">预览</span>
             <span style="display: inline-block;"><a v-bind:href="file.downurl"> 下载<i style="font-weight: bold !important; padding: 5px; color: chocolate;" class="el-icon-download"></i></a></span>
           </span>
         </div>
         <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
       </div>
-      <div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">
-        <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
-        <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
-        <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
-        <Button type="info" @click="taskToDevided(taskBasicMsg.uid)">任务分解</Button>
+      <div v-if="taskBasicMsg.status !== '3' ">
+        <div class="cannetProject" v-if="taskBasicMsg.showMenu !== 0 && taskBasicMsg.showMenu !== 3 && taskBasicMsg.showMenu !== 4">
+          <!--&& taskBasicMsg.showMenu === '1'-->
+          <Button v-if="taskBasicMsg.status === '0' && taskBasicMsg.showMenu === 1" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.uid)">任务开始</Button>
+          <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">任务完成</Button>
+          <Button type="info" v-if="taskBasicMsg.timeoutButton === 1" style="margin-right: 20px;" @click="stopeTask(taskBasicMsg.uid)">任务暂停</Button>
+          <Button type="info" style="margin-right: 20px;" @click="transferTask()">任务移交</Button>
+          <Button type="info" @click="taskToDevided(taskBasicMsg.uid)">任务分解</Button>
+        </div>
+        <div class="cannetProject" v-if="taskBasicMsg.showMenu === 3">
+          <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
+        </div>
       </div>
-      <div class="cannetProject" v-if="taskBasicMsg.isRestart">
-        <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.uid)">任务重启</Button>
+      <div class="cannetProject" v-if="taskBasicMsg.showMenu === 4">
+        <Button type="info" v-if="taskBasicMsg.timeoutButton === 2"  style="margin-right: 20px;" @click="startTaskstoped(taskBasicMsg.uid)">任务开启</Button>
       </div>
       <!-- 任务分解 引入组件-->
     <!--v-bind:TaskDistributeShow="toShowDevided"-->
     <!--v-bind:TaskDistributeShow="rilegou" tetstt -->
       <div v-show="toShowDevided2">
         <component v-bind:is="compArr.TaskDistribute"
-                   v-bind:TaskDistributeShow="testtest"
+                   v-bind:TaskDistributeShow="toShowDevided2"
                    fileFormId="TaskDistribute"
                    v-on:DistributeFormVisible="DistributeFormVisibleFuc"
                    v-on:TaskDistributeCallback="TaskDistributeCallbackFuc"
@@ -146,7 +165,15 @@
         <div style="display: inline-block"><img src="../../../static/img/goutong.png" alt=""><span>沟 通</span></div>
       </div>
       <div class="el-textarea" v-loading="loading2">
-        <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent"></textarea>
+        <div class="peopleList" style="right: 0;top: -230px;" v-if="selectUserDiaShow2">
+          <Input prefix="ios-search-outline" placeholder="请输人员姓名或拼音(如'张三'或 'zs')" style="width: 270px"  autofocus v-model="searchPeople" ref="re"/>
+          <ul>
+            <li v-for="(item, index) in options42" :key="index" @click="checkPeople(item)">{{item.Name + ' (' + item.jName + ')'}}</li>
+          </ul>
+        </div>
+        <textarea name="content" class="el-textarea__inner" id="textArea2" type="text" v-model="commitComent" v-on:input="inputFunt"
+                  @keyup.shift.50="inputConent"
+                  @click="getTxt1CursorPosition" @keyup.delete ="deleteText"></textarea>
         <div class="cannetProject21">
           <!--引入组件 详情 沟通-->
           <component v-bind:is="compArr.FileUploadComp" fileFormId="taskDetailConnect" v-bind:clearInfo="IsClear" v-on:FileDataEmit="GetFileInfo"></component>
@@ -183,6 +210,7 @@
           <Timeline-item v-for="(history, index) in historyList" v-bind:key="index">
             <p class="time">{{history.oTime}}</p>
             <p class="content">{{history.oName}}{{history.oContent}}</p>
+            <p class="content" v-if="history.comment" style="color: #e8be68;">备注: {{history.comment}}</p>
             <span v-for="(his, index2) in history.attachment" v-bind:key="index2">
               <p class="content" v-if="his.showName"><span>附件:</span>
                 <span style="display: inline-block"> {{his.showName}}</span>
@@ -229,6 +257,14 @@
         </div>
       </div>
     </div>
+    <div class="stopeModel" v-if="projectStopeVisible2">
+      <div class="stopeTitle">任务开启</div>
+      <div class="modelCon">确定开启任务且修改时间吗?</div>
+      <div>
+        <el-button type="primary" @click="startTaskOnly()">开启不修改时间</el-button>
+        <el-button type="primary" @click="startEditTask()">开启修改时间</el-button>
+      </div>
+    </div>
     <!--<Drawer class="drawerScroll" title="修改任务" :closable="false" width="40%" v-model="modifyTaskVisible">-->
       <!--&lt;!&ndash; 修改任务 编辑任务 引入组件 &ndash;&gt;-->
       <!--<component v-bind:is="compArr.ModifyTask" v-bind:DrawerOpen="modifyTaskVisible" fileFormId="ModifyTask" v-on:FilePreEmit="GetFilePreData" v-on:ModifyTaskCallback="ModifyTaskCallbackFuc" :nodeId="currentNodeId"></component>-->
@@ -237,7 +273,7 @@
 </template>
 
 <script>
-import FileUploadComp from '././FileUploadComp.vue'
+import FileUploadComp from '../CustomComp/FileUploadComp.vue'
 import ModifyTask from './ModifyTask.vue'
 import TaskDistribute from './TaskDistribute.vue'
 export default {
@@ -250,13 +286,26 @@ export default {
   },
   data () {
     return {
+      // 是否有权限查看所属项目
+      projectAuth: '1',
+      taskIntroMoreOpen: false,
+      peopleList: [],
+      // 组织架构人员
+      options42: [],
+      // 搜索人员
+      searchPeople: '',
+      // @组织架构是否出现
+      selectUserDiaShow2: false,
       rid: '',
+      stopeId: '',
       taskIdEdit: '',
       IsClear: false,
       loading2: false,
       showDrawer: false,
       butnDisabled: true,
       butnDisabledF: false,
+      projectListShow: false,
+      projectStopeVisible2: false,
       selDateEnd2: '',
       selDateStart2: '',
       taskBasicMsg: '',
@@ -323,7 +372,21 @@ export default {
       return that.$store.state.taskEdit
     }
   },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        el.focus()
+      }
+    }
+  },
   watch: {
+    taskIntroMoreOpen: function (val, oV) {
+      if (val) {
+        $('.taskDetailCnt').css('display', 'block')
+      } else {
+        $('.taskDetailCnt').css('display', '-webkit-box')
+      }
+    },
     modifyTaskRes: function (val, oV) {
       if (val) {
         this.$emit('CompThrow', false)
@@ -336,10 +399,15 @@ export default {
         that.showDrawer = true
         that.toDetail(that.nodeId)
         that.TaskConnectProcessList()
+        that.getPeople()
+        // that.taskIntroMoreOpen = true
       } else {
         that.concelTransfer()
         that.showDrawer = false
+        that.toShowDevided2 = false
         that.taskFinishedVisible = false
+        that.projectStopeVisible2 = false
+        that.taskIntroMoreOpen = false
       }
     },
     commitComent: function (val, oVal) {
@@ -347,6 +415,16 @@ export default {
         this.butnDisabled = false
       } else {
         this.butnDisabled = true
+      }
+      let str = val.charAt(val.length - 1)
+      if (str === '@') {
+        this.selectUserDiaShow2 = true
+        this.searchPeople = ''
+        setTimeout(() => {
+          this.$refs['re'].focus()
+        }, 200)
+      } else {
+        this.selectUserDiaShow2 = false
       }
     },
     commitComentF: function (val, oVal) {
@@ -362,14 +440,139 @@ export default {
       } else {
         this.butnDisabledT = true
       }
+    },
+    searchPeople: function (val, old) {
+      if (val) {
+        this.getPeople()
+      }
+      if (val === '') {
+        this.searchPeople = ''
+        this.getPeople()
+      }
     }
   },
+  // created: function () {
+  //   $('.TaskDetailComp').click(function () {
+  //     $('.stopeModel').hide()
+  //     return false
+  //   })
+  //   $('.stopeModel').click(function () {
+  //     return false
+  //   })
+  // },
   methods: {
-    toProjectDetail: function (id) {
-      if (id) {
-        this.$store.state.proId = id
-        this.$router.push('/goodsDetail')
+    taskIntroMore: function () {
+      this.log($('.taskDetailCnt').html())
+      this.taskIntroMoreOpen = !this.taskIntroMoreOpen
+      // if (this.taskIntroMoreOpen) {
+      //   $('.taskDetailCnt').css('display', 'block')
+      // } else {
+      //   $('.taskDetailCnt').css('display', '-webkit-box')
+      // }
+    },
+    getNextPlan: function (pid) {
+      this.$store.state.proId = pid
+      this.$router.push('/goodsDetail')
+    },
+    getPosition (element) {
+      let cursorPos = 0
+      if (document.selection) { // IE
+        var selectRange = document.selection.createRange()
+        selectRange.moveStart('character', -element.value.length)
+        cursorPos = selectRange.text.length
+      } else if (element.selectionStart || element.selectionStart === '0') {
+        cursorPos = element.selectionStart
       }
+      this.position = cursorPos
+    },
+    getTxt1CursorPosition (e) {
+      this.getPosition(e.target)
+    },
+    // 点击任意区域弹窗消失
+    hidePanel (event) {
+      let sp2 = document.querySelector('.peopleList')
+      let sp3 = document.querySelector('.stopeModel')
+      if (sp2) {
+        if (!sp2.contains(event.target)) {
+          this.selectUserDiaShow2 = false
+        }
+      }
+      if (sp3) {
+        if (!sp3.contains(event.target)) {
+          this.projectStopeVisible2 = false
+        }
+      }
+    },
+    // 键盘删除事件
+    deleteText () {
+      let content = this.commitComent
+      let content1 = this.commitComent
+      let delBefore = content.substring(0, this.position)
+      let delAfter = content1.substring(this.position)
+      let position = delBefore.lastIndexOf('@', this.position)
+      let str = delBefore.substring(position, this.position)
+      this.peopleList.forEach((item, index) => {
+        if (str === '@' + item.Name + '(' + item.jName + ')' + '\xa0' || str === '@' + item.Name + '(' + item.jName) {
+          let textarea = this.commitComent
+          let contentB = textarea.substring(0, position)
+          this.commitComent = contentB + delAfter
+        }
+      })
+    },
+    // 检测历史记录输入功能
+    inputFunt (e) {
+      this.getTxt1CursorPosition(e)
+    },
+    inputConent () {
+      this.selectUserDiaShow2 = true
+      // let arr = this.commitComent.split('@')
+      this.searchPeople = ''
+      if (this.selectUserDiaShow2) {
+        setTimeout(() => {
+          this.$refs['re'].focus()
+        }, 200)
+      }
+    },
+    // 点击获取@人员
+    checkPeople (item) {
+      let that = this
+      that.peopleList.push(item)
+      that.selectUserDiaShow2 = false
+      $('.el-textarea__inner').focus()
+      // that.commitComent = that.commitComent + item.Name + '(' + item.jName + ')' + '\xa0\xa0\xa0'
+      let content1 = that.commitComent
+      let content2 = that.commitComent
+      let before = content1.substring(0, that.position)
+      let after = content2.substring(that.position)
+      that.commitComent = before + item.Name + '(' + item.jName + ')' + '\xa0\xa0' + after
+      that.log(that.peopleList)
+    },
+    // 获取默认的人员
+    getPeople () {
+      let that = this
+      that.ajax('/myProject/autoCompleteNames', {projectManager: that.searchPeople, projectId: that.$store.state.proId}).then(res => {
+        if (res.code === 200) {
+          that.options42 = res.data
+          // this.loading22 = false
+        }
+      })
+    },
+    toProjectDetail: function (id) {
+      var that = this
+      if (id) {
+        if (that.projectAuth === '1') {
+          this.$store.state.proId = id
+          this.$router.push('/goodsDetail')
+        } else {
+          this.$Message.warning('权限不足，无法查看所属项目')
+        }
+      }
+    },
+    // 关联项目
+    connectProject: function (id) {
+      var that = this
+      console.log('666666666', id)
+      that.$emit('taskShow', id)
     },
     // 创建流程 流程选项列表
     rowClick: function (obj) {
@@ -453,14 +656,14 @@ export default {
       var that = this
       if (id) {
         that.taskId = id
-        that.getTaskChildList(id)
         that.ajax('/myTask/queryTaskDetail', {taskId: id}).then(res => {
           that.$emit('getChildrenId', id)
-          this.log('queryTaskDetail：', res)
+          this.log('queryTaskDetail：：', res)
           if (res.code === 200) {
             that.taskBasicMsg = res.data
             that.rid = res.data.uid
             that.currentNodeId = id
+            that.projectAuth = res.data.projectAuth
             // var st = res.data.taskStartDate.split(' ')[0] + ' 00:00:00'
             // var et = res.data.taskFinishDate
             // var sT = new Date(st)
@@ -481,8 +684,11 @@ export default {
             that.resetScro()
             that.taskComment.uid = id
             that.taskHistoryList.uid = id
+            that.getTaskChildList(id)
             that.getHistoryList()
             that.getCommicateCont()
+          } else if (res.code === 505) {
+            that.$Message.warning(res.msg)
           }
         })
       } else {
@@ -528,7 +734,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
-          that.$emit('TaskDelCallback', res)
+          that.$emit('TaskDelCallback', res, '1')
           if (res.code === 200) {
             // that.log('delPlanOrTask:', res)
             that.getTaskChildList(id)
@@ -682,6 +888,58 @@ export default {
         })
       })
     },
+    // 暂停任务
+    stopeTask: function (id) {
+      var that = this
+      // console.log('id', id)
+      that.$confirm('确定后将暂停此任务，确定暂停？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.ajax('/myTask/timeoutTask', {taskId: id}).then(res => {
+          that.$emit('ActionResThrow', {res: res, actionName: 'startTask'})
+          if (res.code === 200) {
+            that.log('dealTask:', res)
+            that.toDetail(id)
+            // that.selectProjectId()
+            that.getHistoryList()
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消开始'
+        })
+      })
+    },
+    // 暂停开启
+    startTaskstoped: function (id) {
+      var that = this
+      that.stopeId = id
+      that.projectStopeVisible2 = true
+    },
+    startTaskOnly: function () {
+      var that = this
+      that.ajax('/myTask/timeonTask', {taskId: that.stopeId}).then(res => {
+        that.$emit('ActionResThrow', {res: res, actionName: 'startTask'})
+        if (res.code === 200) {
+          that.log('dealTask:', res)
+          that.toDetail(that.stopeId)
+          // that.selectProjectId()
+          that.getHistoryList()
+          that.projectStopeVisible2 = false
+        } else {
+          that.$message.warning(res.msg)
+        }
+      })
+    },
+    startEditTask: function () {
+      var that = this
+      that.projectStopeVisible2 = false
+      that.startTaskOnly(that.nodeId)
+      that.$emit('showEditForm', that.nodeId)
+    },
     taskToDevided: function (id) {
       var that = this
       that.toShowDevided2 = true
@@ -724,7 +982,7 @@ export default {
         type: 'warning'
       }).then(() => {
         that.ajax('/myTask/delTaskById', {taskId: id}).then(res => {
-          that.$emit('TaskDelCallback', res)
+          that.$emit('TaskDelCallback', res, '2')
           if (res.code === 200) {
             // that.log('delPlanOrTask:', res)
             that.getTaskChildList(that.taskId)
@@ -739,16 +997,20 @@ export default {
     // 新增 点击“回复”按钮
     taskDetailconnect () {
       var that = this
-      that.ajax('/comment/addComment', {
+      that.peopleList = that.peopleList.filter(item => that.commitComent.indexOf(item.Name + '(' + item.jName + ')') !== -1)
+      let obj = {
         content: that.commitComent,
         attachmentId: that.SetFileIdStr(),
         contentId: that.taskId,
-        parentCommentId: '11'
-      }).then(res => {
+        parentCommentId: '11',
+        memberList: that.peopleList
+      }
+      that.ajax('/comment/addComment', JSON.stringify(obj)).then(res => {
         if (res.code === 200) {
           that.IsClear = true
           // that.log('myTaskView:', res)
           that.getCommicateCont()
+          that.peopleList = []
           // that.fileListComment = []
           that.commitComent = ''
           $('.showFileName').html('')
@@ -781,11 +1043,14 @@ export default {
     },
     showImagePre: function (previewUrl, showName) {
       // this.log('showName:', showName)
-      this.$emit('FilePreEmit', {previewUrl: previewUrl, fileName: showName})
+      this.imgPreview(previewUrl, showName)
+      // this.$emit('FilePreEmit', {previewUrl: previewUrl, fileName: showName})
     },
     // 任务分解
     DistributeFormVisibleFuc: function (res) {
-      this.toShowDevided = false
+      if (res === false) {
+        this.toShowDevided2 = false
+      }
     },
     // 拼接附件上传的id为字符串
     SetFileIdStr () {
@@ -892,7 +1157,7 @@ export default {
         that.$emit('ActionResThrow', {res: res, actionName: 'finishTask'})
         that.taskFinishedVisible = false
         if (res.code === 200) {
-          that.log('myTaskView:', res)
+          // that.log('myTaskView:', res)
           that.toDetail()
           // that.selectProjectId()
           that.getHistoryList()
@@ -922,6 +1187,9 @@ export default {
   }
 </style>
 <style scoped>
+  .TaskDetailComp{
+    position: relative;
+  }
   .slidTop{
     height: 40px;
     line-height: 40px;
@@ -943,6 +1211,9 @@ export default {
   .topState2{
     color: #27CF97;
   }
+  .topState3{
+    color: #e97474;
+  }
   .taskMsg{
     background-color: #f5f8fa;
     display: flex;
@@ -950,6 +1221,7 @@ export default {
   }
   .taskLf{
     padding: 10px;
+    padding-bottom: unset;
     width: 80%;
   }
   .taskName{
@@ -958,6 +1230,8 @@ export default {
     font-family: '黑体';
   }
   .taskDetail{
+  }
+  .taskDetailCnt{
     font-size: 14px;
     margin-top: 10px;
     text-indent: 2em;
@@ -966,6 +1240,14 @@ export default {
     text-overflow:ellipsis;
     -webkit-line-clamp: 3;
     overflow: hidden;
+  }
+  .taskDetailCntMore{
+    color: #515a6e;
+    text-align: center;
+  }
+  .taskDetailCntMore:hover{
+    color: #2D9CFF;
+    /*background: rgba(0,0,0,0.1);*/
   }
   .taskRt{
     width: 20%;
@@ -1182,6 +1464,7 @@ export default {
   .el-textarea{
     margin-top: 15px;
     margin-left: 0px;
+    position: relative;
   }
   .el-textarea__inner{
     width: 100%;
@@ -1219,9 +1502,82 @@ export default {
   .reFreshIcon.ratate{
     animation:processMove 0.5s;
   }
+  .childTaskStyle0{
+    color: #ffc107;
+  }
+  .childTaskStyle1{
+    color: #13ce66;
+  }
+  .childTaskStyle2{
+    color: #409EFF;
+  }
+  .peopleList {
+    width:300px;
+    height: 370px;
+    padding: 20px 10px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 200;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+  }
+  .peopleList ul {
+    list-style: none;
+    width:270px;
+    max-height:300px;
+    overflow: auto;
+    margin-top:10px;
+  }
+  .peopleList ul li{
+    list-style: none;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #f2f2f2;
+    cursor: pointer;
+  }
+  .peopleList ul li:hover{
+    background: #f5f8fa;
+  }
   @keyframes processMove
   {
     from {transform: rotate(0deg)}
     to {transform: rotate(360deg)}
+  }
+  .stopeModel{
+    height: 150px;
+    width: 300px;
+    position: absolute;
+    text-align: center;
+    top: 20%;
+    left: 25%;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.2);
+    z-index: 999999;
+  }
+  .stopeTitle{
+    color: #fff;
+    font-size: 16px;
+  }
+  .modelCon{
+    height: 60px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 60px;
+  }
+  .bainProject{
+    padding: 2px 6px;
+    background-color: #509EFF;
+    display: inline-block;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    line-height: 20px;
+    border-radius: 4px;
+  }
+  .linkProject{
+    color: #409EFF;
+    cursor: pointer;
+    font-size: 14px;
   }
 </style>

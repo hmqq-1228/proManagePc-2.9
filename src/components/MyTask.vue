@@ -149,7 +149,7 @@
           </el-option>
         </el-select>
       </div>
-      <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm.value9.length===0">* 如果此项不选，则默认自己</div>
+      <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm.value9.length===0"></div>
       <div class="selectUserBtn" v-on:click="selectUserClick()"><el-button>确定</el-button></div>
     </div>
     <!--发动态 时间选择 -->
@@ -352,7 +352,7 @@
                   </el-option>
                 </el-select>
               </div>
-              <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0">* 如果此项不选，则默认自己</div>
+              <div style="color: #dd6161;font-size: 12px; transform: scale(0.9)" v-if="taskForm2.value9.length===0"></div>
               <div class="selectUserBtn" v-on:click="selectUserClick2()"><el-button>确定</el-button></div>
             </div>
             <div class="selectDateDialog2"  style="right: 0;top: 0;" v-if="selectDateDiaShow2">

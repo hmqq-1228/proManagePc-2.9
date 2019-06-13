@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import store from '@/store/store.js'
-// import router from '@/router'
+import router from '@/router'
 const install = function (Vue, options) {
   Vue.prototype.ajax = function (actionName, postData) {
     var baseurl
@@ -14,7 +14,11 @@ const install = function (Vue, options) {
         zzPostData.userId = store.state.userId
         postData = JSON.stringify(zzPostData)
       } else {
-        postData.userId = store.state.userId
+        if (postData.userId) {
+          // j
+        } else {
+          postData.userId = store.state.userId
+        }
       }
     }
     baseurl = store.state.baseServiceUrl + actionName
@@ -29,9 +33,12 @@ const install = function (Vue, options) {
       crossDomain: true,
       data: postData,
       success: function (data) {
+        // router.push('/page404')
         if (data.code === 201) {
           // alert('ajax:' + data.code)
           // store._mutations.ddLogin[0]()
+        } else if (data.code === 404) {
+          router.push('/page404')
         }
       }
     })
@@ -45,6 +52,25 @@ const install = function (Vue, options) {
       }
     }
   }
+  Vue.prototype.alert = function (test) {
+    if (store.state.debug) {
+      return window.alert(test)
+    }
+  }
+  // Vue.prototype.isImage = function (fileName) {
+  //   if (fileName) {
+  //     var geshi = fileName.substr(-4).indexOf('.') > -1 ? fileName.toLowerCase().substr(-3) : fileName.toLowerCase().substr(-4)
+  //   }
+  //   var isImg = false
+  //   for (var i = 0; i < store.state.fileFormat.length; i++) {
+  //     if (store.state.fileFormat[i] === geshi) {
+  //       isImg = true
+  //     } else {
+  //       isImg = false
+  //     }
+  //   }
+  //   return isImg
+  // }
   // 判断是否是图片
   Vue.prototype.isImage = function (fileName) {
     var geshi = fileName.substr(-4).indexOf('.') > -1 ? fileName.toLowerCase().substr(-3) : fileName.toLowerCase().substr(-4)
@@ -56,20 +82,12 @@ const install = function (Vue, options) {
     }
     return isImg
   }
-  Vue.prototype.alert = function (test) {
-    if (store.state.debug) {
-      return window.alert(test)
+  // 图片预览
+  Vue.prototype.imgPreview = function (previewUrl, fileName) {
+    if (previewUrl && this.isImage(fileName)) {
+      store.state.imgPreviewShow = true
+      store.state.imgPreviewSrc = previewUrl
     }
-  }
-  Vue.prototype.isImage = function (fileName) {
-    var geshi = fileName.substr(-4).indexOf('.') > -1 ? fileName.toLowerCase().substr(-3) : fileName.toLowerCase().substr(-4)
-    var isImg = false
-    for (var i = 0; i < store.state.fileFormat.length; i++) {
-      if (store.state.fileFormat[i] === geshi) {
-        isImg = true
-      }
-    }
-    return isImg
   }
   // 检测浏览器类型
   Vue.prototype.testBrowser = function () {
@@ -110,6 +128,18 @@ const install = function (Vue, options) {
   Vue.prototype.getLaterTime = function (msecond, btime) {
     var myDate = btime ? new Date(btime) : new Date()
     var laterTimeStamp = myDate.getTime() + msecond
+    myDate = new Date(laterTimeStamp)
+    var year = myDate.getFullYear()
+    var month = (myDate.getMonth() + 1) < 10 ? '0' + (myDate.getMonth() + 1) : (myDate.getMonth() + 1)
+    var date = myDate.getDate() < 10 ? '0' + myDate.getDate() : myDate.getDate()
+    var hour = myDate.getHours() < 10 ? '0' + myDate.getHours() : myDate.getHours()
+    var min = myDate.getMinutes() < 10 ? '0' + myDate.getMinutes() : myDate.getMinutes()
+    var sec = myDate.getSeconds() < 10 ? '0' + myDate.getSeconds() : myDate.getSeconds()
+    return year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec
+  }
+  Vue.prototype.getBeforeTime = function (msecond, btime) {
+    var myDate = btime ? new Date(btime) : new Date()
+    var laterTimeStamp = myDate.getTime() - msecond
     myDate = new Date(laterTimeStamp)
     var year = myDate.getFullYear()
     var month = (myDate.getMonth() + 1) < 10 ? '0' + (myDate.getMonth() + 1) : (myDate.getMonth() + 1)

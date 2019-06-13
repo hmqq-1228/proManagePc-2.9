@@ -44,7 +44,7 @@
     <!--新建任务开始-->
     <div class="cannetProject1" style="display:flex;justify-content: space-between">
       <div style="display: inline-block"><img src="../../../static/img/delTask.png" alt=""><span>添加子任务</span></div>
-      <div @click="addChild(planMsg.id, 3)" style="font-size: 14px;color: #409EFF;cursor: pointer;font-weight: normal"><i class="el-icon-circle-plus-outline"></i> 添加子计划</div>
+      <!--<div @click="addChild(planMsg.id, 3)" style="font-size: 14px;color: #409EFF;cursor: pointer;font-weight: normal"><i class="el-icon-circle-plus-outline"></i> 添加子计划</div>-->
     </div>
     <component v-bind:is="compArr.AddNewTask"
                fileFormId="AddNewTask"
@@ -103,7 +103,7 @@ export default {
   computed: {
     refshPlan: function () {
       var that = this
-      console.log(that.$store.state.goPerfect)
+      that.log(that.$store.state.goPerfect)
       if (that.$store.state.refshPlan === true) {
         that.getNextPlanTask(this.nodeId)
       }
@@ -188,7 +188,7 @@ export default {
     },
     delCurrentPlan: function (id) {
       var that = this
-      console.log('id', id)
+      that.log('id', id)
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -209,7 +209,7 @@ export default {
     },
     delChildTask: function (id) {
       var that = this
-      console.log('id', id)
+      that.log('id', id)
       that.$confirm('删除本条会包括本条及其包含内容，确定删除？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
