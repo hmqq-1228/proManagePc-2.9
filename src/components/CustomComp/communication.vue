@@ -56,13 +56,21 @@
                 <div class="noComment" v-if="commentList.length === 0" style="height: 415px;">还没有人发言呦~</div>
               </div>
               <div style="text-align: center" v-if="commentList.length>0">
-                <Page
-                  :total="commentTotalNum"
-                  size="small"
+                <!--<Page-->
+                  <!--:total="commentTotalNum"-->
+                  <!--size="small"-->
+                  <!--:page-size="5"-->
+                  <!--show-total-->
+                  <!--@on-change="commentPageChange($event)"-->
+                <!--&gt;</Page>-->
+                <el-pagination
+                  small
+                  @current-change="commentPageChange($event)"
+                  background
                   :page-size="5"
-                  show-total
-                  @on-change="commentPageChange($event)"
-                ></Page>
+                  layout="total, prev, pager, next, jumper"
+                  :total="commentTotalNum">
+                </el-pagination>
               </div>
             </div>
           </div>
@@ -84,7 +92,15 @@
             </Timeline>
             <div class="noComment" v-if="historyList.length === 0" style="height: 570px;">还没有操作记录呦~</div>
             <div style="text-align: center;margin-top:40px" v-if="historyList.length>0">
-              <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
+              <el-pagination
+                small
+                @current-change="getCurrentHistoryPage($event)"
+                background
+                :page-size="pageSize"
+                layout="total, prev, pager, next, jumper"
+                :total="totalHistoryNum">
+              </el-pagination>
+              <!--<Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>-->
             </div>
           </div>
         <!--</TabPane>-->
@@ -180,7 +196,6 @@ export default {
   },
   created () {
     this.getHistoryCont()
-    this.getHistoryList()
   },
   methods: {
     refreshCom () {
@@ -190,10 +205,14 @@ export default {
       this.getHistoryList()
     },
     toCom () {
+      this.pageN = 1
       this.type = 1
+      this.getHistoryCont()
     },
     toOperation () {
+      this.pageNo = 1
       this.type = 2
+      this.getHistoryList()
     },
     // 历史记录 分页值改变
     commentPageChange: function (e) {

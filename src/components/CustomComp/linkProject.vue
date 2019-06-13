@@ -69,7 +69,7 @@
         background
         :current-page="currentPage"
         @current-change="getProjectPageNum($event)"
-        layout="total, prev, pager, next"
+        layout="total, prev, pager, next, jumper"
         :total="tableDataRow">
       </el-pagination>
     </div>

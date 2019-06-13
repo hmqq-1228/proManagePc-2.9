@@ -341,7 +341,15 @@
     </el-dialog>
     <!--分页 start-->
     <div style="padding: 10px 0 30px 0; text-align: center;">
-      <Page :total="pageTotalRow" :page-size="10" :current="myProjectViewPayload.pageNum" size="small" @on-change="pageNumChange" />
+      <!--<Page :total="pageTotalRow" :page-size="10" :current="myProjectViewPayload.pageNum" size="small" @on-change="pageNumChange" />-->
+      <el-pagination
+        @current-change="pageNumChange($event)"
+        background
+        :current-page = 'myProjectViewPayload.pageNum'
+        :page-size="10"
+        layout="total, prev, pager, next, jumper"
+        :total="pageTotalRow">
+      </el-pagination>
     </div>
     <!--分页 end-->
   </div>
