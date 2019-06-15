@@ -2,13 +2,13 @@
   <div class="tree" v-if="list.length>0">
     <div class="tree-first" v-for="(item,index) in list" :key="index">
         <div :class="item.type==='task'?'menuTree':'planTree'" @click="showDetailPage(item)">
-            <div class="children-content" :class="item.type==='task'?'havBorder':''">
+            <div class="children-content" :class="item.type==='task'&&item.userName?'havBorder':''">
                 <div class="children-checked">
                     <i :class="{'el-icon-caret-right':!item.show,'el-icon-caret-bottom':item.show}" @click.stop="showTree(item,index)" v-if="item.children&&item.children.length>0" style="margin-left:-10px"></i>
                     <span class="name" @click="showDetailPage(item)">{{item.name}}</span>
                     <span class="planTime" v-if="item.type==='plan'">
                       <img src="../../../static/img/data.png">
-                      <span style="margin-left:10px">{{item.start}} - {{item.finish}}</span>
+                      <span style="margin-left:5px">{{item.start}} - {{item.finish}}</span>
                     </span>
                     <div class="taskDesc" v-bind:class="item.userName?'':'noUser'" v-if="item.type==='task'">
                          <div class="top" v-if="item.userName">
@@ -24,7 +24,7 @@
                         <span class="text">{{item.start}} - {{item.finish}}</span>
                        </div>
                       <div class="down noUser" :class="{'leftDay':item.status==='2'}" v-if="!item.userName">
-                        <span><img src="../../../static/img/time.png"></span>
+                        <img src="../../../static/img/data.png" style="width: 15px;">
                         <span class="text">{{item.start}} - {{item.finish}}</span>
                       </div>
                     </div>
