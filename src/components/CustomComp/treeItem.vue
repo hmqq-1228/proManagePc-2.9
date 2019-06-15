@@ -1,16 +1,16 @@
 <template>
   <div v-if="menuData">
     <div :class="menuData.type==='task'?'menuTree':'planTree'" @click="showDetailPage(menuData)">
-      <div class="children-content" :class="menuData.type==='task'?'havBorder':''" style="margin-left:30px">
+      <div class="children-content" :class="menuData.type==='task'&& menuData.userName ?'havBorder':''" style="margin-left:30px">
             <div class="children-checked">
               <i :class="{'el-icon-caret-right':!show,'el-icon-caret-bottom':show}" @click.stop="showTree" v-if="menuData.children&&menuData.children.length>0" style="margin-left:-10px"></i>
               <span class="name" @click="showDetailPage(menuData)">{{menuData.name}}</span>
               <span class="planTime" v-if="menuData.type==='plan'">
                 <img src="../../../static/img/data.png">
-                <span style="margin-left:10px">{{menuData.start}} - {{menuData.finish}}</span>
+                <span style="margin-left:5px">{{menuData.start}} - {{menuData.finish}}</span>
               </span>
-              <div class="taskDesc" v-if="menuData.type==='task'">
-                   <div class="top">
+              <div class="taskDesc" v-bind:class="menuData.userName?'':'noUser'" v-if="menuData.type==='task'">
+                   <div class="top" v-if="menuData.userName">
                      <span style="font-size:12px;float:left;margin-right: 15px"><Icon type="ios-person" size="24" style="color:#28558C;margin-top:-5px"/>&nbsp;{{menuData.userName}}</span>
                      <span v-if="menuData.status!=='2'&&menuData.dayNum">
                        <span class="residue" v-if="menuData.dayNum > 0" :class="{'number':menuData.dayNum>1}">剩余{{menuData.dayNum}}天</span>
@@ -18,12 +18,16 @@
                      </span>
                      <!--<div class="createPeople" v-if="menuData.userName" :class="{'leftDay':menuData.status==='2'}">{{menuData.userName.substr(0, 1)}}</div>-->
                    </div>
-                 <div class="down" :class="{'leftDay':menuData.status==='2'}">
-                  <img src="../../../static/img/time.png">
-                  <span class="text">{{menuData.start}} - {{menuData.finish}}</span>
-                 </div>
+                   <div class="down" :class="{'leftDay':menuData.status==='2'}" v-if="menuData.userName">
+                    <img src="../../../static/img/time.png">
+                    <span class="text">{{menuData.start}} - {{menuData.finish}}</span>
+                   </div>
+                  <div class="down noUser" :class="{'leftDay':menuData.status==='2'}" v-if="!menuData.userName">
+                    <img src="../../../static/img/data.png" style="width: 15px;">
+                    <span class="text">{{menuData.start}} - {{menuData.finish}}</span>
+                  </div>
               </div>
-              <div  v-if="menuData.type==='task'">
+              <div  v-if="menuData.type==='task'&& menuData.userName">
                 <div class="status" :class="{'noSure':menuData.status==='0','noFinish':menuData.status==='1','finish':menuData.status==='2','stop':menuData.status==='3','overdue':menuData.status==='4',}"><p>{{menuData.statusStr}}</p></div>
               </div>
              </div>
@@ -152,6 +156,9 @@ export default {
   /*margin-top: 15px;*/
   /*overflow: hidden;*/
   position: relative;
+}
+.taskDesc.noUser{
+  margin-top: auto;
 }
 .children-checked .name{
   cursor: pointer;

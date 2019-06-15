@@ -258,7 +258,7 @@ export default {
       }, 1000)
     },
     onevent: function () {
-      this.log(1111)
+      // this.log(1111)
     },
     jiajianClick: function (e) {
       // this.log(11111111111)
