@@ -464,7 +464,7 @@ html,body{
 #app{
   height: 100%;
 }
-.showImg,.showImgs img{
+.showImg img,.showImgs img{
   width: 100%;
 }
 .el-aside {

@@ -293,7 +293,6 @@ export default {
         this.getUserInfo()
         this.getProjectList()
         this.getProjectPayload.taskId = this.linkId
-        console.log('11111111', this.linkId)
       }
     },
     inputProject: function (val, oV) {
