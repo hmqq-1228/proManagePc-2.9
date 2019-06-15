@@ -247,7 +247,7 @@
     </el-dialog>
     <!--分页器-->
     <div class="paginationBox" style="text-align: center; padding-top: 20px;">
-      <el-pagination v-bind:page-size="ProCommunityListPayload.pageSize" layout="prev, pager, next" :total="taskTotalRow" v-on:current-change="currentChange"></el-pagination>
+      <el-pagination background :current-page="ProCommunityListPayload.pageNum" v-bind:page-size="ProCommunityListPayload.pageSize" layout="total, prev, pager, next, jumper" :total="taskTotalRow" v-on:current-change="currentChange"></el-pagination>
     </div>
     <!---->
   </div>
@@ -358,6 +358,7 @@ export default {
     },
     searchValue: function (newValue, oldValue) {
       var that = this
+      that.ProCommunityListPayload.pageNum = 1
       that.ProCommunityListPayload.projectName = $.trim(newValue)
       that.getProList()
     },
@@ -688,6 +689,7 @@ export default {
         if (this.tagsArr[i].tagType === type) {
           this.tagsArr[i].tagState = 'active'
           that.ProCommunityListPayload.type = that.tagsArr[i].type
+          that.ProCommunityListPayload.pageNum = 1
           that.getProList()
         } else {
           this.tagsArr[i].tagState = ''
@@ -696,6 +698,7 @@ export default {
     },
     handleCommand (command) {
       this.selectType = command
+      this.ProCommunityListPayload.pageNum = 1
       this.ProCommunityListPayload.projectType = command
       this.getProList()
       // this.$message('click on item ' + command)

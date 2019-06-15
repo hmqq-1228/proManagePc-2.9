@@ -349,7 +349,15 @@
     </el-dialog>
     <!--分页 start-->
     <div style="padding: 10px 0 30px 0; text-align: center;">
-      <Page :total="pageTotalRow" :page-size="10" :current="myProjectViewPayload.pageNum" size="small" @on-change="pageNumChange" />
+      <!--<Page :total="pageTotalRow" :page-size="10" :current="myProjectViewPayload.pageNum" size="small" @on-change="pageNumChange" />-->
+      <el-pagination
+        @current-change="pageNumChange($event)"
+        background
+        :current-page = 'myProjectViewPayload.pageNum'
+        :page-size="10"
+        layout="total, prev, pager, next, jumper"
+        :total="pageTotalRow">
+      </el-pagination>
     </div>
     <!--分页 end-->
   </div>
@@ -664,6 +672,7 @@ export default {
     },
     searchProVal: function (val, old) {
       this.log(33333)
+      this.myProjectViewPayload.pageNum = 1
       this.myProjectViewPayload.projectName = val
       this.queryMyProjectView()
       // if (val) {
@@ -671,6 +680,7 @@ export default {
       // }
     },
     searchProManagerVal: function (val, oV) {
+      this.myProjectViewPayload.pageNum = 1
       this.myProjectViewPayload.projectManager = val
       this.log(4444)
       this.queryMyProjectView()

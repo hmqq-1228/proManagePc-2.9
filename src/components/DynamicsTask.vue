@@ -257,7 +257,7 @@
       <div class="showImg"><img v-bind:src="commentPreviewUrl1" alt=""></div>
     </el-dialog>
     <div class="paginationBox" style="text-align: center; padding-top: 20px;">
-      <el-pagination v-bind:page-size="TaskCommunityListPayload.jobPageSize" layout="prev, pager, next" :total="taskTotalRow" v-on:current-change="currentChange" :current-page="TaskCommunityListPayload.jobPageNum"></el-pagination>
+      <el-pagination background v-bind:page-size="TaskCommunityListPayload.jobPageSize" layout="total, prev, pager, next, jumper" :total="taskTotalRow" v-on:current-change="currentChange" :current-page="TaskCommunityListPayload.jobPageNum"></el-pagination>
     </div>
     <!---->
   </div>
@@ -526,6 +526,7 @@ export default {
     searchValue: function (newValue, oldValue) {
       var that = this
       this.log('change')
+      that.TaskCommunityListPayload.jobPageNum = 1
       that.TaskCommunityListPayload.jobName = $.trim(newValue)
       that.getTaskList()
     },
@@ -1034,6 +1035,7 @@ export default {
           that.tagsArr[i].tagState = ''
         }
       }
+      that.TaskCommunityListPayload.jobPageNum = 1
       that.getTaskList()
     },
     handleCommand (command) {

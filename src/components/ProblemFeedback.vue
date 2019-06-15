@@ -95,7 +95,7 @@
     <div style="text-align: center;margin-top: 40px;margin-bottom: 40px;">
       <el-pagination
         background
-        layout="prev, pager, next, total"
+        layout="total, prev, pager, next, jumper"
         @current-change="pageNumChenge($event)"
         :page-size="8"
         :current-page="myTaskViewPayload.pageNum"
