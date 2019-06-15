@@ -382,13 +382,21 @@
           :commentList="taskLogs"
         ></component>
         <div style="text-align: center">
-          <Page
-            :total="commentTotalNum"
-            size="small"
+          <!--<Page-->
+            <!--:total="commentTotalNum"-->
+            <!--size="small"-->
+            <!--:page-size="10"-->
+            <!--show-total-->
+            <!--@on-change="commentPageChange($event)"-->
+          <!--&gt;</Page>-->
+          <el-pagination
+            small
+            @current-change="commentPageChange($event)"
+            background
             :page-size="10"
-            show-total
-            @on-change="commentPageChange($event)"
-          ></Page>
+            layout="total, prev, pager, next, jumper"
+            :total="commentTotalNum">
+          </el-pagination>
         </div>
       </div>
       </div>

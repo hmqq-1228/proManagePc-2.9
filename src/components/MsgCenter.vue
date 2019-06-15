@@ -30,7 +30,6 @@
        </div>
        <div style="text-align: center;margin-top: 20px;" v-if="list.length > 0">
          <el-pagination
-           small
            @change="handleCurrentChange"
            :page-size="20"
            layout="total, prev, pager, next, jumper"
@@ -115,14 +114,17 @@ export default {
     },
     choseTime (item) {
       this.active = item.id
+      this.pageNum = 1
       this.getMsgPage()
     },
     chooseType (type) {
       this.type = type
+      this.pageNum = 1
       this.getMsgPage()
     },
     getStatus (item) {
       this.status = item.id
+      this.pageNum = 1
       this.getMsgPage()
     },
     handleCurrentChange (val) {

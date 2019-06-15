@@ -92,7 +92,8 @@
     </Drawer>
     <div style="text-align: center">
       <el-pagination
-        layout="prev, pager, next"
+        background
+        layout="total, prev, pager, next, jumper"
         :page-size="10"
         :total="totalRow"
         :current-page="pageNumber"

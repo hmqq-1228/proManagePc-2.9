@@ -56,7 +56,6 @@
      </div>
      <div style="text-align: center" v-if="list.length > 0">
        <el-pagination
-         small
          background
          layout="total, prev, pager, next, jumper"
          :total="total"

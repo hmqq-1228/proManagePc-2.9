@@ -657,7 +657,7 @@ padding: 8px 20px;
 .line .el-radio-button--mini .el-radio-button__inner{
   padding: 5px 10px;
 }
-  .goods .el-pagination.is-background .el-pager li:not(.disabled).active,.GoodsArchives .el-pagination.is-background .el-pager li:not(.disabled).active{
+  .el-pagination.is-background .el-pager li:not(.disabled).active,.el-pagination.is-background .el-pager li:not(.disabled).active{
     background-color: #34c5be;
   }
   .goods .el-radio-button__orig-radio:checked+.el-radio-button__inner,.GoodsArchives .el-radio-button__orig-radio:checked+.el-radio-button__inner{

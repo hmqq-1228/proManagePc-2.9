@@ -179,7 +179,15 @@
         </Timeline>
         <div class="noComment" v-if="commentList.length === 0">还没有人发言呦~</div>
         <div style="text-align: center">
-          <Page :total="totalNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentPage($event)"></Page>
+          <!--<Page :total="totalNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentPage($event)"></Page>-->
+          <el-pagination
+            small
+            @current-change="getCurrentPage($event)"
+            background
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="totalNum">
+          </el-pagination>
         </div>
       </div>
       <div class="cannetProject1-1" style="margin-top: 0">
@@ -201,7 +209,15 @@
           </Timeline-item>
         </Timeline>
         <div style="text-align: center">
-          <Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>
+          <!--<Page :total="totalHistoryNum" size="small" :page-size="pageSize" show-total @on-change="getCurrentHistoryPage($event)"></Page>-->
+          <el-pagination
+            small
+            @current-change="getCurrentHistoryPage($event)"
+            background
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="totalHistoryNum">
+          </el-pagination>
         </div>
       </div>
     <!--任务移交-->

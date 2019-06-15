@@ -114,7 +114,6 @@
          </div>
          <div style="text-align: center" v-if="planList.length>0">
            <el-pagination
-             small
              layout="total, prev, pager, next, jumper"
              :total="total"
              @current-change="currentPage1"
