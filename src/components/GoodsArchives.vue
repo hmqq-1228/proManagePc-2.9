@@ -828,7 +828,7 @@ export default {
             that.num = that.num + 1
           }
           if (that.num === (that.$store.state.codeArr.length - 1) && isIni === 'ini') {
-            that.log(123)
+            that.log('99999999', that.$store.state.codeArr)
             setTimeout(function () {
               var cc = that.$store.state.codeArr
               for (var r = 0; r < cc.length; r++) {

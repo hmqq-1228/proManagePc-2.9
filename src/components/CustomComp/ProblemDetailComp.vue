@@ -6,9 +6,9 @@
         <div v-bind:class="'topState' + taskBasicMsg.status"><img src="../../../static/img/stataNew.png" alt="">{{taskBasicMsg.statusStr}}</div>
         <div><span>紧急程度: </span><span><Rate v-model="taskBasicMsg.questionLevel" disabled/></span></div>
         <div>
-          <div style="display: flex;justify-content: space-between" v-if="taskBasicMsg.status !== '3'">
-            <div style="width: 50px;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true" @click="delTask(taskBasicMsg.id)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
-            <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.showDeleteFlag === 0 ? false:true"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
+          <div style="display: flex;justify-content: space-between">
+            <div style="width: 50px;" v-if="taskBasicMsg.deleteButton === 1" @click="delTask(taskBasicMsg.id)"><Icon type="ios-trash-outline" size="24" color="#53b5ff"/></div>
+            <div @click="modifyTask()" style="width: 50px;padding-top: 3px;font-size: 14px;color: #409EFF; cursor: pointer;" v-if="taskBasicMsg.editButton === 1"><i class="el-icon-edit" style="font-size: 18px;color: #409EFF"></i> 修改</div>
           </div>
         </div>
       </div>
@@ -64,20 +64,16 @@
         </div>
         <div style="display: inline-block;font-size: 14px;color: #888;" v-if="!taskBasicMsg.attachment || taskBasicMsg.attachment.length === 0">暂无附件</div>
       </div>
-    <div v-if="taskBasicMsg.status !== '3' ">
-      <div class="cannetProject" v-if="taskBasicMsg.showMenu===0?false:true">
-        <Button v-if="taskBasicMsg.status === '0'" type="warning" style="margin-right: 20px;" @click="startTask(taskBasicMsg.id)">开始问题</Button>
-        <Button v-if="taskBasicMsg.status === '1'" type="success" style="margin-right: 20px;" @click="finishedTask()">完成问题</Button>
-        <Button type="info" v-if="taskBasicMsg.timeoutButton === 1" style="margin-right: 20px;" @click="stopeTask(taskBasicMsg.id)">任务暂停</Button>
-        <Button type="info" style="margin-right: 20px;" @click="transferTask()">移交问题</Button>
-        <Button type="info" @click="taskToDevided(taskBasicMsg.id)">分解问题</Button>
+    <div>
+      <div class="cannetProject">
+        <Button v-if="taskBasicMsg.startButton === 1" type="warning" style="margin-right: 0px;" @click="startTask(taskBasicMsg.id)">开始问题</Button>
+        <Button v-if="taskBasicMsg.finishButton === 1" type="success" style="margin-right: 0px;" @click="finishedTask()">完成问题</Button>
+        <Button v-if="taskBasicMsg.reStartButton === 1" type="primary" style="margin-right: 0px;" @click="isReStartTask(taskBasicMsg.id)">重启问题</Button>
+        <Button type="info" v-if="taskBasicMsg.pauseButton === 1" style="margin-right: 0px;" @click="stopeTask(taskBasicMsg.id)">任务暂停</Button>
+        <Button type="info" v-if="taskBasicMsg.openButton === 1"  style="margin-right: 20px;" @click="startTaskstoped(taskBasicMsg.id)">任务开启</Button>
+        <Button type="info" v-if="taskBasicMsg.transferButton === 1" style="margin-right: 0px;" @click="transferTask()">移交问题</Button>
+        <Button type="info" v-if="taskBasicMsg.decomposeButton === 1" @click="taskToDevided(taskBasicMsg.id)">分解问题</Button>
       </div>
-      <div class="cannetProject" v-if="taskBasicMsg.isRestart">
-        <Button v-if="taskBasicMsg.status === '2'" type="primary" style="margin-right: 20px;" @click="isReStartTask(taskBasicMsg.id)">重启问题</Button>
-      </div>
-    </div>
-    <div class="cannetProject" v-if="taskBasicMsg.status === '3' ">
-      <Button type="info" v-if="taskBasicMsg.timeoutButton === 2"  style="margin-right: 20px;" @click="startTaskstoped(taskBasicMsg.id)">任务开启</Button>
     </div>
       <!-- 任务分解 引入组件-->
     <!--v-bind:TaskDistributeShow="toShowDevided"-->

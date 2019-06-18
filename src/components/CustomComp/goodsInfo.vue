@@ -8,13 +8,12 @@
       <Input v-model="formValidate.goodsCode" placeholder="请输入商品编码" :maxlength="20" size="large"/>
       </FormItem>
       <FormItem label="品牌类型" prop="categoryType">
-          <Select v-model="formValidate.categoryType" placeholder="请选择品牌类型" size="large">
-            <Option value="KUB">可优比</Option>
-            <Option value="DI">蒂爱</Option>
+          <Select v-model="formValidate.categoryType" placeholder="请选择品牌类型" size="large" @on-change="changeBrand">
+            <Option :value="item.code" v-for="(item, index) in optionBrand" v-bind:key="index">{{item.categoryName}}</Option>
           </Select>
       </FormItem>
-      <FormItem label="品牌类目" prop="code" :required = true>
-          <Cascader :data="options" trigger="hover" @on-change="changeTree" :value="values" size="large"></Cascader>
+      <FormItem label="品牌类目" prop="code" :require="true">
+          <Cascader :data="options" trigger="hover" @on-change="changeTree" placeholder="请选择品牌类型后选择品牌类目" :value="values" size="large"></Cascader>
           <!-- <el-cascader :options="options" :show-all-levels="false" expand-trigger="hover"></el-cascader> -->
       </FormItem>
       <FormItem label="爆品等级" prop="explosiveLevel">
@@ -85,7 +84,7 @@ export default {
         explosiveLevel: 'A',
         developProgress: '1',
         newProductType: '1',
-        categoryType: '',
+        categoryType: 'K',
         goodsCode: ''
       },
       editValidate: {
@@ -125,7 +124,9 @@ export default {
           { required: true, message: '请选择新品类型', trigger: 'change' }
         ]
       },
-      options: []
+      options: [],
+      optionBrand: [],
+      brandType: 'K'
     }
   },
   components: {
@@ -139,9 +140,19 @@ export default {
   created () {
     this.getOptionType()
     this.getTree()
+    this.getBrand()
     // this.getDetail()
   },
   methods: {
+    changeBrand (val) {
+      this.brandType = val
+      let that = this
+      that.ajax('/goods/getGoodsClassifyTree', {brandType: this.brandType}).then(res => {
+        if (res.code === 200) {
+          this.options = res.data
+        }
+      })
+    },
     change (val) {
       this.selectionFlag = val
       if (val === true) {
@@ -156,7 +167,20 @@ export default {
       that.ajax('/goods/getGoodsDetail', {projectId: that.proId}).then(res => {
         if (res.code === 200) {
           if (res.data) {
-            that.formValidate = res.data
+            // that.formValidate.explosiveLevel
+            if (res.data.explosiveLevel !== '') {
+              that.formValidate = res.data
+            } else {
+              that.formValidate = {
+                goodsName: '',
+                code: '',
+                explosiveLevel: 'A',
+                developProgress: '1',
+                newProductType: '1',
+                categoryType: 'K',
+                goodsCode: ''
+              }
+            }
           }
           that.values = []
           that.values = that.formValidate.categoryCode
@@ -203,10 +227,20 @@ export default {
         }
       })
     },
+    getBrand () {
+      let that = this
+      that.ajax('/archives/getBrandType', {}).then(res => {
+        if (res.code === 200) {
+          this.optionBrand = res.data.brandType
+          this.optionBrand.pop()
+          this.optionBrand.shift()
+        }
+      })
+    },
     // 获取品排类目
     getTree () {
       let that = this
-      that.ajax('/goods/getGoodsClassifyTree', {}).then(res => {
+      that.ajax('/goods/getGoodsClassifyTree', {brandType: 'K'}).then(res => {
         if (res.code === 200) {
           this.options = res.data
         }

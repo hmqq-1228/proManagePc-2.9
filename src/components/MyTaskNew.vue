@@ -60,7 +60,7 @@
         <Card :bordered="true">
           <div class="groupItemTit" slot="title" :title="myTask.jobName">
             <div class="groupItemTitCnt">
-              <span style="color: #888; font-weight: normal">任务:</span>{{myTask.jobName}}
+              <span style="color: #888; font-weight: normal"><span v-if="myTask.typeCode">{{ myTask.typeName }}</span><span v-else>任务</span>:</span>{{myTask.jobName}}
             </div>
             <div class="taskStateBiaoNew" v-bind:class="myTask.tagStyle">{{myTask.statusStr}}</div>
           </div>
