@@ -5,11 +5,14 @@
       <el-header class="elHeader" style="padding: 0;">
         <div class="header">
           <div @click="tttest()">贝豪实业项目管理中心</div>
-          <div class="message" @click.stop="showMsg" @mouseover="mouseOver">
-            <Icon type="md-notifications-outline" style="font-size: 24px"/>
-            <div class="number" v-if="msgObj.totalNum > 0">
-              <p style="font-size: 12px;transform: scale(0.8)" v-if="msgObj.totalNum < 100">{{msgObj.totalNum}}</p>
-              <p style="font-size: 12px;transform: scale(0.8)" v-else>99+</p>
+          <div style="width: 250px;display: flex;justify-content: space-between;">
+            <div style="font-size: 16px;font-weight: normal;">{{sayMsg}}！{{userInfoName}}</div>
+            <div class="message" @click.stop="showMsg" @mouseover="mouseOver">
+              <Icon type="md-notifications-outline" style="font-size: 24px"/>
+              <div class="number" v-if="msgObj.totalNum > 0">
+                <p style="font-size: 12px;transform: scale(0.8)" v-if="msgObj.totalNum < 100">{{msgObj.totalNum}}</p>
+                <p style="font-size: 12px;transform: scale(0.8)" v-else>99+</p>
+              </div>
             </div>
           </div>
         </div>
@@ -111,6 +114,8 @@ export default {
   name: 'App',
   data () {
     return {
+      sayMsg: '您好',
+      userInfoName: '用户',
       isCollapse: false,
       asideWidth: '250px',
       Width: '270px',
@@ -136,6 +141,7 @@ export default {
     this.getPmsVersion()
     this.queryMenu()
     this.getUserInfo()
+    this.getHours()
     this.$Bus.$on('getMsg', msgObj => {
       this.msgObj = msgObj
     })
@@ -172,6 +178,23 @@ export default {
     }
   },
   methods: {
+    // 简单判断早晨O-7点、上午8-10点、中午11-14点、下午15-18点、晚上19-23点
+    getHours () {
+      var that = this
+      var dataNow = new Date()
+      var monthNow = dataNow.getHours()
+      if (monthNow >= 8 && monthNow < 11) {
+        that.sayMsg = '上午好'
+      } else if (monthNow >= 11 && monthNow <= 14) {
+        that.sayMsg = '中午好'
+      } else if (monthNow > 14 && monthNow <= 18) {
+        that.sayMsg = '下午好'
+      } else if (monthNow > 18 && monthNow <= 23) {
+        that.sayMsg = '晚上好'
+      } else if (monthNow < 8) {
+        that.sayMsg = '早上好'
+      }
+    },
     mouseOver () {
       if (this.msgObj.totalNum > 0) {
         this.msgShow = true
@@ -280,6 +303,7 @@ export default {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
+          that.userInfoName = res.data.Name + ' (' + res.data.jName + ')'
           that.$store.state.userId = res.data.ID
           that.$store.state.userName = res.data.Name
           that.$store.state.userLoginInfo = res.data
@@ -464,7 +488,7 @@ html,body{
 #app{
   height: 100%;
 }
-.showImg,.showImgs img{
+.showImg img,.showImgs img{
   width: 100%;
 }
 .el-aside {

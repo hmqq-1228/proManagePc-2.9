@@ -52,7 +52,7 @@ const state = {
   userName: '',
   jName: '',
   userLoginInfo: '',
-  debug: false,
+  debug: true,
   proId: '',
   menuId: '',
   NavActiveData: {},
