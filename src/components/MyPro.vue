@@ -32,6 +32,13 @@
           <TabPane label="已暂停" name="4"></TabPane>
         </Tabs>
       </div>
+      <div class="sort">
+         <span>项目排序：</span>
+         <RadioGroup v-model="sortType" type="button" size="small" @on-change="sortPro">
+            <Radio label="1">创建时间</Radio>
+            <Radio label="2">活跃度</Radio>
+         </RadioGroup>
+      </div>
       <div class="content" style="margin-top: 15px;">
         <!--<div class="cntItem" v-if="false" v-for="item in projectViewData" :key="item.projectUID">-->
           <!--<div class="cntItemLeft" @click="toProDetail(item.projectUID)">-->
@@ -362,7 +369,11 @@
     <!--分页 end-->
   </div>
 </template>
-
+<style>
+  .MyPro .ivu-radio-group-button .ivu-radio-wrapper>span {
+    margin-left: -10px;
+  }
+</style>
 <script>
 import CommentLogs from './CustomComp/CommentLogs.vue'
 import FileUploadComp from './CustomComp/FileUploadComp.vue'
@@ -378,6 +389,8 @@ export default {
   },
   data () {
     return {
+      // 排序
+      sortType: '1',
       // 光标位置
       position: 0,
       // 搜索组织架构人员
@@ -541,7 +554,8 @@ export default {
         projectType: '',
         // 项目分类记录id
         projectClassifyId: '',
-        pageSize: 10
+        pageSize: 10,
+        sortType: 1
       },
       ruleForm: {
         projectName: '',
@@ -724,6 +738,11 @@ export default {
     }
   },
   methods: {
+    // 排序
+    sortPro (val) {
+      this.myProjectViewPayload.sortType = parseInt(val)
+      this.queryMyProjectView()
+    },
     // 关注
     attention (type, item) {
       this.ajax('/myProject/attention', {status: type, linkId: item.projectUID}).then(res => {
@@ -1522,6 +1541,18 @@ export default {
   .selectBox{
     padding: 20px 10px;
   }
+  .sort {
+    width: 100%;
+    height: 30px;
+    background: #f5f8fa;
+    line-height: 30px;
+    text-indent: 10px;
+  }
+  /*.sortlist {*/
+    /*width: 30px;*/
+    /*height: 20px;*/
+    /*border: 1px;*/
+  /*}*/
   .select1{
     margin-right: 20px;
   }

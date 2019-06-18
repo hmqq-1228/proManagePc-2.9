@@ -28,7 +28,8 @@
         </div>
       </div>
     </div>
-    <div class="tabsCntList" v-loading="loading">
+    <!--v-loading="loading"-->
+    <div class="tabsCntList">
       <!---->
       <!---->
       <div class="nodata" v-if="noDataShow">

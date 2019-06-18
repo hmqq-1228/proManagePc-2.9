@@ -4,8 +4,21 @@
     <el-form :model="ruleForm" class="demo-ruleForm">
       <div class="paiTaskIptBox">
         <div class="paiTaskIptLeft">
-          <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
-          <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入新建任务名称" /></div>
+          <div class="proBelong" style="padding-right: 10px;width: 310px;border-right: 1px dashed #ccc;display: flex">
+            <span style="font-size: 14px;width: 80px;line-height: 38px;">任务类型：</span>
+            <el-cascader
+              placeholder="请选择任务类型"
+              :options="taskType"
+              change-on-select
+              :props="props"
+              :show-all-levels = "false"
+              @change="changeType"
+            ></el-cascader>
+          </div>
+          <div style="margin-left: 10px;width: 50%;display: flex;">
+            <div class="paiTaskIptIcon"><i class="el-icon-edit-outline"></i></div>
+            <div class="paiTaskIptWrap"><input v-on:focus="inputFocus()" v-model="taskNameText" type="text" placeholder="请输入新建任务名称" /></div>
+          </div>
         </div>
         <div class="paiTaskIptRight">
           <div class="paiTaskIptRightIcon" style="cursor: pointer" v-on:click="selectUser($event)"><i class="el-icon-edit-outline"></i></div>
@@ -17,14 +30,14 @@
           <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="selDateStart + ' 到 ' + selDateEnd" v-on:click="selectDate($event)"><i class="el-icon-date"></i></div>
           <div class="paiTaskIptRightCnt" :title="selDateStart + ' 到 ' + selDateEnd" v-on:click="selectDate($event)">时间</div>
           <div class="paiTaskIptRightIcon" style="cursor: pointer" :title="'等级:' + levelValue" v-on:click="selectLevel($event)">
-            <div style="width: 24px;height: 24px;padding-left: 4px;"><div class="levelNum">{{levelValue}}</div></div>
+            <div style="width: 24px;height: 24px;padding-left: 4px;padding-top: 4px;"><div class="levelNum">{{levelValue}}</div></div>
           </div>
         </div>
       </div>
       <!---->
       <div class="taskRelation" v-if="taskRelationShow">
         <div class="relationHeader">
-          <div class="proBelong">
+          <div class="proBelong" style="position: relative" @mouseover="mouseOver" @mouseleave="mouseleave">
             <!--所属项目 <i class="el-icon-arrow-down"></i>-->
             <!--<el-select v-model="projectBelong" placeholder="请选择关联项目">-->
               <!--<el-option-->
@@ -35,9 +48,11 @@
               <!--</el-option>-->
             <!--</el-select>-->
             <el-input v-model="proName" placeholder="请选择关联项目" readonly="readonly" style="width: 150px;float: left"></el-input>
+            <Icon type="ios-close-circle-outline" style="position: absolute;font-size: 16px;cursor: pointer;right: 50px;top:8px" v-if="close" @click="reduction"/>
             <!--<el-button type="primary" size="small" @click="selectPro" style="margin-left: 10px;">请选择项目</el-button>-->
             <div style="width: 40px;height: 28px;background:#2D8CF0;text-align: center;line-height: 28px;color:#fff;float: left;margin-top: 1px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;cursor: pointer" @click="selectPro" title="选择项目"><Icon type="ios-search" style="font-size: 16px;"/></div>
-            <span style="color:red" v-if="options.length===0">&nbsp;&nbsp;请新建一个项目</span>
+            <span style="color:red;line-height: 32px" v-if="options.length===0">&nbsp;&nbsp;请新建一个项目</span>
+            <span style="color:#ffb400;line-height: 32px;margin-left: 15px" v-if="val.length > 0 && remark">注释：{{remark}}</span>
           </div>
         </div>
         <div class="relationIntro">
@@ -132,6 +147,11 @@ export default {
   },
   data () {
     return {
+      props: {
+        children: 'children',
+        label: 'name',
+        value: 'code'
+      },
       // 选择项目
       selectProject: false,
       // 我的项目
@@ -183,6 +203,7 @@ export default {
         projectManager: ''
       },
       CommunityTaskPayload: {
+        type: '',
         parentId: '',
         // projectUID: '',
         // planId: '',
@@ -199,13 +220,19 @@ export default {
       pageNum: 1,
       projectType: '',
       projectName: '',
-      proName: ''
+      proName: '',
+      taskType: [],
+      remark: '', // 备注
+      val: [],
+      userInfo: {},
+      close: false
     }
   },
   created () {
     this.getUserInfo()
     this.getProBelong()
     this.getProjectList()
+    this.getTaskType()
   },
   watch: {
     projectBelong: function (newQuestion, oldQuestion) {
@@ -229,13 +256,67 @@ export default {
     }
   },
   methods: {
+    reduction () {
+      this.proName = ''
+      this.projectBelong = ''
+      this.queryMyTaskView()
+    },
+    mouseOver () {
+      this.close = true
+    },
+    mouseleave () {
+      this.close = false
+    },
+    getCascaderObj (val, opt) {
+      return val.map(function (value, index, array) {
+        for (var itm of opt) {
+          if (itm.code === value) { opt = itm.children; return itm }
+        }
+        return null
+      })
+    },
+    changeType (val) {
+      // defImplementer.name
+      this.val = val
+      let item = this.getCascaderObj(val, this.taskType)
+      if (item[item.length - 1].appointUserId) {
+        this.defImplementer.name = item[item.length - 1].appointUserName
+        this.defImplementer.id = item[item.length - 1].appointUserId
+      } else {
+        this.defImplementer.name = this.userInfo.Name
+        this.defImplementer.id = this.userInfo.ID
+      }
+      this.remark = item[item.length - 1].remark
+      this.CommunityTaskPayload.type = item[item.length - 1].code
+      console.log(item)
+    },
+    getTaskType () {
+      this.ajax('/myTask/getTaskTypeTree', {}).then(res => {
+        if (res.code === 200) {
+          this.taskType = res.data
+          this.taskType.forEach((item, index) => {
+            this.isDele(item)
+          })
+        }
+      })
+    },
+    isDele (item) {
+      if (item.children.length === 0) {
+        delete item.children
+      } else {
+        item.children.forEach((item, index) => {
+          this.isDele(item)
+        })
+      }
+    },
     getProjectList: function () {
       var that = this
       that.ajax('/myProject/myProjectView', {
         pageNum: this.pageNum,
         pageSize: 10,
         projectType: this.projectType,
-        projectName: this.projectName
+        projectName: this.projectName,
+        sortType: 1
       }).then(res => {
         if (res.code === 200) {
           this.options = res.data.list
@@ -291,6 +372,7 @@ export default {
       var that = this
       this.ajax('/myProject/getUserInfo', {}).then(res => {
         if (res.code === 200) {
+          this.userInfo = res.data
           that.defImplementer.name = res.data.Name
           that.defImplementer.id = res.data.ID
         }
@@ -555,10 +637,12 @@ export default {
     width: 20px;
     font-size: 18px;
     margin-right: 6px;
+    margin-top: 7px;
   }
   .paiTaskIptWrap{
     width: 100%;
-    line-height: 27px;
+    line-height: 40px;
+    /*margin-top: 10px;*/
   }
   .paiTaskIptWrap input{
     width: 100%;
@@ -575,11 +659,12 @@ export default {
     font-size: 18px;
     padding-left: 5px;
     color: #1687d9;
+    line-height: 40px;
   }
   .paiTaskIptRightCnt{
     cursor: pointer;
     margin-right: 10px;
-    line-height: 25px;
+    line-height: 40px;
   }
   .taskRelation{
     border: 1px solid #a9b8bf;
@@ -601,6 +686,7 @@ export default {
   }
   .selectMoreInfo{
     line-height: 30px;
+    cursor: pointer;
   }
   .submitBtn{
     margin-left: 15px;

@@ -113,7 +113,7 @@ export default {
   transition: all 1s;
 }
 .menuTree {
-    height: 65px;
+    /*height: 65px;*/
     border-bottom: 1px solid #f2f2f2;
     overflow: hidden;
     cursor: pointer;
@@ -137,9 +137,9 @@ export default {
   border-bottom: none;
 }
 .children-content {
-      margin-top: 15px;
-      line-height: 35px;
-      /*height: 50px;*/
+  margin-top: 15px;
+  line-height: 35px;
+  /*height: 50px;*/
 }
 .children-content .active {
   margin-left: 0px;
@@ -159,6 +159,7 @@ export default {
 }
 .taskDesc.noUser{
   margin-top: auto;
+  height: 0px;
 }
 .children-checked .name{
   cursor: pointer;
@@ -173,12 +174,12 @@ export default {
 .taskDesc {
   float:right;
   padding-right:50px;
-  height: 55px;
+  height: 65px;
   margin-top: -12px;
 }
 .taskDesc .top {
-      margin-left: 269px;
-      display: inline-block;
+  margin-left: 269px;
+  display: inline-block;
 }
 .taskDesc .top .residue {
   color:red;

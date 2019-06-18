@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div :class="'tree-all-'+index" v-show="item.show" v-if="item.children">
+        <div v-show="item.show" v-if="item.children">
             <div class="tree-second">
               <ul style="margin-left:-30px;">
                  <treeItem v-for="(item1,index) in item.children" :menuData="item1" @showDetailPage="showDetailPage" :key="index" :show="show"></treeItem>
@@ -119,7 +119,7 @@ export default {
   transition: all 1s;
 }
 .menuTree {
-  height: 65px;
+  /*height: 65px;*/
   border-bottom: 1px solid #f2f2f2;
   overflow: hidden;
   cursor: pointer;
@@ -176,11 +176,12 @@ export default {
 .taskDesc {
   float:right;
   padding-right:50px;
-  height: 55px;
+  height: 65px;
   margin-top: -12px;
 }
 .taskDesc.noUser{
   margin-top: auto;
+  height: 0px;
 }
 .taskDesc .top {
   margin-left: 269px;
@@ -264,5 +265,8 @@ export default {
 }
 .children-checked .overdue {
   background: #aaa;
+}
+.havHeight {
+   height: 40px;
 }
 </style>
