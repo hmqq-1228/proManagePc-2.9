@@ -45,11 +45,31 @@ const install = function (Vue, options) {
   }
   Vue.prototype.log = function (mark, cont) {
     if (store.state.debug) {
-      if (cont) {
+      if (arguments.length > 1) {
         return window.console.log(mark, cont)
-      } else {
+      } else if (arguments.length === 1) {
         return window.console.log(mark)
       }
+    }
+  }
+  /** this.log('getUserInfo:', res.data, 'only') */
+  Vue.prototype.loglog = function (mark, cont, only) {
+    // ** 如果debug开关打开
+    if (store.state.debug) {
+      // ** debugAll 是否调试全部 true:全部， false:个别或部分
+      // if (store.state.debugAll) {
+      //   if (arguments[2] === 'only') {
+      //     return window.console.log(mark, cont)
+      //   } else if (arguments[1] === 'only' || arguments.length === 1) {
+      //     return window.console.log(mark)
+      //   }
+      // } else {
+      //   if (arguments[2] === 'only') {
+      //     return window.console.log(mark, cont)
+      //   } else if (arguments[1] === 'only' || arguments.length === 1) {
+      //     return window.console.log(mark)
+      //   }
+      // }
     }
   }
   Vue.prototype.alert = function (test) {

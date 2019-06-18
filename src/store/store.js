@@ -53,6 +53,8 @@ const state = {
   jName: '',
   userLoginInfo: '',
   debug: true,
+  debugAll: false,
+  allowAction: ['getPermission'],
   proId: '',
   menuId: '',
   NavActiveData: {},

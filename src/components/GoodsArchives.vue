@@ -506,11 +506,11 @@ export default {
       var dou = i < (that.codeArr.length - 1) ? ',' : ''
       codeStr = codeStr + that.codeArr[i].code + dou
     }
-    console.log('codeStr', codeStr)
     this.iniBtn()
     that.getGoodsList(codeStr)
     that.getPermission()
     that.queryOptionType()
+    that.log('debugAll:', that.$store.state.debugAll)
   },
   mounted: function () {
     /** 设置侧边栏激活状态 */
@@ -694,10 +694,7 @@ export default {
     },
     getPermission: function () {
       var that = this
-      console.log('that.$store.state.permission', that.$store.state.permission)
       that.ajax('/archives/getPermission', {menuId: that.$store.state.menuId}).then(res => {
-        that.log('store.permission', that.$store.state.permission)
-        that.log('getPermission:', res)
         if (res.code === 200) {
           that.OptionList = res.data
           if (that.$store.state.permission) {

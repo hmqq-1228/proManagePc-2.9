@@ -1070,7 +1070,7 @@ export default {
         that.myProjectViewPayload.type = that.selectList1[0].value
       }
       this.ajax('/myProject/myProjectViewLeader', that.myProjectViewPayload).then(res => {
-        console.log('项目卡片', res)
+        that.log('项目卡片', res)
         if (res.code === 200) {
           // res.data.list
           this.pageTotalRow = res.data.totalRow

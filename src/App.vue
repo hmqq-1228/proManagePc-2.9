@@ -335,7 +335,7 @@ export default {
           if (navType === '商品管理') {
             switch (navData[r].menuName) {
               case '研发管理':
-                navData[r].path = 'GoodsManage'
+                navData[r].path = 'DevelopManage'
                 break
               case '档案管理':
                 navData[r].path = 'GoodsArchives'

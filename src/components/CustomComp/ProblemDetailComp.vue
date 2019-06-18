@@ -992,7 +992,8 @@ export default {
     },
     showImagePre: function (previewUrl, showName) {
       // this.log('showName:', showName)
-      this.$emit('FilePreEmit', {previewUrl: previewUrl, fileName: showName})
+      this.imgPreview(previewUrl, showName)
+      // this.$emit('FilePreEmit', {previewUrl: previewUrl, fileName: showName})
     },
     // 任务分解
     DistributeFormVisibleFuc: function (res) {

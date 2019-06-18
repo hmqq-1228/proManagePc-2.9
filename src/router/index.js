@@ -36,6 +36,7 @@ import ProDetail from '@/components/ProDetail'
 import TestUpload from '@/components/TestUpload'
 import CompUse from '@/components/CompUse'
 import goodsDetail2 from '@/components/goodsDetail2'
+import DevelopManage from '@/components/DevelopManage'
 import page404 from '@/components/page404'
 import GroupAdmin from '@/components/GroupAdmin'
 import TTEST from '@/components/TTEST'
@@ -208,6 +209,11 @@ export default new Router({
       path: '/goodsDetail2',
       name: 'goodsDetail2',
       component: goodsDetail2
+    },
+    {
+      path: '/DevelopManage',
+      name: 'DevelopManage',
+      component: DevelopManage
     },
     {
       path: '/page404',
