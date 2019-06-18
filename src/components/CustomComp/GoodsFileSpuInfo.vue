@@ -156,7 +156,7 @@
             <div class="spuInfoLabel" style="text-align: justify">类目</div>
             <div style="padding-top: 5px;">:</div>
             <div class="spuInfoName select">
-              <Cascader v-show="classifyInfoEditStatus" :data="options" @on-change="changeTree($event,'categoryCodeList',{categoryName: categoryCodeVal},'editExtra')" trigger="hover" v-model="categoryCodeList"></Cascader>
+              <Cascader v-show="classifyInfoEditStatus" change-on-select :data="options" @on-change="changeTree($event,'categoryCodeList',{categoryName: categoryCodeVal},'editExtra')" trigger="hover" v-model="categoryCodeList"></Cascader>
               <div style="position: absolute; top: 5px; right: 9px; background-color: #fff; color: #808695;">
                 <Icon class="haha" v-show="classifyInfoEditStatus" id="categoryCodeList" @click="editExtraSpuInfo({categoryName: categoryCodeVal},'categoryCodeList')" type="md-checkmark-circle" slot="suffix" />
               </div>
@@ -961,7 +961,7 @@ export default {
     // 查询下来选择
     this.queryOptionType()
     // 查询类目 树结构
-    this.queryClassifyTree()
+    // this.queryClassifyTree()
   },
   methods: {
     // 刷新
@@ -1418,21 +1418,23 @@ export default {
           that.pinpaiCodeVal = res.data.brandCode
           that.managerNameVal = res.data.userName
           // that.log('getSpuBasic2:', res)
+          that.queryClassifyTree(that.pinpaiCodeVal)
         }
       })
     },
     // 选择类目
     changeTree (val, name) {
+      this.log('888888', val)
       this.categoryCodeVal = val[val.length - 1]
       $('#' + name).css('color', '#2d8cf0')
     },
     // goods/getGoodsClassifyTree
-    queryClassifyTree: function () {
-      // var that = this
-      this.ajax('/goods/getGoodsClassifyTree', {}).then(res => {
-        // that.log('getGoodsClassifyTree:', res)
+    queryClassifyTree: function (CodeVal) {
+      var that = this
+      // that.log('getGoodsClassifyTree2:', CodeVal)
+      this.ajax('/goods/getGoodsClassifyTree', {brandType: CodeVal}).then(res => {
         if (res.code === 200) {
-          this.options = res.data
+          that.options = res.data
         }
       })
     },
